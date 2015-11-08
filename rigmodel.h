@@ -12,6 +12,8 @@ class cRigmodel : public QObject
     Q_OBJECT
     Q_PROPERTY(int pressure READ pressure WRITE setPressure NOTIFY pressureChanged)
     Q_PROPERTY(int oiltemp READ oiltemp WRITE setOiltemp NOTIFY oiltempChanged)
+    Q_PROPERTY(int voltage READ voltage WRITE setVoltage NOTIFY voltageChanged)
+    Q_PROPERTY(int ampere READ ampere WRITE setAmpere NOTIFY ampereChanged)
     //############ переменные - данные для отправки
     Q_PROPERTY(bool lamp READ lamp WRITE setLamp NOTIFY lampChanged)
     Q_PROPERTY(bool engine READ engine WRITE setEngine NOTIFY engineChanged)
@@ -31,6 +33,12 @@ public:
 
     void setOiltemp(const int &oiltemp);
     int oiltemp() const;
+
+    void setVoltage(const int &voltage);
+    int voltage() const;
+
+    void setAmpere(const int &ampere);
+    int ampere() const;
 
     void setAddress(const QString  &address);
     QString address() const;
@@ -55,7 +63,9 @@ public:
 signals:
     void pressureChanged();
     void oiltempChanged();
+    void voltageChanged();
     void addressChanged();
+    void ampereChanged();
 
     void lampChanged();
     void engineChanged();
@@ -81,6 +91,10 @@ public slots:
 private:
     int m_pressure=0;
     int m_oiltemp=0;
+    int m_voltage=0;
+    int m_ampere=0;
+
+
     QString m_address;
     int m_port=65000;
 

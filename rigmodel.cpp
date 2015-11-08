@@ -42,6 +42,29 @@ int cRigmodel::oiltemp() const
     return m_oiltemp;
 }
 
+
+void cRigmodel::setVoltage(const int &voltage)
+{
+    m_voltage = voltage;
+    emit voltageChanged();
+}
+
+int cRigmodel::voltage() const
+{
+    return m_voltage;
+}
+
+void cRigmodel::setAmpere(const int &ampere)
+{
+    m_ampere = ampere;
+    emit ampereChanged();
+}
+
+int cRigmodel::ampere() const
+{
+    return m_ampere;
+}
+
 void cRigmodel::setLamp(const bool &lamp)
 {
     m_lamp = lamp;
@@ -111,7 +134,7 @@ bool cRigmodel::client_connected() const
 void cRigmodel::start_client()
 {
     bytesWritten = 0;
-    qDebug()<<"Start client >>>"+this->address()+" >> "+m_address+" >> "+QString(m_port);
+    qDebug()<<"Start client >>>"+this->address()+" >> "+m_address+" >> "+::QString().number(m_port);
     
     tcpClient.connectToHost(m_address, m_port);
 
@@ -161,7 +184,6 @@ void cRigmodel::sendData()
 // проверяем, есть ли подключение клиента. Если подключения нет, то ничего не отправляем.
 if (!m_client_connected) return;
 
-// собираем данные и упаковываем в массив байтов - по текущей документации у нас 5 байт.
 
 bytesToWrite = (int)tcpClient.write(QByteArray(data,5).toHex());
 if (bytesToWrite<0)qDebug()<<"Что то пошло не так при попытке отпраки данны >>>"+tcpClient.errorString();
