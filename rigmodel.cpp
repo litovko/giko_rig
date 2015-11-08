@@ -4,15 +4,20 @@
 
 cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 {
-    connect(this, SIGNAL(addressChanged()), this, SLOT(start_client())); // установили новый адрес - вызываем функцию start_clietn()
-    connect(this, SIGNAL(portChanged()), this, SLOT(start_client())); // установили новый порт - вызываем функцию start_clietn()
-    connect(&tcpServer, SIGNAL(newConnection()),this, SLOT(acceptConnection())); // получен новый коннект к серверу (пришел клиент)
+    connect(this, SIGNAL(addressChanged()), this, SLOT(start_client())); // установили новый адрес - вызываем функцию start_client()
+    connect(this, SIGNAL(portChanged()), this, SLOT(start_client())); // установили новый порт - вызываем функцию start_client()
     connect(&tcpClient, SIGNAL(connected()),this, SLOT(clientConnected())); // Клиент приконнектилася к указанному адресу по указанному порту.
     connect(&tcpClient, SIGNAL(bytesWritten(qint64)),this, SLOT(updateClientProgress(qint64)));
+    connect(&tcpClient, SIGNAL(readyRead()),this, SLOT(readData()));
     connect(&tcpClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(displayError(QAbstractSocket::SocketError)));
 
-    tcpServer.listen(QHostAddress(m_address),m_port);
-    m_server_ready = true;
+    connect(&tcpClient, SIGNAL(connected()),this, SLOT(sendData())); //при установке исходящего соединения с аппаратом посылаем текущие данные.
+    //при изменении пользователем любого параметра сразу передаем данные
+    connect(this, SIGNAL(lampChanged()),this, SLOT(sendData()));
+    connect(this, SIGNAL(engineChanged()),this, SLOT(sendData()));
+    connect(this, SIGNAL(joystickChanged()),this, SLOT(sendData()));
+
+
 }
     
 void cRigmodel::setPressure(const int &pressure)
@@ -37,6 +42,39 @@ int cRigmodel::oiltemp() const
     return m_oiltemp;
 }
 
+void cRigmodel::setLamp(const bool &lamp)
+{
+    m_lamp = lamp;
+    emit lampChanged();
+    qDebug()<<"Переключили лампу";
+}
+
+bool cRigmodel::lamp() const
+{
+    return m_lamp;
+}
+
+void cRigmodel::setEngine(const bool &engine)
+{
+    m_engine = engine;
+    emit engineChanged();
+}
+
+bool cRigmodel::engine() const
+{
+    return m_engine;
+}
+\
+void cRigmodel::setJoystick(const int &joystick)
+{
+    m_joystick = joystick;
+    emit joystickChanged();
+}
+
+int cRigmodel::joystick() const
+{
+    return m_joystick;
+}
 
 void cRigmodel::setAddress(const QString  &address)
 {
@@ -59,43 +97,24 @@ void cRigmodel::setPort(const int  &port)
     m_port = port;
     emit portChanged();
 }
-bool cRigmodel::server_ready() const
-{
-    return m_server_ready;
-}
+
 
 bool cRigmodel::client_connected() const
 {
     return m_client_connected;
 }
-bool cRigmodel::server_connected() const
-{
-    return m_server_connected;
-}
+
 //################################################################
-// Функция работает по сигналу узменения адреса сервера.
-void cRigmodel::start_server()
-{
 
-    bytesReceived = 0;
-    QString st=tcpServer.isListening()?"yes":"no";
-    qDebug()<<"Start "+this->address()+ " is listening==" + st ;
-    while (!tcpServer.isListening() && !tcpServer.listen()) {
-        qDebug()<<"не включается листенер";
-            return;
-    }
-    st=tcpServer.isListening()?"yes":"no";
-    qDebug()<<"Start "+this->address()+ " is listening==" + st ;
-    m_server_ready = true;
 
-}
 
 void cRigmodel::start_client()
 {
     bytesWritten = 0;
-    qDebug()<<"Start client >>>"+this->address()+" >> "+m_address+" >> "+m_port;
+    qDebug()<<"Start client >>>"+this->address()+" >> "+m_address+" >> "+QString(m_port);
     
     tcpClient.connectToHost(m_address, m_port);
+
 }
 void cRigmodel::clientConnected()
 {
@@ -108,22 +127,7 @@ void cRigmodel::clientDisconnected()
     m_client_connected=false;
 }
 
-//Функция работает по сигналу прихода нового клиента к серверу.
-void cRigmodel::acceptConnection()
-{
-    tcpServerConnection = tcpServer.nextPendingConnection();
 
-    connect(tcpServerConnection, SIGNAL(readyRead()),
-            this, SLOT(updateServerProgress()));
-    connect(tcpServerConnection, SIGNAL(error(QAbstractSocket::SocketError)),
-            this, SLOT(displayError(QAbstractSocket::SocketError)));
-
-    qDebug()<<"Accepted connection >>>"+tcpServerConnection->peerAddress().toString();
-    //serverStatusLabel->setText(tr("Accepted connection"));
-    m_server_connected = true;
-    tcpServer.close(); //выключаем листенер - одной коннеции достаточно.
-    m_server_ready=false;
-}
 
 
 
@@ -131,20 +135,9 @@ void cRigmodel::updateClientProgress(qint64 numBytes)
 {
     // callen when the TCP client has written some bytes
     bytesWritten += (int)numBytes;
-    qDebug()<<"Update client progress >>>"+numBytes;
-    // only write more if not finished and when the Qt write buffer is below a certain size.
-    if (bytesToWrite > 0 && tcpClient.bytesToWrite() <= 100)
-        bytesToWrite -= (int)tcpClient.write(QByteArray(qMin(bytesToWrite, 100), '@'));
-
+    qDebug()<<"Update client progress >>>"+::QString().number(bytesWritten);
 }
-void cRigmodel::updateServerProgress()
-{
-    bytesReceived += (int)tcpServerConnection->bytesAvailable();
-    tcpServerConnection->readAll();
-     qDebug()<<"Server progress bytes received >>>"+bytesReceived;
 
-
-}
 void cRigmodel::displayError(QAbstractSocket::SocketError socketError)
 {
     if (socketError == QTcpSocket::RemoteHostClosedError)
@@ -153,5 +146,33 @@ void cRigmodel::displayError(QAbstractSocket::SocketError socketError)
 
 
     tcpClient.close();
-    tcpServer.close();
+
+}
+
+
+//##################### функция отправки данных
+
+void cRigmodel::sendData()
+{
+    char data[5]={0,32,33,34,35};
+
+    data[0] += m_lamp*1+m_engine*2;
+    qDebug()<<"Отправка данных";
+// проверяем, есть ли подключение клиента. Если подключения нет, то ничего не отправляем.
+if (!m_client_connected) return;
+
+// собираем данные и упаковываем в массив байтов - по текущей документации у нас 5 байт.
+
+bytesToWrite = (int)tcpClient.write(QByteArray(data,5).toHex());
+if (bytesToWrite<0)qDebug()<<"Что то пошло не так при попытке отпраки данны >>>"+tcpClient.errorString();
+if (bytesToWrite>=0)qDebug()<<"Data sent>>>"+QByteArray(data,5).toHex();
+}
+
+
+void cRigmodel::readData()
+{
+    QByteArray ba = tcpClient.readAll();
+    bytesReceived +=ba.length();
+    qDebug()<<"Data read>>>" << ba.toHex() << " bytesReceived:" << ::QString().number(bytesReceived);
+
 }

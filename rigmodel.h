@@ -2,7 +2,7 @@
 #define RIGMODEL_H
 
 #include <QObject>
-#include <QTcpServer>
+
 #include <QTcpSocket>
 #include <QString>
 
@@ -12,13 +12,17 @@ class cRigmodel : public QObject
     Q_OBJECT
     Q_PROPERTY(int pressure READ pressure WRITE setPressure NOTIFY pressureChanged)
     Q_PROPERTY(int oiltemp READ oiltemp WRITE setOiltemp NOTIFY oiltempChanged)
-    //############ адрс и порт
+    //############ переменные - данные для отправки
+    Q_PROPERTY(bool lamp READ lamp WRITE setLamp NOTIFY lampChanged)
+    Q_PROPERTY(bool engine READ engine WRITE setEngine NOTIFY engineChanged)
+    Q_PROPERTY(int joystick READ joystick WRITE setJoystick NOTIFY joystickChanged)
+    //############ адрес и порт
     Q_PROPERTY(QString address READ address WRITE setAddress NOTIFY addressChanged)
     Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
-    //############ свойства - статусы tcp соединений
-    Q_PROPERTY(bool server_ready READ server_ready NOTIFY server_readyChanged)
+    //############ свойства - статусы tcp соединения
+
     Q_PROPERTY(bool client_connected READ client_connected NOTIFY client_connectedChanged)
-    Q_PROPERTY(bool server_connected READ server_connected NOTIFY server_connectedChanged)
+
 public:
     explicit cRigmodel(QObject *parent = 0);
 
@@ -34,40 +38,64 @@ public:
     void setPort(const int &port);
     int  port() const;
 
-    bool server_ready() const;
+
     bool client_connected()const;
-    bool server_connected()const;
+
+
+    //############ Данные для отправки
+    void setLamp(const bool &lamp);
+    bool lamp() const;
+
+    void setEngine(const bool &engine);
+    bool engine() const;
+
+    void setJoystick(const int &joystick);
+    int joystick() const;
 
 signals:
     void pressureChanged();
     void oiltempChanged();
     void addressChanged();
+
+    void lampChanged();
+    void engineChanged();
+    void joystickChanged();
+
     void portChanged();
-    void server_readyChanged();
+
     void client_connectedChanged();
-    void server_connectedChanged();
+
 
 
 public slots:
-    void start_server();
+
     void start_client();
-    void acceptConnection();  //tcpServer new connection
-    void clientConnected();
+
+    void clientConnected();  // слот для обработки события присоединения клиента к серверу.
     void clientDisconnected();
-    void updateServerProgress();
+
     void updateClientProgress(qint64 numBytes);
     void displayError(QAbstractSocket::SocketError socketError);
+    void sendData(); //слот должен вызываться любым событием, которое меняет данные, предназначенные для отправки.
+    void readData(); //расклаываем полученные от сервера данные по параметрам
 private:
     int m_pressure=0;
     int m_oiltemp=0;
     QString m_address;
     int m_port=65000;
-    bool m_server_ready = false;
+
     bool m_client_connected = false;
-    bool m_server_connected = false;
-    QTcpServer tcpServer;
+
+
+    //############ Данные для отправки
+    bool m_lamp=false;
+    bool m_engine=false;
+    int m_joystick=0;
+
+
+
     QTcpSocket tcpClient;
-    QTcpSocket *tcpServerConnection; //переменная хранит сокет открытой коннекции с клиентом
+
 
     int bytesToWrite=0;
     int bytesWritten=0;
