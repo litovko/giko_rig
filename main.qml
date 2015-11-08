@@ -9,6 +9,7 @@ Window {
         pressure:   100
         oiltemp:    20
         address:  "localhost"
+        port: 65000
 
     }
 
@@ -19,8 +20,9 @@ Window {
             if (mouse.button == Qt.RightButton){
                    console.log(rig.server_connected?"black":"white");
                    console.log(rig.lamp?"on":"off");
-                   rig.pressure=111
+                   rig.pressure=111;
                    rig.lamp=rig.lamp?false:true;
+                   rig.start_client();
             }
             else
                    Qt.quit();

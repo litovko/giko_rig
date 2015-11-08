@@ -14,6 +14,7 @@ class cRigmodel : public QObject
     Q_PROPERTY(int oiltemp READ oiltemp WRITE setOiltemp NOTIFY oiltempChanged)
     Q_PROPERTY(int voltage READ voltage WRITE setVoltage NOTIFY voltageChanged)
     Q_PROPERTY(int ampere READ ampere WRITE setAmpere NOTIFY ampereChanged)
+    Q_PROPERTY(int turns READ turns WRITE setTurns NOTIFY turnsChanged)
     //############ переменные - данные для отправки
     Q_PROPERTY(bool lamp READ lamp WRITE setLamp NOTIFY lampChanged)
     Q_PROPERTY(bool engine READ engine WRITE setEngine NOTIFY engineChanged)
@@ -27,7 +28,7 @@ class cRigmodel : public QObject
 
 public:
     explicit cRigmodel(QObject *parent = 0);
-
+    //############ занчения, получаемые по сети от контроллера
     void setPressure(const int &pressure);
     int pressure() const;
 
@@ -40,15 +41,14 @@ public:
     void setAmpere(const int &ampere);
     int ampere() const;
 
+    void setTurns(const int &turns);
+    int turns() const;
+
     void setAddress(const QString  &address);
     QString address() const;
 
     void setPort(const int &port);
     int  port() const;
-
-
-    bool client_connected()const;
-
 
     //############ Данные для отправки
     void setLamp(const bool &lamp);
@@ -60,12 +60,15 @@ public:
     void setJoystick(const int &joystick);
     int joystick() const;
 
+    bool client_connected()const;
+
 signals:
     void pressureChanged();
     void oiltempChanged();
     void voltageChanged();
     void addressChanged();
     void ampereChanged();
+    void turnsChanged();
 
     void lampChanged();
     void engineChanged();
@@ -93,6 +96,7 @@ private:
     int m_oiltemp=0;
     int m_voltage=0;
     int m_ampere=0;
+    int m_turns=0;
 
 
     QString m_address;

@@ -65,6 +65,17 @@ int cRigmodel::ampere() const
     return m_ampere;
 }
 
+void cRigmodel::setTurns(const int &turns)
+{
+    m_turns = turns;
+    emit turnsChanged();
+}
+
+int cRigmodel::turns() const
+{
+    return m_turns;
+}
+
 void cRigmodel::setLamp(const bool &lamp)
 {
     m_lamp = lamp;
@@ -133,6 +144,7 @@ bool cRigmodel::client_connected() const
 
 void cRigmodel::start_client()
 {
+    if (m_client_connected) return;
     bytesWritten = 0;
     qDebug()<<"Start client >>>"+this->address()+" >> "+m_address+" >> "+::QString().number(m_port);
     
@@ -141,8 +153,9 @@ void cRigmodel::start_client()
 }
 void cRigmodel::clientConnected()
 {
-    qDebug()<<"Client connect to address >>>"+this->address()+" port:"+ this->port();
+    qDebug()<<"Client connect to address >>>"+this->address()+" port:"+ ::QString().number(m_port);
     m_client_connected=true;
+    emit client_connectedChanged();
 }
 void cRigmodel::clientDisconnected()
 {
@@ -193,8 +206,29 @@ if (bytesToWrite>=0)qDebug()<<"Data sent>>>"+QByteArray(data,5).toHex();
 
 void cRigmodel::readData()
 {
-    QByteArray ba = tcpClient.readAll();
-    bytesReceived +=ba.length();
-    qDebug()<<"Data read>>>" << ba.toHex() << " bytesReceived:" << ::QString().number(bytesReceived);
+
+    char ba[10]={0,0,0,0,0,0,0,0,0,0};
+    int len=10;
+    int numRead =  tcpClient.read(&ba[0],len);
+    if (numRead<0) qDebug()<<"что-то пошло не так при чтении данных ";
+    if (numRead==0) qDebug()<<"сигнал пришел, но данных нет!!!";
+    QString s("read "+::QString().number(numRead) +" bytes of data>>");
+    for (int i=0;i<numRead;i++) s=s+" "+ ::QString().number(ba[i],16);
+    qDebug()<<s;
+    bytesReceived +=len;
+    struct t_resdata
+    {
+        int t,p,w,u,a;
+    };
+    t_resdata d;
+    memcpy(&d,&ba,len);
+    qDebug()<<"Data read>>>"
+            << " t:" <<::QString().number(d.t)
+            << " p:" <<::QString().number(d.p)
+            << " w:" <<::QString().number(d.w)
+            << " u:" <<::QString().number(d.u)
+            << " a:" <<::QString().number(d.a)
+            ;
+    if (!tcpClient.atEnd())
 
 }
