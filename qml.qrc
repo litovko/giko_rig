@@ -1,6 +1,16 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>Pribor.qml</file>
+        <file>MyDashboard.qml</file>
+		<file>MyGauge.qml</file>
+		<file>MyLamp.qml</file>
+        <file>skin/pause.png</file>
+        <file>skin/play.png</file>
+        <file>skin/needle.png</file>
+        <file>skin/needle_shadow.png</file>
+        <file>ControlPanel.qml</file>
+        <file>skin/settings.png</file>
+        <file>MyBotton.qml</file>
     </qresource>
 </RCC>
-

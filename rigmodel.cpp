@@ -4,9 +4,10 @@
 
 cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 {
-    connect(this, SIGNAL(addressChanged()), this, SLOT(start_client())); // установили новый адрес - вызываем функцию start_client()
-    connect(this, SIGNAL(portChanged()), this, SLOT(start_client())); // установили новый порт - вызываем функцию start_client()
+//    connect(this, SIGNAL(addressChanged()), this, SLOT(start_client())); // установили новый адрес - вызываем функцию start_client()
+//    connect(this, SIGNAL(portChanged()), this, SLOT(start_client())); // установили новый порт - вызываем функцию start_client()
     connect(&tcpClient, SIGNAL(connected()),this, SLOT(clientConnected())); // Клиент приконнектилася к указанному адресу по указанному порту.
+    connect(&tcpClient, SIGNAL(disconnected()),this, SLOT(clientDisconnected())); // Клиент отвалился
     connect(&tcpClient, SIGNAL(bytesWritten(qint64)),this, SLOT(updateClientProgress(qint64)));
     connect(&tcpClient, SIGNAL(readyRead()),this, SLOT(readData()));
     connect(&tcpClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(displayError(QAbstractSocket::SocketError)));
@@ -16,8 +17,12 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(lampChanged()),this, SLOT(sendData()));
     connect(this, SIGNAL(engineChanged()),this, SLOT(sendData()));
     connect(this, SIGNAL(joystickChanged()),this, SLOT(sendData()));
+    connect(this, SIGNAL(cameraChanged()),this, SLOT(sendData()));
 
-
+    connect(&timer_connect, SIGNAL(timeout()), this, SLOT(start_client()));
+    timer_connect.start(5000);
+    connect(&timer_send, SIGNAL(timeout()), this, SLOT(sendData()));
+    timer_send.start(1000);
 }
     
 void cRigmodel::setPressure(const int &pressure)
@@ -76,6 +81,17 @@ int cRigmodel::turns() const
     return m_turns;
 }
 
+void cRigmodel::setTemperature(const int &temperature)
+{
+    m_temperature = temperature;
+    emit temperatureChanged();
+}
+
+int cRigmodel::temperature() const
+{
+    return m_temperature;
+}
+
 void cRigmodel::setLamp(const bool &lamp)
 {
     m_lamp = lamp;
@@ -86,6 +102,18 @@ void cRigmodel::setLamp(const bool &lamp)
 bool cRigmodel::lamp() const
 {
     return m_lamp;
+}
+
+void cRigmodel::setCamera(const bool &camera)
+{
+    m_camera = camera;
+    emit cameraChanged();
+    qDebug()<<"Переключили питание камер";
+}
+
+bool cRigmodel::camera() const
+{
+    return m_camera;
 }
 
 void cRigmodel::setEngine(const bool &engine)
@@ -138,6 +166,12 @@ bool cRigmodel::client_connected() const
     return m_client_connected;
 }
 
+bool cRigmodel::good_data() const
+{
+    return m_good_data;
+}
+
+
 //################################################################
 
 
@@ -153,7 +187,7 @@ void cRigmodel::start_client()
 }
 void cRigmodel::clientConnected()
 {
-    qDebug()<<"Client connect to address >>>"+this->address()+" port:"+ ::QString().number(m_port);
+    qDebug()<<"Client connected to address >>>"+this->address()+" port:"+ ::QString().number(m_port);
     m_client_connected=true;
     emit client_connectedChanged();
 }
@@ -161,6 +195,9 @@ void cRigmodel::clientDisconnected()
 {
     qDebug()<<"Client disconnected form address >>>"+this->address()+" port:"+ this->port();
     m_client_connected=false;
+    m_good_data=false;
+    emit client_connectedChanged();
+    emit good_dataChanged();
 }
 
 
@@ -191,44 +228,74 @@ void cRigmodel::displayError(QAbstractSocket::SocketError socketError)
 void cRigmodel::sendData()
 {
     char data[5]={0,32,33,34,35};
+    data[0] = m_lamp*4+m_engine*1+m_camera*8;
+    QString Data; // Строка отправки данных.
 
-    data[0] += m_lamp*1+m_engine*2;
-    qDebug()<<"Отправка данных";
 // проверяем, есть ли подключение клиента. Если подключения нет, то ничего не отправляем.
-if (!m_client_connected) return;
-
-
-bytesToWrite = (int)tcpClient.write(QByteArray(data,5).toHex());
-if (bytesToWrite<0)qDebug()<<"Что то пошло не так при попытке отпраки данны >>>"+tcpClient.errorString();
-if (bytesToWrite>=0)qDebug()<<"Data sent>>>"+QByteArray(data,5).toHex();
+    if (!m_client_connected) return;
+    Data="{ana1:"+::QString().number(int(m_joystick*127/100),10)+";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
+    qDebug()<<"Отправка данных"<<Data;
+    qDebug()<<"Joystik:"<<::QString().number(m_joystick,10);
+    bytesToWrite = (int)tcpClient.write(::QByteArray(Data.toLatin1()).data());
+    if (bytesToWrite<0)qDebug()<<"Что то пошло не так при попытке отпраки данны >>>"+tcpClient.errorString();
+    if (bytesToWrite>=0)qDebug()<<"Data sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
 }
 
 
 void cRigmodel::readData()
 {
 
-    char ba[10]={0,0,0,0,0,0,0,0,0,0};
-    int len=10;
-    int numRead =  tcpClient.read(&ba[0],len);
-    if (numRead<0) qDebug()<<"что-то пошло не так при чтении данных ";
-    if (numRead==0) qDebug()<<"сигнал пришел, но данных нет!!!";
-    QString s("read "+::QString().number(numRead) +" bytes of data>>");
-    for (int i=0;i<numRead;i++) s=s+" "+ ::QString().number(ba[i],16);
-    qDebug()<<s;
-    bytesReceived +=len;
-    struct t_resdata
-    {
-        int t,p,w,u,a;
-    };
-    t_resdata d;
-    memcpy(&d,&ba,len);
-    qDebug()<<"Data read>>>"
-            << " t:" <<::QString().number(d.t)
-            << " p:" <<::QString().number(d.p)
-            << " w:" <<::QString().number(d.w)
-            << " u:" <<::QString().number(d.u)
-            << " a:" <<::QString().number(d.a)
-            ;
-    if (!tcpClient.atEnd())
+    QByteArray Data="";
+    QString CRC ="";
+    QList<QByteArray> split;
+    int m;
+    Data = tcpClient.readAll();
+    qDebug()<<"read :"<<Data;
 
+    // надо распрасить строчку
+    // {toil=29;poil=70;drpm=15;pwrv=33;pwra=3}FAFBFCFD
+    // проверяем на наличие {}
+    m_good_data = false; emit good_dataChanged();
+    if (Data.startsWith("{")&&(m=Data.indexOf("}"))>0) {
+        m_good_data = true; emit good_dataChanged();
+        CRC=Data.mid(m+1);
+        qDebug()<<"CRC:"<<CRC; //CRC пока не проверяем - это отдельная тема.
+        Data=Data.mid(1,m-1);
+        qDebug()<<"truncated :"<<Data;
+        split=Data.split(';');
+        qDebug()<<"split:"<<split;
+        QListIterator<QByteArray> i(split);
+        QByteArray s, val;
+        bool ok;
+        while (i.hasNext()){
+             s=i.next();
+             m=s.indexOf("=");
+             val=s.mid(m+1); //данные после "="
+             s=s.left(m); // названия тэга
+            qDebug()<<"tag:"<<s<<"value:"<<val;
+            if (s=="toil") {
+                m_temperature=val.toInt(&ok,10); emit temperatureChanged();
+                if(!ok) {m_good_data = false; emit good_dataChanged();}
+            }
+            if (s=="poil"){
+                m_pressure=val.toInt(&ok,10); emit pressureChanged();
+                if(!ok) {m_good_data = false; emit good_dataChanged();}
+            }
+            if (s=="poil"){
+                m_turns=val.toInt(&ok,10);
+                if(!ok) {m_good_data = false; emit good_dataChanged();}
+            }
+            if (s=="pwrv"){
+                m_voltage=val.toInt(&ok,10); emit voltageChanged();;
+                if(!ok) {m_good_data = false; emit good_dataChanged();}
+            }
+            if (s=="pwra"){
+                m_ampere=val.toInt(&ok,10); emit ampereChanged();;
+                if(!ok) {m_good_data = false; emit good_dataChanged();}
+            }
+         }
+    }
+    else {
+        m_good_data=false; good_dataChanged();
+    }
 }

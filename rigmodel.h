@@ -5,6 +5,7 @@
 
 #include <QTcpSocket>
 #include <QString>
+#include <QTimer>
 
 class cRigmodel : public QObject
 {
@@ -15,16 +16,19 @@ class cRigmodel : public QObject
     Q_PROPERTY(int voltage READ voltage WRITE setVoltage NOTIFY voltageChanged)
     Q_PROPERTY(int ampere READ ampere WRITE setAmpere NOTIFY ampereChanged)
     Q_PROPERTY(int turns READ turns WRITE setTurns NOTIFY turnsChanged)
+    Q_PROPERTY(int temperature READ temperature WRITE setTemperature NOTIFY temperatureChanged)
     //############ переменные - данные для отправки
     Q_PROPERTY(bool lamp READ lamp WRITE setLamp NOTIFY lampChanged)
     Q_PROPERTY(bool engine READ engine WRITE setEngine NOTIFY engineChanged)
     Q_PROPERTY(int joystick READ joystick WRITE setJoystick NOTIFY joystickChanged)
+    Q_PROPERTY(bool camera READ camera WRITE setCamera NOTIFY cameraChanged)
     //############ адрес и порт
     Q_PROPERTY(QString address READ address WRITE setAddress NOTIFY addressChanged)
     Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
     //############ свойства - статусы tcp соединения
 
     Q_PROPERTY(bool client_connected READ client_connected NOTIFY client_connectedChanged)
+    Q_PROPERTY(bool good_data READ good_data  NOTIFY good_dataChanged)
 
 public:
     explicit cRigmodel(QObject *parent = 0);
@@ -44,6 +48,9 @@ public:
     void setTurns(const int &turns);
     int turns() const;
 
+    void setTemperature(const int &temperature);
+    int temperature() const;
+
     void setAddress(const QString  &address);
     QString address() const;
 
@@ -54,6 +61,9 @@ public:
     void setLamp(const bool &lamp);
     bool lamp() const;
 
+    void setCamera(const bool &camera);
+    bool camera() const;
+
     void setEngine(const bool &engine);
     bool engine() const;
 
@@ -61,6 +71,7 @@ public:
     int joystick() const;
 
     bool client_connected()const;
+    bool good_data()const;
 
 signals:
     void pressureChanged();
@@ -69,15 +80,17 @@ signals:
     void addressChanged();
     void ampereChanged();
     void turnsChanged();
+    void temperatureChanged();
 
     void lampChanged();
     void engineChanged();
     void joystickChanged();
+    void cameraChanged();
 
     void portChanged();
 
     void client_connectedChanged();
-
+    void good_dataChanged();
 
 
 public slots:
@@ -97,22 +110,28 @@ private:
     int m_voltage=0;
     int m_ampere=0;
     int m_turns=0;
+    int m_temperature=0;
 
 
-    QString m_address;
-    int m_port=65000;
+    QString m_address="localhost";
+    int m_port=1212;
 
     bool m_client_connected = false;
 
 
     //############ Данные для отправки
     bool m_lamp=false;
+    bool m_camera=false;
     bool m_engine=false;
     int m_joystick=0;
+    bool m_good_data=false;
 
 
 
     QTcpSocket tcpClient;
+    QTimer timer_connect;
+    QTimer timer_send;
+
 
 
     int bytesToWrite=0;
