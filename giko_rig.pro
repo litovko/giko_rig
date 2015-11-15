@@ -5,7 +5,8 @@ CONFIG += c++11
 # This line is from QmlVlcDemo.pro
 INCLUDEPATH += deps
 SOURCES += main.cpp \
-    rigmodel.cpp
+    rigmodel.cpp \
+    camera.cpp
 
 RESOURCES += qml.qrc
 
@@ -26,7 +27,8 @@ include(deps/QmlVlc/QmlVlc.pri)
 
 #
 HEADERS += \
-    rigmodel.h
+    rigmodel.h \
+    camera.h
 
 DISTFILES += \
     skin/hycoicon.ico

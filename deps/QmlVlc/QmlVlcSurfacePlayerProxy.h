@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2014, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2014-2015, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -23,41 +23,27 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include <QtGui/QGuiApplication>
-#include <QQuickView>
+#pragma once
 
-#include <QmlVlc.h>
-#include <QmlVlc/QmlVlcConfig.h>
+#include "QmlVlcPlayerProxy.h"
+#include "QmlVlcVideoOutput.h"
+#include "QmlVlcVideoSurface.h"
 
-
-#include "rigmodel.h"
-#include "camera.h"
-#include <QtQml>
-
-int main(int argc, char *argv[])
+class QmlVlcSurfacePlayerProxy
+    : public QmlVlcPlayerProxy
 {
-    RegisterQmlVlc();
-    QmlVlcConfig& config = QmlVlcConfig::instance();
-    config.enableAdjustFilter( true );
-    config.enableMarqueeFilter( true );
-    config.enableLogoFilter( true );
-    config.enableRecord( false );
-    //config.enableDebug( true );
-    //config.enableRecord( true);
+    Q_OBJECT
+public:
+    explicit QmlVlcSurfacePlayerProxy( const std::shared_ptr<vlc::player>& player,
+                                       QObject* parent = 0 );
+    virtual void classBegin();
+    ~QmlVlcSurfacePlayerProxy();
 
+    void registerVideoSurface( QmlVlcVideoSurface* s );
+    void unregisterVideoSurface( QmlVlcVideoSurface* s );
 
-    qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
-    qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
-    QGuiApplication app(argc, argv);
+    Q_INVOKABLE void swap( QmlVlcSurfacePlayerProxy* );
 
-
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-
-//############### такой код генерирует QT
-//    QQmlApplicationEngine engine;
-//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-//#########################################################
-    return app.exec();
-}
-
+private:
+    QScopedPointer<QmlVlcVideoOutput> m_videoOutput;
+};

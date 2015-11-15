@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2014, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2013-2014, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -23,41 +23,29 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include <QtGui/QGuiApplication>
-#include <QQuickView>
+#include "vlc_helpers.h"
 
-#include <QmlVlc.h>
-#include <QmlVlc/QmlVlcConfig.h>
-
-
-#include "rigmodel.h"
-#include "camera.h"
-#include <QtQml>
-
-int main(int argc, char *argv[])
+int vlc::track_idx_2_track_id( const libvlc_track_description_t *const tracks, int idx )
 {
-    RegisterQmlVlc();
-    QmlVlcConfig& config = QmlVlcConfig::instance();
-    config.enableAdjustFilter( true );
-    config.enableMarqueeFilter( true );
-    config.enableLogoFilter( true );
-    config.enableRecord( false );
-    //config.enableDebug( true );
-    //config.enableRecord( true);
+    if( tracks && idx >= 0 ) {
+        const libvlc_track_description_t* t = tracks;
+        for( ; t && idx; --idx, t = t->p_next );
+        if( t )
+            return t->i_id;
+    }
 
-
-    qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
-    qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
-    QGuiApplication app(argc, argv);
-
-
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-
-//############### такой код генерирует QT
-//    QQmlApplicationEngine engine;
-//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-//#########################################################
-    return app.exec();
+    return -1;
 }
 
+int vlc::track_id_2_track_idx( const libvlc_track_description_t *const tracks, int id )
+{
+    if( tracks && id >= 0 ) {
+        const libvlc_track_description_t* t = tracks;
+        for( unsigned idx = 0; t; ++idx, t = t->p_next ) {
+            if( t->i_id == id )
+                return idx;
+        }
+    }
+
+    return -1;
+}

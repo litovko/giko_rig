@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2014, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2013-2015, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -23,41 +23,31 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include <QtGui/QGuiApplication>
-#include <QQuickView>
+#pragma once
 
-#include <QmlVlc.h>
-#include <QmlVlc/QmlVlcConfig.h>
+#include "vlc_basic_player.h"
 
-
-#include "rigmodel.h"
-#include "camera.h"
-#include <QtQml>
-
-int main(int argc, char *argv[])
+namespace vlc
 {
-    RegisterQmlVlc();
-    QmlVlcConfig& config = QmlVlcConfig::instance();
-    config.enableAdjustFilter( true );
-    config.enableMarqueeFilter( true );
-    config.enableLogoFilter( true );
-    config.enableRecord( false );
-    //config.enableDebug( true );
-    //config.enableRecord( true);
+    class subtitles
+    {
+    public:
+        subtitles( vlc::basic_player& player )
+            : _player( player ) {}
 
+        unsigned track_count();
 
-    qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
-    qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
-    QGuiApplication app(argc, argv);
+        //can return -1 if there are no active subtitle
+        int get_track();
+        void set_track( unsigned );
 
+        //in milliseconds
+        int64_t get_delay();
+        void set_delay( int64_t );
 
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+        bool load( const std::string& file );
 
-//############### такой код генерирует QT
-//    QQmlApplicationEngine engine;
-//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-//#########################################################
-    return app.exec();
-}
-
+    private:
+        vlc::basic_player& _player;
+    };
+};

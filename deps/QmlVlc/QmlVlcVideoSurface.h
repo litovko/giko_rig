@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2014, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2014-2015, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -23,41 +23,30 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include <QtGui/QGuiApplication>
-#include <QQuickView>
+#pragma once
 
-#include <QmlVlc.h>
-#include <QmlVlc/QmlVlcConfig.h>
+#include <QPointer>
 
+#include "QmlVlcGenericVideoSurface.h"
+class QmlVlcSurfacePlayerProxy; //#include "QmlVlcSurfacePlayerProxy.h"
 
-#include "rigmodel.h"
-#include "camera.h"
-#include <QtQml>
-
-int main(int argc, char *argv[])
+class QmlVlcVideoSurface
+    : public QmlVlcGenericVideoSurface
 {
-    RegisterQmlVlc();
-    QmlVlcConfig& config = QmlVlcConfig::instance();
-    config.enableAdjustFilter( true );
-    config.enableMarqueeFilter( true );
-    config.enableLogoFilter( true );
-    config.enableRecord( false );
-    //config.enableDebug( true );
-    //config.enableRecord( true);
+    Q_OBJECT
 
+    Q_PROPERTY( QmlVlcSurfacePlayerProxy* source READ source WRITE setSource NOTIFY sourceChanged )
 
-    qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
-    qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
-    QGuiApplication app(argc, argv);
+public:
+    QmlVlcVideoSurface();
+    ~QmlVlcVideoSurface();
 
+    QmlVlcSurfacePlayerProxy* source() const;
+    void setSource( QmlVlcSurfacePlayerProxy* source );
 
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+Q_SIGNALS:
+    void sourceChanged();
 
-//############### такой код генерирует QT
-//    QQmlApplicationEngine engine;
-//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-//#########################################################
-    return app.exec();
-}
-
+private:
+    QPointer<QmlVlcSurfacePlayerProxy> m_source;
+};

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2014, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2014-2015, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -23,41 +23,27 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include <QtGui/QGuiApplication>
-#include <QQuickView>
+#pragma once
 
-#include <QmlVlc.h>
-#include <QmlVlc/QmlVlcConfig.h>
+#include "QmlVlcPlayerProxy.h"
+#include "QmlVlcMmVideoOutput.h"
 
-
-#include "rigmodel.h"
-#include "camera.h"
-#include <QtQml>
-
-int main(int argc, char *argv[])
+class QmlVlcMmPlayer
+    : public QmlVlcPlayerProxy
 {
-    RegisterQmlVlc();
-    QmlVlcConfig& config = QmlVlcConfig::instance();
-    config.enableAdjustFilter( true );
-    config.enableMarqueeFilter( true );
-    config.enableLogoFilter( true );
-    config.enableRecord( false );
-    //config.enableDebug( true );
-    //config.enableRecord( true);
+    Q_OBJECT
+public:
+    explicit QmlVlcMmPlayer( QObject* parent = 0 );
+    ~QmlVlcMmPlayer();
 
+    Q_PROPERTY( QAbstractVideoSurface* videoSurface READ videoSurface WRITE setVideoSurface )
 
-    qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
-    qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
-    QGuiApplication app(argc, argv);
+    QAbstractVideoSurface* videoSurface() const
+        { return m_videoOutput.videoSurface(); }
+    void setVideoSurface( QAbstractVideoSurface* s )
+        { m_videoOutput.setVideoSurface( s ); }
 
-
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-
-//############### такой код генерирует QT
-//    QQmlApplicationEngine engine;
-//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-//#########################################################
-    return app.exec();
-}
-
+private:
+    libvlc_instance_t* m_libvlc;
+    QmlVlcMmVideoOutput m_videoOutput;
+};

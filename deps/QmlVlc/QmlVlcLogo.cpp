@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2014, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2014, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -23,41 +23,33 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include <QtGui/QGuiApplication>
-#include <QQuickView>
+#include "QmlVlcLogo.h"
 
-#include <QmlVlc.h>
-#include <QmlVlc/QmlVlcConfig.h>
+#include "QmlVlcPositions.h"
 
-
-#include "rigmodel.h"
-#include "camera.h"
-#include <QtQml>
-
-int main(int argc, char *argv[])
+QString QmlVlcLogo::get_position()
 {
-    RegisterQmlVlc();
-    QmlVlcConfig& config = QmlVlcConfig::instance();
-    config.enableAdjustFilter( true );
-    config.enableMarqueeFilter( true );
-    config.enableLogoFilter( true );
-    config.enableRecord( false );
-    //config.enableDebug( true );
-    //config.enableRecord( true);
-
-
-    qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
-    qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
-    QGuiApplication app(argc, argv);
-
-
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-
-//############### такой код генерирует QT
-//    QQmlApplicationEngine engine;
-//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-//#########################################################
-    return app.exec();
+    int p = get_logo_int( libvlc_logo_position );
+    return QmlGetPositionById( p );
 }
 
+void QmlVlcLogo::set_position( const QString& position )
+{
+    int p = QmlGetIdByPosition( position );
+    set_logo_int( libvlc_logo_position, p );
+}
+
+void QmlVlcLogo::file( const QString& f )
+{
+    libvlc_video_set_logo_string( m_player.get_mp(), libvlc_logo_file, f.toUtf8().constData() );
+}
+
+int QmlVlcLogo::get_logo_int( libvlc_video_logo_option_t o )
+{
+    return libvlc_video_get_logo_int( m_player.get_mp(), o );
+}
+
+void QmlVlcLogo::set_logo_int( libvlc_video_logo_option_t o, int i )
+{
+    libvlc_video_set_logo_int( m_player.get_mp(), o, i );
+}

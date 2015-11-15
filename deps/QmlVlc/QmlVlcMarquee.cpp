@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2014, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2014, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -23,41 +23,43 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include <QtGui/QGuiApplication>
-#include <QQuickView>
+#include "QmlVlcMarquee.h"
 
-#include <QmlVlc.h>
-#include <QmlVlc/QmlVlcConfig.h>
+#include "QmlVlcPositions.h"
 
-
-#include "rigmodel.h"
-#include "camera.h"
-#include <QtQml>
-
-int main(int argc, char *argv[])
+QString QmlVlcMarquee::get_text()
 {
-    RegisterQmlVlc();
-    QmlVlcConfig& config = QmlVlcConfig::instance();
-    config.enableAdjustFilter( true );
-    config.enableMarqueeFilter( true );
-    config.enableLogoFilter( true );
-    config.enableRecord( false );
-    //config.enableDebug( true );
-    //config.enableRecord( true);
+    QString text;
+    char* t = libvlc_video_get_marquee_string( m_player.get_mp(), libvlc_marquee_Text );
+    if ( t )
+        text = t;
 
-
-    qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
-    qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
-    QGuiApplication app(argc, argv);
-
-
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-
-//############### такой код генерирует QT
-//    QQmlApplicationEngine engine;
-//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-//#########################################################
-    return app.exec();
+    return text;
 }
 
+void QmlVlcMarquee::set_text( const QString& t )
+{
+    libvlc_video_set_marquee_string( m_player.get_mp(), libvlc_marquee_Text, t.toUtf8().constData() );
+}
+
+QString QmlVlcMarquee::get_position()
+{
+    int p = get_marquee_int( libvlc_marquee_Position );
+    return QmlGetPositionById( p );
+}
+
+void QmlVlcMarquee::set_position( const QString& position )
+{
+    int p = QmlGetIdByPosition( position );
+    set_marquee_int( libvlc_marquee_Position, p );
+}
+
+int QmlVlcMarquee::get_marquee_int( libvlc_video_marquee_option_t o )
+{
+    return libvlc_video_get_marquee_int( m_player.get_mp(), o );
+}
+
+void QmlVlcMarquee::set_marquee_int( libvlc_video_marquee_option_t o, int i )
+{
+    libvlc_video_set_marquee_int( m_player.get_mp(), o, i );
+}

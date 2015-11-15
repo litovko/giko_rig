@@ -31,10 +31,15 @@ Window {
            if (event.key === Qt.Key_F4) rig.engine=rig.engine?false:true;
            if (event.key === Qt.Key_F5) rig.lamp=rig.lamp?false:true;
         }
+        RigCamera {
+            id: cam1
+        }
+
         VlcPlayer {
             id: vlcPlayer;
+            mrl: cam1.url1;
             //mrl: "rtsp://192.168.1.168:8557/PSIA/Streaming/channels/2?videoCodecType=H.264"
-             mrl: "rtsp://192.168.1.168:8553/PSIA/Streaming/channels/1?videoCodecType=MPEG4"
+            // mrl: "rtsp://192.168.1.168:8553/PSIA/Streaming/channels/1?videoCodecType=MPEG4"
             //mrl: "rtsp://pionerskaya.glavpunkt.ru:554/user=admin&password=0508&channel=1&stream=0.sdp?real_stream--rtp-caching=100";
             //mrl: "rtsp://stream.tn.com.ar/live/tnhd1";
             //rtsp://192.168.1.168:8557/PSIA/Streaming/channels/2?videoCodecType=H.264

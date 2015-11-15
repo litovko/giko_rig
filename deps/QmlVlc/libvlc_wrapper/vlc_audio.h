@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2014, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2013-2015, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -23,41 +23,55 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include <QtGui/QGuiApplication>
-#include <QQuickView>
+#pragma once
 
-#include <QmlVlc.h>
-#include <QmlVlc/QmlVlcConfig.h>
+#include "callbacks_holder.h"
 
+#include "vlc_basic_player.h"
 
-#include "rigmodel.h"
-#include "camera.h"
-#include <QtQml>
-
-int main(int argc, char *argv[])
+namespace vlc
 {
-    RegisterQmlVlc();
-    QmlVlcConfig& config = QmlVlcConfig::instance();
-    config.enableAdjustFilter( true );
-    config.enableMarqueeFilter( true );
-    config.enableLogoFilter( true );
-    config.enableRecord( false );
-    //config.enableDebug( true );
-    //config.enableRecord( true);
+    enum class audio_event_e
+    {
+        mute_changed,
+        volume_changed,
+    };
 
+    struct audio_events_callback
+    {
+        virtual void audio_event( audio_event_e e ) = 0;
+    };
 
-    qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
-    qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
-    QGuiApplication app(argc, argv);
+    class audio
+        : public callbacks_holder<audio_events_callback>
+    {
+    public:
+        audio( vlc::basic_player& player )
+            : _player( player ) {};
 
+        bool is_muted();
+        void toggle_mute();
+        void set_mute( bool );
 
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+        unsigned get_volume();
+        void set_volume( unsigned );
 
-//############### такой код генерирует QT
-//    QQmlApplicationEngine engine;
-//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-//#########################################################
-    return app.exec();
-}
+        unsigned track_count();
+        //can return -1 if there is no active audio track
+        int get_track();
+        void set_track( unsigned );
 
+        libvlc_audio_output_channel_t get_channel();
+        void set_channel( libvlc_audio_output_channel_t );
+
+        //in milliseconds
+        int64_t get_delay();
+        void set_delay( int64_t );
+
+    private:
+        void notify( audio_event_e );
+
+    private:
+        vlc::basic_player& _player;
+    };
+};

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2014, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2013-2015, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -23,41 +23,47 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include <QtGui/QGuiApplication>
-#include <QQuickView>
+#pragma once
 
-#include <QmlVlc.h>
-#include <QmlVlc/QmlVlcConfig.h>
+#include <vlc/vlc.h>
 
+#include "vlc_media.h"
 
-#include "rigmodel.h"
-#include "camera.h"
-#include <QtQml>
-
-int main(int argc, char *argv[])
+namespace vlc
 {
-    RegisterQmlVlc();
-    QmlVlcConfig& config = QmlVlcConfig::instance();
-    config.enableAdjustFilter( true );
-    config.enableMarqueeFilter( true );
-    config.enableLogoFilter( true );
-    config.enableRecord( false );
-    //config.enableDebug( true );
-    //config.enableRecord( true);
+    class basic_player
+    {
+    public:
+        basic_player();
+        ~basic_player();
 
+        bool open( libvlc_instance_t* inst );
+        void close();
 
-    qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
-    qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
-    QGuiApplication app(argc, argv);
+        void swap( basic_player* );
 
+        bool is_open() const { return _mp != 0; }
 
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+        void play();
+        void pause();
+        void togglePause();
+        void stop();
 
-//############### такой код генерирует QT
-//    QQmlApplicationEngine engine;
-//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-//#########################################################
-    return app.exec();
-}
+        void set_media( const vlc::media& );
 
+        vlc::media current_media();
+
+        libvlc_state_t get_state();
+
+        bool is_playing() { return libvlc_Playing == get_state(); }
+        bool is_paused() { return libvlc_Paused == get_state(); }
+        bool is_stopped() { return libvlc_Stopped == get_state(); }
+
+        libvlc_media_player_t* get_mp() const
+            { return _mp; }
+
+    private:
+        libvlc_instance_t*     _libvlc_instance;
+        libvlc_media_player_t* _mp;
+    };
+};

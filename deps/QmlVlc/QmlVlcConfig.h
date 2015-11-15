@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2014, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2014-2015, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -23,41 +23,54 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include <QtGui/QGuiApplication>
-#include <QQuickView>
+#pragma once
 
-#include <QmlVlc.h>
-#include <QmlVlc/QmlVlcConfig.h>
+#include <QObject>
 
+#include <vlc/vlc.h>
 
-#include "rigmodel.h"
-#include "camera.h"
-#include <QtQml>
-
-int main(int argc, char *argv[])
+//this class is not thread safe
+class QmlVlcConfig
+    : public QObject
 {
-    RegisterQmlVlc();
-    QmlVlcConfig& config = QmlVlcConfig::instance();
-    config.enableAdjustFilter( true );
-    config.enableMarqueeFilter( true );
-    config.enableLogoFilter( true );
-    config.enableRecord( false );
-    //config.enableDebug( true );
-    //config.enableRecord( true);
+    Q_OBJECT
+public:
+    static QmlVlcConfig& instance();
 
+    void setNetworkCacheTime( int time );
+    void enableAdjustFilter( bool enable );
+    void enableMarqueeFilter( bool enable );
+    void enableLogoFilter( bool enable );
+    void enableDebug( bool enable );
+    void enableRecord( bool enable );
+    void enableNoVideoTitleShow( bool enable );
+    void enableHardwareAcceleration( bool enable );
 
-    qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
-    qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
-    QGuiApplication app(argc, argv);
+    void setTrustedEnvironment( bool trusted );
+    bool trustedEnvironment() const;
 
+    bool isOptionTrusted( const QString& ) const;
 
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    libvlc_instance_t* createLibvlcInstance();
+    void releaseLibvlcInstance( libvlc_instance_t* );
 
-//############### такой код генерирует QT
-//    QQmlApplicationEngine engine;
-//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-//#########################################################
-    return app.exec();
-}
+private:
+    QmlVlcConfig();
+    ~QmlVlcConfig();
 
+    QmlVlcConfig( QmlVlcConfig& ) = delete;
+    QmlVlcConfig& operator= ( QmlVlcConfig& ) = delete;
+
+private:
+    int _networkCacheTime;
+    bool _adjustFilter;
+    bool _marqueeFilter;
+    bool _logoFilter;
+    bool _debug;
+    bool _record;
+    bool _noVideoTitleShow;
+    bool _hardwareAcceleration;
+    bool _trustedEnvironment;
+    unsigned _libvlcCounter;
+    libvlc_instance_t* _libvlc;
+};

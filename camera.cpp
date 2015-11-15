@@ -25,5 +25,25 @@ cCamera::cCamera(QObject *parent) : QObject(parent)
         m_port = port;
         emit portChanged();
     }
+    QString cCamera::url1() const
+    {
+        return m_url1;
+    }
+    QString cCamera::url2() const
+    {
+        return m_url2;
+    }
+
+        void cCamera::setVideopage(const cVideopage  &videopage)
+        {
+            m_videopage =videopage;
+            emit videopageChanged();
+        }
+
+        cVideopage cCamera::videopage() const
+        {
+            return m_videopage;
+        }
+
 
 

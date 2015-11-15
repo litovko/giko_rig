@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2014, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2014, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -23,41 +23,48 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include <QtGui/QGuiApplication>
-#include <QQuickView>
+#pragma once
 
-#include <QmlVlc.h>
-#include <QmlVlc/QmlVlcConfig.h>
+#include <vlc/vlc.h>
+#include <string>
 
-
-#include "rigmodel.h"
-#include "camera.h"
-#include <QtQml>
-
-int main(int argc, char *argv[])
+namespace vlc
 {
-    RegisterQmlVlc();
-    QmlVlcConfig& config = QmlVlcConfig::instance();
-    config.enableAdjustFilter( true );
-    config.enableMarqueeFilter( true );
-    config.enableLogoFilter( true );
-    config.enableRecord( false );
-    //config.enableDebug( true );
-    //config.enableRecord( true);
+    class media
+    {
+    public:
+        media();
+        explicit media( ::libvlc_media_t*, bool needs_retain );
+        media( const media& other );
+        ~media();
 
+        media& operator= ( const media& m );
 
-    qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
-    qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
-    QGuiApplication app(argc, argv);
+        bool operator== ( const media& m ) const
+            { return m_media == m.m_media; }
+        bool operator!= ( const media& m ) const
+            { return m_media != m.m_media; }
+        bool operator== ( ::libvlc_media_t* m ) const
+            { return m_media == m; }
+        bool operator!= ( ::libvlc_media_t* m ) const
+            { return m_media != m; }
+        operator bool() const
+            { return m_media != 0; }
 
+        ::libvlc_media_t* libvlc_media_t() const
+            { return m_media; }
 
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+        bool is_parsed() const;
+        void parse();
 
-//############### такой код генерирует QT
-//    QQmlApplicationEngine engine;
-//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-//#########################################################
-    return app.exec();
-}
+        std::string mrl() const;
+        std::string meta( ::libvlc_meta_t meta_id ) const;
+        void set_meta( ::libvlc_meta_t meta_id, const std::string& meta );
 
+    private:
+        void release_media();
+
+    private:
+        ::libvlc_media_t* m_media;
+    };
+};

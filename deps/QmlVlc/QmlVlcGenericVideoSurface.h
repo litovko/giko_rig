@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2014, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2014-2015, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -23,41 +23,47 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include <QtGui/QGuiApplication>
-#include <QQuickView>
+#pragma once
 
-#include <QmlVlc.h>
-#include <QmlVlc/QmlVlcConfig.h>
+#include <QQuickItem>
+#include <QSharedPointer>
 
+struct QmlVlcI420Frame;//#include "QmlVlcVideoFrame.h"
 
-#include "rigmodel.h"
-#include "camera.h"
-#include <QtQml>
-
-int main(int argc, char *argv[])
+class QmlVlcGenericVideoSurface
+    : public QQuickItem
 {
-    RegisterQmlVlc();
-    QmlVlcConfig& config = QmlVlcConfig::instance();
-    config.enableAdjustFilter( true );
-    config.enableMarqueeFilter( true );
-    config.enableLogoFilter( true );
-    config.enableRecord( false );
-    //config.enableDebug( true );
-    //config.enableRecord( true);
+    Q_OBJECT
 
+    Q_PROPERTY( FillMode fillMode READ fillMode WRITE setFillMode NOTIFY fillModeChanged )
 
-    qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
-    qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
-    QGuiApplication app(argc, argv);
+public:
+    QmlVlcGenericVideoSurface();
+    ~QmlVlcGenericVideoSurface();
 
+    enum FillMode {
+        Stretch            = Qt::IgnoreAspectRatio,
+        PreserveAspectFit  = Qt::KeepAspectRatio,
+        PreserveAspectCrop = Qt::KeepAspectRatioByExpanding
+    };
+    Q_ENUMS( FillMode )
 
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    FillMode fillMode() const
+        { return m_fillMode; }
+    void setFillMode( FillMode mode );
 
-//############### такой код генерирует QT
-//    QQmlApplicationEngine engine;
-//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-//#########################################################
-    return app.exec();
-}
+    virtual QSGNode* updatePaintNode( QSGNode*, UpdatePaintNodeData* );
 
+public Q_SLOTS:
+    void presentFrame( const QSharedPointer<const QmlVlcI420Frame>& frame );
+
+Q_SIGNALS:
+    void sourceChanged();
+    void fillModeChanged( FillMode mode );
+
+private:
+    FillMode m_fillMode;
+
+    bool m_frameUpdated;
+    QSharedPointer<const QmlVlcI420Frame> m_frame;
+};
