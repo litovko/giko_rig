@@ -12,5 +12,6 @@
         <file>ControlPanel.qml</file>
         <file>skin/settings.png</file>
         <file>MyBotton.qml</file>
+		<file>SetupCamera.qml</file>
     </qresource>
 </RCC>

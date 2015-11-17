@@ -13,8 +13,6 @@ Window {
     height: 720
     width: 1280
     color: "transparent"
-
-
     Rectangle {
         id: mainRect
         color: 'black';
@@ -30,9 +28,12 @@ Window {
            if (event.key === Qt.Key_F3) rig.camera=rig.camera?false:true;;
            if (event.key === Qt.Key_F4) rig.engine=rig.engine?false:true;
            if (event.key === Qt.Key_F5) rig.lamp=rig.lamp?false:true;
+           if (event.key === Qt.Key_F10) menu.visible=menu.visible?false:true;
         }
         RigCamera {
             id: cam1
+            videopage: true
+            address: "192.168.1.168"
         }
 
         VlcPlayer {
@@ -207,10 +208,18 @@ Window {
    }
     ControlPanel {
         source: rig
-        width: 700
+        width: 800
         height: 100
         anchors { margins: 10; bottomMargin: 100; bottom: parent.bottom; left: parent.left}
     }
+    SetupCamera {
+        id: menu
+        width: 600
+        height: 500
+        anchors.centerIn: parent
+        cam: cam1
+    }
+
 
 }
 

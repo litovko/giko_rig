@@ -19,8 +19,6 @@ Item {
     property real minorTickmarks: 1
     property real warningThreshold: 90
 
-//    property real startAngle: 0 //угол начала шкалы
-//    property real schaleMargin: 0 //расстояние от конца стрелики до шкалы
 
     CircularGauge {
         width: parent.width

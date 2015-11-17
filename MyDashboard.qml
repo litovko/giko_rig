@@ -32,19 +32,7 @@ Item {
             radius: 7
             Column{
             spacing: 20
-    //        Rectangle {
-    //            color:"blue";
-    //            width: dashBoard.width;
-    //            height: 30;
-    //            Text{color: "yellow";font.pointSize: 24;text: source.lamp.toString()}
-    //        }
-    //        Rectangle {
-    //            color:"white";
-    //            width: dashBoard.width;
-    //            height: 30;
-    //            Text{color: "yellow";font.pointSize: 24;text: source.ampere.toString()}
 
-    //        }
                 Rectangle {
                     color:"transparent";
                     width: r.width;
