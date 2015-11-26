@@ -4,89 +4,48 @@ import QtQuick.Controls 1.4
 import QtQuick.Extras 1.4
 Item {
     id: g
-    property string bottomText: "Мощность";
     property int minimumValue: 0
-    property int maximumValue: 100
+    property int maximumValue: 127
     property int val: 0;
-    Column  {
-        id: column
-        Rectangle
-        {
-            id: r
-            width: g.width
-            height: g.height*0.9
+    //onValChanged: pb.value=val
+    Rectangle {
+        id: r
+        width: g.width
+        height: (val>0)?g.height*val/(g.maximumValue-g.minimumValue):0
+        //y: g.height
+        rotation: 0
+        y:g.height-height
+        color: "yellow"
+        opacity: 0.8
 
-            color: "transparent"
-            Gauge {
-                id: gg
-                value: val
-                anchors.fill: parent
-                minimumValue: g.minimumValue
-                maximumValue: g.maximumValue
-                minorTickmarkCount:1
-                style: GaugeStyle {
-                    valueBar: Rectangle {
-                                    color: "blue"
-                                    implicitWidth: 28
-                                }
 
-                    foreground :Item {
-                        implicitHeight: 5
-                        implicitWidth: 10
-                        Rectangle {
-                            color: "yellow"
-                            y: valuePosition<implicitHeight?parent.height-implicitHeight: parent.height-valuePosition
-                            opacity: 0.8
-                            implicitWidth: 28
-                            implicitHeight: 5
-                        }
+
+        }
+    Rectangle {
+        id: p
+        color: "blue"
+        width:r.width+2
+        height:r.width+2
+        y: r.y-r.width
+        x:-1
+        radius: 2
+        border.color: "white"
+        Behavior on y {
+
+                    NumberAnimation {
+                        easing.overshoot: 2
+                        easing.type: Easing.OutExpo
+                        //This specifies how long the animation takes
+                        duration: 500
+                        //This selects an easing curve to interpolate with, the default is Easing.Linear
+                        //easing.type: Easing.OutBounce
+
                     }
-                                tickmark: Item {
-                                    implicitWidth: 10
-                                    implicitHeight: 2
-
-                                    Rectangle {
-                                        x: control.tickmarkAlignment === Qt.AlignLeft
-                                            || control.tickmarkAlignment === Qt.AlignTop ? parent.implicitWidth : -28
-                                        width: 28
-                                        height: parent.height
-                                        color: "#ffffff"
-                                    }
-                                }
-
-                                minorTickmark: Item {
-                                    implicitWidth: 10
-                                    implicitHeight: 1
-
-                                    Rectangle {
-                                        x: control.tickmarkAlignment === Qt.AlignLeft
-                                            || control.tickmarkAlignment === Qt.AlignTop ? parent.implicitWidth : -28
-                                        width: 28
-                                        height: parent.height
-                                        color: "#ffffff"
-                                    }
-                                }
                 }
-            }
-        }
-        Rectangle {
-            id: tr
-            width: g.width
-            height: g.height*0.1
-            anchors.horizontalCenter: column.horizontalCenter
-            color: "transparent"
-            Text {
-                font.bold: true
-                text: bottomText
-                color: "yellow"
-                font.pointSize: tr.height*0.5;
-                horizontalAlignment: Text.AlignHCenter;
-                verticalAlignment: Text.AlignVCenter;
-                anchors.fill: tr
 
-            }
-        }
     }
 
 }
+
+
 

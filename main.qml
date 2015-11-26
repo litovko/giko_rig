@@ -4,6 +4,7 @@ import QtQuick.Controls 1.4
 import Gyco 1.0
 
 import QmlVlc 0.1
+import QtMultimedia 5.5
 
 Window {
     id: win
@@ -13,6 +14,18 @@ Window {
     height: 720
     width: 1280
     color: "transparent"
+    function statename(camstate) {
+        if (camstate===0) return "NothingSpecial";
+        if (camstate===1) return "Opening";
+        if (camstate===2) return "Buffering";
+        if (camstate===3) return "Playing";
+        if (camstate===4) return "Paused";
+        if (camstate===5) return "Stopped";
+        if (camstate===6) return "Ended";
+        if (camstate===7) return "Error";
+        return "";
+    }
+
     Rectangle {
         id: mainRect
         color: 'black';
@@ -27,8 +40,11 @@ Window {
            if (event.key === Qt.Key_F2) rig.lamp=rig.lamp?false:true;
            if (event.key === Qt.Key_F3) rig.camera=rig.camera?false:true;;
            if (event.key === Qt.Key_F4) rig.engine=rig.engine?false:true;
-           if (event.key === Qt.Key_F5) rig.lamp=rig.lamp?false:true;
+        //   if (event.key === Qt.Key_F5) rig.lamp=rig.lamp?false:true;
            if (event.key === Qt.Key_F10) menu.visible=menu.visible?false:true;
+           if (event.key === Qt.Key_F5) vlcPlayer.play(cam1.url1);
+           if (event.key === Qt.Key_F6) vlcPlayer.stop();
+           if (event.key === Qt.Key_F12) win.visibility= win.visibility===Window.FullScreen?Window.Windowed:Window.FullScreen;
         }
         RigCamera {
             id: cam1
@@ -44,6 +60,14 @@ Window {
             //mrl: "rtsp://pionerskaya.glavpunkt.ru:554/user=admin&password=0508&channel=1&stream=0.sdp?real_stream--rtp-caching=100";
             //mrl: "rtsp://stream.tn.com.ar/live/tnhd1";
             //rtsp://192.168.1.168:8557/PSIA/Streaming/channels/2?videoCodecType=H.264
+
+            onStateChanged: {
+                if (vlcPlayer.state===6) {
+
+                    console.log("Try to start playing againe")
+                    //play(cam1.url1);
+                }
+            }
         }
 //        VlcMmPlayer {
 //            id: vlcMmPlayer;
@@ -53,8 +77,8 @@ Window {
 //            mrl: "rtsp://192.168.1.168:8557/PSIA/Streaming/channels/2?videoCodecType=H.264"
 //        }
         VlcVideoSurface {
+//        VideoOutput {
             id: surface
-
             source: vlcPlayer;
             anchors.top: parent.top;
             anchors.topMargin: 10;
@@ -79,14 +103,15 @@ Window {
                 //right: parent.right
                 margins: 10
             }
+
             Text {
                 id: t
                 color: "yellow"
                 font.pointSize: 12
                 anchors {left: parent.center; bottom: parent.bottom; margins: 1}
 
-                text: "Статус видео:"+vlcPlayer.state.toString()//+" w:" + vlcPlayer.video.width.toString()+" ww:"+surface.width.toString();
-                onTextChanged:  console.log("New status: " + vlcPlayer.state.toString() )
+                text: "Статус видео:"+statename(vlcPlayer.state) +" playing:"+vlcPlayer.playing;
+                onTextChanged:  console.log("New status: " + vlcPlayer.state.toString())
             }
             }
         }
@@ -113,7 +138,8 @@ Window {
                    rig.start_client();
             }
             else
-                   Qt.quit();
+//                   Qt.quit();
+            console.log("Mouse: left botton pressed");
         }
     }
     Column {
@@ -186,16 +212,21 @@ Window {
             height: 20
             color: "transparent"
             border.color: "black"
+            RigJoystick {
+                id: j
+            }
 
             Slider {
                 id: s5
-                value:90
+                value:j.yaxis
                 anchors.fill: parent
-                maximumValue: 100
+                maximumValue: 127
+                minimumValue: -127
                 stepSize: 1
                 onValueChanged: rig.joystick=value
             }
         }
+
 
     }
     MyDashboard {
@@ -208,7 +239,8 @@ Window {
    }
     ControlPanel {
         source: rig
-        width: 800
+        cam: cam1
+        width: 900
         height: 100
         anchors { margins: 10; bottomMargin: 100; bottom: parent.bottom; left: parent.left}
     }
@@ -218,6 +250,7 @@ Window {
         height: 500
         anchors.centerIn: parent
         cam: cam1
+        player: vlcPlayer
     }
 
 

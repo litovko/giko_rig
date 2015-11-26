@@ -33,6 +33,7 @@
 #include "rigmodel.h"
 #include "camera.h"
 #include <QtQml>
+#include "cjoystick.h"
 
 int main(int argc, char *argv[])
 {
@@ -48,6 +49,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
     qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
+    qmlRegisterType<cJoystick>("Gyco", 1, 0, "RigJoystick");
     QGuiApplication app(argc, argv);
 
 

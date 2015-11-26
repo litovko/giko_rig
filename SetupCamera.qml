@@ -1,20 +1,23 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Window 2.0
+import QtQuick.Controls.Styles 1.4
+import QmlVlc 0.1
 import Gyco 1.0
 Item {
     id: setupDialog
     visible: true
     property RigCamera cam: null
+    property VlcPlayer player: null
 
     Rectangle {
         id: rectangle1
         width: 500
-        height: 500
+        height: 455
         gradient: Gradient {
             GradientStop {
                 position: 1
-                color: "#222222"
+                color: "#ffffff"
             }
 
             GradientStop {
@@ -29,7 +32,7 @@ Item {
         opacity: 0.8
         border.width: 3
         radius: 10
-        z: -1
+        z: 0
         border.color: "yellow"
 
 
@@ -42,6 +45,7 @@ Item {
             height: 13
             color: "white"
             text: qsTr("Камера")
+            font.pointSize: 9
 
             TextField {
                 id: cam_name
@@ -50,8 +54,9 @@ Item {
                 width: 180
                 height: 20
                 text: "CAM1"
+                readOnly: true
                 opacity: 0.8
-                placeholderText: qsTr("Text Field")
+                placeholderText: qsTr("Выбранная камера")
             }
         }
         Label {
@@ -61,9 +66,10 @@ Item {
             width: 67
             height: 13
             color: "white"
-            text: qsTr("Потоков")
+            text: qsTr("Видеорежим")
+            font.pointSize: 9
             ComboBox {
-                id: spinBox_stream
+                id: spinBox_videomode
                 x: 73
                 y: -4
                 width: 181
@@ -72,32 +78,10 @@ Item {
                 model: ListModel {
                     id: listStreams
                 }
-                onCurrentIndexChanged: {
-                    cam.videocodec=currentIndex;
 
-                    spinBox_codec.fill_list_model();
-                    cam.videocodeccombo=0;
-                    spinBox_res.fill_list_model();
-                    // включение/выключение страниц потоков
-                    switch (currentIndex) {
-                    case 0:
-                        f2.visible=false;
-                        f3.visible=false;
-                        break;
-                    case 1:
-                        f2.visible=true;
-                        f3.visible=false;
-                        break;
-                    case 2:
-                        f2.visible=true;
-                        f3.visible=true;
-                        break;
-                    default:
-                    }
-                }
                 function fill_list_model() {
 
-                    var  s=cam.codeclist;
+                    var  s=cam.combylist;
                     var  c=s.substring(s.indexOf(","))
                     var  i = s.indexOf(",");
                     var  strlen=s.length;
@@ -113,159 +97,35 @@ Item {
 
                     }
                     listStreams.append({text: s}) // добавляем последний элемент
-                    spinBox_stream.currentIndex=0; //устанавливаем элемент в начало списка
-                    cam.videocodec=0;
+                    spinBox_videomode.currentIndex=0; //устанавливаем элемент в начало списка
+                    cam.comby=0;
                     return;
                 }
-            }
-        }
-
-        Label {
-            id: label_codec
-            x: 8
-            y: 95
-            width: 67
-            height: 13
-            color: "#ffffff"
-            text: qsTr("Кодеки")
-            verticalAlignment: Text.AlignTop
-
-            ComboBox {
-                id: spinBox_codec
-                x: 73
-                y: -7
-                width: 182
-                height: 20
-                model: ListModel {
-                        id: listCodec;
-                }
-                function fill_list_model() {
-
-                    var  s=cam.codeccombolist;
-                    var  c=s.substring(s.indexOf(","))
-                    var  i = s.indexOf(",");
-                    var  strlen=s.length;
-                    listCodec.clear();
-                    while(i>0){
-
-                        c=s.substring(0,i);
-                        s=s.substring(i+1,strlen);
-                        listCodec.append({text: c})
-
-                        i = s.indexOf(",");
-                        strlen=s.length;
-
-                    }
-                    listCodec.append({text: s}) // добавляем последний элемент
-                    spinBox_codec.currentIndex=0; //устанавливаем элемент в начало списка
-                    cam.videocodeccombo=0;
-                    return;
-                }
-                onCurrentIndexChanged: {
-                    //if (currentIndex===0) {
-                        cam.videocodeccombo=currentIndex;
-
-                        spinBox_res.fill_list_model();
-                    //}
-                }
-            }
-        }
-        Label {
-            id: label_res
-            x: 8
-            y: 121
-            width: 67
-            height: 13
-            color: "#ffffff"
-            text: qsTr("Детализация")
-            ComboBox {
-                id: spinBox_res
-                x: 73
-                y: -7
-                width: 182
-                height: 20
-                model: ListModel {
-                        id: listResolution;
-                }
-                function fill_list_model() {
-
-                    var  s=cam.resolutionlist;
-                    var  c=s.substring(s.indexOf(","))
-                    var  i = s.indexOf(",");
-                    var  strlen=s.length;
-                    listResolution.clear();
-                    while(i>0){
-
-                        c=s.substring(0,i);
-                        s=s.substring(i+1,strlen);
-                        listResolution.append({text: c})
-
-                        i = s.indexOf(",");
-                        strlen=s.length;
-
-                    }
-                    listResolution.append({text: s}) // добавляем последний элемент
-                    spinBox_res.currentIndex=0; //устанавливаем элемент в начало списка
-                    cam.videocodecres=0;
-                    return;
-                }
-            }
-            verticalAlignment: Text.AlignTop
-        }
-
-        Row {
-            x: 8
-            y: 147
-            z: 2
-            layoutDirection: Qt.LeftToRight
-            spacing: 4
-
-            Button {
-                id: f1
-                text: "Поток 1"
-                visible: true
-                z: 2
-                tooltip: "Настройки первого видеопотока"
-                opacity: 0.9
-            }
-
-            Button {
-                id: f2
-                text: "Поток 2"
-                visible: false
-                z: 3
-                opacity: 0.9
-                tooltip: "Настройки второго видеопотока"
-            }
-
-            Button {
-                id: f3
-                text: "Поток 3"
-                z: 4
-                visible: false
-                opacity: 0.9
-                tooltip: "Настройки третьего видеопотока"
             }
         }
 
 
         Button {
             id: ok
-            x: 415
-            y: 32
+            x: 271
+            y: 61
             opacity: 0.8
             text: qsTr("Применить")
             tooltip: "Применение указанных настроек камеры"
             onClicked: {
-                console.log("Кликнули");
+ //               console.log("Кликнули");
+                console.log("Кликнули применить настройки комбо-режима");
+                player.stop();
+                cam.comby=spinBox_videomode.currentIndex;
+                console.log("comby:"+cam.comby);
                 cam.videopage=true;
             }
         }
 
         Button {
             id: close
-            x: 415
-            y: 66
+            x: 394
+            y: 27
             text: qsTr("Закрыть")
             isDefault: true
             opacity: 0.8
@@ -273,6 +133,387 @@ Item {
                 setupDialog.visible=false;
                 console.log("Кликнули выход");
             }
+        }
+
+        Rectangle {
+            id: rectsettings
+            x: 20
+            y: 132
+            width: 466
+            height: 305
+            radius: 5
+            gradient: Gradient {
+                GradientStop {
+                    position: 0
+                    color: "#ffffff"
+                }
+
+                GradientStop {
+                    position: 0.993
+                    color: "#ffffff"
+                }
+
+                GradientStop {
+                    position: 0.51
+                    color: "#000000"
+                }
+
+            }
+            opacity: 0.8
+            z: 1
+            border.color: "#f4f400"
+
+            Label {
+                id: l1
+                x: 8
+                y: 12
+                width: 122
+                height: 17
+                color: "#ffffff"
+                text: qsTr("Яркость")
+                font.pointSize: 10
+                verticalAlignment: Text.AlignVCenter
+                font.bold: true
+            }
+
+            Label {
+                id: l2
+                x: 8
+                y: 37
+                width: 122
+                height: 17
+                color: "#ffffff"
+                text: qsTr("Контрастность")
+                font.pointSize: 10
+                font.bold: true
+            }
+
+            Slider {
+                id: s1
+                x: 136
+                y: 9
+                width: 269
+                height: 22
+                z: 3
+                stepSize: 1
+                maximumValue: 255
+                value: cam.brightness
+            }
+
+            Slider {
+                id: s2
+                x: 136
+                y: 34
+                width: 269
+                height: 22
+                maximumValue: 255
+                z: 3
+                value: cam.contrast
+                stepSize: 1
+            }
+
+            Slider {
+                id: s3
+                x: 136
+                y: 63
+                width: 269
+                height: 22
+                maximumValue: 255
+                z: 3
+                value: cam.saturation
+                stepSize: 1
+            }
+
+            Label {
+                id: l3
+                x: 8
+                y: 66
+                width: 122
+                height: 17
+                color: "#ffffff"
+                text: qsTr("Цветность")
+                font.pointSize: 10
+                font.bold: true
+            }
+
+            Label {
+                id: l4
+                x: 8
+                y: 91
+                width: 122
+                height: 17
+                color: "#ffffff"
+                text: qsTr("Четкость")
+                font.pointSize: 10
+                font.bold: true
+            }
+
+            Slider {
+                id: s4
+                x: 136
+                y: 89
+                width: 269
+                height: 22
+                maximumValue: 255
+                z: 3
+                value: cam.sharpness
+                stepSize: 1
+            }
+
+            Label {
+                id: l5
+                x: 10
+                y: 119
+                width: 122
+                height: 17
+                color: "#ffffff"
+                text: qsTr("Усиление динамического диапазона")
+                font.pointSize: 10
+                font.bold: true
+            }
+
+            Slider {
+                id: s5
+                x: 269
+                y: 117
+                width: 136
+                height: 22
+                tickmarksEnabled: true
+                maximumValue: 3
+                z: 3
+                value: cam.dynrange
+                stepSize: 1
+            }
+
+            Label {
+                id: l6
+                x: 8
+                y: 229
+                width: 187
+                height: 17
+                color: "#ffffff"
+                text: qsTr("Текст - название профиля")
+                font.pointSize: 10
+                font.bold: true
+            }
+
+            TextField {
+                id: textField1
+                x: 207
+                y: 227
+                width: 198
+                height: 20
+                text: cam.overlaytext
+                placeholderText: qsTr("Профиль")
+            }
+
+            Button {
+                id: ok1
+                x: 131
+                y: 265
+                text: qsTr("Применить настройки видео")
+                tooltip: "Применение указанных настроек видео"
+                scale: 1.1
+                z: 3
+                onClicked: {
+                    cam.brightness=s1.value;
+                    cam.contrast=s2.value;
+                    cam.saturation=s3.value;
+                    cam.sharpness=s4.value;
+                    cam.colorkiller=cam.colorkiller=radioDay.checked?1:0;
+                    cam.img2a=cbwhitebal.currentIndex;
+                    cam.overlaytext=textField1.text
+                    cam.videosettings=true;
+                }
+
+            }
+
+            ComboBox {
+                id: cbwhitebal
+                x: 215
+                y: 154
+                width: 190
+                height: 18
+
+                model: ListModel {
+                        id: li
+                        ListElement { text: "NONE"; color: "Yellow" }
+                        ListElement { text: "APPRO"; color: "Green" }
+                        ListElement { text: "TI"; color: "Brown" }
+                    }
+                currentIndex: cam.img2a
+            }
+
+            Label {
+                id: l7
+                x: 105
+                y: 155
+                width: 122
+                height: 17
+                color: "#ffffff"
+                text: qsTr("Баланс белого")
+                font.pointSize: 10
+                font.bold: true
+            }
+
+            RadioButton {
+                id: radioNight
+                x: 25
+                y: 187
+                width: 55
+                height: 17
+                scale: 1.5
+                onCheckedChanged: {
+                    if (checked) radioDay.checked=false
+                    else radioDay.checked=true;
+                    cam.colorkiller=checked?0:1
+
+                    console.log("ночь"+ cam.colorkiller);
+                }
+                style: RadioButtonStyle {
+                        indicator: Rectangle {
+                                implicitWidth: 16
+                                implicitHeight: 16
+                                radius: 9
+                                //border.color: control.activeFocus ? "yellow" : "gray"
+                                border.width: 1
+                                Rectangle {
+                                    anchors.fill: parent
+                                    visible: control.checked
+                                    color: control.checked ? "yellow" : "gray"
+                                    radius: 9
+                                    anchors.margins: 4
+                                }
+                        }
+                }
+
+            }
+
+            RadioButton {
+
+                id: radioDay
+
+                onCheckedChanged: {
+
+                    if (checked) radioNight.checked=false
+                    else radioNight.checked=true;
+                    cam.colorkiller=checked?1:0
+                    console.log("день"+ cam.colorkiller);
+                }
+                Component.onCompleted:  checked=cam.colorkiller==0?true:false
+
+                x: 11
+                y: 160
+                width: 56
+                height: 17
+                scale: 1.5
+                transformOrigin: Item.Left
+                rotation: 0
+                style: RadioButtonStyle {
+                        indicator: Rectangle {
+                                implicitWidth: 16
+                                implicitHeight: 16
+                                radius: 9
+                                //border.color: control.activeFocus ? "yellow" : "gray"
+                                border.width: 1
+                                Rectangle {
+                                    anchors.fill: parent
+                                    visible: control.checked
+                                    color: control.checked ? "yellow" : "gray"
+                                    radius: 9
+                                    anchors.margins: 4
+                                }
+                        }
+                }
+            }
+
+            Label {
+                id: ldn1
+                x: 43
+                y: 161
+                width: 37
+                height: 17
+                color: "#ffffff"
+                text: qsTr("День")
+                font.bold: radioDay.checked
+            }
+
+            Label {
+                id: ldn2
+                x: 43
+                y: 188
+                width: 37
+                height: 17
+                color: "#fbfbfb"
+                text: qsTr("Ночь")
+                font.bold: radioNight.checked
+            }
+
+            Label {
+                id: lb1
+                x: 411
+                y: 12
+                width: 33
+                height: 17
+                color: "#ffffff"
+                text: s1.value
+                font.bold: true
+                font.pointSize: 10
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            Label {
+                id: lb2
+                x: 411
+                y: 37
+                width: 33
+                height: 17
+                color: "#ffffff"
+                text: s2.value
+                font.bold: true
+                font.pointSize: 10
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            Label {
+                id: lb3
+                x: 411
+                y: 66
+                width: 33
+                height: 17
+                color: "#ffffff"
+                text: s3.value
+                font.bold: true
+                font.pointSize: 10
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            Label {
+                id: lb4
+                x: 411
+                y: 91
+                width: 33
+                height: 17
+                color: "#ffffff"
+                text: s4.value
+                font.bold: true
+                font.pointSize: 10
+                verticalAlignment: Text.AlignVCenter
+            }
+        }
+
+        Label {
+            id: label1
+            x: 170
+            y: 105
+            width: 160
+            height: 21
+            color: "#ffffff"
+            text: qsTr("Настройки видео")
+            font.pointSize: 10
+            z: 3
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
     }
 

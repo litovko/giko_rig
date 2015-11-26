@@ -6,8 +6,32 @@ Item {
     id: dashBoard
     property RigModel source
 
-//
+    MyGauge {
+            val:j.yaxis
+            //anchors.fill: parent
+            anchors.bottom: dbr.bottom
+            anchors.left: dbr.left
+            anchors.bottomMargin: 10
+            anchors.leftMargin: 2
+            width:6
+            height: dashBoard.height-20-width
+
+            z:3
+        }
+    MyGauge {
+            val:j.yaxis
+            //anchors.fill: parent
+            anchors.bottom: dbr.bottom
+            anchors.right: dbr.right
+            anchors.bottomMargin: 10
+            anchors.rightMargin: 2
+            width:6
+            height: dashBoard.height-20-width
+
+            z:3
+        }
     Rectangle{
+        id: dbr
         height: dashBoard.height
         width: dashBoard.width
         color: "transparent"

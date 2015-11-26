@@ -9,6 +9,7 @@ import Gyco 1.0
 Item {
     id: controlPanel
     property RigModel source
+    property RigCamera cam
     property int lampSize:100
     property int fontSize:15
 
@@ -87,16 +88,13 @@ Item {
                     bottomText:"ПИТАНИЕ"
                     active:source.voltage
                 }
-
-
-//                MyGauge {
-//                    height: 200
-//                    width: 40
-//                    bottomText: "Мощн.%"
-//                    val: source.joystick
-
-//                }
-
+                MyLamp{
+                    id: camera
+                    height: lampSize
+                    width: lampSize
+                    bottomText:"КАМЕРА"
+                    active:cam.camerapresent
+                }
 
             }
 

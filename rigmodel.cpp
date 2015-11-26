@@ -20,7 +20,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(cameraChanged()),this, SLOT(sendData()));
 
     connect(&timer_connect, SIGNAL(timeout()), this, SLOT(start_client()));
-    timer_connect.start(5000);
+    timer_connect.start(30000);
     connect(&timer_send, SIGNAL(timeout()), this, SLOT(sendData()));
     timer_send.start(1000);
 }
@@ -180,7 +180,7 @@ void cRigmodel::start_client()
 {
     if (m_client_connected) return;
     bytesWritten = 0;
-    qDebug()<<"Start client >>>"+this->address()+" >> "+m_address+" >> "+::QString().number(m_port);
+    qDebug()<<"Start client >>>"<<m_address<<"poprt"<<::QString().number(m_port);
     
     tcpClient.connectToHost(m_address, m_port);
 
@@ -208,12 +208,12 @@ void cRigmodel::updateClientProgress(qint64 numBytes)
 {
     // callen when the TCP client has written some bytes
     bytesWritten += (int)numBytes;
-    qDebug()<<"Update client progress >>>"+::QString().number(bytesWritten);
+    //qDebug()<<"Update client progress >>>"+::QString().number(bytesWritten);
 }
 
 void cRigmodel::displayError(QAbstractSocket::SocketError socketError)
 {
-    if (socketError == QTcpSocket::RemoteHostClosedError)
+    if (socketError == QTcpSocket::RemoteHostClosedError)   //litovko надо уточнить зачем эта проверка
         return;
     qDebug()<<"Network error >>>"+tcpClient.errorString();
 
@@ -235,7 +235,7 @@ void cRigmodel::sendData()
     if (!m_client_connected) return;
     Data="{ana1:"+::QString().number(int(m_joystick*127/100),10)+";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
     qDebug()<<"Отправка данных"<<Data;
-    qDebug()<<"Joystik:"<<::QString().number(m_joystick,10);
+    //qDebug()<<"Joystik:"<<::QString().number(m_joystick,10);
     bytesToWrite = (int)tcpClient.write(::QByteArray(Data.toLatin1()).data());
     if (bytesToWrite<0)qDebug()<<"Что то пошло не так при попытке отпраки данны >>>"+tcpClient.errorString();
     if (bytesToWrite>=0)qDebug()<<"Data sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);

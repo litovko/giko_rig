@@ -1,12 +1,15 @@
 TEMPLATE = app
 # обязательно требуется мультимедия от QT иначе не регистрируется плагин.
-QT += qml quick multimedia
+QT += qml quick multimedia network
 CONFIG += c++11
 # This line is from QmlVlcDemo.pro
 INCLUDEPATH += deps
 SOURCES += main.cpp \
     rigmodel.cpp \
-    camera.cpp
+    camera.cpp \
+    filedownloader.cpp \
+    cjoystick.cpp \
+    xinputGamepad.cpp
 
 RESOURCES += qml.qrc
 
@@ -28,9 +31,17 @@ include(deps/QmlVlc/QmlVlc.pri)
 #
 HEADERS += \
     rigmodel.h \
-    camera.h
+    camera.h \
+    filedownloader.h \
+    cjoystick.h \
+    xinputGamepad.h
 
 DISTFILES += \
     skin/hycoicon.ico
 
 RC_ICONS = skin/hycoicon.ico
+
+win32: LIBS += -L$$PWD/SFML/lib/ -lsfml-window
+
+INCLUDEPATH += $$PWD/SFML
+DEPENDPATH += $$PWD/SFML
