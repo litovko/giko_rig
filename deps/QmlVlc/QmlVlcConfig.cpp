@@ -176,7 +176,7 @@ libvlc_instance_t* QmlVlcConfig::createLibvlcInstance()
     if( _debug )
         opts.push_back( "-vvv" );
     if( _record )
-        opts.push_back( "--sout=#standard{access=file,mux=ps,dst=file-%c%m.mpg" );
+        opts.push_back( "--sout=#standard{access=file,mux=ps,dst=file---.mpg" );
     //opts.push_back( "=#es{access=file,mux=ps,url_audio=audio-%c.%m,url_video=video-%c.%m}");
     if( _noVideoTitleShow )
         opts.push_back( "--no-video-title-show" );

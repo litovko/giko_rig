@@ -13,5 +13,6 @@
         <file>skin/settings.png</file>
         <file>MyBotton.qml</file>
 		<file>SetupCamera.qml</file>
+		<file>Settings.qml</file>
     </qresource>
 </RCC>

@@ -4,8 +4,9 @@
 
 cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 {
-//    connect(this, SIGNAL(addressChanged()), this, SLOT(start_client())); // установили новый адрес - вызываем функцию start_client()
-//    connect(this, SIGNAL(portChanged()), this, SLOT(start_client())); // установили новый порт - вызываем функцию start_client()
+    readSettings();
+    connect(this, SIGNAL(addressChanged()), this, SLOT(saveSettings()));
+    connect(this, SIGNAL(portChanged()), this, SLOT(saveSettings()));
     connect(&tcpClient, SIGNAL(connected()),this, SLOT(clientConnected())); // Клиент приконнектилася к указанному адресу по указанному порту.
     connect(&tcpClient, SIGNAL(disconnected()),this, SLOT(clientDisconnected())); // Клиент отвалился
     connect(&tcpClient, SIGNAL(bytesWritten(qint64)),this, SLOT(updateClientProgress(qint64)));
@@ -16,15 +17,35 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     //при изменении пользователем любого параметра сразу передаем данные
     connect(this, SIGNAL(lampChanged()),this, SLOT(sendData()));
     connect(this, SIGNAL(engineChanged()),this, SLOT(sendData()));
-    connect(this, SIGNAL(joystickChanged()),this, SLOT(sendData()));
+    //connect(this, SIGNAL(joystickChanged()),this, SLOT(sendData()));
     connect(this, SIGNAL(cameraChanged()),this, SLOT(sendData()));
 
     connect(&timer_connect, SIGNAL(timeout()), this, SLOT(start_client()));
-    timer_connect.start(30000);
+    timer_connect.start(m_timer_connect_interval);
     connect(&timer_send, SIGNAL(timeout()), this, SLOT(sendData()));
-    timer_send.start(1000);
+    timer_send.start(m_timer_send_interval);
 }
-    
+void cRigmodel::saveSettings()
+{
+    qDebug()<<"saveSettings addres:"<<m_address<<"port:"<<m_port;
+    QSettings settings("HYCO", "Rig Console");
+    settings.setValue("RigAddress",m_address);
+    settings.setValue("RigPort",m_port);
+    settings.setValue("RigSendInterval",m_timer_send_interval);
+    settings.setValue("RigConnectInterval",m_timer_connect_interval);
+
+}
+
+void cRigmodel::readSettings()
+{
+
+    QSettings settings("HYCO", "Rig Console");
+    m_address=settings.value("RigAddress","localhost").toString();
+    m_port=settings.value("RigPort","1212").toInt();
+    m_timer_send_interval=settings.value("RigSendInterval","2000").toInt();
+    m_timer_connect_interval=settings.value("RigConnectInterval","30000").toInt();
+    qDebug()<<"readSettings addres:"<<m_address<<"port:"<<m_port;
+}
 void cRigmodel::setPressure(const int &pressure)
 {
     m_pressure = pressure;
@@ -90,6 +111,17 @@ void cRigmodel::setTemperature(const int &temperature)
 int cRigmodel::temperature() const
 {
     return m_temperature;
+}
+
+void cRigmodel::setRigtype(const QString &rigtype)
+{
+    m_rigtype = rigtype;
+    emit rigtypeChanged();
+}
+
+QString cRigmodel::rigtype() const
+{
+    return m_rigtype;
 }
 
 void cRigmodel::setLamp(const bool &lamp)
@@ -160,6 +192,27 @@ void cRigmodel::setPort(const int  &port)
     emit portChanged();
 }
 
+int cRigmodel::timer_send_interval() const
+{
+    return m_timer_send_interval;
+}
+
+void cRigmodel::setTimer_send_interval(const int  &timer_send_interval)
+{
+    m_timer_send_interval = timer_send_interval;
+    emit timer_send_intervalChanged();
+}
+
+int cRigmodel::timer_connect_interval() const
+{
+    return m_timer_connect_interval;
+}
+
+void cRigmodel::setTimer_connect_interval(const int  &timer_connect_interval)
+{
+    m_timer_connect_interval = timer_connect_interval;
+    emit timer_connect_intervalChanged();
+}
 
 bool cRigmodel::client_connected() const
 {
@@ -196,6 +249,18 @@ void cRigmodel::clientDisconnected()
     qDebug()<<"Client disconnected form address >>>"+this->address()+" port:"+ this->port();
     m_client_connected=false;
     m_good_data=false;
+    m_pressure=0;
+    m_oiltemp=0;
+    m_voltage=0;
+    m_ampere=0;
+    m_turns=0;
+    m_temperature=0;
+    emit pressureChanged();
+    emit oiltempChanged();
+    emit voltageChanged();
+    emit ampereChanged();
+    emit turnsChanged();
+    emit temperatureChanged();
     emit client_connectedChanged();
     emit good_dataChanged();
 }
@@ -266,11 +331,11 @@ void cRigmodel::readData()
         qDebug()<<"split:"<<split;
         QListIterator<QByteArray> i(split);
         QByteArray s, val;
-        bool ok;
+        bool ok=false;
         while (i.hasNext()){
              s=i.next();
-             m=s.indexOf("=");
-             val=s.mid(m+1); //данные после "="
+             m=s.indexOf(":");
+             val=s.mid(m+1); //данные после ":"
              s=s.left(m); // названия тэга
             qDebug()<<"tag:"<<s<<"value:"<<val;
             if (s=="toil") {
@@ -281,16 +346,21 @@ void cRigmodel::readData()
                 m_pressure=val.toInt(&ok,10); emit pressureChanged();
                 if(!ok) {m_good_data = false; emit good_dataChanged();}
             }
-            if (s=="poil"){
-                m_turns=val.toInt(&ok,10);
+            if (s=="drpm"){
+                m_turns=val.toInt(&ok,10); emit turnsChanged();
                 if(!ok) {m_good_data = false; emit good_dataChanged();}
             }
             if (s=="pwrv"){
-                m_voltage=val.toInt(&ok,10); emit voltageChanged();;
+                m_voltage=val.toInt(&ok,10); emit voltageChanged();
                 if(!ok) {m_good_data = false; emit good_dataChanged();}
             }
             if (s=="pwra"){
-                m_ampere=val.toInt(&ok,10); emit ampereChanged();;
+                m_ampere=val.toInt(&ok,10); emit ampereChanged();
+                if(!ok) {m_good_data = false; emit good_dataChanged();}
+            }
+            if (s=="type"){
+                m_rigtype=val; emit rigtypeChanged();
+                if (m_rigtype=="grab2"||m_rigtype=="grab6"||m_rigtype=="gkgbu"||m_rigtype=="tk-15") ok=true;
                 if(!ok) {m_good_data = false; emit good_dataChanged();}
             }
          }

@@ -42,10 +42,10 @@ int main(int argc, char *argv[])
     config.enableAdjustFilter( true );
     config.enableMarqueeFilter( true );
     config.enableLogoFilter( true );
-    config.enableRecord( false );
+    //config.enableRecord( true );
     //config.enableDebug( true );
     //config.enableRecord( true);
-
+    //qDebugQTime
 
     qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
     qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");

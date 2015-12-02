@@ -2,6 +2,8 @@ import QtQuick 2.5
 import Gyco 1.0
 
 
+
+
 Item {
     id: dashBoard
     property RigModel source
@@ -118,6 +120,24 @@ Item {
                         value: source.pressure
                         centerТext: "кПа"
                         bottomText: "Давл. масла"
+                        warningThreshold: maximumValue*0.9
+                        minorTickmarks:3
+                    }
+                }
+                Rectangle {
+                    color:"transparent";
+                    //opacity: 0.5
+                    width: r.width;
+                    height: r.width ;
+                    Pribor {
+                        width: parent.width-10; height: parent.height-10
+                        maximumValue: 100
+                        stepSize: 20
+                        anchors.centerIn: parent
+
+                        value: source.joystick>0?Math.round(source.joystick*100/127):0
+                        centerТext: "%"
+                        bottomText: "Мощность"
                         warningThreshold: maximumValue*0.9
                         minorTickmarks:3
                     }

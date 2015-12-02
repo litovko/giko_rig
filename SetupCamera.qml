@@ -6,7 +6,7 @@ import QmlVlc 0.1
 import Gyco 1.0
 Item {
     id: setupDialog
-    visible: true
+    visible: false
     property RigCamera cam: null
     property VlcPlayer player: null
 

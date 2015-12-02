@@ -1,18 +1,38 @@
 #include "camera.h"
 #include <QDebug>
+#include <QSettings>
 
 
 
 cCamera::cCamera(QObject *parent) : QObject(parent)
 {
+    readSettings();
+    connect(this, SIGNAL(addressChanged()),this, SLOT(saveSettings()));
     connect(this, SIGNAL(videopageChanged()),this, SLOT(change_videopage()));
     connect(this, SIGNAL(videosettingsChanged()),this, SLOT(change_videosettings()));
     connect(this, SIGNAL(combyChanged()),this, SLOT(change_combyparametrs()));
     connect(&timer_check, SIGNAL(timeout()), this, SLOT(get_parametrs()));
 
-    timer_check.start(60000);
+    timer_check.start(15000);
 
 }
+void cCamera::saveSettings()
+{
+    qDebug()<<"saveSettings Cam1 addres:"<<m_address;
+    QSettings settings("HYCO", "Rig Console");
+    settings.setValue("Cam1Address",m_address);
+;
+
+}
+
+void cCamera::readSettings()
+{
+
+    QSettings settings("HYCO", "Rig Console");
+    m_address=settings.value("Cam1Address","192.168.1.168").toString();
+    qDebug()<<"readSettings Cam1addres:"<<m_address;
+}
+
     void cCamera::setAddress(const QString  &address)
     {
         m_address = address;
@@ -327,10 +347,10 @@ cCamera::cCamera(QObject *parent) : QObject(parent)
     {
         qDebug()<<"comby changed:"<<m_comby;
 
-        if (m_comby==0) {m_videocodec=0; m_videocodeccombo=1; m_videocodecres=0; }
-        if (m_comby==1) {m_videocodec=0; m_videocodeccombo=1; m_videocodecres=3; }
-        if (m_comby==2) {m_videocodec=0; m_videocodeccombo=0; m_videocodecres=0; }
-        if (m_comby==3) {m_videocodec=0; m_videocodeccombo=0; m_videocodecres=3; }
+        if (m_comby==2) {m_videocodec=0; m_videocodeccombo=1; m_videocodecres=0; }
+        if (m_comby==3) {m_videocodec=0; m_videocodeccombo=1; m_videocodecres=3; }
+        if (m_comby==0) {m_videocodec=0; m_videocodeccombo=0; m_videocodecres=0; }
+        if (m_comby==1) {m_videocodec=0; m_videocodeccombo=0; m_videocodecres=3; }
     }
 
     QString cCamera::combylist() const

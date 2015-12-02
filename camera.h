@@ -137,6 +137,8 @@ signals:
 
     void downloaded();
 public slots:
+    void saveSettings();
+    void readSettings();
     void change_videopage(); //посылаем корректный запрос камере для изменения параметров
     void change_videosettings(); //посылаем корректный запрос камере для изменения установок изображения
     void change_videopagesettings(); // параметры положения текстовых надписей.
@@ -153,7 +155,7 @@ private:
     QStringList m_parametr; //храним все настройки, полученный из камеры в этой структуре.
     QUrl iniUrl; //URL запроса настроек камеры
 private:
-    QString m_address="192.168.1.168";
+    QString m_address;
     int m_port=8553;
     bool m_camerapresent=false;  //доступна ли камера по сети?
     bool m_videopage;

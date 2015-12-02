@@ -36,20 +36,27 @@ Window {
         focus:true
 
         Keys.onPressed: {
-           console.log("key pressed my bottom");
+           console.log("key pressed"+event.key);
            if (event.key === Qt.Key_F2) rig.lamp=rig.lamp?false:true;
            if (event.key === Qt.Key_F3) rig.camera=rig.camera?false:true;;
            if (event.key === Qt.Key_F4) rig.engine=rig.engine?false:true;
-        //   if (event.key === Qt.Key_F5) rig.lamp=rig.lamp?false:true;
-           if (event.key === Qt.Key_F10) menu.visible=menu.visible?false:true;
+           if (event.key === Qt.Key_F10) {
+               menu.visible=menu.visible?false:true;
+               settings.visible=false;
+           }
+           if (event.key === Qt.Key_F11) {
+               settings.visible=settings.visible?false:true;
+               menu.visible=false;
+           }
            if (event.key === Qt.Key_F5) vlcPlayer.play(cam1.url1);
            if (event.key === Qt.Key_F6) vlcPlayer.stop();
            if (event.key === Qt.Key_F12) win.visibility= win.visibility===Window.FullScreen?Window.Windowed:Window.FullScreen;
         }
+
         RigCamera {
             id: cam1
             videopage: true
-            address: "192.168.1.168"
+            //address: "192.168.1.168"
         }
 
         VlcPlayer {
@@ -119,10 +126,11 @@ Window {
     RigModel {
         id: rig
 
-        address:  "localhost"
+//        address:  "localhost"
 //        port: 1212
 //        pressure:   100
 //        oiltemp:    20
+        joystick: j.yaxis
 
     }
 
@@ -251,6 +259,15 @@ Window {
         anchors.centerIn: parent
         cam: cam1
         player: vlcPlayer
+    }
+    Settings {
+        id: settings
+        width: 600
+        height: 500
+        anchors.centerIn: parent
+        cam: cam1
+        player: vlcPlayer
+        rig: rig
     }
 
 
