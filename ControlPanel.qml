@@ -9,7 +9,7 @@ import Gyco 1.0
 Item {
     id: controlPanel
     property RigModel source
-    property RigCamera cam
+    property list<RigCamera> cam
     property int lampSize:100
     property int fontSize:15
 
@@ -89,11 +89,27 @@ Item {
                     active:source.voltage
                 }
                 MyLamp{
-                    id: camera
+                    id: camera1
                     height: lampSize
                     width: lampSize
-                    bottomText:"КАМЕРА"
-                    active:cam.camerapresent
+                    bottomText:cam[0].title
+                    active:cam[0].camerapresent
+                }
+                MyLamp{
+                    id: camera2
+                    height: lampSize
+                    width: lampSize
+                    bottomText:cam[1].title
+                    active:cam[1].camerapresent
+                    visible: cam[1].index
+                }
+                MyLamp{
+                    id: camera3
+                    height: lampSize
+                    width: lampSize
+                    bottomText:cam[2].title
+                    active:cam[2].camerapresent
+                    visible: cam[2].index
                 }
 
             }

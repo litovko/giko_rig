@@ -124,6 +124,7 @@ int QmlVlcPlaylist::addWithOptions( const QString& mrl, const QStringList& optio
     std::vector<const char*> untrusted_opts;
 
     for( int i = 0; i < options.size(); ++i ) {
+        qDebug()<<"Add with options"<<options[i].toUtf8();
         QByteArray& buf = *bufStorage.insert( bufStorage.end(), options[i].toUtf8() );
         if( QmlVlcConfig::instance().isOptionTrusted( options[i] ) )
             trusted_opts.push_back( buf.data() );
@@ -136,6 +137,7 @@ int QmlVlcPlaylist::addWithOptions( const QString& mrl, const QStringList& optio
     return player().add_media( mrl.toUtf8().data(),
                                untrusted_opts.size(), untrusted_optv,
                                trusted_opts.size(), trusted_optv );
+
 }
 
 void QmlVlcPlaylist::play()

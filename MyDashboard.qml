@@ -17,7 +17,7 @@ Item {
             anchors.leftMargin: 2
             width:6
             height: dashBoard.height-20-width
-
+            color: j.yaxis>0?"yellow":"lightblue"
             z:3
         }
     MyGauge {
@@ -29,7 +29,7 @@ Item {
             anchors.rightMargin: 2
             width:6
             height: dashBoard.height-20-width
-
+            color: j.yaxis>0?"yellow":"lightblue"
             z:3
         }
     Rectangle{
@@ -67,12 +67,12 @@ Item {
                         width: parent.width-10; height: parent.height-10
                         anchors.centerIn: parent
                         value: source.ampere
-                        maximumValue: 10
+                        maximumValue: 100
                         warningThreshold: maximumValue*0.9
-                        stepSize: 2
-                        centerТext: "0.1A"
-                        bottomText: "Ток"
-                        minorTickmarks:5
+                        stepSize: 20
+                        centerТext: "A"
+                        bottomText: "Сила тока"
+                        minorTickmarks:10
                     }
                  }
                 Rectangle {
@@ -135,11 +135,11 @@ Item {
                         stepSize: 20
                         anchors.centerIn: parent
 
-                        value: source.joystick>0?Math.round(source.joystick*100/127):0
+                        value: source.joystick>0?Math.round(source.joystick*100/127):-Math.round(source.joystick*100/127)
                         centerТext: "%"
                         bottomText: "Мощность"
                         warningThreshold: maximumValue*0.9
-                        minorTickmarks:3
+                        minorTickmarks:5
                     }
                 }
 

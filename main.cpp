@@ -34,24 +34,34 @@
 #include "camera.h"
 #include <QtQml>
 #include "cjoystick.h"
+#include <QSettings>
+
+#define giko_name "HYCO"
+#define giko_program "Rig Console"
 
 int main(int argc, char *argv[])
 {
     RegisterQmlVlc();
+    QSettings settings(giko_name, giko_program);
+    int cache=settings.value("network_caching",333).toInt();
     QmlVlcConfig& config = QmlVlcConfig::instance();
     config.enableAdjustFilter( true );
     config.enableMarqueeFilter( true );
     config.enableLogoFilter( true );
+    config.setTrustedEnvironment(true);
+    config.setNetworkCacheTime(cache);
     //config.enableRecord( true );
     //config.enableDebug( true );
     //config.enableRecord( true);
-    //qDebugQTime
+
 
     qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
     qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
     qmlRegisterType<cJoystick>("Gyco", 1, 0, "RigJoystick");
     QGuiApplication app(argc, argv);
-
+    app.setOrganizationName(giko_name);
+    app.setOrganizationDomain("hyco.ru");
+    app.setApplicationName(giko_program);
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));

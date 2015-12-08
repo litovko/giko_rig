@@ -5,25 +5,65 @@ import Gyco 1.0
 
 import QmlVlc 0.1
 import QtMultimedia 5.5
+import Qt.labs.settings 1.0
 
 Window {
     id: win
 //    visibility: Window.FullScreen
-    title: "HYCO RIG CONSOLE ПУЛЬТ УПРАВЛЕНИЯ ПОДВОДНЫМ КОМПЛЕКСОМ"
+    title: "HYCO RIG CONSOLE ПУЛЬТ УПРАВЛЕНИЯ ПОДВОДНЫМ АППАРАТОМ"
     visible: true
     height: 720
     width: 1280
     color: "transparent"
+    property int recording: 0
+    property int network_caching: 333
+    property string filepath: ""
+    property string cam1title:"cam1"
+    property string cam2title:"cam2"
+    property string cam3title:"cam3"
+    property int cam1index: 1
+    property int cam2index: 0
+    property int cam3index: 0
+    Settings {
+        property alias x: win.x
+        property alias y: win.y
+        property alias width: win.width
+        property alias height: win.height
+        property alias recording: win.recording
+        property alias network_caching: win.network_caching
+        property alias filepath: win.filepath
+        property alias cam1title:win.cam1title
+        property alias cam2title:win.cam2title
+        property alias cam3title:win.cam3title
+        property alias cam1index:win.cam1index
+        property alias cam2index:win.cam2index
+        property alias cam3index:win.cam3index
+    }
+
     function statename(camstate) {
-        if (camstate===0) return "NothingSpecial";
-        if (camstate===1) return "Opening";
-        if (camstate===2) return "Buffering";
-        if (camstate===3) return "Playing";
-        if (camstate===4) return "Paused";
-        if (camstate===5) return "Stopped";
-        if (camstate===6) return "Ended";
-        if (camstate===7) return "Error";
+        if (camstate===0) return "---";
+        if (camstate===1) return "Открытие";
+        if (camstate===2) return "Буферизация";
+        if (camstate===3) return "Проигрывание";
+        if (camstate===4) return "На паузе";
+        if (camstate===5) return "Остановлено";
+        if (camstate===6) return "Завершено";
+        if (camstate===7) return "Ошибка";
         return "";
+    }
+    function getrecordoption(){
+       var dt=new Date();
+       var sopt=[":network-caching="+network_caching.toString(), ":sout-all", ":sout-keep" ];
+       console.log("Options without record:"+sopt);
+       if (recording===0) return sopt;
+       console.log("Current time for filename");
+       console.log(dt);
+       console.log("FilePath:"+filepath);
+       var popt=[":network-caching="+network_caching.toString(),":sout=#stream_out_duplicate{dst=display,dst=std{access=file,mux=mp4,dst="+filepath+"hyco-"
+                 + dt.toLocaleString(Qt.locale(),"dd-MM-yyyy_HH-mm-ss")
+                 +".mpg}}"]
+       console.log("Options with record:"+popt);
+       return popt
     }
 
     Rectangle {
@@ -48,30 +88,53 @@ Window {
                settings.visible=settings.visible?false:true;
                menu.visible=false;
            }
-           if (event.key === Qt.Key_F5) vlcPlayer.play(cam1.url1);
+           if (event.key === Qt.Key_F5) {
+               vlcPlayer.stop();
+               console.log("Play:" +  cam1.url1 +" options:"+ getrecordoption() )
+               vlcPlayer.playlist.clear();
+               vlcPlayer.playlist.addWithOptions(cam1.url1,getrecordoption());
+               vlcPlayer.play();
+           }
            if (event.key === Qt.Key_F6) vlcPlayer.stop();
            if (event.key === Qt.Key_F12) win.visibility= win.visibility===Window.FullScreen?Window.Windowed:Window.FullScreen;
         }
 
         RigCamera {
             id: cam1
-            videopage: true
-            //address: "192.168.1.168"
+            title: cam1title
+            index: cam1index
+        }
+        RigCamera {
+            id: cam2
+            title: cam2title
+            index: cam2index
+        }
+        RigCamera {
+            id: cam3
+            title: cam3title
+            index: cam3index
         }
 
         VlcPlayer {
             id: vlcPlayer;
-            mrl: cam1.url1;
             //mrl: "rtsp://192.168.1.168:8557/PSIA/Streaming/channels/2?videoCodecType=H.264"
             // mrl: "rtsp://192.168.1.168:8553/PSIA/Streaming/channels/1?videoCodecType=MPEG4"
             //mrl: "rtsp://pionerskaya.glavpunkt.ru:554/user=admin&password=0508&channel=1&stream=0.sdp?real_stream--rtp-caching=100";
             //mrl: "rtsp://stream.tn.com.ar/live/tnhd1";
             //rtsp://192.168.1.168:8557/PSIA/Streaming/channels/2?videoCodecType=H.264
+            Component.onCompleted: {
+            // остановим плеер
+                stop();
+                vlcPlayer.playlist.clear();
+                vlcPlayer.playlist.addWithOptions(cam1.url1,getrecordoption());
+                play();
+            // добавим в плейлист
+            }
 
             onStateChanged: {
                 if (vlcPlayer.state===6) {
-
-                    console.log("Try to start playing againe")
+                    //
+                    //console.log("Try to start playing againe")
                     //play(cam1.url1);
                 }
             }
@@ -115,10 +178,9 @@ Window {
                 id: t
                 color: "yellow"
                 font.pointSize: 12
-                anchors {left: parent.center; bottom: parent.bottom; margins: 1}
-
-                text: "Статус видео:"+statename(vlcPlayer.state) +" playing:"+vlcPlayer.playing;
-                onTextChanged:  console.log("New status: " + vlcPlayer.state.toString())
+                anchors.centerIn: parent
+                text: "Статус видео: "+statename(vlcPlayer.state)// +" playing :"+vlcPlayer.playing;
+                //onTextChanged:  console.log("New status: " + vlcPlayer.state.toString())
             }
             }
         }
@@ -247,29 +309,33 @@ Window {
    }
     ControlPanel {
         source: rig
-        cam: cam1
-        width: 900
+        cam: [cam1, cam2, cam3]
+        width: 1000
         height: 100
+        lampSize: 90
+        fontSize: 14
         anchors { margins: 10; bottomMargin: 100; bottom: parent.bottom; left: parent.left}
     }
     SetupCamera {
         id: menu
         width: 600
         height: 500
+        visible: false
         anchors.centerIn: parent
         cam: cam1
         player: vlcPlayer
     }
-    Settings {
+    SetupSettings{
         id: settings
         width: 600
         height: 500
         anchors.centerIn: parent
-        cam: cam1
+        cam1: cam1
+        cam2: cam2
+        cam3: cam3
         player: vlcPlayer
         rig: rig
+        visible: false
     }
-
-
 }
 

@@ -17,8 +17,9 @@ class cCamera : public QObject
 {
     Q_OBJECT
     //############ адрес и порт
+    Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
     Q_PROPERTY(QString address READ address WRITE setAddress NOTIFY addressChanged)
-    Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
+    Q_PROPERTY(int index READ index WRITE setIndex NOTIFY indexChanged)
     Q_PROPERTY(bool camerapresent READ camerapresent NOTIFY camerapresentChanged)
     Q_PROPERTY(int videocodec READ videocodec WRITE setVideocodec NOTIFY videocodecChanged) // режим количества видеопотоков
     Q_PROPERTY(int videocodeccombo READ videocodeccombo WRITE setVideocodeccombo NOTIFY videocodeccomboChanged) // режим типов видеопотоков - MPEG, H264
@@ -46,13 +47,19 @@ class cCamera : public QObject
     Q_PROPERTY(QString url2 READ url2 NOTIFY url2Changed) //Корректный URL для просмотра изображения второго потока камеры.
     Q_PROPERTY(bool videopage READ videopage WRITE setVideopage NOTIFY videopageChanged) // переменная для применения настроек комбинированных режимов к камере
     Q_PROPERTY(bool videosettings READ videosettings WRITE setVideosettings NOTIFY videosettingsChanged) // переменная для применения настроек яркости контрастности и проч камере
+
 public:
     explicit cCamera(QObject *parent = 0);
+    virtual ~cCamera() {saveSettings();};
+
+    void setTitle(const QString  &title);
+    QString title() const;
+
     void setAddress(const QString  &address);
     QString address() const;
 
-    void setPort(const int &port);
-    int  port() const;
+    void setIndex(const int &index);
+    int  index() const;
     bool camerapresent() const;
     //#############
     void setVideocodec(const int &videocodec);
@@ -93,7 +100,7 @@ public:
 
     void setImg2a(const int &img2a);
     int  img2a() const;
-
+    Q_INVOKABLE void setTimesettings();
 
     //#############
     QString combylist() const;
@@ -109,8 +116,9 @@ public:
 
 
 signals:
+    void titleChanged();
     void addressChanged();
-    void portChanged();
+    void indexChanged();
     void camerapresentChanged();
     void url1Changed();
     void url2Changed();
@@ -156,12 +164,14 @@ private:
     QUrl iniUrl; //URL запроса настроек камеры
 private:
     QString m_address;
-    int m_port=8553;
+    QString m_title;
+    int m_index=8553;
     bool m_camerapresent=false;  //доступна ли камера по сети?
     bool m_videopage;
     bool m_videosettings;
-    QString m_url1="rtsp://192.168.1.168:8553/PSIA/Streaming/channels/1?videoCodecType=MPEG4";
+    QString m_url1;//="rtsp://192.168.1.168:8553/PSIA/Streaming/channels/1?videoCodecType=MPEG4";
     QString m_url2="";
+
     //http://192.168.1.168/vb.htm?videocodec=0&videocodeccombo=0&videocodecres=0&mirctrl=0 HTTP/1.1
 
 //    http://192.168.1.168/vb.htm?videocodec=0&videocodeccombo=0&videocodecres=0&mirctrl=0 HTTP/1.1
@@ -171,7 +181,7 @@ private:
 //    http://192.168.1.168/vb.htm?paratest=multicast HTTP/1.1
 
     int m_videocodec=0;
-    int m_videocodeccombo=1;  //MPEG
+    int m_videocodeccombo=0;  //H.264
     int m_videocodecres=0;
     int m_mirctrl=0;
 
@@ -193,57 +203,14 @@ private:
 //    http://192.168.1.168/vb.htm?paratest=multicast HTTP/1.1
 
     int m_comby=0; // 0-4 комбинированные режимы согласно таблице
-    QString TABLE_COMBY[4]={"Кодек MPEG4 HD 720",
-                            "Кодек MPEG4 Full HD 1080",
-                            "Кодек H.264 HD 720",
-                            "Кодек H.264 Full HD 1080"};
-
+    QString TABLE_COMBY[4]={"Кодек H.264 HD 720",
+                            "Кодек H.264 Full HD 1080",
+                            "Кодек MPEG4 HD 720",
+                            "Кодек MPEG4 Full HD 1080"};
     QTimer timer_check;
 
 
-    QString TABLE [NUMROWS][6]=
-    {
-        {"Один поток", "0", "H.264", "0", "H264:720", "0"},
-        {"Один поток", "0", "H.264", "0", "H264:D1", "1"},
-        {"Один поток", "0", "H.264", "0", "H264:SXVGA", "2"},
-        {"Один поток", "0", "H.264", "0", "H264:1080", "3"},
-        {"Один поток", "0", "H.264", "0", "H264:720MAX60", "4"},
-        {"Один поток", "0", "MPEG4", "1", "MPEG4:720", "0"},
-        {"Один поток", "0", "MPEG4", "1", "MPEG4:D1", "1"},
-        {"Один поток", "0", "MPEG4", "1", "MPEG4:SXVGA", "2"},
-        {"Один поток", "0", "MPEG4", "1", "MPEG4:1080", "3"},
-        {"Один поток", "0", "MPEG4", "1", "MPEG4:720MAX60", "4"},
-        {"Один поток", "0", "MegaPixel", "2", "H264:2MP", "0"},
-        {"Один поток", "0", "MegaPixel", "2", "JPG:2MP", "1"},
-        {"Один поток", "0", "MegaPixel", "2", "H264:3MP", "2"},
-        {"Один поток", "0", "MegaPixel", "2", "JPG:3MP", "3"},
-        {"Один поток", "0", "MegaPixel", "2", "H264:5MP", "4"},
-        {"Один поток", "0", "MegaPixel", "2", "JPG:5MP", "4"},
-        {"Два потока", "1", "H.264 + JPEG", "0", "H264:720 + JPEG:VGA", "0"},
-        {"Два потока", "1", "H.264 + JPEG", "0", "H264:720 + JPEG:D1", "1"},
-        {"Два потока", "1", "H.264 + JPEG", "0", "H264:720 + JPEG:720", "2"},
-        {"Два потока", "1", "H.264 + JPEG", "0", "H264:1080 + JPEG:QVGA", "3"},
-        {"Два потока", "1", "H.264 + JPEG", "0", "H264:1080 + JPEG:D1", "4"},
-        {"Два потока", "1", "MPEG4 + JPEG", "1", "MPEG4:720 + JPEG:VGA", "0"},
-        {"Два потока", "1", "MPEG4 + JPEG", "1", "MPEG4:720 + JPEG:D1", "1"},
-        {"Два потока", "1", "MPEG4 + JPEG", "1", "MPEG4:720 + JPEG:720", "2"},
-        {"Два потока", "1", "MPEG4 + JPEG", "1", "MPEG4:1080 + JPEG:QVGA", "3"},
-        {"Два потока", "1", "MPEG4 + JPEG", "1", "MPEG4:1080 + JPEG:D1", "4"},
-        {"Два потока", "1", "Два потока H.264", "2", "H264:720 + H264:QVGA", "0"},
-        {"Два потока", "1", "Два потока H.264", "2", "H264:720 + H264:D1", "1"},
-        {"Два потока", "1", "Два потока H.264", "2", "H264:D1 +  H264:QVGA", "2"},
-        {"Два потока", "1", "Два потока H.264", "2", "H264:1080 + H264:QVGA", "3"},
-        {"Два потока", "1", "Два потока H.264", "2", "H264:1080 + H264:D1", "4"},
-        {"Два потока", "1", "Два потока MPEG4", "3", "MPEG4:720 + H264:QVGA", "0"},
-        {"Два потока", "1", "Два потока MPEG4", "3", "MPEG4:720 + H264:D1", "1"},
-        {"Два потока", "1", "Два потока MPEG4", "3", "MPEG4:D1 +  H264:QVGA", "2"},
-        {"Два потока", "1", "Два потока MPEG4", "3", "MPEG4:1080 + H264:QVGA", "3"},
-        {"Два потока", "1", "Два потока MPEG4", "3", "MPEG4:1080 + H264:D1", "4"},
-        {"Два потока", "1", "H.264 + MPEG4", "4", "H264:720, MPEG4:D1", "0"},
-        {"Два потока", "1", "H.264 + MPEG4", "4", "H264:1080, MPEG4:D1", "1"},
-        {"Три потока", "2", "Два потока H.264 + JPEG", "0", "H264:720+JPEG:VGA+H264:QVGA", "0"},
-        {"Три потока", "2", "Два потока MPEG4 + JPEG", "1", "MPEG4:720+JPEG:VGA+MPEG4:QVGA", "0"}
-    };
+
 };
 
 #endif // CAMERA_H

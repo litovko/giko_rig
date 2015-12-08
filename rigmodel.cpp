@@ -1,12 +1,13 @@
 #include "rigmodel.h"
 #include <QDebug>
+#include <QTime>
 
 
 cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 {
     readSettings();
     connect(this, SIGNAL(addressChanged()), this, SLOT(saveSettings()));
-    connect(this, SIGNAL(portChanged()), this, SLOT(saveSettings()));
+    //connect(this, SIGNAL(portChanged()), this, SLOT(saveSettings()));
     connect(&tcpClient, SIGNAL(connected()),this, SLOT(clientConnected())); // Клиент приконнектилася к указанному адресу по указанному порту.
     connect(&tcpClient, SIGNAL(disconnected()),this, SLOT(clientDisconnected())); // Клиент отвалился
     connect(&tcpClient, SIGNAL(bytesWritten(qint64)),this, SLOT(updateClientProgress(qint64)));
@@ -44,7 +45,7 @@ void cRigmodel::readSettings()
     m_port=settings.value("RigPort","1212").toInt();
     m_timer_send_interval=settings.value("RigSendInterval","2000").toInt();
     m_timer_connect_interval=settings.value("RigConnectInterval","30000").toInt();
-    qDebug()<<"readSettings addres:"<<m_address<<"port:"<<m_port;
+//    qDebug()<<"readSettings addres:"<<m_address<<"port:"<<m_port;
 }
 void cRigmodel::setPressure(const int &pressure)
 {
@@ -231,9 +232,10 @@ bool cRigmodel::good_data() const
 
 void cRigmodel::start_client()
 {
+    QTime t;
     if (m_client_connected) return;
     bytesWritten = 0;
-    qDebug()<<"Start client >>>"<<m_address<<"poprt"<<::QString().number(m_port);
+    qDebug()<<"Start client >>>"<<m_address<<"poprt"<<::QString().number(m_port)<<t.currentTime();;
     
     tcpClient.connectToHost(m_address, m_port);
 

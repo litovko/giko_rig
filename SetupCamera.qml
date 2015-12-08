@@ -9,11 +9,11 @@ Item {
     visible: false
     property RigCamera cam: null
     property VlcPlayer player: null
-
+    onVisibleChanged: spinBox_videomode.currentIndex=cam.comby;
     Rectangle {
         id: rectangle1
         width: 500
-        height: 455
+        height: 511
         gradient: Gradient {
             GradientStop {
                 position: 1
@@ -35,7 +35,17 @@ Item {
         z: 0
         border.color: "yellow"
 
-
+        TextField {
+            id: camurl
+            x: 25
+            y: 442
+            z: 3
+            width: 452
+            height: 24
+            readOnly: true
+            text: cam.url1
+            font.pixelSize: 10
+        }
 
         Label {
             id: label2
@@ -74,7 +84,11 @@ Item {
                 y: -4
                 width: 181
                 height: 20
-                Component.onCompleted: fill_list_model();
+
+                Component.onCompleted: {
+                    fill_list_model();
+                    currentIndex: cam.comby
+                }
                 model: ListModel {
                     id: listStreams
                 }
@@ -82,10 +96,12 @@ Item {
                 function fill_list_model() {
 
                     var  s=cam.combylist;
+
                     var  c=s.substring(s.indexOf(","))
                     var  i = s.indexOf(",");
                     var  strlen=s.length;
                     listStreams.clear();
+                    console.log("cam.combylist:"+cam.combylist)
                     while(i>0){
 
                         c=s.substring(0,i);
@@ -97,8 +113,8 @@ Item {
 
                     }
                     listStreams.append({text: s}) // добавляем последний элемент
-                    spinBox_videomode.currentIndex=0; //устанавливаем элемент в начало списка
-                    cam.comby=0;
+                    spinBox_videomode.currentIndex=cam.comby;
+                    console.log("Filllistmodel() cam.comby:"+cam.comby+"curindex:"+spinBox_videomode.currentIndex);
                     return;
                 }
             }
@@ -117,7 +133,7 @@ Item {
                 console.log("Кликнули применить настройки комбо-режима");
                 player.stop();
                 cam.comby=spinBox_videomode.currentIndex;
-                console.log("comby:"+cam.comby);
+                console.log("Применить, comby:"+cam.comby);
                 cam.videopage=true;
             }
         }
@@ -131,6 +147,7 @@ Item {
             opacity: 0.8
             onClicked: {
                 setupDialog.visible=false;
+                mainRect.focus=true;
                 console.log("Кликнули выход");
             }
         }
@@ -293,6 +310,7 @@ Item {
                 height: 17
                 color: "#ffffff"
                 text: qsTr("Текст - название профиля")
+
                 font.pointSize: 10
                 font.bold: true
             }
@@ -304,6 +322,11 @@ Item {
                 width: 198
                 height: 20
                 text: cam.overlaytext
+                //  /[a-zA-Z]/
+                validator: RegExpValidator {
+                    regExp:  /[a-zA-Z0-9\s-]*/
+                }
+
                 placeholderText: qsTr("Профиль")
             }
 
@@ -312,6 +335,7 @@ Item {
                 x: 131
                 y: 265
                 text: qsTr("Применить настройки видео")
+                clip: false
                 tooltip: "Применение указанных настроек видео"
                 scale: 1.1
                 z: 3
@@ -515,6 +539,18 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
+
+        Text {
+            id: vlcversion
+            x: 100
+            y: 472
+            width: 218
+            height: 19
+            text:"Версия библиотек VLC:"+ player.vlcVersion
+            font.pixelSize: 12
+        }
+
+
     }
 
 }

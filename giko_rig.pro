@@ -7,7 +7,6 @@ INCLUDEPATH += deps
 SOURCES += main.cpp \
     rigmodel.cpp \
     camera.cpp \
-    filedownloader.cpp \
     cjoystick.cpp \
     xinputGamepad.cpp
 
@@ -32,7 +31,6 @@ include(deps/QmlVlc/QmlVlc.pri)
 HEADERS += \
     rigmodel.h \
     camera.h \
-    filedownloader.h \
     cjoystick.h \
     xinputGamepad.h
 

@@ -7,15 +7,16 @@ Item {
     property int minimumValue: 0
     property int maximumValue: 127
     property int val: 0;
+    property color color:"yellow"
     //onValChanged: pb.value=val
     Rectangle {
         id: r
         width: g.width
-        height: (val>0)?g.height*val/(g.maximumValue-g.minimumValue):0
+        height: (val>0)?g.height*val/(g.maximumValue-g.minimumValue):-g.height*val/(g.maximumValue-g.minimumValue)
         //y: g.height
         rotation: 0
         y:g.height-height
-        color: "yellow"
+        color: g.color
         opacity: 0.8
 
 
@@ -36,7 +37,7 @@ Item {
                         easing.overshoot: 2
                         easing.type: Easing.OutExpo
                         //This specifies how long the animation takes
-                        duration: 500
+                        duration: 100
                         //This selects an easing curve to interpolate with, the default is Easing.Linear
                         //easing.type: Easing.OutBounce
 

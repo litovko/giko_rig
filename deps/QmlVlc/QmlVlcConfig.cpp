@@ -108,6 +108,7 @@ static const TrustedOption trustedOptions[] = {
     { ":avformat-format", "mxg" },
     { ":demux", "h264" },
     { ":h264-fps", 0 },
+    { ":sout", 0 },
 };
 
 bool QmlVlcConfig::isOptionTrusted( const QString& opt ) const
@@ -177,7 +178,6 @@ libvlc_instance_t* QmlVlcConfig::createLibvlcInstance()
         opts.push_back( "-vvv" );
     if( _record )
         opts.push_back( "--sout=#standard{access=file,mux=ps,dst=file---.mpg" );
-    //opts.push_back( "=#es{access=file,mux=ps,url_audio=audio-%c.%m,url_video=video-%c.%m}");
     if( _noVideoTitleShow )
         opts.push_back( "--no-video-title-show" );
 
