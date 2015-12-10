@@ -26,6 +26,7 @@ class cCamera : public QObject
     Q_PROPERTY(int videocodecres READ videocodecres WRITE setVideocodecres NOTIFY videocodecresChanged) // режим разрешения видиопотоков
     Q_PROPERTY(int mirctrl READ mirctrl WRITE setMirctrl NOTIFY mirctrlChanged) // режим зеркалирования изображения
     Q_PROPERTY(QString overlaytext READ overlaytext WRITE setOverlaytext NOTIFY overlaytextChanged)
+
 //====
     Q_PROPERTY(int comby READ comby WRITE setComby NOTIFY combyChanged) // комбинированный режим, доступный для выбора из диалогового окна
 //====
@@ -36,6 +37,7 @@ class cCamera : public QObject
     Q_PROPERTY(int dynrange READ dynrange WRITE setDynrange NOTIFY dynrangeChanged)
     Q_PROPERTY(int colorkiller READ colorkiller WRITE setColorkiller NOTIFY colorkillerChanged)
     Q_PROPERTY(int img2a READ img2a WRITE setImg2a NOTIFY img2aChanged)
+    Q_PROPERTY(int img2atype READ img2atype WRITE setImg2atype NOTIFY img2atypeChanged)
 
 
 //====
@@ -50,7 +52,7 @@ class cCamera : public QObject
 
 public:
     explicit cCamera(QObject *parent = 0);
-    virtual ~cCamera() {saveSettings();};
+    virtual ~cCamera() {saveSettings();}
 
     void setTitle(const QString  &title);
     QString title() const;
@@ -100,7 +102,9 @@ public:
 
     void setImg2a(const int &img2a);
     int  img2a() const;
-    Q_INVOKABLE void setTimesettings();
+    void setImg2atype(const int &img2atype);
+    int  img2atype() const;
+
 
     //#############
     QString combylist() const;
@@ -142,6 +146,7 @@ signals:
     void dynrangeChanged();
     void colorkillerChanged();
     void img2aChanged();
+    void img2atypeChanged();
 
     void downloaded();
 public slots:
@@ -153,7 +158,10 @@ public slots:
     void commit_videosettings(); // по документации необходим вызов функции установки флага
     void commit_multicast();
     void change_combyparametrs(); //изменение параметров при выборе комби режима
-    void get_parametrs(); // запросить параметры от камеры.
+    Q_INVOKABLE void setTimesettings();
+    Q_INVOKABLE void setDateTimesettings();
+    Q_INVOKABLE void get_parametrs(); // запросить параметры от камеры.
+    Q_INVOKABLE void send_reset();
     void loadINI(QNetworkReply *pReply); //получить параметры от камеры после ответа.   
     void loadResponce(QNetworkReply *pReply);
 private:
@@ -165,13 +173,13 @@ private:
 private:
     QString m_address;
     QString m_title;
-    int m_index=8553;
+    int m_index=0;
     bool m_camerapresent=false;  //доступна ли камера по сети?
     bool m_videopage;
     bool m_videosettings;
     QString m_url1;//="rtsp://192.168.1.168:8553/PSIA/Streaming/channels/1?videoCodecType=MPEG4";
     QString m_url2="";
-
+    int parse_int(QString param);
     //http://192.168.1.168/vb.htm?videocodec=0&videocodeccombo=0&videocodecres=0&mirctrl=0 HTTP/1.1
 
 //    http://192.168.1.168/vb.htm?videocodec=0&videocodeccombo=0&videocodecres=0&mirctrl=0 HTTP/1.1
@@ -189,7 +197,7 @@ private:
     int m_timestampenable=1;
     int m_textenable=1;
     int m_textposition=0;  //0 - Top-Left; 1 - Top-Right
-    QString m_overlaytext="Profile_1981123123";
+    QString m_overlaytext;
     int m_brightness=127;
     int m_contrast=127;
     int m_saturation=127;
@@ -197,7 +205,7 @@ private:
     int m_dynrange=0;
     int m_colorkiller=0; //режим день/ночь
     int m_img2a=1;  // движок баланса белого
-
+    int m_img2atype=3;
 //    http://192.168.1.168/vb.htm?brightness=128&contrast=128&saturation=128&sharpness=128&blc=1&dynrange=0&awb=0&colorkiller=1&exposurectrl=1&maxexposuretime=0&maxgain=0&nfltctrl=0&tnfltctrl=0&vidstb1=0&lensdistortcorrection=0&binning=2&img2a=1&backlight=1&histogram=0&img2atype=3&priority=0 HTTP/1.1
 //    http://192.168.1.168/vb.htm?paratest=reloadflag HTTP/1.1
 //    http://192.168.1.168/vb.htm?paratest=multicast HTTP/1.1

@@ -6,14 +6,18 @@ import QmlVlc 0.1
 import Gyco 1.0
 Item {
     id: setupDialog
-    visible: false
-    property RigCamera cam: null
-    property VlcPlayer player: null
-    onVisibleChanged: spinBox_videomode.currentIndex=cam.comby;
+    visible: true
+    //property RigCamera cam: null
+    property list<RigCamera> cam
+    property list<VlcPlayer> players
+    property int currentcam: 0
+    property int currentplayer: 0
+    antialiasing: false
+    onVisibleChanged: spinBox_videomode.currentIndex=cam[currentcam].comby;
     Rectangle {
         id: rectangle1
         width: 500
-        height: 511
+        height: 547
         gradient: Gradient {
             GradientStop {
                 position: 1
@@ -28,51 +32,59 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 0
         anchors.top: parent.top
-        anchors.topMargin: 0
+        anchors.topMargin: -36
         opacity: 0.8
         border.width: 3
         radius: 10
+        visible: true
         z: 0
         border.color: "yellow"
 
         TextField {
             id: camurl
-            x: 25
-            y: 442
+            x: 90
+            y: 486
             z: 3
-            width: 452
+            width: 387
             height: 24
             readOnly: true
-            text: cam.url1
+            text: cam[currentcam].url1
             font.pixelSize: 10
         }
 
         Label {
             id: label2
             x: 8
-            y: 37
+            y: 26
             width: 67
             height: 13
             color: "white"
             text: qsTr("Камера")
             font.pointSize: 9
 
-            TextField {
-                id: cam_name
-                x: 73
-                y: -4
-                width: 180
+            ComboBox {
+                id: cb_cam
+                x: 74
+                y: -3
+                width: 164
                 height: 20
-                text: "CAM1"
-                readOnly: true
-                opacity: 0.8
-                placeholderText: qsTr("Выбранная камера")
+                Component.onCompleted: {
+
+                    listCams.append({text: cam[0].title})
+                    listCams.append({text: cam[1].title})
+                    listCams.append({text: cam[2].title})
+                    currentIndex=0
+                }
+                model: ListModel {
+                    id: listCams
+                }
+                onCurrentIndexChanged: currentcam=currentIndex
             }
         }
         Label {
             id: label_stream
             x: 8
-            y: 66
+            y: 82
             width: 67
             height: 13
             color: "white"
@@ -87,7 +99,7 @@ Item {
 
                 Component.onCompleted: {
                     fill_list_model();
-                    currentIndex: cam.comby
+                    currentIndex: cam[currentcam].comby
                 }
                 model: ListModel {
                     id: listStreams
@@ -95,13 +107,13 @@ Item {
 
                 function fill_list_model() {
 
-                    var  s=cam.combylist;
+                    var  s=cam[currentcam].combylist;
 
                     var  c=s.substring(s.indexOf(","))
                     var  i = s.indexOf(",");
                     var  strlen=s.length;
                     listStreams.clear();
-                    console.log("cam.combylist:"+cam.combylist)
+                    console.log("cam"<<currentcam<<".combylist:"+cam[currentcam].combylist)
                     while(i>0){
 
                         c=s.substring(0,i);
@@ -113,8 +125,8 @@ Item {
 
                     }
                     listStreams.append({text: s}) // добавляем последний элемент
-                    spinBox_videomode.currentIndex=cam.comby;
-                    console.log("Filllistmodel() cam.comby:"+cam.comby+"curindex:"+spinBox_videomode.currentIndex);
+                    spinBox_videomode.currentIndex=cam[currentcam].comby;
+                    console.log("Filllistmodel() cam.comby:"+cam[currentcam].comby+"curindex:"+spinBox_videomode.currentIndex);
                     return;
                 }
             }
@@ -123,25 +135,27 @@ Item {
 
         Button {
             id: ok
-            x: 271
-            y: 61
+            x: 281
+            y: 77
             opacity: 0.8
             text: qsTr("Применить")
             tooltip: "Применение указанных настроек камеры"
             onClicked: {
- //               console.log("Кликнули");
+                //               console.log("Кликнули");
                 console.log("Кликнули применить настройки комбо-режима");
-                player.stop();
-                cam.comby=spinBox_videomode.currentIndex;
-                console.log("Применить, comby:"+cam.comby);
-                cam.videopage=true;
+                players[currentplayer].stop();
+                cam[currentcam].comby=spinBox_videomode.currentIndex;
+                console.log("Применить, comby:"+cam[currentcam].comby);
+                cam[currentcam].videopage=true;
             }
         }
 
         Button {
             id: close
-            x: 394
-            y: 27
+            x: 411
+            y: 16
+            width: 75
+            height: 34
             text: qsTr("Закрыть")
             isDefault: true
             opacity: 0.8
@@ -155,7 +169,7 @@ Item {
         Rectangle {
             id: rectsettings
             x: 20
-            y: 132
+            y: 175
             width: 466
             height: 305
             radius: 5
@@ -214,7 +228,7 @@ Item {
                 z: 3
                 stepSize: 1
                 maximumValue: 255
-                value: cam.brightness
+                value: cam[currentcam].brightness
             }
 
             Slider {
@@ -225,7 +239,7 @@ Item {
                 height: 22
                 maximumValue: 255
                 z: 3
-                value: cam.contrast
+                value: cam[currentcam].contrast
                 stepSize: 1
             }
 
@@ -237,7 +251,7 @@ Item {
                 height: 22
                 maximumValue: 255
                 z: 3
-                value: cam.saturation
+                value: cam[currentcam].saturation
                 stepSize: 1
             }
 
@@ -273,7 +287,7 @@ Item {
                 height: 22
                 maximumValue: 255
                 z: 3
-                value: cam.sharpness
+                value: cam[currentcam].sharpness
                 stepSize: 1
             }
 
@@ -298,7 +312,7 @@ Item {
                 tickmarksEnabled: true
                 maximumValue: 3
                 z: 3
-                value: cam.dynrange
+                value: cam[currentcam].dynrange
                 stepSize: 1
             }
 
@@ -321,7 +335,7 @@ Item {
                 y: 227
                 width: 198
                 height: 20
-                text: cam.overlaytext
+                text: cam[currentcam].overlaytext
                 //  /[a-zA-Z]/
                 validator: RegExpValidator {
                     regExp:  /[a-zA-Z0-9\s-]*/
@@ -340,14 +354,14 @@ Item {
                 scale: 1.1
                 z: 3
                 onClicked: {
-                    cam.brightness=s1.value;
-                    cam.contrast=s2.value;
-                    cam.saturation=s3.value;
-                    cam.sharpness=s4.value;
-                    cam.colorkiller=cam.colorkiller=radioDay.checked?1:0;
-                    cam.img2a=cbwhitebal.currentIndex;
-                    cam.overlaytext=textField1.text
-                    cam.videosettings=true;
+                    cam[currentcam].brightness=s1.value;
+                    cam[currentcam].contrast=s2.value;
+                    cam[currentcam].saturation=s3.value;
+                    cam[currentcam].sharpness=s4.value;
+                    cam[currentcam].colorkiller=radioDay.checked?1:0;
+                    cam[currentcam].img2a=cbwhitebal.currentIndex;
+                    cam[currentcam].overlaytext=textField1.text
+                    cam[currentcam].videosettings=true;
                 }
 
             }
@@ -360,12 +374,12 @@ Item {
                 height: 18
 
                 model: ListModel {
-                        id: li
-                        ListElement { text: "NONE"; color: "Yellow" }
-                        ListElement { text: "APPRO"; color: "Green" }
-                        ListElement { text: "TI"; color: "Brown" }
-                    }
-                currentIndex: cam.img2a
+                    id: li
+                    ListElement { text: "NONE"; color: "Yellow" }
+                    ListElement { text: "APPRO"; color: "Green" }
+                    ListElement { text: "TI"; color: "Brown" }
+                }
+                currentIndex: cam[currentcam].img2a
             }
 
             Label {
@@ -390,25 +404,25 @@ Item {
                 onCheckedChanged: {
                     if (checked) radioDay.checked=false
                     else radioDay.checked=true;
-                    cam.colorkiller=checked?0:1
+                    cam[currentcam].colorkiller=checked?0:1
 
-                    console.log("ночь"+ cam.colorkiller);
+                    console.log("ночь"+ cam[currentcam].colorkiller);
                 }
                 style: RadioButtonStyle {
-                        indicator: Rectangle {
-                                implicitWidth: 16
-                                implicitHeight: 16
-                                radius: 9
-                                //border.color: control.activeFocus ? "yellow" : "gray"
-                                border.width: 1
-                                Rectangle {
-                                    anchors.fill: parent
-                                    visible: control.checked
-                                    color: control.checked ? "yellow" : "gray"
-                                    radius: 9
-                                    anchors.margins: 4
-                                }
+                    indicator: Rectangle {
+                        implicitWidth: 16
+                        implicitHeight: 16
+                        radius: 9
+                        //border.color: control.activeFocus ? "yellow" : "gray"
+                        border.width: 1
+                        Rectangle {
+                            anchors.fill: parent
+                            visible: control.checked
+                            color: control.checked ? "yellow" : "gray"
+                            radius: 9
+                            anchors.margins: 4
                         }
+                    }
                 }
 
             }
@@ -421,10 +435,10 @@ Item {
 
                     if (checked) radioNight.checked=false
                     else radioNight.checked=true;
-                    cam.colorkiller=checked?1:0
-                    console.log("день"+ cam.colorkiller);
+                    cam[currentcam].colorkiller=checked?1:0
+                    console.log("день"+ cam[currentcam].colorkiller);
                 }
-                Component.onCompleted:  checked=cam.colorkiller==0?true:false
+                Component.onCompleted:  checked=cam[currentcam].colorkiller==0?true:false
 
                 x: 11
                 y: 160
@@ -434,20 +448,20 @@ Item {
                 transformOrigin: Item.Left
                 rotation: 0
                 style: RadioButtonStyle {
-                        indicator: Rectangle {
-                                implicitWidth: 16
-                                implicitHeight: 16
-                                radius: 9
-                                //border.color: control.activeFocus ? "yellow" : "gray"
-                                border.width: 1
-                                Rectangle {
-                                    anchors.fill: parent
-                                    visible: control.checked
-                                    color: control.checked ? "yellow" : "gray"
-                                    radius: 9
-                                    anchors.margins: 4
-                                }
+                    indicator: Rectangle {
+                        implicitWidth: 16
+                        implicitHeight: 16
+                        radius: 9
+                        //border.color: control.activeFocus ? "yellow" : "gray"
+                        border.width: 1
+                        Rectangle {
+                            anchors.fill: parent
+                            visible: control.checked
+                            color: control.checked ? "yellow" : "gray"
+                            radius: 9
+                            anchors.margins: 4
                         }
+                    }
                 }
             }
 
@@ -529,7 +543,7 @@ Item {
         Label {
             id: label1
             x: 170
-            y: 105
+            y: 148
             width: 160
             height: 21
             color: "#ffffff"
@@ -543,14 +557,52 @@ Item {
         Text {
             id: vlcversion
             x: 100
-            y: 472
+            y: 520
             width: 218
             height: 19
-            text:"Версия библиотек VLC:"+ player.vlcVersion
+            text:"Версия библиотек VLC:"+ players[currentplayer].vlcVersion
             font.pixelSize: 12
         }
 
+        Button {
+            id: time
+            x: 255
+            y: 21
+            text: qsTr("Установить время")
+            opacity: 0.8
+            tooltip: "Установка текущего времени"
+            onClicked: {
+                console.log("Кликнули установки времени");
+                players[currentplayer].stop();
+                cam[currentcam].setDateTimesettings();
+            }
+        }
 
+        Button {
+            id: btn_reset
+            x: 255
+            y: 114
+            width: 101
+            height: 23
+            text: qsTr("Ресет камеры")
+            tooltip: "Программынй ресет камеры"
+            opacity: 0.8
+            onClicked: cam[currentcam].send_reset();
+        }
+
+
+    }
+
+    TextField {
+        id: cam_name
+        x: 13
+        y: 452
+        width: 70
+        height: 20
+        text: cam[currentcam].title
+        readOnly: true
+        opacity: 0.8
+        placeholderText: qsTr("Выбранная камера")
     }
 
 }

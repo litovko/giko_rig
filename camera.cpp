@@ -2,20 +2,21 @@
 #include <QDebug>
 #include <QSettings>
 #include <QTime>
-
+#include <QDateTime>
 cCamera::cCamera(QObject *parent) : QObject(parent)
 {
-    readSettings();
-    connect(this, SIGNAL(addressChanged()),this, SLOT(saveSettings()));
+    //readSettings();
+    //connect(this, SIGNAL(addressChanged()),this, SLOT(saveSettings()));
     connect(this, SIGNAL(indexChanged()),this, SLOT(readSettings()));
     connect(this, SIGNAL(videopageChanged()),this, SLOT(change_videopage()));
     connect(this, SIGNAL(videosettingsChanged()),this, SLOT(change_videosettings()));
     connect(this, SIGNAL(combyChanged()),this, SLOT(change_combyparametrs()));
     connect(&timer_check, SIGNAL(timeout()), this, SLOT(get_parametrs()));
 
-    timer_check.start(20000);
-    get_parametrs();
-    setTimesettings();
+    timer_check.start(30000);
+//    get_parametrs();
+//    setTimesettings();
+//    setDateTimesettings();
 }
 void cCamera::saveSettings()
 {
@@ -23,14 +24,15 @@ void cCamera::saveSettings()
     QSettings settings("HYCO", "Rig Console");
     settings.setValue("Cam"+QString::number(m_index)+"Address",m_address);
     settings.setValue("Cam"+QString::number(m_index)+"Comby",m_comby);
+    settings.setValue("Cam"+QString::number(m_index)+"OverlayText",m_overlaytext);
 }
 void cCamera::readSettings()
 {
-
     QSettings settings("HYCO", "Rig Console");
-    m_address=settings.value("Cam"+QString::number(m_index)+"Address","192.168.1.168").toString();
-    m_comby=settings.value("Cam"+QString::number(m_index)+"Comby",0).toInt();
+    setAddress(settings.value("Cam"+QString::number(m_index)+"Address","192.168.1.168").toString());
+    setComby(settings.value("Cam"+QString::number(m_index)+"Comby",0).toInt());
     m_url1=url1(); //меняем строку запуска камеры
+    setOverlaytext(settings.value("Cam"+QString::number(m_index)+"OverlayText","Cam"+QString::number(m_index)).toString());
     qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"Cam"<<QString::number(m_index)<<":"<<"readSettings addres:"<<m_address;
 }
 void cCamera::setTitle(const QString  &title)
@@ -71,7 +73,12 @@ QString cCamera::title() const
     void cCamera::setIndex(const int  &index)
     {
         m_index = index;
+        readSettings();
+        get_parametrs();
+//        setTimesettings();
+//        setDateTimesettings();
         emit indexChanged();
+        //emit addressChanged();
     }
     //#############
     int cCamera::videocodec() const
@@ -95,7 +102,6 @@ QString cCamera::title() const
         m_videocodeccombo = videocodeccombo;
         emit videocodeccomboChanged();
         m_url1=url1();
-        //emit url1Changed();
     }
 
     int cCamera::videocodecres() const
@@ -129,12 +135,14 @@ QString cCamera::title() const
     {
         m_comby = comby;
         emit combyChanged();
+        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"Cam"<<QString::number(m_index)<<":"<<"setComby:"<<m_comby;
     }
 
     void cCamera::setOverlaytext(const QString  &overlaytext)
     {
         m_overlaytext = overlaytext;
         emit overlaytextChanged();
+        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"Cam"<<QString::number(m_index)<<":"<<"setOverlayed text:"<<m_overlaytext;
     }
 
     QString cCamera::overlaytext() const
@@ -220,6 +228,17 @@ QString cCamera::title() const
         emit img2aChanged();
     }
 
+    int cCamera::img2atype() const
+    {
+        return m_img2atype;
+    }
+
+    void cCamera::setImg2atype(const int  &img2atype)
+    {
+        m_img2atype = img2atype;
+        emit img2atypeChanged();
+    }
+
 
 
     //#############
@@ -302,6 +321,7 @@ QString cCamera::title() const
     }
     void cCamera::setTimesettings()
     {
+        if (m_index==0) return;
         QString s;
         s="http://" + m_address
                 + "/vb.htm?timefrequency=-1&daylight=0&timezone=15&dateformat=2&tstampformat=1&dateposition=0&timeposition=0 HTTP/1.1";
@@ -314,7 +334,26 @@ QString cCamera::title() const
         connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
         QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
     }
-
+    //http://192.168.1.168/vb.htm?newdate=2012/12/09&newtime=13:18:33&dateformat=2&tstampformat=1&dateposition=0&timeposition=0
+    void cCamera::setDateTimesettings()
+    {
+        if (m_index==0) return;
+        QString s;
+        QDateTime t;
+        s="http://" + m_address
+                + "/vb.htm?newdate=" +t.currentDateTime().toString("yyyy/MM/dd")
+                + "&newtime="+t.currentDateTime().toString("HH:mm:ss")
+                + "&dateformat=2&tstampformat=1&dateposition=0&timeposition=0"
+                + " HTTP/1.1";
+        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"setDateTimesettings():"<<s;
+        QUrl iniUrl(s);
+        iniUrl.setPassword(USERPASS);
+        iniUrl.setUserName(USERNAME);
+        QNetworkRequest request(iniUrl);
+        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
+        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
+        QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
+    }
 
     void cCamera::change_videosettings()
     {
@@ -326,7 +365,9 @@ QString cCamera::title() const
                 +"&blc=1&dynrange=0&awb=0&colorkiller="+::QString().number(m_colorkiller,10)
                 +"&exposurectrl=1&maxexposuretime=0&maxgain=0&nfltctrl=0&tnfltctrl=0&vidstb1=0&lensdistortcorrection=0&binning=2"
                 +"&img2a="+::QString().number(m_img2a,10)
-                +"&backlight=1&histogram=0&img2atype=3&priority=0 HTTP/1.1";
+                +"&backlight=1&histogram=0"
+                +"&img2atype="+::QString().number(m_img2atype,10)
+                +"&priority=0 HTTP/1.1";
         qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"urlchange_videosettings:"<<s;
         QUrl iniUrl(s);
         iniUrl.setPassword(USERPASS);
@@ -368,6 +409,21 @@ QString cCamera::title() const
         connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
         QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
     }
+    void cCamera::send_reset()
+    {
+        QString s;
+     //    http://192.168.1.168/vb.htm?ipcamrestartcmd
+        s="http://"+m_address+"/vb.htm?ipcamrestartcmd";
+
+        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"restart:"<<s;
+        QUrl iniUrl(s);
+        iniUrl.setPassword(USERPASS);
+        iniUrl.setUserName(USERNAME);
+        QNetworkRequest request(iniUrl);
+        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
+        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
+        QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
+    }
     void cCamera::loadResponce(QNetworkReply *pReply)
     {
         //
@@ -389,7 +445,7 @@ QString cCamera::title() const
     QString cCamera::combylist() const
     {
         QString s= TABLE_COMBY[0]+","+TABLE_COMBY[1]+","+TABLE_COMBY[2]+","+TABLE_COMBY[3];
-        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<s;
+        qDebug()<<"Cam"<<QString::number(m_index)<<"combylist():"<<s;
         return s;
     }
 
@@ -411,6 +467,7 @@ QString cCamera::title() const
         QString s="нет данных";
         return s;
     }
+
     void cCamera::get_parametrs()
     {
        if (m_index==0) return;
@@ -422,6 +479,17 @@ QString cCamera::title() const
        m_WebCtrl= new QNetworkAccessManager(this);
        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadINI(QNetworkReply*)));
        QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
+    }
+    int cCamera::parse_int(QString param){
+        QRegExp rx("^("+param+"=.*)");
+        QString s=m_parametr.at(m_parametr.indexOf(rx)); qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"loadINI videocodeccombo:"<<s;
+        QStringList sl=s.split("=");
+        s=sl.at(1);
+        bool ok; int c,r;
+        c=s.toInt(&ok,10);
+        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"loadINI "<<param<<":"<<c<<"ok:"<<ok;
+        if (ok) return c;
+        return 0;
     }
     void cCamera::loadINI(QNetworkReply* pReply)
     {
@@ -438,26 +506,22 @@ QString cCamera::title() const
             m_DownloadedData = pReply->readAll();
             m_parametr.clear(); m_parametr=::QString(m_DownloadedData).split("<br>",QString::SkipEmptyParts);
             m_camerapresent=true;  emit camerapresentChanged();
-            QRegExp rx("^(videocodeccombo=.*)");
-            QString s=m_parametr.at(m_parametr.indexOf(rx)); qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"loadINI videocodeccombo:"<<s;
-            QStringList sl=s.split("=");
-            s=sl.at(1);
             bool ok; int c,r;
-            c=s.toInt(&ok,10); if (ok) setVideocodeccombo(c);
-            qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"loadINI setVideocombo:"<<ok<<"c="<<c;
-            rx.setPattern("^(videocodecres=.*)");
-            s=m_parametr.at(m_parametr.indexOf(rx)); sl=s.split("=");
-            qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"loadINI videocodecres:"<<s;
-            s=sl.at(1);
-            r=s.toInt(&ok,10); if (ok) setVideocodecres(r);
+            c=parse_int("videocodeccombo"); setVideocodeccombo(c);
+            r=parse_int("videocodecres"); setVideocodecres(r);
             if (c==0&&r==0) m_comby=0;
             if (c==0&&r==3) m_comby=1;
             if (c==1&&r==0) m_comby=2;
             if (c==1&&r==3) m_comby=3;
             emit combyChanged();
-            qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"loadINI comby:"<<comby();
+            setBrightness(parse_int("brightness"));
+            setContrast(parse_int("contrast"));
+            setSaturation(parse_int("saturation"));
+            setSharpness(parse_int("sharpness"));
+            setColorkiller(parse_int("colorkiller"));
+            setImg2a(parse_int("img2a"));
+            setImg2atype(parse_int("img2atype"));
             qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"!!3";
-
         }
         qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"!!4";
         pReply->deleteLater();

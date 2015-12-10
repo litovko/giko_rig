@@ -26,13 +26,13 @@ bool XInput::initInput(int joystickId)
 {
     // see docs. SFML provides only static functions for Joystick class
     // so no initialization for hardware is required
-
+    //sf::Joystick::update();
     m_joystickId = joystickId;
 
     //m_f_haveJoystick = sf::Joystick::isConnected(m_joystickId);
     m_f_haveJoystick = true;
 
-	return true;
+    return m_f_haveJoystick;
 }
 
 bool XInput::releaseInput()

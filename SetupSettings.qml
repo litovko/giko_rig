@@ -8,10 +8,7 @@ import Gyco 1.0
 Item {
     id: settingsDialog
     visible: true
-    property RigCamera cam1: null
-    property RigCamera cam2: null
-    property RigCamera cam3: null
-    property VlcPlayer player: null
+    property list<RigCamera> cam
     property RigModel rig:null
 
     RegExpValidator{
@@ -79,11 +76,12 @@ Item {
             onClicked: {
                 rig.address=rig_address.text
                 rig.port=rig_port.text
-                cam2.index=cb_cam2.checked?2:0
-                cam3.index=cb_cam3.checked?3:0
-                cam1.address=cam1_address.text
-                cam2.address=cam2_address.text
-                cam3.address=cam3_address.text
+
+                win.cam2index=cb_cam2.checked?2:0
+                win.cam3index=cb_cam3.checked?3:0
+                cam[0].address=cam1_address.text
+                cam[1].address=cam2_address.text
+                cam[2].address=cam3_address.text
                 cb_cam1.checked=true;
 
                 console.log("cb"+cb_cam2.checked+" "+cb_cam3.checked)
@@ -143,7 +141,7 @@ Item {
                 y: -3
                 width: 96
                 height: 20
-                text: cam1.address
+                text: cam[0].address
                 readOnly: false
                 validator: adr_validator
                 placeholderText: qsTr("IP-адрес видеокамеры")
@@ -167,7 +165,7 @@ Item {
                 y: -3
                 width: 96
                 height: 20
-                text: cam2.address
+                text: cam[1].address
                 validator: adr_validator
                 opacity: 0.8
                 placeholderText: qsTr("IP-адрес видеокамеры")
@@ -190,7 +188,7 @@ Item {
                 y: -3
                 width: 96
                 height: 20
-                text: cam3.address
+                text: cam[2].address
                 validator: adr_validator
                 opacity: 0.8
                 placeholderText: qsTr("IP-адрес видеокамеры")
@@ -328,10 +326,10 @@ Item {
             id: cb_cam1
             x: 333
             y: 221
-            text: cam1.title
+            text: cam[0].title
             clip: false
             scale: 1
-            checked: cam1.index
+            checked: cam[0].index
 
         }
 
@@ -339,19 +337,30 @@ Item {
             id: cb_cam2
             x: 333
             y: 250
-            text: cam2.title
+            text: cam[1].title
             scale: 1
-            checked: cam2.index
+            checked: cam[1].index
         }
 
         CheckBox {
             id: cb_cam3
             x: 333
             y: 280
-            text: cam3.title
+            text: cam[2].title
             scale: 1
-            checked: cam3.index
+            checked: cam[2].index
         }
+
+//        MyLamp {
+//            id: joyLamp
+//            x: 228
+//            y: 160
+//            height: 50
+//            width: 50
+//            bottomText: "Джойстик"
+//            fontSize: 8
+//            active: j.ispresent
+//        }
     }
     
 }

@@ -25,10 +25,12 @@ signals:
     void ispresentChanged();
 public slots:
     void readJoystickState();
+    void checkJoystick();
 private:
     XInput input;
     bool m_ispresent=false;
     QTimer *timer_joystick;
+    QTimer *timer_checkjoystick;
     int m_xaxis;
     int m_yaxis;
     bool m_key_0=false;

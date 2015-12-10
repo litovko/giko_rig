@@ -7,13 +7,36 @@ cJoystick::cJoystick(QObject *parent) : QObject(parent)
     m_ispresent = input.initInput(0);
     emit ispresentChanged();
     //emit key_0Changed();
-    qDebug()<<"constructor m_key_0:"<<m_key_0;
+    qDebug()<<"Joystick present:"<<m_ispresent;
     if (m_ispresent) {
         timer_joystick = new QTimer(this);
 
         connect(timer_joystick,SIGNAL(timeout()),this,SLOT(readJoystickState()));
         timer_joystick->start(0);
     }
+//    else {
+//        m_xaxis=0; m_yaxis=0;
+//        timer_joystick = new QTimer(this);
+//        timer_checkjoystick = new QTimer(this);
+//        connect(timer_checkjoystick,SIGNAL(timeout()),this,SLOT(checkJoystick()));
+//        timer_checkjoystick->start(15000);
+//    }
+}
+void cJoystick::checkJoystick()
+{
+    m_ispresent = input.initInput(0);
+    qDebug()<<"Joystick"<<" "<<"0"<<" check:"<<m_ispresent;
+    qDebug()<<"Joystick"<<" "<<"1"<<" check:"<<input.initInput(1);
+    emit ispresentChanged();
+    if (m_ispresent) {
+    connect(timer_joystick,SIGNAL(timeout()),this,SLOT(readJoystickState()));
+    timer_joystick->start(0);
+    }
+    else {
+        timer_joystick->stop();
+        disconnect(timer_joystick,SIGNAL(timeout()),this,SLOT(readJoystickState()));
+    }
+
 }
 
 bool cJoystick::ispresent()
