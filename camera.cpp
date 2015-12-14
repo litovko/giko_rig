@@ -239,7 +239,25 @@ QString cCamera::title() const
         emit img2atypeChanged();
     }
 
+    bool cCamera::timeout() const
+    {
+        return m_timeout;
+    }
 
+    void cCamera::setTimeout(const int  &timeout)
+    {
+        m_timeout = true;
+        emit timeoutChanged();
+        timer_timeout.singleShot(timeout,this, SLOT(stoptimeout()));
+    }
+
+    void cCamera::stoptimeout()
+    {
+        m_timeout=false;
+        emit timeoutChanged();
+    }
+    
+    
 
     //#############
 
@@ -278,6 +296,8 @@ QString cCamera::title() const
 
     void cCamera::change_videopage()
     {
+        if (m_index==0||timeout()) return;
+        setTimeout(TIMEOUT);
         QString s;
         s="http://"+m_address+"/vb.htm?videocodec="+::QString().number(m_videocodec,10)
                 +"&videocodeccombo=" +::QString().number(m_videocodeccombo,10)
@@ -298,6 +318,7 @@ QString cCamera::title() const
     }
     void cCamera::change_videopagesettings()
     {
+        if (m_index==0||timeout()) return;
         QString s;
         s="http://" + m_address
                 + "/vb.htm?framerate1=0&bitrate1=4000&ratecontrol1=1&datestampenable1="+::QString().number(m_datestampenable,10)
@@ -321,7 +342,8 @@ QString cCamera::title() const
     }
     void cCamera::setTimesettings()
     {
-        if (m_index==0) return;
+        if (m_index==0||timeout()) return;
+        setTimeout(TIMEOUT);
         QString s;
         s="http://" + m_address
                 + "/vb.htm?timefrequency=-1&daylight=0&timezone=15&dateformat=2&tstampformat=1&dateposition=0&timeposition=0 HTTP/1.1";
@@ -337,6 +359,7 @@ QString cCamera::title() const
     //http://192.168.1.168/vb.htm?newdate=2012/12/09&newtime=13:18:33&dateformat=2&tstampformat=1&dateposition=0&timeposition=0
     void cCamera::setDateTimesettings()
     {
+        if (timeout()) return; else setTimeout(TIMEOUT);
         if (m_index==0) return;
         QString s;
         QDateTime t;
@@ -357,6 +380,7 @@ QString cCamera::title() const
 
     void cCamera::change_videosettings()
     {
+        if (m_index==0||timeout()) return;
         QString s;
         s="http://"+m_address+"/vb.htm?brightness="+::QString().number(m_brightness,10)
                 +"&contrast="+::QString().number(m_contrast,10)
@@ -411,6 +435,7 @@ QString cCamera::title() const
     }
     void cCamera::send_reset()
     {
+        if (timeout()) return; else setTimeout(TIMEOUT_RESET);
         QString s;
      //    http://192.168.1.168/vb.htm?ipcamrestartcmd
         s="http://"+m_address+"/vb.htm?ipcamrestartcmd";
@@ -470,7 +495,7 @@ QString cCamera::title() const
 
     void cCamera::get_parametrs()
     {
-       if (m_index==0) return;
+       if (m_index==0||timeout()) return;
        QUrl iniUrl("http://"+m_address+"/ini.htm");  //http://192.168.1.168/ini.htm
        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"Запрос параметров камеры" << iniUrl<<QTime().currentTime();
        iniUrl.setPassword(USERPASS);

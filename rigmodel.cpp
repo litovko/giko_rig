@@ -159,7 +159,7 @@ bool cRigmodel::engine() const
 {
     return m_engine;
 }
-\
+
 void cRigmodel::setJoystick(const int &joystick)
 {
     m_joystick = joystick;
@@ -169,6 +169,48 @@ void cRigmodel::setJoystick(const int &joystick)
 int cRigmodel::joystick() const
 {
     return m_joystick;
+}
+void cRigmodel::setJoystick_x1(const int &joystick)
+{
+    m_joystick_x1 = joystick;
+    emit joystick_x1Changed();
+}
+
+int cRigmodel::joystick_x1() const
+{
+    return m_joystick_x1;
+}
+//-------------------------------
+void cRigmodel::setJoystick_y1(const int &joystick)
+{
+    m_joystick_y1 = joystick;
+    emit joystick_y1Changed();
+}
+
+int cRigmodel::joystick_y1() const
+{
+    return m_joystick_y1;
+}
+//----------------------------------
+void cRigmodel::setJoystick_x2(const int &joystick)
+{
+    m_joystick_x2 = joystick;
+    emit joystick_x2Changed();
+}
+
+int cRigmodel::joystick_x2() const
+{
+    return m_joystick_x2;
+}
+void cRigmodel::setJoystick_y2(const int &joystick)
+{
+    m_joystick_y2 = joystick;
+    emit joystick_y2Changed();
+}
+
+int cRigmodel::joystick_y2() const
+{
+    return m_joystick_y2;
 }
 
 void cRigmodel::setAddress(const QString  &address)
@@ -300,9 +342,8 @@ void cRigmodel::sendData()
 
 // проверяем, есть ли подключение клиента. Если подключения нет, то ничего не отправляем.
     if (!m_client_connected) return;
-    Data="{ana1:"+::QString().number(int(m_joystick*127/100),10)+";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
+    Data="{ana1:"+::QString().number(int(m_joystick_y1*127/100),10)+";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
     qDebug()<<"Отправка данных"<<Data;
-    //qDebug()<<"Joystik:"<<::QString().number(m_joystick,10);
     bytesToWrite = (int)tcpClient.write(::QByteArray(Data.toLatin1()).data());
     if (bytesToWrite<0)qDebug()<<"Что то пошло не так при попытке отпраки данны >>>"+tcpClient.errorString();
     if (bytesToWrite>=0)qDebug()<<"Data sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);

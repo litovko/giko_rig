@@ -584,7 +584,7 @@ Item {
             y: 114
             width: 101
             height: 23
-            text: qsTr("Ресет камеры")
+            text: qsTr("Перезапуск камеры")
             tooltip: "Программынй ресет камеры"
             opacity: 0.8
             onClicked: cam[currentcam].send_reset();

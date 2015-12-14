@@ -11,7 +11,8 @@
 #define NUMROWS 40 //количество строк таблицы форматов видео
 #define USERNAME "user"
 #define USERPASS "9999"
-
+#define TIMEOUT 10000  // 5 секунд таймаут для установки видеорежимов
+#define TIMEOUT_RESET 25000 // 15 sec
 
 class cCamera : public QObject
 {
@@ -49,6 +50,9 @@ class cCamera : public QObject
     Q_PROPERTY(QString url2 READ url2 NOTIFY url2Changed) //Корректный URL для просмотра изображения второго потока камеры.
     Q_PROPERTY(bool videopage READ videopage WRITE setVideopage NOTIFY videopageChanged) // переменная для применения настроек комбинированных режимов к камере
     Q_PROPERTY(bool videosettings READ videosettings WRITE setVideosettings NOTIFY videosettingsChanged) // переменная для применения настроек яркости контрастности и проч камере
+    Q_PROPERTY(bool videosettings READ videosettings WRITE setVideosettings NOTIFY videosettingsChanged) // переменная для применения настроек яркости контрастности и проч камере
+    Q_PROPERTY(bool timeout READ timeout WRITE setTimeout NOTIFY timeoutChanged) // true - когда необходимо подождать выполнения предыдущей команды
+    
 
 public:
     explicit cCamera(QObject *parent = 0);
@@ -63,6 +67,8 @@ public:
     void setIndex(const int &index);
     int  index() const;
     bool camerapresent() const;
+    bool timeout() const;
+    void setTimeout(const int  &timeout);
     //#############
     void setVideocodec(const int &videocodec);
     int  videocodec() const;
@@ -149,6 +155,7 @@ signals:
     void img2atypeChanged();
 
     void downloaded();
+    void timeoutChanged();
 public slots:
     void saveSettings();
     void readSettings();
@@ -164,6 +171,7 @@ public slots:
     Q_INVOKABLE void send_reset();
     void loadINI(QNetworkReply *pReply); //получить параметры от камеры после ответа.   
     void loadResponce(QNetworkReply *pReply);
+    void stoptimeout();
 private:
     //переменные для загрузки INI-файла из камеры.
     QNetworkAccessManager *m_WebCtrl;
@@ -206,16 +214,14 @@ private:
     int m_colorkiller=0; //режим день/ночь
     int m_img2a=1;  // движок баланса белого
     int m_img2atype=3;
-//    http://192.168.1.168/vb.htm?brightness=128&contrast=128&saturation=128&sharpness=128&blc=1&dynrange=0&awb=0&colorkiller=1&exposurectrl=1&maxexposuretime=0&maxgain=0&nfltctrl=0&tnfltctrl=0&vidstb1=0&lensdistortcorrection=0&binning=2&img2a=1&backlight=1&histogram=0&img2atype=3&priority=0 HTTP/1.1
-//    http://192.168.1.168/vb.htm?paratest=reloadflag HTTP/1.1
-//    http://192.168.1.168/vb.htm?paratest=multicast HTTP/1.1
-
     int m_comby=0; // 0-4 комбинированные режимы согласно таблице
     QString TABLE_COMBY[4]={"Кодек H.264 HD 720",
                             "Кодек H.264 Full HD 1080",
                             "Кодек MPEG4 HD 720",
                             "Кодек MPEG4 Full HD 1080"};
     QTimer timer_check;
+    QTimer timer_timeout;
+    bool m_timeout=false;
 
 
 

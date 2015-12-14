@@ -10,7 +10,7 @@ Item {
     visible: true
     property list<RigCamera> cam
     property RigModel rig:null
-
+    onVisibleChanged: { cbj.checked=j.ispresent}
     RegExpValidator{
         id: adr_validator
         regExp: /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
@@ -88,6 +88,7 @@ Item {
                 rig.timer_send_interval=parseInt(rig_msec1.text);
                 rig.timer_connect_interval=parseInt(rig_msec2.text);
                 network_caching=parseInt(netcache.text);
+                j.ispresent=cbj.checked
             }
         }
         
@@ -272,7 +273,7 @@ Item {
             y: 397
             width: 479
             height: 33
-            title: qsTr("Путь к файлам видео")
+            title: qsTr("Путь к видеозаписям")
 
             Text {
                 id: tfilepath
@@ -351,6 +352,14 @@ Item {
             checked: cam[2].index
         }
 
+        CheckBox {
+            id: cbj
+            x: 19
+            y: 152
+            checked: j.ispresent
+            text: qsTr("Джойстик")
+        }
+
 //        MyLamp {
 //            id: joyLamp
 //            x: 228
@@ -358,9 +367,9 @@ Item {
 //            height: 50
 //            width: 50
 //            bottomText: "Джойстик"
-//            fontSize: 8
-//            active: j.ispresent
-//        }
+        //            fontSize: 8
+        //            active: j.ispresent
+        //        }
     }
     
 }

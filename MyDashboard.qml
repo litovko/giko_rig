@@ -49,13 +49,37 @@ Item {
             }
         }
         border.color: "yellow"
+        border.width: ma.containsMouse?3:1;
         opacity: 0.9
         Rectangle {
             id: r
             anchors { fill: parent; margins: 10}
             color: "transparent"
             border.color: "white"
+            border.width: ma.containsMouse?2:1;
             radius: 7
+            MouseArea{
+                id: ma
+                anchors.fill: parent
+                hoverEnabled: true
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onReleased: {
+                    j.yaxis=0;
+                }
+
+                onPressed: {
+                    j.yaxis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
+                    //console.log("Joy Y:"+j.yaxis)
+                    j.ispresent=false;
+                }
+                onPositionChanged: {
+                    if (ma.pressedButtons&(Qt.LeftButton|Qt.RightButton)&&ma.containsMouse)
+                    j.yaxis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
+                    else j.yaxis=0;
+                    //console.log("Joy Y:"+j.yaxis+"btn:"+(ma.pressedButtons&(Qt.LeftButton|Qt.RightButton)))
+
+                }
+            }
             Column{
             spacing: 20
 

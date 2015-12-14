@@ -17,7 +17,7 @@ Window {
     color: "transparent"
     property int recording: 0
     property int network_caching: 250
-    property int current_cam: 0
+    property int keyboard_count: 3
     property string filepath: ""
     property string cam1title:"cam1"
     property string cam2title:"cam2"
@@ -33,7 +33,7 @@ Window {
                 stop();
                 playlist.clear();
                 playlist.addWithOptions(cam1.url1,getrecordoption(1));
-                play();
+                if(cams[0].index)play();
 
             }
         },
@@ -44,7 +44,7 @@ Window {
                 stop();
                 playlist.clear();
                 playlist.addWithOptions(cam2.url1,getrecordoption(2));
-                play();
+                if(cams[1].index)play();
 
             }
         },
@@ -55,7 +55,7 @@ Window {
                 stop();
                 playlist.clear();
                 playlist.addWithOptions(cam3.url1,getrecordoption(3));
-                play();
+                if(cams[2].index)play();
 
             }
         }
@@ -93,12 +93,11 @@ Window {
         property alias cam1index:win.cam1index
         property alias cam2index:win.cam2index
         property alias cam3index:win.cam3index
-        property alias current_cam: win.current_cam
     }
     function player_play(player_number){
         players[player_number].stop();
         players[player_number].playlist.clear();
-        players[player_number].playlist.addWithOptions(cam1.url1,getrecordoption());
+        players[player_number].playlist.addWithOptions(cam1.url1,getrecordoption(player_number));
         players[player_number].play();
     }
 
@@ -115,14 +114,16 @@ Window {
     }
     function getrecordoption(camindex){
         var dt=new Date();
+        if (camindex===undefined) console.assert("getrecordoption camindex undefined!!!")
         var sopt=[":network-caching="+network_caching.toString(), ":sout-all", ":sout-keep" ];
         console.log("Options without record:"+sopt);
         if (recording===0) return sopt;
-        console.log("Current time for filename");
-        console.log(dt);
-        console.log("FilePath:"+filepath);
+        console.log("Camindex="+camindex);
+        console.log("Camindex="+camindex+"cam:" +cams[camindex].title+"text:"+cams[camindex].overlaytext);
+        console.log("FN Time:"+ dt + "FilePath:"+filepath );
         var popt=[":network-caching="+network_caching.toString(),":sout=#stream_out_duplicate{dst=display,dst=std{access=file,mux=mp4,dst="+filepath+"hyco-"
-                  +"cam"+camindex+"-"
+                  +"cam"+(camindex+1)+"-"
+                  +cams[camindex].overlaytext + "-"
                   + dt.toLocaleString(Qt.locale(),"dd-MM-yyyy_HH-mm-ss")
                   +".mpg}}"]
         console.log("Options with record:"+popt);
@@ -130,9 +131,27 @@ Window {
     }
     RigModel {
         id: rig
-        joystick: j.yaxis
+        joystick_y1: j.yaxis
     }
+    function changestate(){
+                    console.log("STATE: "+mainRect.state + " ind:" +cams[0].index+cams[1].index+cams[2].index);
+                    console.log((cams[1].index+cams[2].index)===2);
+                    if ((cams[1].index+cams[2].index)===0) // только одна камера
+                        if (mainRect.state==="1-KAM-bol") mainRect.state="1-KAM-mal"
+                        else mainRect.state="1-KAM-bol"
+                    if ((cams[1].index+cams[2].index)===2) // две камеры
+                        if (mainRect.state==="2-KAM-mal") mainRect.state="2-KAM-bol1"
+                        else if (mainRect.state==="2-KAM-bol1") mainRect.state="2-KAM-bol2"
+                             else mainRect.state="2-KAM-mal"
 
+                    if ((cams[1].index+cams[2].index)===5) //три камеры
+                    if (mainRect.state==="3-KAM-mal") mainRect.state="3-KAM-bol1"
+                    else if (mainRect.state==="3-KAM-bol1") mainRect.state="3-KAM-bol2"
+                         else if (mainRect.state==="3-KAM-bol2") mainRect.state="3-KAM-bol3"
+                              else if (mainRect.state==="3-KAM-bol3") mainRect.state="3-KAM-mal"
+                                   else mainRect.state="3-KAM-mal"
+
+                }
     Rectangle {
         id: mainRect
         color: 'black';
@@ -141,7 +160,7 @@ Window {
         radius:20
         border.width: 3
         focus:true
-        state: "LAYOUT1"
+        state: "1-KAM-bol"
 //        property list<VlcVideoSurface> surfs: [suface1, surface2, surface3]
             VlcVideoSurface {
                 id: surface1
@@ -154,31 +173,102 @@ Window {
                 height: mainRect.height / 1 - anchors.topMargin * 2;
                 opacity: 1;
                 visible: true
+                Behavior on opacity {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                Behavior on width{
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                Behavior on height {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
             }
             VlcVideoSurface {
                 id: surface2
                 source: win.players[1];
                 anchors.top: mainRect.top;
                 anchors.topMargin: 10;
-                anchors.left: surface1.right;
+                anchors.left: mainRect.left;
                 anchors.leftMargin: anchors.topMargin;
                 width: mainRect.width / 1 - anchors.leftMargin * 2;
                 height: mainRect.height / 1 - anchors.topMargin * 2;
                 opacity: 1;
                 visible: false
+                Behavior on opacity {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                Behavior on width{
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                Behavior on height {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
             }
             VlcVideoSurface {
                 id: surface3
                 source: win.players[2];
                 anchors.top: mainRect.top;
                 anchors.topMargin: 10;
-                anchors.left: surface2.right;
+                anchors.left: mainRect.left;
                 anchors.leftMargin: anchors.topMargin;
                 width: mainRect.width / 1 - anchors.leftMargin * 2;
                 height: mainRect.height / 1 - anchors.topMargin * 2;
                 opacity: 1;
                 visible: false
+                Behavior on opacity {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                Behavior on width{
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                Behavior on height {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
             }
+        Keys.onReleased: {
+            console.log("Released:"+j.yaxis)
+
+        }
+        Keys.onNoPressed: {
+            if (!j.ispresent)j.yaxis= j.yaxis-Math.sign(j.yaxis)
+            console.log("NoPressed:"+j.yaxis)
+        }
 
         Keys.onPressed: {
             console.log("key pressed"+event.key);
@@ -194,14 +284,23 @@ Window {
                 menu.visible=false;
             }
             if (event.key === Qt.Key_F5) {
-                player_play(current_cam);
-                player_play(1);
-                player_play(2);
+                if(cams[0].index>0) player_play(0);
+                if(cams[1].index>0) player_play(1);
+                if(cams[2].index>0) player_play(2);
             }
             if (event.key === Qt.Key_F6) {
-                players[current_cam].stop();
+                players[0].stop();
                 players[1].stop();
                 players[2].stop();
+            }
+            if (event.key === Qt.Key_Down) {
+                j.ispresent=false
+                if(j.yaxis>-127) j.yaxis=j.yaxis-1;
+            }
+            if (event.key === Qt.Key_Up) {
+                j.ispresent=false
+                if(j.yaxis<127) j.yaxis=j.yaxis+1;
+                console.log("j.yaxis:"+j.yaxis)
             }
             if (event.key === Qt.Key_F12) win.visibility= win.visibility===Window.FullScreen?Window.Windowed:Window.FullScreen;
         }
@@ -223,10 +322,19 @@ Window {
             z: 3
             border.color: "yellow"
             radius: 10
-            color: "transparent"
+            GradientStop {
+                position: 0.00;
+                color: "#000000";
+            }
+            GradientStop {
+                position: 1.00;
+                color: "transparent";
+            }
+            opacity: 0.8
+            color: "black"
             //width:parent.width
             height: 40
-            width: mainRect.width
+            width: mainRect.width-height
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 bottom: parent.bottom
@@ -242,7 +350,12 @@ Window {
                     margins: 10
                 }
                 Text {
-                    text: mainRect.state.toString()
+                    text: "Тип аппарата:" + rig.rigtype
+                    color: "lightblue"
+                    font.pointSize: 12
+                }
+                Text {
+                    text: "Вид:"+mainRect.state.toString()
                     color: "lightblue"
                     font.pointSize: 12
                 }
@@ -258,6 +371,7 @@ Window {
                     id: t2
                     color: "yellow"
                     font.pointSize: 12
+                    visible: cams[1].index
                     //anchors.centerIn: parent
                     text: "Статус видео 2: "+statename(vlcPlayer2.state)
                 }
@@ -265,6 +379,7 @@ Window {
                     id: t3
                     color: "yellow"
                     font.pointSize: 12
+                    visible: cams[2].index
                     //anchors.centerIn: parent
                     text: "Статус видео 3: "+statename(vlcPlayer3.state)
                 }
@@ -276,26 +391,8 @@ Window {
         MouseArea {
             anchors.fill: parent
             acceptedButtons: Qt.AllButtons
-            onClicked: {
-                if (mouse.button == Qt.RightButton){
-                    console.log(rig.server_connected?"black":"white");
-                    console.log(rig.lamp?"on":"off");
-                    rig.pressure=111;
-                    rig.lamp=rig.lamp?false:true;
-                    rig.start_client();
-                }
-                else
-                    //                   Qt.quit();
-                    console.log("Mouse: left botton pressed");
-            }
-            onDoubleClicked: {
-                console.log("STATE: "+mainRect.state);
-                if (mainRect.state==="LAYOUT0") mainRect.state="LAYOUT1"
-                else if (mainRect.state==="LAYOUT1") mainRect.state="LAYOUT2"
-                     else if (mainRect.state==="LAYOUT2") mainRect.state="LAYOUT3"
-                          else if (mainRect.state==="LAYOUT3") mainRect.state="LAYOUT0"
 
-            }
+            onDoubleClicked: changestate()
         }
         Column {
             spacing: 20
@@ -369,6 +466,7 @@ Window {
                 border.color: "black"
                 RigJoystick {
                     id: j
+                    onKey_1Changed: if (key_1) changestate()
                 }
 
                 Slider {
@@ -386,6 +484,7 @@ Window {
         }
         MyDashboard {
             //height: 600
+            id: dashboard
             width: 180
             source: rig
             anchors { margins: 10; bottomMargin: 100; top: parent.top; bottom: parent.bottom; right: parent.right}
@@ -394,29 +493,113 @@ Window {
         //###################################################################################################
         states: [
             State { // первая камера
-                name: "LAYOUT1"
-                PropertyChanges { target: surface1;  visible: true; width: mainRect.width / 1 - anchors.leftMargin * 2; anchors.left: mainRect.left}
-                PropertyChanges { target: surface2;  visible: false; width: mainRect.width / 3}
-                PropertyChanges { target: surface3;  visible: false; width: mainRect.width / 3}
+                name: "3-KAM-bol1"
+                PropertyChanges { target: surface1; z: 0;opacity: 1; visible: true;
+                    height: mainRect.height / 1 - anchors.topMargin * 2;
+                    width: mainRect.width / 1 - anchors.leftMargin * 2;
+                    anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface2; z: 1; opacity: 0.6; visible: true; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface3; z: 1; opacity: 0.6; visible: true; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface2.bottom}
 
             },
             State { // три камеры рядом
-                name: "LAYOUT0"
-                PropertyChanges { target: surface1;  visible: true; width: mainRect.width / 3}
-                PropertyChanges { target: surface2;  visible: true; width: mainRect.width / 3}
-                PropertyChanges { target: surface3;  visible: true; width: mainRect.width / 3}
+                name: "3-KAM-mal"
+                PropertyChanges { target: surface3; z: 0; opacity: 1; visible: true;
+                    height:mainRect.height/3;
+                    width: mainRect.width / 3 - anchors.leftMargin * 2;
+                    anchors.top: mainRect.top; anchors.left: mainRect.left}
+                PropertyChanges { target: surface2; z: 0; opacity: 1; visible: true;
+                    height:mainRect.height/3;
+                    width: mainRect.width / 3 - anchors.leftMargin * 2;
+                    anchors.top: mainRect.top; anchors.left: surface3.right}
+                PropertyChanges { target: surface1; z: 0; opacity: 1; visible: true;
+                    height:mainRect.height/3;
+                    width: mainRect.width / 3 - anchors.leftMargin * 2;
+                    anchors.top: surface2.bottom; anchors.left: surface3.right}
             },
             State { //
-                name: "LAYOUT2"
-                PropertyChanges { target: surface2;  visible: true; width: mainRect.width / 1 - anchors.leftMargin * 2; anchors.left: mainRect.left}
-                PropertyChanges { target: surface1;  visible: false; width: mainRect.width / 3}
-                PropertyChanges { target: surface3;  visible: false; width: mainRect.width / 3}
+                name: "3-KAM-bol2"
+                PropertyChanges { target: surface2; z: 0; opacity: 1; visible: true;
+                    height: mainRect.height / 1 - anchors.topMargin * 2;
+                    width: mainRect.width / 1 - anchors.leftMargin * 2; anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface1; z: 1; opacity: 0.6; visible: true; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface3; z: 1; opacity: 0.6; visible: true; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface1.bottom}
             },
             State { //
-                name: "LAYOUT3"
-                PropertyChanges { target: surface3;  visible: true; width: mainRect.width / 1 - anchors.leftMargin * 2; anchors.left: mainRect.left}
-                PropertyChanges { target: surface1;  visible: false;  width: mainRect.width / 3}
-                PropertyChanges { target: surface2;  visible: false; width: mainRect.width / 3}
+                name: "3-KAM-bol3"
+                PropertyChanges { target: surface3; z: 0; opacity: 1; visible: true;
+                    height: mainRect.height / 1 - anchors.topMargin * 2;
+                    width: mainRect.width / 1 - anchors.leftMargin * 2; anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface2; z: 1; opacity: 0.6; visible: true; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface1; z: 1; opacity: 0.6; visible: true; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface2.bottom}
+            },
+            State { // одна камера во весь экран
+                name: "1-KAM-bol"
+                PropertyChanges { target: surface1; z: 0; opacity: 1; visible: true;
+                    height: mainRect.height / 1 - anchors.topMargin * 2;
+                    width: mainRect.width / 1 - anchors.leftMargin * 2;
+                    anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface2; visible:cams[1].index;}
+                PropertyChanges { target: surface3; visible:cams[2].index;}
+            },
+            State { // одна камера часть экрана
+                name: "1-KAM-mal"
+                PropertyChanges { target: surface1; z: 0; opacity: 1; visible: true;
+                    height: mainRect.height-dashboard.width;
+                    width: mainRect.width - dashboard.width;
+                    anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface2; visible:cams[1].index;}
+                PropertyChanges { target: surface3; visible:cams[2].index;}
+            },
+            State { // две камеры, одинаковые
+                name: "2-KAM-mal"
+                PropertyChanges { target: surface1; z: 0; opacity: 1; visible: true;
+                    height: mainRect.height / 2 - anchors.topMargin * 2;
+                    width: mainRect.width / 2 - anchors.leftMargin * 2;
+                    anchors.left: mainRect.left; anchors.top: mainRect.top
+                }
+                PropertyChanges { target: surface2; visible:cams[1].index; opacity: 1
+                    height: mainRect.height / 2 - anchors.topMargin * 2;
+                    width: mainRect.width / 2 - anchors.leftMargin * 2;
+                    anchors.left: mainRect.left; anchors.top: surface1.bottom
+                }
+                PropertyChanges { target: surface3; visible:cams[2].index;}
+            },
+            State { // две камеры, первая большая
+                name: "2-KAM-bol1"
+                PropertyChanges { target: surface1; z: 0; opacity: 1; visible: true;
+                    height: mainRect.height / 1 - anchors.topMargin * 2;
+                    width: mainRect.width / 1 - anchors.leftMargin * 2;
+                    anchors.left: mainRect.left; anchors.top: mainRect.top
+                }
+                PropertyChanges { target: surface2; visible:cams[1].index; opacity: 0.8;
+                    height: mainRect.height / 4 - anchors.topMargin * 2;
+                    width: mainRect.width / 4 - anchors.leftMargin * 2;
+                    anchors.left: mainRect.left; anchors.top: mainRect.top
+                }
+                PropertyChanges { target: surface3; visible:cams[2].index; opacity: 0.8;
+                    height: mainRect.height / 4 - anchors.topMargin * 2;
+                    width: mainRect.width / 4 - anchors.leftMargin * 2;
+                    anchors.left: mainRect.left; anchors.top: mainRect.top
+                }
+            },
+            State { // две камеры, первая большая
+                name: "2-KAM-bol2"
+                PropertyChanges { target: surface2; z: 0; opacity: 1; visible:cams[1].index;
+                    height: mainRect.height / 1 - anchors.topMargin * 2;
+                    width: mainRect.width / 1 - anchors.leftMargin * 2;
+                    anchors.left: mainRect.left; anchors.top: mainRect.top
+                }
+                PropertyChanges { target: surface3; z: 0; opacity: 1; visible:cams[2].index;
+                    height: mainRect.height / 1 - anchors.topMargin * 2;
+                    width: mainRect.width / 1 - anchors.leftMargin * 2;
+                    anchors.left: mainRect.left; anchors.top: mainRect.top
+                }
+                PropertyChanges { target: surface1; visible: true; opacity: 0.8;
+                    height: mainRect.height / 4 - anchors.topMargin * 2;
+                    width: mainRect.width / 4 - anchors.leftMargin * 2;
+                    anchors.left: mainRect.left; anchors.top: mainRect.top
+                }
             }
         ]
         //###################################################################################################
@@ -447,6 +630,13 @@ Window {
         cam: win.cams
         rig: rig
         visible: false
+    }
+    MyHourglass {
+        x: 300
+        y: 300
+        z:10
+        anchors.centerIn: parent
+        visible: cam1.timeout|cam2.timeout|cam3.timeout
     }
 }
 

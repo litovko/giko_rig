@@ -38,6 +38,24 @@ void cJoystick::checkJoystick()
     }
 
 }
+void cJoystick::setXaxis(const int &axis)
+{
+    m_xaxis=axis;
+    emit xaxisChanged();
+}
+
+void cJoystick::setYaxis(const int &axis)
+{
+    m_yaxis=axis;
+    emit yaxisChanged();
+
+}
+void cJoystick::setIspresent (const bool &pr)
+{
+    m_ispresent=pr;
+    emit ispresentChanged();
+}
+
 
 bool cJoystick::ispresent()
 {
@@ -59,13 +77,18 @@ bool cJoystick::key_0()
     return m_key_0;
 }
 
+bool cJoystick::key_1()
+{
+    return m_key_1;
+}
+
 void cJoystick::readJoystickState()
 {
     //qDebug()<<"is present"<<m_ispresent;
     if (!input.updateState()) return;
 
     // Update main axes
-
+    if (!m_ispresent) return;
     m_yaxis=-input.getVertical()*127;
     emit yaxisChanged();
     m_xaxis=input.getHorizontal()*127;
@@ -74,6 +97,11 @@ void cJoystick::readJoystickState()
     if (k!=m_key_0) {
         m_key_0=k;
         emit key_0Changed();
+    }
+    k=input.isKeyPressed(1);
+    if (k!=m_key_1) {
+        m_key_1=k;
+        emit key_1Changed();
     }
 
 }

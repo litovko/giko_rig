@@ -23,6 +23,12 @@ class cRigmodel : public QObject
     Q_PROPERTY(bool lamp READ lamp WRITE setLamp NOTIFY lampChanged)
     Q_PROPERTY(bool engine READ engine WRITE setEngine NOTIFY engineChanged)  //включение выключение мотора
     Q_PROPERTY(int joystick READ joystick WRITE setJoystick NOTIFY joystickChanged)
+
+    Q_PROPERTY(int joystick_x1 READ joystick_x1 WRITE setJoystick_x1 NOTIFY joystick_x1Changed)
+    Q_PROPERTY(int joystick_y1 READ joystick_y1 WRITE setJoystick_y1 NOTIFY joystick_y1Changed)
+    Q_PROPERTY(int joystick_x2 READ joystick_x2 WRITE setJoystick_x2 NOTIFY joystick_x2Changed)
+    Q_PROPERTY(int joystick_y2 READ joystick_y2 WRITE setJoystick_y2 NOTIFY joystick_y2Changed)
+
     Q_PROPERTY(bool camera READ camera WRITE setCamera NOTIFY cameraChanged)
     //############ адрес и порт
     Q_PROPERTY(QString address READ address WRITE setAddress NOTIFY addressChanged)
@@ -83,6 +89,15 @@ public:
     void setJoystick(const int &joystick);
     int joystick() const;
 
+    void setJoystick_x1(const int &joystick);
+    int joystick_x1() const;
+    void setJoystick_y1(const int &joystick);
+    int joystick_y1() const;
+    void setJoystick_x2(const int &joystick);
+    int joystick_x2() const;
+    void setJoystick_y2(const int &joystick);
+    int joystick_y2() const;
+
     bool client_connected()const;
     bool good_data()const;
 
@@ -98,6 +113,10 @@ signals:
     void lampChanged();
     void engineChanged();
     void joystickChanged();
+    void joystick_x1Changed();
+    void joystick_y1Changed();
+    void joystick_x2Changed();
+    void joystick_y2Changed();
     void cameraChanged();
     void addressChanged();
     void portChanged();
@@ -140,6 +159,10 @@ private:
     bool m_camera=false;
     bool m_engine=false;
     int m_joystick=0;
+    int m_joystick_x1=0;
+    int m_joystick_y1=0;
+    int m_joystick_x2=0;
+    int m_joystick_y2=0;
     bool m_good_data=false;
 
 
