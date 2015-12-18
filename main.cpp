@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 {
     RegisterQmlVlc();
     QSettings settings(giko_name, giko_program);
-    int cache=settings.value("network_caching",333).toInt();
+    int cache=settings.value("network_caching",150).toInt();
     QmlVlcConfig& config = QmlVlcConfig::instance();
     config.enableAdjustFilter( true );
     config.enableMarqueeFilter( true );
@@ -65,11 +65,6 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-
-//############### такой код генерирует QT
-//    QQmlApplicationEngine engine;
-//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-//#########################################################
     return app.exec();
 }
 

@@ -131,7 +131,7 @@ Window {
     }
     RigModel {
         id: rig
-        joystick_y1: j.yaxis
+        joystick_y1: j.y1axis
     }
     function changestate(){
                     console.log("STATE: "+mainRect.state + " ind:" +cams[0].index+cams[1].index+cams[2].index);
@@ -261,20 +261,18 @@ Window {
                             }
                         }
             }
-        Keys.onReleased: {
-            console.log("Released:"+j.yaxis)
 
-        }
-        Keys.onNoPressed: {
-            if (!j.ispresent)j.yaxis= j.yaxis-Math.sign(j.yaxis)
-            console.log("NoPressed:"+j.yaxis)
-        }
 
         Keys.onPressed: {
             console.log("key pressed"+event.key);
             if (event.key === Qt.Key_F2) rig.lamp=rig.lamp?false:true;
             if (event.key === Qt.Key_F3) rig.camera=rig.camera?false:true;;
             if (event.key === Qt.Key_F4) rig.engine=rig.engine?false:true;
+            if (event.key === Qt.Key_F8) {
+                if (dashboard.state==="grab2") dashboard.state="grab6"
+                else if (dashboard.state==="grab6") dashboard.state="gkgbu"
+                     else  dashboard.state="grab2"
+            }
             if (event.key === Qt.Key_F10) {
                 menu.visible=menu.visible?false:true;
                 settings.visible=false;
@@ -295,12 +293,12 @@ Window {
             }
             if (event.key === Qt.Key_Down) {
                 j.ispresent=false
-                if(j.yaxis>-127) j.yaxis=j.yaxis-1;
+                if(j.y1axis>-127) j.y1axis=j.y1axis-1;
             }
             if (event.key === Qt.Key_Up) {
                 j.ispresent=false
-                if(j.yaxis<127) j.yaxis=j.yaxis+1;
-                console.log("j.yaxis:"+j.yaxis)
+                if(j.y1axis<127) j.y1axis=j.y1axis+1;
+                console.log("j.y1axis:"+j.y1axis)
             }
             if (event.key === Qt.Key_F12) win.visibility= win.visibility===Window.FullScreen?Window.Windowed:Window.FullScreen;
         }
@@ -341,6 +339,7 @@ Window {
                 //right: parent.right
                 margins: 10
             }
+
             Row {
                 spacing: 10
                 anchors {
@@ -394,100 +393,105 @@ Window {
 
             onDoubleClicked: changestate()
         }
-        Column {
-            spacing: 20
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.margins: 20
-            Rectangle{
-                width: 200
-                height: 20
-                color: "transparent"
-                border.color: "black"
+//        Column {
+//            spacing: 20
+//            anchors.top: parent.top
+//            anchors.left: parent.left
+//            anchors.margins: 20
+//            Rectangle{
+//                width: 200
+//                height: 20
+//                color: "transparent"
+//                border.color: "black"
 
-                Slider {
-                    id: s1
-                    value:15
-                    anchors.fill: parent
-                    maximumValue: 100
-                    stepSize: 1
-                    onValueChanged: rig.ampere=value
-                }
-            }
-            Rectangle{
-                width: 200
-                height: 20
-                color: "transparent"
-                border.color: "black"
+//                Slider {
+//                    id: s1
+//                    value:15
+//                    anchors.fill: parent
+//                    maximumValue: 100
+//                    stepSize: 1
+//                    onValueChanged: rig.ampere=value
+//                }
+//            }
+//            Rectangle{
+//                width: 200
+//                height: 20
+//                color: "transparent"
+//                border.color: "black"
 
-                Slider {
-                    id: s2
-                    value:24
-                    anchors.fill: parent
-                    maximumValue: 50
-                    stepSize: 1
-                    onValueChanged: rig.voltage=value
-                }
-            }
-            Rectangle{
-                width: 200
-                height: 20
-                color: "transparent"
-                border.color: "black"
+//                Slider {
+//                    id: s2
+//                    value:24
+//                    anchors.fill: parent
+//                    maximumValue: 50
+//                    stepSize: 1
+//                    onValueChanged: rig.voltage=value
+//                }
+//            }
+//            Rectangle{
+//                width: 200
+//                height: 20
+//                color: "transparent"
+//                border.color: "black"
 
-                Slider {
-                    id: s3
-                    value:24
-                    anchors.fill: parent
-                    maximumValue: 200
-                    stepSize: 1
-                    onValueChanged: rig.temperature=value
-                }
-            }
-            Rectangle{
-                width: 200
-                height: 20
-                color: "transparent"
-                border.color: "black"
+//                Slider {
+//                    id: s3
+//                    value:24
+//                    anchors.fill: parent
+//                    maximumValue: 200
+//                    stepSize: 1
+//                    onValueChanged: rig.temperature=value
+//                }
+//            }
+//            Rectangle{
+//                width: 200
+//                height: 20
+//                color: "transparent"
+//                border.color: "black"
 
-                Slider {
-                    id: s4
-                    value:24
-                    anchors.fill: parent
-                    maximumValue: 200
-                    stepSize: 1
-                    onValueChanged: rig.pressure=value
-                }
-            }
-            Rectangle{
-                width: 200
-                height: 20
-                color: "transparent"
-                border.color: "black"
-                RigJoystick {
-                    id: j
-                    onKey_1Changed: if (key_1) changestate()
-                }
-
-                Slider {
-                    id: s5
-                    value:j.yaxis
-                    anchors.fill: parent
-                    maximumValue: 127
-                    minimumValue: -127
-                    stepSize: 1
-                    onValueChanged: rig.joystick=value
-                }
-            }
+//                Slider {
+//                    id: s4
+//                    value:24
+//                    anchors.fill: parent
+//                    maximumValue: 200
+//                    stepSize: 1
+//                    onValueChanged: rig.pressure=value
+//                }
+//            }
+//            Rectangle{
+//                width: 200
+//                height: 20
+//                color: "transparent"
+//                border.color: "black"
 
 
+//                Slider {
+//                    id: s5
+//                    value:j.yaxis
+//                    anchors.fill: parent
+//                    maximumValue: 127
+//                    minimumValue: -127
+//                    stepSize: 1
+//                    onValueChanged: rig.joystick=value
+//                }
+//            }
+//        }
+        RigJoystick {
+            id: j
+            onKey_1Changed: if (key_1) changestate()
         }
         MyDashboard {
-            //height: 600
+            height: 600
             id: dashboard
             width: 180
             source: rig
-            anchors { margins: 10; bottomMargin: 100; top: parent.top; bottom: parent.bottom; right: parent.right}
+            state: rig.rigtype
+            containerheight: parent.height
+            anchors { margins: 10;
+                      //bottomMargin: 100;
+                      //bottom: parent.bottom;
+                      top: parent.top;
+                      right: parent.right}
         }
 
         //###################################################################################################
@@ -630,6 +634,7 @@ Window {
         cam: win.cams
         rig: rig
         visible: false
+
     }
     MyHourglass {
         x: 300

@@ -3,6 +3,14 @@
 #include <QTime>
 
 
+
+//qDebug("idx: %d, name: %s (axes: %d, buttons: %d, hats: %d)",
+//       j->index,
+//       j->name.toLatin1().data(),
+//       j->numAxes,
+//       j->numButtons,
+//       j->numHats);
+
 cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 {
     readSettings();
@@ -18,6 +26,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     //при изменении пользователем любого параметра сразу передаем данные
     connect(this, SIGNAL(lampChanged()),this, SLOT(sendData()));
     connect(this, SIGNAL(engineChanged()),this, SLOT(sendData()));
+    connect(this, SIGNAL(pumpChanged()),this, SLOT(sendData()));
     //connect(this, SIGNAL(joystickChanged()),this, SLOT(sendData()));
     connect(this, SIGNAL(cameraChanged()),this, SLOT(sendData()));
 
@@ -81,6 +90,17 @@ int cRigmodel::voltage() const
     return m_voltage;
 }
 
+void cRigmodel::setVoltage24(const int &voltage)
+{
+    m_voltage24 = voltage;
+    emit voltage24Changed();
+}
+
+int cRigmodel::voltage24() const
+{
+    return m_voltage24;
+}
+
 void cRigmodel::setAmpere(const int &ampere)
 {
     m_ampere = ampere;
@@ -118,6 +138,7 @@ void cRigmodel::setRigtype(const QString &rigtype)
 {
     m_rigtype = rigtype;
     emit rigtypeChanged();
+    qDebug()<<"Rig: rigtype:"<<m_rigtype;
 }
 
 QString cRigmodel::rigtype() const
@@ -160,16 +181,17 @@ bool cRigmodel::engine() const
     return m_engine;
 }
 
-void cRigmodel::setJoystick(const int &joystick)
+void cRigmodel::setPump(const bool &pump)
 {
-    m_joystick = joystick;
-    emit joystickChanged();
+    m_pump = pump;
+    emit pumpChanged();
 }
 
-int cRigmodel::joystick() const
+bool cRigmodel::pump() const
 {
-    return m_joystick;
+    return m_pump;
 }
+
 void cRigmodel::setJoystick_x1(const int &joystick)
 {
     m_joystick_x1 = joystick;
@@ -337,7 +359,10 @@ void cRigmodel::displayError(QAbstractSocket::SocketError socketError)
 void cRigmodel::sendData()
 {
     char data[5]={0,32,33,34,35};
-    data[0] = m_lamp*4+m_engine*1+m_camera*8;
+    data[0] = m_engine*1
+            +   m_pump*2
+            +   m_lamp*4
+            + m_camera*8;
     QString Data; // Строка отправки данных.
 
 // проверяем, есть ли подключение клиента. Если подключения нет, то ничего не отправляем.
@@ -345,7 +370,7 @@ void cRigmodel::sendData()
     Data="{ana1:"+::QString().number(int(m_joystick_y1*127/100),10)+";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
     qDebug()<<"Отправка данных"<<Data;
     bytesToWrite = (int)tcpClient.write(::QByteArray(Data.toLatin1()).data());
-    if (bytesToWrite<0)qDebug()<<"Что то пошло не так при попытке отпраки данны >>>"+tcpClient.errorString();
+    if (bytesToWrite<0)qWarning()<<"Что то пошло не так при попытке отпраки данных >>>"+tcpClient.errorString();
     if (bytesToWrite>=0)qDebug()<<"Data sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
 }
 
@@ -359,11 +384,8 @@ void cRigmodel::readData()
     int m;
     Data = tcpClient.readAll();
     qDebug()<<"read :"<<Data;
-
-    // надо распрасить строчку
     // {toil=29;poil=70;drpm=15;pwrv=33;pwra=3}FAFBFCFD
-    // проверяем на наличие {}
-    m_good_data = false; emit good_dataChanged();
+    //m_good_data = false; emit good_dataChanged();
     if (Data.startsWith("{")&&(m=Data.indexOf("}"))>0) {
         m_good_data = true; emit good_dataChanged();
         CRC=Data.mid(m+1);
@@ -383,28 +405,39 @@ void cRigmodel::readData()
             qDebug()<<"tag:"<<s<<"value:"<<val;
             if (s=="toil") {
                 m_temperature=val.toInt(&ok,10); emit temperatureChanged();
-                if(!ok) {m_good_data = false; emit good_dataChanged();}
+                if(!ok) {m_good_data = false; emit good_dataChanged();
+                qWarning()<<"Rig no good data for "<<"toil:"<<val;}
             }
             if (s=="poil"){
                 m_pressure=val.toInt(&ok,10); emit pressureChanged();
-                if(!ok) {m_good_data = false; emit good_dataChanged();}
+                if(!ok) {m_good_data = false; emit good_dataChanged();
+                qWarning()<<"Rig no good data for "<<"poil:"<<val;}
             }
             if (s=="drpm"){
                 m_turns=val.toInt(&ok,10); emit turnsChanged();
-                if(!ok) {m_good_data = false; emit good_dataChanged();}
+                if(!ok) {m_good_data = false; emit good_dataChanged();
+                qWarning()<<"Rig no good data for "<<"drpm:"<<val;}
             }
             if (s=="pwrv"){
                 m_voltage=val.toInt(&ok,10); emit voltageChanged();
-                if(!ok) {m_good_data = false; emit good_dataChanged();}
+                if(!ok) {m_good_data = false; emit good_dataChanged();
+                qWarning()<<"Rig no good data for "<<"pwrv:"<<val;}
+            }
+            if (s=="dc1v"){
+                setVoltage24(val.toInt(&ok,10));
+                if(!ok) {m_good_data = false; emit good_dataChanged();
+                qWarning()<<"Rig no good data for "<<"dc1v:"<<val;}
             }
             if (s=="pwra"){
                 m_ampere=val.toInt(&ok,10); emit ampereChanged();
-                if(!ok) {m_good_data = false; emit good_dataChanged();}
+                if(!ok) {m_good_data = false; emit good_dataChanged();
+                qWarning()<<"Rig no good data for "<<"pwra:"<<val;}
             }
             if (s=="type"){
                 m_rigtype=val; emit rigtypeChanged();
                 if (m_rigtype=="grab2"||m_rigtype=="grab6"||m_rigtype=="gkgbu"||m_rigtype=="tk-15") ok=true;
-                if(!ok) {m_good_data = false; emit good_dataChanged();}
+                if(!ok) {m_good_data = false; emit good_dataChanged();
+                qWarning()<<"Rig no good data for "<<"type:"<<val;}
             }
          }
     }

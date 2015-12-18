@@ -360,16 +360,42 @@ Item {
             text: qsTr("Джойстик")
         }
 
-//        MyLamp {
-//            id: joyLamp
-//            x: 228
-//            y: 160
-//            height: 50
-//            width: 50
-//            bottomText: "Джойстик"
-        //            fontSize: 8
-        //            active: j.ispresent
-        //        }
+        Label {
+            id: ltype
+            x: 170
+            y: 153
+            width: 78
+            height: 13
+            color: "#ffffff"
+            text: qsTr("Тип аппарата")
+            font.pointSize: 9
+
+            ComboBox {
+                id: cbtype
+                x: 89
+                y: -4
+                width: 180
+                height: 20
+                function curindex() {
+                    console.log("Settings curindex:"+rig.rigtype+currentText)
+                    if (rig.rigtype==="grab2") return 0;
+                    if (rig.rigtype==="grab6") return 1;
+                    if (rig.rigtype==="gkgbu") return 2;
+                    return 0;
+                }
+                function curtype(){
+                    console.log("Settings curtype"+currentText)
+                    if (currentIndex==1) return "grab6";
+                    if (currentIndex==2) return "gkgbu";
+                    return "grab2";
+                }
+                onCurrentIndexChanged: rig.rigtype=curtype()
+                model: ["Двухлепестковый - grab2", "Шестилепестковый - grab6", "ГКГБУ - gkgbu" ]
+                //currentIndex: curindex()
+            }
+        }
+
+
     }
     
 }

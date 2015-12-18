@@ -7,9 +7,44 @@ import Gyco 1.0
 Item {
     id: dashBoard
     property RigModel source
+    property int gaugesize: 180-20 // 20 - поля: два по 10
+    property int containerheight: 1080
+
+    state: "grab2"
+    states: [
+        State {
+            name: "grab2"
+        //    PropertyChanges {target: dashBoard; width: 180}
+        },
+        State {
+            name: "grab6"
+        //    PropertyChanges {target: dashBoard;   width: 360}
+        },
+        State {
+            name: "gkgbu"
+        //    PropertyChanges {target: dashBoard;   width: 540}
+        }
+    ]
+    function calculatesize(){
+        console.log("Dashboard - recalculate width and height")
+        var num_gauge=flowrow.visibleChildren.length
+        var numrows=Math.floor(containerheight/(gaugesize+20))
+        numrows=numrows?numrows:num_gauge
+        var numcolm=Math.ceil(num_gauge/numrows) //округляем в большую сторону
+        numrows=Math.ceil(num_gauge/numcolm)
+        dashBoard.width=(numcolm)*(gaugesize+20)
+        dashBoard.height=(gaugesize+20)*numrows
+    }
+
+    onStateChanged: {
+        console.log("DashBoard stat:"+state);
+        calculatesize()
+
+    }
+    onContainerheightChanged: calculatesize()
 
     MyGauge {
-            val:j.yaxis
+            val:j.y1axis
             //anchors.fill: parent
             anchors.bottom: dbr.bottom
             anchors.left: dbr.left
@@ -17,11 +52,19 @@ Item {
             anchors.leftMargin: 2
             width:6
             height: dashBoard.height-20-width
-            color: j.yaxis>0?"yellow":"lightblue"
+            color: j.y1axis>0?"yellow":"lightblue"
             z:3
         }
     MyGauge {
-            val:j.yaxis
+            val: gauge_value()
+            function gauge_value(){
+                if (dashboard.state==="grab2") return j.y1axis
+                if (dashboard.state==="grab6") return j.y2axis
+            }
+            function gauge_color(){
+                if (dashboard.state==="grab2") return j.y1axis>0?"yellow":"lightblue"
+                if (dashboard.state==="grab6") return j.y2axis>0?"yellow":"lightblue"
+            }
             //anchors.fill: parent
             anchors.bottom: dbr.bottom
             anchors.right: dbr.right
@@ -29,7 +72,7 @@ Item {
             anchors.rightMargin: 2
             width:6
             height: dashBoard.height-20-width
-            color: j.yaxis>0?"yellow":"lightblue"
+            color: gauge_color()
             z:3
         }
     Rectangle{
@@ -51,6 +94,7 @@ Item {
         border.color: "yellow"
         border.width: ma.containsMouse?3:1;
         opacity: 0.9
+
         Rectangle {
             id: r
             anchors { fill: parent; margins: 10}
@@ -68,25 +112,40 @@ Item {
                 }
 
                 onPressed: {
-                    j.yaxis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
+                    j.y1axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
                     //console.log("Joy Y:"+j.yaxis)
                     j.ispresent=false;
                 }
                 onPositionChanged: {
                     if (ma.pressedButtons&(Qt.LeftButton|Qt.RightButton)&&ma.containsMouse)
-                    j.yaxis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
-                    else j.yaxis=0;
+                    j.y1axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
+                    else j.y1axis=0;
                     //console.log("Joy Y:"+j.yaxis+"btn:"+(ma.pressedButtons&(Qt.LeftButton|Qt.RightButton)))
 
                 }
             }
-            Column{
-            spacing: 20
+            Flow{
+              id: flowrow
+              spacing: 20
+              anchors.fill: parent
 
+
+              add: Transition {
+                      NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
+                      NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 400 }
+                  }
+              populate: Transition {
+                      NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
+                      NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 400 }
+                  }
+              move: Transition {
+                      NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
+                      NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 400 }
+                  }
                 Rectangle {
                     color:"transparent";
-                    width: r.width;
-                    height: r.width ;
+                    width:  gaugesize;
+                    height: gaugesize;
                     Pribor {
                         width: parent.width-10; height: parent.height-10
                         anchors.centerIn: parent
@@ -101,23 +160,24 @@ Item {
                  }
                 Rectangle {
                     color:"transparent";
-                    width: r.width;
-                    height: r.width ;
+                    width:  gaugesize;
+                    height: gaugesize;
                     Pribor {
                         width: parent.width-10; height: parent.height-10
-                        maximumValue: 50
+                        maximumValue: 500
+                        stepSize: 100
                         anchors.centerIn: parent
                         value: source.voltage
                         centerТext: "V"
                         bottomText: "Напряжение"
-                        warningThreshold: maximumValue*0.9
-                        minorTickmarks:5
+                        warningThreshold: 450
+                        minorTickmarks: 50
                     }
                 }
                 Rectangle {
                     color:"transparent";
-                    width: r.width;
-                    height: r.width ;
+                    width:  gaugesize;
+                    height: gaugesize;
                     Pribor {
                         width: parent.width-10; height: parent.height-10
                         maximumValue: 120
@@ -125,7 +185,7 @@ Item {
                         stepSize: 20
                         anchors.centerIn: parent
                         value: source.temperature
-                        centerТext: "t"
+                        centerТext: "t\u00B0"
                         bottomText: "Темп. масла"
                         warningThreshold: maximumValue*0.9
                         minorTickmarks:5
@@ -134,8 +194,8 @@ Item {
                 Rectangle {
                     color:"transparent";
                     //opacity: 0.5
-                    width: r.width;
-                    height: r.width ;
+                    width:  gaugesize;
+                    height: gaugesize;
                     Pribor {
                         width: parent.width-10; height: parent.height-10
                         maximumValue: 200
@@ -150,18 +210,72 @@ Item {
                 }
                 Rectangle {
                     color:"transparent";
+                    width:  gaugesize;
+                    height: gaugesize;
+                    Pribor {
+                        width: parent.width-10; height: parent.height-10
+                        maximumValue: 60
+                        stepSize: 10
+                        anchors.centerIn: parent
+                        value: source.voltage24
+                        centerТext: "V"
+                        bottomText: "Шина 24В"
+                        warningThreshold: 49
+                        minorTickmarks:5
+                    }
+                }
+                Rectangle {
+                    color:"transparent";
+                    width:  gaugesize;
+                    height: gaugesize;
+                    visible: dashboard.state==="gkgbu"?true:false
+                    Pribor {
+                        width: parent.width-10; height: parent.height-10
+                        maximumValue: 10
+                        stepSize: 2
+                        anchors.centerIn: parent
+                        value: source.turns
+                        centerТext: "x100"
+                        bottomText: "Обороты"
+                        warningThreshold: 9
+                        minorTickmarks:1
+                    }
+                }
+                Rectangle {
+                    id: power
+                    color:"transparent";
                     //opacity: 0.5
-                    width: r.width;
-                    height: r.width ;
+                    width:  gaugesize;
+                    height: gaugesize;
                     Pribor {
                         width: parent.width-10; height: parent.height-10
                         maximumValue: 100
                         stepSize: 20
                         anchors.centerIn: parent
 
-                        value: source.joystick>0?Math.round(source.joystick*100/127):-Math.round(source.joystick*100/127)
+                        value: j.y1axis>0?Math.round(j.y1axis*100/127):-Math.round(j.y1axis*100/127)
                         centerТext: "%"
                         bottomText: "Мощность"
+                        warningThreshold: maximumValue*0.9
+                        minorTickmarks:5
+                    }
+                }
+                Rectangle {
+                    id: power2
+                    color:"transparent";
+                    //opacity: 0.5
+                    width:  gaugesize;
+                    height: gaugesize;
+                    visible: dashboard.state==="grab6"
+                    Pribor {
+                        width: parent.width-10; height: parent.height-10
+                        maximumValue: 100
+                        stepSize: 20
+                        anchors.centerIn: parent
+
+                        value: j.y2axis>0?Math.round(j.y2axis*100/127):-Math.round(j.y2axis*100/127)
+                        centerТext: "%"
+                        bottomText: "Мощность2"
                         warningThreshold: maximumValue*0.9
                         minorTickmarks:5
                     }

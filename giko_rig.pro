@@ -8,7 +8,7 @@ SOURCES += main.cpp \
     rigmodel.cpp \
     camera.cpp \
     cjoystick.cpp \
-    xinputGamepad.cpp
+    qJoyStick.cpp
 
 RESOURCES += qml.qrc
 
@@ -32,14 +32,18 @@ HEADERS += \
     rigmodel.h \
     camera.h \
     cjoystick.h \
-    xinputGamepad.h
+    qJoyStick.h
 
 DISTFILES += \
     skin/hycoicon.ico
 
 RC_ICONS = skin/hycoicon.ico
 
-win32: LIBS += -L$$PWD/SFML/lib/ -lsfml-window
+LIBS += -lSDL
+#win32 {
+#    DEFINES += SDL_WIN
+#}
+win32: LIBS += -L$$PWD/SDL/lib/ -lSDLmain
 
-INCLUDEPATH += $$PWD/SFML
-DEPENDPATH += $$PWD/SFML
+INCLUDEPATH += $$PWD/SDL/include
+DEPENDPATH += $$PWD/SDL/include

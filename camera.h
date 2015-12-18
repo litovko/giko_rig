@@ -8,7 +8,6 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
-#define NUMROWS 40 //количество строк таблицы форматов видео
 #define USERNAME "user"
 #define USERPASS "9999"
 #define TIMEOUT 10000  // 5 секунд таймаут для установки видеорежимов
@@ -188,14 +187,6 @@ private:
     QString m_url1;//="rtsp://192.168.1.168:8553/PSIA/Streaming/channels/1?videoCodecType=MPEG4";
     QString m_url2="";
     int parse_int(QString param);
-    //http://192.168.1.168/vb.htm?videocodec=0&videocodeccombo=0&videocodecres=0&mirctrl=0 HTTP/1.1
-
-//    http://192.168.1.168/vb.htm?videocodec=0&videocodeccombo=0&videocodecres=0&mirctrl=0 HTTP/1.1
-//    http://192.168.1.168/vb.htm?framerate1=0&bitrate1=4000&ratecontrol1=1&datestampenable1=0&timestampenable1=0&logoenable1=0&logoposition1=0&textenable1=0&title=VEC-255-IP&textposition1=1&encryptvideo=0&localdisplay=2&overlaytext1=text1&detailinfo1=0 HTTP/1.1
-//    http://192.168.1.168/vb.htm?framerate1=0&bitrate1=4000&ratecontrol1=1&datestampenable1=1&timestampenable1=1&logoenable1=0&logoposition1=0&textenable1=0&title=CAM1&textposition1=0&encryptvideo=0&localdisplay=2&overlaytext1=Profile_Number_1981123123&detailinfo1=0 HTTP/1.1"
-//    http://192.168.1.168/vb.htm?paratest=reloadflag HTTP/1.1
-//    http://192.168.1.168/vb.htm?paratest=multicast HTTP/1.1
-
     int m_videocodec=0;
     int m_videocodeccombo=0;  //H.264
     int m_videocodecres=0;

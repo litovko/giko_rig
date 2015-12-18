@@ -15,6 +15,7 @@ class cRigmodel : public QObject
     Q_PROPERTY(int pressure READ pressure WRITE setPressure NOTIFY pressureChanged)
     Q_PROPERTY(int oiltemp READ oiltemp WRITE setOiltemp NOTIFY oiltempChanged)
     Q_PROPERTY(int voltage READ voltage WRITE setVoltage NOTIFY voltageChanged)
+    Q_PROPERTY(int voltage24 READ voltage24 WRITE setVoltage24 NOTIFY voltage24Changed)
     Q_PROPERTY(int ampere READ ampere WRITE setAmpere NOTIFY ampereChanged)
     Q_PROPERTY(int turns READ turns WRITE setTurns NOTIFY turnsChanged)
     Q_PROPERTY(int temperature READ temperature WRITE setTemperature NOTIFY temperatureChanged)
@@ -22,7 +23,8 @@ class cRigmodel : public QObject
     //############ переменные - данные для отправки
     Q_PROPERTY(bool lamp READ lamp WRITE setLamp NOTIFY lampChanged)
     Q_PROPERTY(bool engine READ engine WRITE setEngine NOTIFY engineChanged)  //включение выключение мотора
-    Q_PROPERTY(int joystick READ joystick WRITE setJoystick NOTIFY joystickChanged)
+    Q_PROPERTY(bool pump READ pump WRITE setPump NOTIFY pumpChanged)  //включение выключение мотора
+//    Q_PROPERTY(int joystick READ joystick WRITE setJoystick NOTIFY joystickChanged)
 
     Q_PROPERTY(int joystick_x1 READ joystick_x1 WRITE setJoystick_x1 NOTIFY joystick_x1Changed)
     Q_PROPERTY(int joystick_y1 READ joystick_y1 WRITE setJoystick_y1 NOTIFY joystick_y1Changed)
@@ -51,6 +53,9 @@ public:
 
     void setVoltage(const int &voltage);
     int voltage() const;
+
+    void setVoltage24(const int &voltage);
+    int voltage24() const;
 
     void setAmpere(const int &ampere);
     int ampere() const;
@@ -86,8 +91,11 @@ public:
     void setEngine(const bool &engine);
     bool engine() const;
 
-    void setJoystick(const int &joystick);
-    int joystick() const;
+    void setPump(const bool &pump);
+    bool pump() const;
+
+//    void setJoystick(const int &joystick);
+//    int joystick() const;
 
     void setJoystick_x1(const int &joystick);
     int joystick_x1() const;
@@ -105,6 +113,7 @@ signals:
     void pressureChanged();
     void oiltempChanged();
     void voltageChanged();   
+    void voltage24Changed();
     void ampereChanged();
     void turnsChanged();
     void temperatureChanged();
@@ -112,6 +121,7 @@ signals:
 
     void lampChanged();
     void engineChanged();
+    void pumpChanged();
     void joystickChanged();
     void joystick_x1Changed();
     void joystick_y1Changed();
@@ -142,6 +152,7 @@ private:
     int m_pressure=0;
     int m_oiltemp=0;
     int m_voltage=0;
+    int m_voltage24=0;
     int m_ampere=0;
     int m_turns=0;
     int m_temperature=0;
@@ -158,12 +169,14 @@ private:
     bool m_lamp=false;
     bool m_camera=false;
     bool m_engine=false;
+    bool m_pump=false;
     int m_joystick=0;
     int m_joystick_x1=0;
     int m_joystick_y1=0;
     int m_joystick_x2=0;
     int m_joystick_y2=0;
     bool m_good_data=false;
+
 
 
 
