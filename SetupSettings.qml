@@ -77,14 +77,19 @@ Item {
                 rig.address=rig_address.text
                 rig.port=rig_port.text
 
-                win.cam2index=cb_cam2.checked?2:0
-                win.cam3index=cb_cam3.checked?3:0
+
                 cam[0].address=cam1_address.text
                 cam[1].address=cam2_address.text
                 cam[2].address=cam3_address.text
-                cb_cam1.checked=true;
+                cam[0].cameraenabled=cb_cam1.checked
+                cam[1].cameraenabled=cb_cam2.checked
+                cam[2].cameraenabled=cb_cam3.checked
+                //win.cam2index=cb_cam2.checked?2:0
+                //win.cam3index=cb_cam3.checked?3:0
+                //cb_cam1.checked=true;
+                //win.cam1index=cb_cam1.checked?1:0
 
-                console.log("cb"+cb_cam2.checked+" "+cb_cam3.checked)
+                console.log("Setup Settings cb"+cb_cam2.checked+" "+cb_cam3.checked)
                 rig.timer_send_interval=parseInt(rig_msec1.text);
                 rig.timer_connect_interval=parseInt(rig_msec2.text);
                 network_caching=parseInt(netcache.text);
@@ -102,7 +107,7 @@ Item {
             onClicked: {
                 settingsDialog.visible=false;
                 mainRect.focus=true;
-                console.log("Кликнули выход"+settingsDialog.parent);
+                console.log("Setup Settings - Close clicked");
             }
         }
         
@@ -307,14 +312,14 @@ Item {
                     selectFolder: true
                     sidebarVisible : true
                     onAccepted: {
-                        console.log("You chose: " + Qt.resolvedUrl(fileDialog.fileUrl))
+                        console.log(" Setup Settings You chose: " + Qt.resolvedUrl(fileDialog.fileUrl))
 
                         win.filepath=fileDialog.fileUrl.toString().substring(8,fileDialog.fileUrl.length)+"/"
-                        console.log("You chose: " + win.filepath)
+                        console.log(" Setup SettingsYou chose: " + win.filepath)
                         fileDialog.visible=false
                     }
                     onRejected: {
-                        console.log("Canceled")
+                        console.log("Setup Settings Canceled")
                         fileDialog.visible=false
                     }
                     Component.onCompleted: visible = false
@@ -330,7 +335,8 @@ Item {
             text: cam[0].title
             clip: false
             scale: 1
-            checked: cam[0].index
+            checked: cam[0].cameraenabled
+            //onCheckedChanged: cam[0].cameraenabled=checked
 
         }
 
@@ -340,7 +346,8 @@ Item {
             y: 250
             text: cam[1].title
             scale: 1
-            checked: cam[1].index
+            checked: cam[1].cameraenabled
+            //onCheckedChanged: cam[1].cameraenabled=checked
         }
 
         CheckBox {
@@ -349,7 +356,8 @@ Item {
             y: 280
             text: cam[2].title
             scale: 1
-            checked: cam[2].index
+            checked: cam[2].cameraenabled
+            //onCheckedChanged: cam[2].cameraenabled=checked
         }
 
         CheckBox {
@@ -376,15 +384,16 @@ Item {
                 y: -4
                 width: 180
                 height: 20
+                Component.onCompleted: currentIndex = curindex()
                 function curindex() {
-                    console.log("Settings curindex:"+rig.rigtype+currentText)
+                    console.log("Setup Settings Settings curindex:"+rig.rigtype+"Текст:"+currentText)
                     if (rig.rigtype==="grab2") return 0;
                     if (rig.rigtype==="grab6") return 1;
                     if (rig.rigtype==="gkgbu") return 2;
                     return 0;
                 }
                 function curtype(){
-                    console.log("Settings curtype"+currentText)
+                    console.log("Setup Settings Settings curtype"+currentText)
                     if (currentIndex==1) return "grab6";
                     if (currentIndex==2) return "gkgbu";
                     return "grab2";
@@ -394,7 +403,6 @@ Item {
                 //currentIndex: curindex()
             }
         }
-
 
     }
     

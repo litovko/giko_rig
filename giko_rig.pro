@@ -1,7 +1,7 @@
 TEMPLATE = app
 # обязательно требуется мультимедия от QT иначе не регистрируется плагин.
 QT += qml quick multimedia network
-CONFIG += c++11
+CONFIG += c++11 console
 # This line is from QmlVlcDemo.pro
 INCLUDEPATH += deps
 SOURCES += main.cpp \
@@ -11,7 +11,7 @@ SOURCES += main.cpp \
     qJoyStick.cpp
 
 RESOURCES += qml.qrc
-
+QMAKE_LFLAGS +=-static-libgcc -static-libstdc++
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 

@@ -109,6 +109,10 @@ static const TrustedOption trustedOptions[] = {
     { ":demux", "h264" },
     { ":h264-fps", 0 },
     { ":sout", 0 },
+    { ":no-audio", 0 },
+    { ":noaudio", 0 },
+    { ":video-title-timeout", 0 },
+    { ":video-title-show", 0 },
 };
 
 bool QmlVlcConfig::isOptionTrusted( const QString& opt ) const
@@ -179,7 +183,7 @@ libvlc_instance_t* QmlVlcConfig::createLibvlcInstance()
     if( _record )
         opts.push_back( "--sout=#standard{access=file,mux=ps,dst=file---.mpg" );
     if( _noVideoTitleShow )
-        opts.push_back( "--no-video-title-show" );
+        opts.push_back( "--video-title-show" );
 
     if( _hardwareAcceleration ) {
         opts.push_back( "--ffmpeg-hw" );

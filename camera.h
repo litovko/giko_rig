@@ -10,8 +10,8 @@
 
 #define USERNAME "user"
 #define USERPASS "9999"
-#define TIMEOUT 10000  // 5 секунд таймаут для установки видеорежимов
-#define TIMEOUT_RESET 25000 // 15 sec
+#define TIMEOUT 10000  //  таймаут для установки видеорежимов
+#define TIMEOUT_RESET 20000 //
 
 class cCamera : public QObject
 {
@@ -21,6 +21,7 @@ class cCamera : public QObject
     Q_PROPERTY(QString address READ address WRITE setAddress NOTIFY addressChanged)
     Q_PROPERTY(int index READ index WRITE setIndex NOTIFY indexChanged)
     Q_PROPERTY(bool camerapresent READ camerapresent NOTIFY camerapresentChanged)
+    Q_PROPERTY(bool cameraenabled READ cameraenabled WRITE setCameraenabled NOTIFY cameraenabledChanged)
     Q_PROPERTY(int videocodec READ videocodec WRITE setVideocodec NOTIFY videocodecChanged) // режим количества видеопотоков
     Q_PROPERTY(int videocodeccombo READ videocodeccombo WRITE setVideocodeccombo NOTIFY videocodeccomboChanged) // режим типов видеопотоков - MPEG, H264
     Q_PROPERTY(int videocodecres READ videocodecres WRITE setVideocodecres NOTIFY videocodecresChanged) // режим разрешения видиопотоков
@@ -48,14 +49,14 @@ class cCamera : public QObject
     Q_PROPERTY(QString url1 READ url1 NOTIFY url1Changed) //Корректный URL для просмотра изображения первого потока камеры.
     Q_PROPERTY(QString url2 READ url2 NOTIFY url2Changed) //Корректный URL для просмотра изображения второго потока камеры.
     Q_PROPERTY(bool videopage READ videopage WRITE setVideopage NOTIFY videopageChanged) // переменная для применения настроек комбинированных режимов к камере
-    Q_PROPERTY(bool videosettings READ videosettings WRITE setVideosettings NOTIFY videosettingsChanged) // переменная для применения настроек яркости контрастности и проч камере
+
     Q_PROPERTY(bool videosettings READ videosettings WRITE setVideosettings NOTIFY videosettingsChanged) // переменная для применения настроек яркости контрастности и проч камере
     Q_PROPERTY(bool timeout READ timeout WRITE setTimeout NOTIFY timeoutChanged) // true - когда необходимо подождать выполнения предыдущей команды
     
 
 public:
     explicit cCamera(QObject *parent = 0);
-    virtual ~cCamera() {saveSettings();}
+    virtual ~cCamera() {saveSettings(); timer_check.stop();}
 
     void setTitle(const QString  &title);
     QString title() const;
@@ -66,6 +67,8 @@ public:
     void setIndex(const int &index);
     int  index() const;
     bool camerapresent() const;
+    bool cameraenabled() const;
+    void setCameraenabled(const bool &enable);
     bool timeout() const;
     void setTimeout(const int  &timeout);
     //#############
@@ -129,6 +132,7 @@ signals:
     void addressChanged();
     void indexChanged();
     void camerapresentChanged();
+    void cameraenabledChanged();
     void url1Changed();
     void url2Changed();
     void videosettingsChanged();
@@ -182,6 +186,7 @@ private:
     QString m_title;
     int m_index=0;
     bool m_camerapresent=false;  //доступна ли камера по сети?
+    bool m_cameraenabled=false;
     bool m_videopage;
     bool m_videosettings;
     QString m_url1;//="rtsp://192.168.1.168:8553/PSIA/Streaming/channels/1?videoCodecType=MPEG4";

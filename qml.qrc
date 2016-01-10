@@ -14,6 +14,7 @@
         <file>MyBotton.qml</file>
 		<file>SetupCamera.qml</file>
 		<file>SetupSettings.qml</file>
+		<file>SetupJoystick.qml</file>
 		<file>MyHourglass.qml</file>
     </qresource>
 </RCC>

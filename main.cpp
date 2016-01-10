@@ -41,17 +41,20 @@
 
 int main(int argc, char *argv[])
 {
+    qDebug()<<QTime::currentTime().toString("hh:mm:ss:zzz ")<<"Start "<<giko_name<<"  "<<giko_program;
     RegisterQmlVlc();
     QSettings settings(giko_name, giko_program);
     int cache=settings.value("network_caching",150).toInt();
+    int vlc_debug=settings.value("vlc_debug",0).toInt();
     QmlVlcConfig& config = QmlVlcConfig::instance();
-    config.enableAdjustFilter( true );
-    config.enableMarqueeFilter( true );
-    config.enableLogoFilter( true );
+    config.enableAdjustFilter( false );
+    config.enableMarqueeFilter( false );
+    config.enableLogoFilter( false );
     config.setTrustedEnvironment(true);
     config.setNetworkCacheTime(cache);
+    config.enableNoVideoTitleShow(true);
     //config.enableRecord( true );
-    //config.enableDebug( true );
+    config.enableDebug( vlc_debug );
     //config.enableRecord( true);
 
 
@@ -64,7 +67,10 @@ int main(int argc, char *argv[])
     app.setApplicationName(giko_program);
 
     QQmlApplicationEngine engine;
+
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    qDebug()<<QTime::currentTime().toString("hh:mm:ss:zzz ")<<"Engine loaded"<<giko_name<<"  "<<giko_program;
     return app.exec();
+
 }
 

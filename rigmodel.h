@@ -44,6 +44,7 @@ class cRigmodel : public QObject
 
 public:
     explicit cRigmodel(QObject *parent = 0);
+    virtual ~cRigmodel() {saveSettings();}
     //############ занчения, получаемые по сети от контроллера
     void setPressure(const int &pressure);
     int pressure() const;
@@ -142,6 +143,7 @@ public slots:
 
     void clientConnected();  // слот для обработки события присоединения клиента к серверу.
     void clientDisconnected();
+    void updateSendTimer();
     void saveSettings();
     void readSettings();
     void updateClientProgress(qint64 numBytes);

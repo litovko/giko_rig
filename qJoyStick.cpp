@@ -8,8 +8,7 @@ QJoystick::QJoystick()
 {
 
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
-    SDL_JoystickEventState(SDL_ENABLE);
-
+    //SDL_Init( SDL_INIT_JOYSTICK);
 }
 
 int QJoystick::currentJoystick()
@@ -58,7 +57,7 @@ QJoystick::~QJoystick()
     buttons.clear();
     SDL_JoystickClose(m_joystick);
     SDL_QuitSubSystem(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
-    this->deleteLater();
+    //this->deleteLater();
 }
 
 
@@ -74,7 +73,6 @@ void QJoystick::getdata()
 
 
         SDL_Event event;
-    SDL_JoystickUpdate();
     SDL_PollEvent(&event);
 
     for(int i=0;i<SDL_JoystickNumAxes(m_joystick);i++)

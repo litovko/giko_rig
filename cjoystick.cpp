@@ -1,22 +1,29 @@
 #include "cjoystick.h"
 #include <QDebug>
 #include <QTime>
-
-#define J_POLL_INTERVAL 200
+#include <QSettings>
+#define J_POLL_INTERVAL 50
 #define J_CHECK_INTERVAL 15000
 
 cJoystick::cJoystick(QObject *parent) : QObject(parent)
 {
-    qDebug()<<"Joystick";
-    setIspresent(joy->availableJoysticks());
-    qDebug()<<"Joystick present:"<<ispresent();
     timer_joystick = new QTimer(this);
     timer_checkjoystick = new QTimer(this);
+    connect(this, SIGNAL(currentChanged()),this, SLOT(change_numbers()));
     connect(timer_checkjoystick,SIGNAL(timeout()),this,SLOT(checkJoystick()));
     timer_checkjoystick->start(J_CHECK_INTERVAL);
+    readSettings();
 }
 cJoystick::~cJoystick(){
-    if (joy)delete joy;
+    timer_joystick->stop();
+    timer_checkjoystick->stop();
+    if (joy)delete joy; joy=0;
+    if (timer_joystick) delete timer_joystick;
+    if (timer_checkjoystick) delete timer_checkjoystick;
+    int n=joystick.length();
+    qDebug()<<"Joystick.length:"<<n << "joysavail:" << joysavail;
+    for(int i=0; i<joysavail;i++) {delete joystick.at(i);}
+    saveSettings();
 }
 
 void cJoystick::checkJoystick()
@@ -26,10 +33,11 @@ void cJoystick::checkJoystick()
         joy = new QJoystick();
         qDebug()<<QTime().currentTime()<<"new QJoystick()";
     }
-    setIspresent(joy->availableJoysticks());
+    joysavail=joy->availableJoysticks();
+    setIspresent(joysavail);
     qDebug()<<QTime().currentTime()<<"checkJoystick availbl:"<<joy->availableJoysticks();
     if (old&&ispresent()) {
-        joy->setJoystick(current()); //закрываем и открываем снова джойстик.
+        //joy->setJoystick(current()); //закрываем и открываем снова джойстик.
         return;
     }
     qDebug()<<"checkJoystick:"<<m_ispresent;
@@ -37,7 +45,8 @@ void cJoystick::checkJoystick()
         qDebug()<<"Joystick-start";
         init_joysticks();
         connect(timer_joystick,SIGNAL(timeout()),this,SLOT(updateData()));
-        timer_joystick->start(0);
+        timer_joystick->start(J_POLL_INTERVAL);
+        change_numbers();
     }
     else {
         qDebug()<<"Joystick-stop joy:"<<joy;
@@ -158,7 +167,8 @@ void cJoystick::init_joysticks()
             joy->setJoystick(i);
             // Axes
             joystick.at(i)->number_axes = joy->joystickNumAxes(i);
-            qDebug()<<"J"<<i<<"axex:"<<joy->joystickNumAxes(i);
+            joystick.at(i)->name=joy->joystickName(i);
+            qDebug()<<"J:"<<i<<" name:"<<joy->joystickName(i)<<" axex:"<<joy->joystickNumAxes(i)<<"buttons:"<<joy->joystickNumButtons(i);
             for(unsigned int j=0; j<joystick.at(i)->number_axes;j++)
             {
                 joystick.at(i)->axis.append(0);
@@ -166,7 +176,7 @@ void cJoystick::init_joysticks()
 
             // Buttons
             joystick.at(i)->number_btn  = joy->joystickNumButtons(i);
-            qDebug()<<"J"<<i<<"buttons:"<<joy->joystickNumButtons(i);
+            //qDebug()<<"J"<<i<<"buttons:"<<joy->joystickNumButtons(i);
             for(unsigned int j=0; j<joystick.at(i)->number_btn;j++)
             {
                 joystick.at(i)->button.append(false);
@@ -179,16 +189,134 @@ void cJoystick::updateData()
 {
     if (!m_ispresent) return;
     pollJoystick();
-    setY1axis(-joystick.at(current())->axis[1]*127/32767);
-    setX1axis(joystick.at(current())->axis[0]*127/32767);
-    setY2axis(-joystick.at(current())->axis[3]*127/32767);
-    setX2axis(joystick.at(current())->axis[2]*127/32767);
-    bool b=(joystick.at(current())->button[0]);
+    setY1axis(-joystick.at(current())->axis[m_y1axis_ind]*127/32767);
+    setX1axis(joystick.at(current())->axis[m_x1axis_ind]*127/32767);
+    setY2axis(-joystick.at(current())->axis[m_y2axis_ind]*127/32767);
+    setX2axis(joystick.at(current())->axis[m_x2axis_ind]*127/32767);
+    bool b=(joystick.at(current())->button[m_key_0_ind]);
     if (b==!m_key_0) { m_key_0=b; emit key_0Changed();
     qDebug()<<"X1:"<<m_x1axis<<" Y1:"<<m_y1axis<<"X2:"<<m_x2axis<<" Y2:"<<m_y2axis<<" B0:"<<m_key_0<<" B1:"<<m_key_1;}
-    b=(joystick.at(current())->button[1]);
+    b=(joystick.at(current())->button[m_key_1_ind]);
     if (b==!m_key_1) { m_key_1=b; emit key_1Changed();}
+}
 
+void cJoystick::change_numbers()
+{
+    qDebug()<<"Joy:"<<"1";
+    if (!joysavail) return;
+    m_axes_number=joystick.at(current())->number_axes;
+    m_buttons_number=joystick.at(current())->number_btn;
+    emit axes_numberChanged();
+    emit buttons_numberChanged();
+    emit nameChanged();
+    qDebug()<<"Joy:"<<"2";
+}
+
+void cJoystick::saveSettings()
+{
+        qDebug()<<"Save settings Joystick"<<name();
+        QSettings settings("HYCO", "Rig Console");
+        settings.setValue("Joystick",name());
+        settings.setValue("Joystick-x1",m_x1axis_ind);
+        settings.setValue("Joystick-x2",m_x2axis_ind);
+        settings.setValue("Joystick-y1",m_y1axis_ind);
+        settings.setValue("Joystick-y2",m_y2axis_ind);
+        settings.setValue("Joystick-b1",m_key_0_ind);
+        settings.setValue("Joystick-b2",m_key_1_ind);
+}
+
+void cJoystick::readSettings()
+{
+    QSettings settings("HYCO", "Rig Console");
+    setX1axis_ind(settings.value("Joystick-x1",0).toInt());
+    setX2axis_ind(settings.value("Joystick-x2",1).toInt());
+    setY1axis_ind(settings.value("Joystick-y1",2).toInt());
+    setY2axis_ind(settings.value("Joystick-y2",3).toInt());
+    setKey_0_ind(settings.value("Joystick-b1",0).toInt());
+    setKey_1_ind(settings.value("Joystick-b2",1).toInt());
+    qDebug()<<"Read settings Joystick";
+}
+
+int cJoystick::buttons_number() const
+{
+    return m_buttons_number;
+}
+
+QString cJoystick::name() const
+{
+    if (joysavail) return joystick.at(m_current)->name;
+    else return "Джойстик не найден";
+}
+
+int cJoystick::axes_number() const
+{
+    return m_axes_number;
+}
+
+int cJoystick::key_1_ind() const
+{
+    return m_key_1_ind;
+}
+
+void cJoystick::setKey_1_ind(int key_1_ind)
+{
+    m_key_1_ind = key_1_ind;
+    emit key_1_indChanged();
+}
+
+int cJoystick::key_0_ind() const
+{
+    return m_key_0_ind;
+}
+
+void cJoystick::setKey_0_ind(int key_0_ind)
+{
+    m_key_0_ind = key_0_ind;
+    emit key_0_indChanged();
+}
+
+int cJoystick::y2axis_ind() const
+{
+    return m_y2axis_ind;
+}
+
+void cJoystick::setY2axis_ind(int y2axis_ind)
+{
+    m_y2axis_ind = y2axis_ind;
+    emit y2axis_indChanged();
+}
+
+int cJoystick::x2axis_ind() const
+{
+    return m_x2axis_ind;
+}
+
+void cJoystick::setX2axis_ind(int x2axis_ind)
+{
+    m_x2axis_ind = x2axis_ind;
+    emit x2axis_indChanged();
+}
+
+int cJoystick::y1axis_ind() const
+{
+    return m_y1axis_ind;
+}
+
+void cJoystick::setY1axis_ind(int y1axis_ind)
+{
+    m_y1axis_ind = y1axis_ind;
+    emit y1axis_indChanged();
+}
+
+int cJoystick::x1axis_ind() const
+{
+    return m_x1axis_ind;
+}
+
+void cJoystick::setX1axis_ind(int x1axis_ind)
+{
+    m_x1axis_ind = x1axis_ind;
+    emit x1axis_indChanged();
 }
 
 // Extracts data from QJoystick class

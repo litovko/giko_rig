@@ -16,47 +16,45 @@ Window {
     width: 1280
     color: "transparent"
     property int recording: 0
+    property int play_on_start: 0
     property int network_caching: 250
-    property int keyboard_count: 3
+    property string vlc_options: ",--nothing, --never ,:none=NAN"
     property string filepath: ""
-    property string cam1title:"cam1"
-    property string cam2title:"cam2"
-    property string cam3title:"cam3"
-    property int cam1index: 1
-    property int cam2index: 0
-    property int cam3index: 0
+//    property string cam1title:"cam1"
+//    property string cam2title:"cam2"
+//    property string cam3title:"cam3"
+//    property int cam1index: 1
+//    property int cam2index: 2
+//    property int cam3index: 3
     property list<VlcPlayer> players:[
         VlcPlayer {
             id: vlcPlayer1;
             Component.onCompleted: {
-                if (cam1.index===0) return
+                if (cam1.index===0 || play_on_start===0) return
                 stop();
                 playlist.clear();
                 playlist.addWithOptions(cam1.url1,getrecordoption(1));
                 if(cams[0].index)play();
-
             }
         },
         VlcPlayer {
             id: vlcPlayer2;
             Component.onCompleted: {
-                if (cam2.index===0) return
+                if (cam2.index===0|| play_on_start===0) return
                 stop();
                 playlist.clear();
                 playlist.addWithOptions(cam2.url1,getrecordoption(2));
                 if(cams[1].index)play();
-
             }
         },
         VlcPlayer {
             id: vlcPlayer3;
             Component.onCompleted: {
-                if (cam3.index===0) return
+                if (cam3.index===0|| play_on_start===0) return
                 stop();
                 playlist.clear();
                 playlist.addWithOptions(cam3.url1,getrecordoption(3));
                 if(cams[2].index)play();
-
             }
         }
 
@@ -64,18 +62,18 @@ Window {
     property list<RigCamera> cams: [
         RigCamera {
             id: cam1
-            title: cam1title
-            index: cam1index
+            //title: cam1title
+            index: 1
         },
         RigCamera {
             id: cam2
-            title: cam2title
-            index: cam2index
+            //title: cam2title
+            index: 2
         },
         RigCamera {
             id: cam3
-            title: cam3title
-            index: cam3index
+            //title: cam3title
+            index: 3
         }
     ]
 
@@ -85,19 +83,19 @@ Window {
         property alias width: win.width
         property alias height: win.height
         property alias recording: win.recording
+        property alias state: mainRect.state
+        property alias play_on_start: win.play_on_start
         property alias network_caching: win.network_caching
+        property alias vlc_options: win.vlc_options
         property alias filepath: win.filepath
-        property alias cam1title:win.cam1title
-        property alias cam2title:win.cam2title
-        property alias cam3title:win.cam3title
-        property alias cam1index:win.cam1index
-        property alias cam2index:win.cam2index
-        property alias cam3index:win.cam3index
+
+
     }
     function player_play(player_number){
+        if (cams[0].timeout||cams[1].timeout||cams[2].timeout) return;
         players[player_number].stop();
         players[player_number].playlist.clear();
-        players[player_number].playlist.addWithOptions(cam1.url1,getrecordoption(player_number));
+        players[player_number].playlist.addWithOptions(cams[player_number].url1,getrecordoption(player_number));
         players[player_number].play();
     }
 
@@ -106,7 +104,7 @@ Window {
         if (camstate===1) return "Открытие";
         if (camstate===2) return "Буферизация";
         if (camstate===3) return "Трансляция";
-        if (camstate===4) return "На паузе";
+        if (camstate===4) return "Пауза";
         if (camstate===5) return "Остановлено";
         if (camstate===6) return "Завершено";
         if (camstate===7) return "Ошибка";
@@ -114,37 +112,48 @@ Window {
     }
     function getrecordoption(camindex){
         var dt=new Date();
+        var vlc=vlc_options.split(',')
+        console.log("getrecordoption"+win.vlc_options);
         if (camindex===undefined) console.assert("getrecordoption camindex undefined!!!")
-        var sopt=[":network-caching="+network_caching.toString(), ":sout-all", ":sout-keep" ];
-        console.log("Options without record:"+sopt);
-        if (recording===0) return sopt;
+        var sopt=[":network-caching="+network_caching.toString()];//, ":sout-all", ":sout-keep" ];
+        console.log("getrecordoption:"+sopt);
+        if (recording===0) {
+            console.log("Cam"+(camindex+1)+" Options without recording:"+sopt);
+            for (var i=0; i<vlc.length; i++) sopt.push(vlc[i]);
+            return sopt;
+        }
         console.log("Camindex="+camindex);
         console.log("Camindex="+camindex+"cam:" +cams[camindex].title+"text:"+cams[camindex].overlaytext);
         console.log("FN Time:"+ dt + "FilePath:"+filepath );
-        var popt=[":network-caching="+network_caching.toString(),":sout=#stream_out_duplicate{dst=display,dst=std{access=file,mux=mp4,dst="+filepath+"hyco-"
+        var popt=[":network-caching="+network_caching.toString()
+                  ,":sout=#stream_out_duplicate{dst=display,dst=std{access=file,mux=mp4,dst="+filepath+"hyco-"
                   +"cam"+(camindex+1)+"-"
                   +cams[camindex].overlaytext + "-"
                   + dt.toLocaleString(Qt.locale(),"dd-MM-yyyy_HH-mm-ss")
                   +".mpg}}"]
-        console.log("Options with record:"+popt);
+        //var vlc=vlc_options.split(',');
+        for (var i=0; i<vlc.length; i++) popt.push(vlc[i]);
+        console.log("Options with recording Cam"+(camindex+1)+":  "+popt);
+        //:venc=ffmpeg,--no-audio,--high-priority,:threads=16
         return popt
     }
     RigModel {
         id: rig
         joystick_y1: j.y1axis
+        joystick_y2: j.y2axis
     }
     function changestate(){
                     console.log("STATE: "+mainRect.state + " ind:" +cams[0].index+cams[1].index+cams[2].index);
-                    console.log((cams[1].index+cams[2].index)===2);
-                    if ((cams[1].index+cams[2].index)===0) // только одна камера
+                    console.log((cams[1].cameraenabled+"  "+cams[2].cameraenabled));
+                    if ((!cams[1].cameraenabled&&!cams[2].cameraenabled)) // только одна камера
                         if (mainRect.state==="1-KAM-bol") mainRect.state="1-KAM-mal"
                         else mainRect.state="1-KAM-bol"
-                    if ((cams[1].index+cams[2].index)===2) // две камеры
+                    if (cams[1].cameraenabled&&!cams[2].cameraenabled) // две камеры
                         if (mainRect.state==="2-KAM-mal") mainRect.state="2-KAM-bol1"
                         else if (mainRect.state==="2-KAM-bol1") mainRect.state="2-KAM-bol2"
                              else mainRect.state="2-KAM-mal"
 
-                    if ((cams[1].index+cams[2].index)===5) //три камеры
+                    if (cams[1].cameraenabled&&cams[2].cameraenabled) //три камеры
                     if (mainRect.state==="3-KAM-mal") mainRect.state="3-KAM-bol1"
                     else if (mainRect.state==="3-KAM-bol1") mainRect.state="3-KAM-bol2"
                          else if (mainRect.state==="3-KAM-bol2") mainRect.state="3-KAM-bol3"
@@ -264,7 +273,7 @@ Window {
 
 
         Keys.onPressed: {
-            console.log("key pressed"+event.key);
+
             if (event.key === Qt.Key_F2) rig.lamp=rig.lamp?false:true;
             if (event.key === Qt.Key_F3) rig.camera=rig.camera?false:true;;
             if (event.key === Qt.Key_F4) rig.engine=rig.engine?false:true;
@@ -273,18 +282,25 @@ Window {
                 else if (dashboard.state==="grab6") dashboard.state="gkgbu"
                      else  dashboard.state="grab2"
             }
+            if (event.key === Qt.Key_F9) {
+                joysetup.visible=joysetup.visible?false:true;
+                settings.visible=false;
+                menu.visible=false;
+            }
             if (event.key === Qt.Key_F10) {
                 menu.visible=menu.visible?false:true;
                 settings.visible=false;
+                joysetup.visible=false;
             }
             if (event.key === Qt.Key_F11) {
                 settings.visible=settings.visible?false:true;
                 menu.visible=false;
+                joysetup.visible=false;
             }
             if (event.key === Qt.Key_F5) {
-                if(cams[0].index>0) player_play(0);
-                if(cams[1].index>0) player_play(1);
-                if(cams[2].index>0) player_play(2);
+                if(cams[0].cameraenabled) player_play(0);
+                if(cams[1].cameraenabled) player_play(1);
+                if(cams[2].cameraenabled) player_play(2);
             }
             if (event.key === Qt.Key_F6) {
                 players[0].stop();
@@ -298,7 +314,14 @@ Window {
             if (event.key === Qt.Key_Up) {
                 j.ispresent=false
                 if(j.y1axis<127) j.y1axis=j.y1axis+1;
-                console.log("j.y1axis:"+j.y1axis)
+            }
+            if (event.key === Qt.Key_PageDown) {
+                j.ispresent=false
+                if(j.y2axis>-127) j.y2axis=j.y2axis-1;
+            }
+            if (event.key === Qt.Key_PageUp) {
+                j.ispresent=false
+                if(j.y2axis<127) j.y2axis=j.y2axis+1;
             }
             if (event.key === Qt.Key_F12) win.visibility= win.visibility===Window.FullScreen?Window.Windowed:Window.FullScreen;
         }
@@ -393,103 +416,21 @@ Window {
 
             onDoubleClicked: changestate()
         }
-//        Column {
-//            spacing: 20
-//            anchors.top: parent.top
-//            anchors.left: parent.left
-//            anchors.margins: 20
-//            Rectangle{
-//                width: 200
-//                height: 20
-//                color: "transparent"
-//                border.color: "black"
 
-//                Slider {
-//                    id: s1
-//                    value:15
-//                    anchors.fill: parent
-//                    maximumValue: 100
-//                    stepSize: 1
-//                    onValueChanged: rig.ampere=value
-//                }
-//            }
-//            Rectangle{
-//                width: 200
-//                height: 20
-//                color: "transparent"
-//                border.color: "black"
-
-//                Slider {
-//                    id: s2
-//                    value:24
-//                    anchors.fill: parent
-//                    maximumValue: 50
-//                    stepSize: 1
-//                    onValueChanged: rig.voltage=value
-//                }
-//            }
-//            Rectangle{
-//                width: 200
-//                height: 20
-//                color: "transparent"
-//                border.color: "black"
-
-//                Slider {
-//                    id: s3
-//                    value:24
-//                    anchors.fill: parent
-//                    maximumValue: 200
-//                    stepSize: 1
-//                    onValueChanged: rig.temperature=value
-//                }
-//            }
-//            Rectangle{
-//                width: 200
-//                height: 20
-//                color: "transparent"
-//                border.color: "black"
-
-//                Slider {
-//                    id: s4
-//                    value:24
-//                    anchors.fill: parent
-//                    maximumValue: 200
-//                    stepSize: 1
-//                    onValueChanged: rig.pressure=value
-//                }
-//            }
-//            Rectangle{
-//                width: 200
-//                height: 20
-//                color: "transparent"
-//                border.color: "black"
-
-
-//                Slider {
-//                    id: s5
-//                    value:j.yaxis
-//                    anchors.fill: parent
-//                    maximumValue: 127
-//                    minimumValue: -127
-//                    stepSize: 1
-//                    onValueChanged: rig.joystick=value
-//                }
-//            }
-//        }
         RigJoystick {
             id: j
+            current: 0
             onKey_1Changed: if (key_1) changestate()
         }
         MyDashboard {
             height: 600
             id: dashboard
             width: 180
+            z: 10
             source: rig
             state: rig.rigtype
             containerheight: parent.height
             anchors { margins: 10;
-                      //bottomMargin: 100;
-                      //bottom: parent.bottom;
                       top: parent.top;
                       right: parent.right}
         }
@@ -587,19 +528,19 @@ Window {
                     anchors.left: mainRect.left; anchors.top: mainRect.top
                 }
             },
-            State { // две камеры, первая большая
+            State { // две камеры, вторая большая
                 name: "2-KAM-bol2"
-                PropertyChanges { target: surface2; z: 0; opacity: 1; visible:cams[1].index;
+                PropertyChanges { target: surface2; z: 0;  opacity: 1; visible:cams[1].index;
                     height: mainRect.height / 1 - anchors.topMargin * 2;
                     width: mainRect.width / 1 - anchors.leftMargin * 2;
                     anchors.left: mainRect.left; anchors.top: mainRect.top
                 }
                 PropertyChanges { target: surface3; z: 0; opacity: 1; visible:cams[2].index;
-                    height: mainRect.height / 1 - anchors.topMargin * 2;
-                    width: mainRect.width / 1 - anchors.leftMargin * 2;
+                    height: mainRect.height / 4 - anchors.topMargin * 2;
+                    width: mainRect.width / 4 - anchors.leftMargin * 2;
                     anchors.left: mainRect.left; anchors.top: mainRect.top
                 }
-                PropertyChanges { target: surface1; visible: true; opacity: 0.8;
+                PropertyChanges { target: surface1; z: 1; visible:cams[0].index; opacity: 0.8;
                     height: mainRect.height / 4 - anchors.topMargin * 2;
                     width: mainRect.width / 4 - anchors.leftMargin * 2;
                     anchors.left: mainRect.left; anchors.top: mainRect.top
@@ -636,12 +577,29 @@ Window {
         visible: false
 
     }
+    SetupJoystick{
+        id: joysetup
+        width: 600
+        height: 500
+        anchors.centerIn: parent
+        joystick: j
+        visible: true
+
+
+    }
     MyHourglass {
         x: 300
         y: 300
         z:10
         anchors.centerIn: parent
         visible: cam1.timeout|cam2.timeout|cam3.timeout
+    }
+    Component.onDestruction: {
+        console.log("Good bye!")
+        players[0].stop();
+        players[1].stop();
+        players[2].stop();
+        console.log("All players stopped")
     }
 }
 

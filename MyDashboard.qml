@@ -14,20 +14,26 @@ Item {
     states: [
         State {
             name: "grab2"
-        //    PropertyChanges {target: dashBoard; width: 180}
+            PropertyChanges {target: power2;   visible: false}
+            PropertyChanges {target: turns;   visible: false}
         },
         State {
             name: "grab6"
-        //    PropertyChanges {target: dashBoard;   width: 360}
+            PropertyChanges {target: power2;   visible: true}
+            PropertyChanges {target: turns;   visible: false}
         },
         State {
             name: "gkgbu"
+            PropertyChanges {target: turns;   visible: true}
+            PropertyChanges {target: power2;   visible: false}
         //    PropertyChanges {target: dashBoard;   width: 540}
         }
     ]
+    onVisibleChildrenChanged: calculatesize()
     function calculatesize(){
-        console.log("Dashboard - recalculate width and height")
+
         var num_gauge=flowrow.visibleChildren.length
+        //console.log("Dashboard - recalculate width and height num gauges"+num_gauge)
         var numrows=Math.floor(containerheight/(gaugesize+20))
         numrows=numrows?numrows:num_gauge
         var numcolm=Math.ceil(num_gauge/numrows) //округляем в большую сторону
@@ -37,7 +43,7 @@ Item {
     }
 
     onStateChanged: {
-        console.log("DashBoard stat:"+state);
+        console.log("DashBoard state:"+state);
         calculatesize()
 
     }
@@ -108,17 +114,20 @@ Item {
                 hoverEnabled: true
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 onReleased: {
-                    j.yaxis=0;
+                    if (dashboard.state==="grab6")  j.y2axis=0;
+                    j.y1axis=0;
                 }
 
                 onPressed: {
-                    j.y1axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
-                    //console.log("Joy Y:"+j.yaxis)
+                    if ((dashboard.state==="grab6")&&(ma.mouseX>width/2))
+                         j.y2axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
+                    else j.y1axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
                     j.ispresent=false;
                 }
                 onPositionChanged: {
                     if (ma.pressedButtons&(Qt.LeftButton|Qt.RightButton)&&ma.containsMouse)
-                    j.y1axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
+                      if ((dashboard.state==="grab6")&&(ma.mouseX>width/2)) j.y2axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
+                      else    j.y1axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
                     else j.y1axis=0;
                     //console.log("Joy Y:"+j.yaxis+"btn:"+(ma.pressedButtons&(Qt.LeftButton|Qt.RightButton)))
 
@@ -130,18 +139,18 @@ Item {
               anchors.fill: parent
 
 
-              add: Transition {
-                      NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
-                      NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 400 }
-                  }
-              populate: Transition {
-                      NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
-                      NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 400 }
-                  }
-              move: Transition {
-                      NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
-                      NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 400 }
-                  }
+//              add: Transition {
+//                      NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
+//                      NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 400 }
+//                  }
+//              populate: Transition {
+//                      NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
+//                      NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 400 }
+//                  }
+//              move: Transition {
+//                      NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
+//                      NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 400 }
+//                  }
                 Rectangle {
                     color:"transparent";
                     width:  gaugesize;
@@ -155,7 +164,7 @@ Item {
                         stepSize: 20
                         centerТext: "A"
                         bottomText: "Сила тока"
-                        minorTickmarks:10
+                        minorTickmarks:5
                     }
                  }
                 Rectangle {
@@ -170,8 +179,8 @@ Item {
                         value: source.voltage
                         centerТext: "V"
                         bottomText: "Напряжение"
-                        warningThreshold: 450
-                        minorTickmarks: 50
+                        warningThreshold: maximumValue*0.9
+                        minorTickmarks: 5
                     }
                 }
                 Rectangle {
@@ -205,7 +214,7 @@ Item {
                         centerТext: "кПа"
                         bottomText: "Давл. масла"
                         warningThreshold: maximumValue*0.9
-                        minorTickmarks:3
+                        minorTickmarks:5
                     }
                 }
                 Rectangle {
@@ -225,10 +234,12 @@ Item {
                     }
                 }
                 Rectangle {
+                    id: turns
                     color:"transparent";
                     width:  gaugesize;
                     height: gaugesize;
                     visible: dashboard.state==="gkgbu"?true:false
+                    onVisibleChanged: calculatesize()
                     Pribor {
                         width: parent.width-10; height: parent.height-10
                         maximumValue: 10
@@ -238,7 +249,7 @@ Item {
                         centerТext: "x100"
                         bottomText: "Обороты"
                         warningThreshold: 9
-                        minorTickmarks:1
+                        minorTickmarks:3
                     }
                 }
                 Rectangle {
@@ -267,6 +278,7 @@ Item {
                     width:  gaugesize;
                     height: gaugesize;
                     visible: dashboard.state==="grab6"
+                    onVisibleChanged: calculatesize()
                     Pribor {
                         width: parent.width-10; height: parent.height-10
                         maximumValue: 100

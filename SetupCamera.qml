@@ -11,7 +11,7 @@ Item {
     property list<RigCamera> cam
     property list<VlcPlayer> players
     property int currentcam: 0
-    property int currentplayer: 0
+//    property int currentplayer: 0
     antialiasing: false
     onVisibleChanged: spinBox_videomode.currentIndex=cam[currentcam].comby;
     Rectangle {
@@ -113,7 +113,7 @@ Item {
                     var  i = s.indexOf(",");
                     var  strlen=s.length;
                     listStreams.clear();
-                    console.log("cam"<<currentcam<<".combylist:"+cam[currentcam].combylist)
+                    console.log("Setup Camera cam"<<currentcam<<".combylist:"+cam[currentcam].combylist)
                     while(i>0){
 
                         c=s.substring(0,i);
@@ -126,7 +126,7 @@ Item {
                     }
                     listStreams.append({text: s}) // добавляем последний элемент
                     spinBox_videomode.currentIndex=cam[currentcam].comby;
-                    console.log("Filllistmodel() cam.comby:"+cam[currentcam].comby+"curindex:"+spinBox_videomode.currentIndex);
+                    console.log("Setup Camera  Filllistmodel() cam.comby:"+cam[currentcam].comby+"curindex:"+spinBox_videomode.currentIndex);
                     return;
                 }
             }
@@ -142,10 +142,10 @@ Item {
             tooltip: "Применение указанных настроек камеры"
             onClicked: {
                 //               console.log("Кликнули");
-                console.log("Кликнули применить настройки комбо-режима");
-                players[currentplayer].stop();
+                console.log("Setup Camera  Comby button clicked");
+                players[currentcam].stop();
                 cam[currentcam].comby=spinBox_videomode.currentIndex;
-                console.log("Применить, comby:"+cam[currentcam].comby);
+                console.log("Setup Camera  Button Apply clicked, comby:"+cam[currentcam].comby);
                 cam[currentcam].videopage=true;
             }
         }
@@ -162,7 +162,7 @@ Item {
             onClicked: {
                 setupDialog.visible=false;
                 mainRect.focus=true;
-                console.log("Кликнули выход");
+                console.log("Setup Camera Exit pressed");
             }
         }
 
@@ -406,7 +406,7 @@ Item {
                     else radioDay.checked=true;
                     cam[currentcam].colorkiller=checked?0:1
 
-                    console.log("ночь"+ cam[currentcam].colorkiller);
+                    console.log("Setup Camera  NIGHT=1/DAY=0"+ cam[currentcam].colorkiller);
                 }
                 style: RadioButtonStyle {
                     indicator: Rectangle {
@@ -436,7 +436,7 @@ Item {
                     if (checked) radioNight.checked=false
                     else radioNight.checked=true;
                     cam[currentcam].colorkiller=checked?1:0
-                    console.log("день"+ cam[currentcam].colorkiller);
+                    console.log("Setup Camera onCheckedChanged NIGHT=1/DAY=0"+ cam[currentcam].colorkiller);
                 }
                 Component.onCompleted:  checked=cam[currentcam].colorkiller==0?true:false
 
@@ -560,7 +560,7 @@ Item {
             y: 520
             width: 218
             height: 19
-            text:"Версия библиотек VLC:"+ players[currentplayer].vlcVersion
+            text:"Версия библиотек VLC:"+ players[currentcam].vlcVersion
             font.pixelSize: 12
         }
 
@@ -572,8 +572,8 @@ Item {
             opacity: 0.8
             tooltip: "Установка текущего времени"
             onClicked: {
-                console.log("Кликнули установки времени");
-                players[currentplayer].stop();
+                console.log("Setup Camera SetTime Clicked");
+                players[currentcam].stop();
                 cam[currentcam].setDateTimesettings();
             }
         }

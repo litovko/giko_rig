@@ -15,6 +15,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 {
     readSettings();
     connect(this, SIGNAL(addressChanged()), this, SLOT(saveSettings()));
+    connect(this, SIGNAL(timer_send_intervalChanged()), this, SLOT(updateSendTimer()));
     //connect(this, SIGNAL(portChanged()), this, SLOT(saveSettings()));
     connect(&tcpClient, SIGNAL(connected()),this, SLOT(clientConnected())); // Клиент приконнектилася к указанному адресу по указанному порту.
     connect(&tcpClient, SIGNAL(disconnected()),this, SLOT(clientDisconnected())); // Клиент отвалился
@@ -37,7 +38,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 }
 void cRigmodel::saveSettings()
 {
-    qDebug()<<"saveSettings addres:"<<m_address<<"port:"<<m_port;
+    qDebug()<<"Rig saveSettings addres:"<<m_address<<"port:"<<m_port;
     QSettings settings("HYCO", "Rig Console");
     settings.setValue("RigAddress",m_address);
     settings.setValue("RigPort",m_port);
@@ -54,8 +55,15 @@ void cRigmodel::readSettings()
     m_port=settings.value("RigPort","1212").toInt();
     m_timer_send_interval=settings.value("RigSendInterval","2000").toInt();
     m_timer_connect_interval=settings.value("RigConnectInterval","30000").toInt();
-//    qDebug()<<"readSettings addres:"<<m_address<<"port:"<<m_port;
+
 }
+
+void cRigmodel::updateSendTimer()
+{
+    timer_send.stop();
+    timer_send.start(m_timer_send_interval);
+}
+
 void cRigmodel::setPressure(const int &pressure)
 {
     m_pressure = pressure;
@@ -150,7 +158,7 @@ void cRigmodel::setLamp(const bool &lamp)
 {
     m_lamp = lamp;
     emit lampChanged();
-    qDebug()<<"Переключили лампу";
+    qDebug()<<"RIG: Lamp swithced";
 }
 
 bool cRigmodel::lamp() const
@@ -162,7 +170,7 @@ void cRigmodel::setCamera(const bool &camera)
 {
     m_camera = camera;
     emit cameraChanged();
-    qDebug()<<"Переключили питание камер";
+    qDebug()<<"Rig Camera power switched";
 }
 
 bool cRigmodel::camera() const
@@ -299,20 +307,20 @@ void cRigmodel::start_client()
     QTime t;
     if (m_client_connected) return;
     bytesWritten = 0;
-    qDebug()<<"Start client >>>"<<m_address<<"poprt"<<::QString().number(m_port)<<t.currentTime();;
+    qDebug()<<"Rig Start client >>>"<<m_address<<"poprt"<<::QString().number(m_port)<<t.currentTime();;
     
     tcpClient.connectToHost(m_address, m_port);
 
 }
 void cRigmodel::clientConnected()
 {
-    qDebug()<<"Client connected to address >>>"+this->address()+" port:"+ ::QString().number(m_port);
+    qDebug()<<"Rig Client connected to address >>>"+this->address()+" port:"+ ::QString().number(m_port);
     m_client_connected=true;
     emit client_connectedChanged();
 }
 void cRigmodel::clientDisconnected()
 {
-    qDebug()<<"Client disconnected form address >>>"+this->address()+" port:"+ this->port();
+    qDebug()<<"Rig Client disconnected form address >>>"+this->address()+" port:"+ this->port();
     m_client_connected=false;
     m_good_data=false;
     m_pressure=0;
@@ -339,14 +347,14 @@ void cRigmodel::updateClientProgress(qint64 numBytes)
 {
     // callen when the TCP client has written some bytes
     bytesWritten += (int)numBytes;
-    //qDebug()<<"Update client progress >>>"+::QString().number(bytesWritten);
+    //qDebug()<<"Rig Update client progress >>>"+::QString().number(bytesWritten);
 }
 
 void cRigmodel::displayError(QAbstractSocket::SocketError socketError)
 {
     if (socketError == QTcpSocket::RemoteHostClosedError)   //litovko надо уточнить зачем эта проверка
         return;
-    qDebug()<<"Network error >>>"+tcpClient.errorString();
+    qDebug()<<"Rig Network error >>>"+tcpClient.errorString();
 
 
     tcpClient.close();
@@ -367,11 +375,16 @@ void cRigmodel::sendData()
 
 // проверяем, есть ли подключение клиента. Если подключения нет, то ничего не отправляем.
     if (!m_client_connected) return;
-    Data="{ana1:"+::QString().number(int(m_joystick_y1*127/100),10)+";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
-    qDebug()<<"Отправка данных"<<Data;
+//    Data="{ana1:"+::QString().number(int(m_joystick_y1*127/100),10)
+//        +";ana2:"+::QString().number(int(m_joystick_y2*127/100),10)
+//        +";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
+    Data="{ana1:"+::QString().number(m_joystick_y1,10)
+            +";ana2:"+::QString().number(m_joystick_y2,10)
+            +";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
+    //qDebug()<<"Rig - send data: "<<Data;
     bytesToWrite = (int)tcpClient.write(::QByteArray(Data.toLatin1()).data());
-    if (bytesToWrite<0)qWarning()<<"Что то пошло не так при попытке отпраки данных >>>"+tcpClient.errorString();
-    if (bytesToWrite>=0)qDebug()<<"Data sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
+    if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
+    if (bytesToWrite>=0)qDebug()<<"Rig: Data sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
 }
 
 
@@ -383,17 +396,17 @@ void cRigmodel::readData()
     QList<QByteArray> split;
     int m;
     Data = tcpClient.readAll();
-    qDebug()<<"read :"<<Data;
+    qDebug()<<"Rig read :"<<Data;
     // {toil=29;poil=70;drpm=15;pwrv=33;pwra=3}FAFBFCFD
     //m_good_data = false; emit good_dataChanged();
     if (Data.startsWith("{")&&(m=Data.indexOf("}"))>0) {
         m_good_data = true; emit good_dataChanged();
         CRC=Data.mid(m+1);
-        qDebug()<<"CRC:"<<CRC; //CRC пока не проверяем - это отдельная тема.
+        //qDebug()<<"CRC:"<<CRC; //CRC пока не проверяем - это отдельная тема.
         Data=Data.mid(1,m-1);
-        qDebug()<<"truncated :"<<Data;
-        split=Data.split(';');
-        qDebug()<<"split:"<<split;
+        //qDebug()<<"truncated :"<<Data;
+        //split=Data.split(';');
+        //qDebug()<<"split:"<<split;
         QListIterator<QByteArray> i(split);
         QByteArray s, val;
         bool ok=false;
@@ -402,7 +415,7 @@ void cRigmodel::readData()
              m=s.indexOf(":");
              val=s.mid(m+1); //данные после ":"
              s=s.left(m); // названия тэга
-            qDebug()<<"tag:"<<s<<"value:"<<val;
+            qDebug()<<"Rig tag:"<<s<<"value:"<<val;
             if (s=="toil") {
                 m_temperature=val.toInt(&ok,10); emit temperatureChanged();
                 if(!ok) {m_good_data = false; emit good_dataChanged();
