@@ -11,6 +11,7 @@ cJoystick::cJoystick(QObject *parent) : QObject(parent)
     timer_checkjoystick = new QTimer(this);
     connect(this, SIGNAL(currentChanged()),this, SLOT(change_numbers()));
     connect(timer_checkjoystick,SIGNAL(timeout()),this,SLOT(checkJoystick()));
+    checkJoystick();
     timer_checkjoystick->start(J_CHECK_INTERVAL);
     readSettings();
 }
@@ -202,14 +203,12 @@ void cJoystick::updateData()
 
 void cJoystick::change_numbers()
 {
-    qDebug()<<"Joy:"<<"1";
     if (!joysavail) return;
     m_axes_number=joystick.at(current())->number_axes;
     m_buttons_number=joystick.at(current())->number_btn;
     emit axes_numberChanged();
     emit buttons_numberChanged();
     emit nameChanged();
-    qDebug()<<"Joy:"<<"2";
 }
 
 void cJoystick::saveSettings()

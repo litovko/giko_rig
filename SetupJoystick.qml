@@ -40,6 +40,10 @@ Item {
             x: 363
             y: 15
             text: qsTr("Применить")
+            onClicked: {
+                joystickDialog.visible=false;
+                mainRect.focus=true;
+            }
         }
 
         GroupBox {
@@ -92,6 +96,77 @@ Item {
                     scale: 1
                     font.pixelSize: 12
                 }
+
+                Label {
+                    id: label8
+                    x: 0
+                    y: 205
+                    width: 172
+                    height: 19
+                    color: "#ffffff"
+                    text: qsTr("Номер кнопки 2'")
+                    font.pointSize: 10
+                }
+
+                Label {
+                    id: label7
+                    x: 0
+                    y: 172
+                    width: 172
+                    height: 19
+                    color: "#ffffff"
+                    text: qsTr("Номер кнопки 1'")
+                    font.pointSize: 10
+                }
+
+                Label {
+                    id: label6
+                    x: 0
+                    y: 137
+                    width: 172
+                    height: 19
+                    color: "#ffffff"
+                    text: qsTr("Номер оси x2'")
+                    font.pointSize: 10
+                }
+
+                Label {
+                    id: label5
+                    x: 0
+                    y: 104
+                    width: 172
+                    height: 19
+                    color: "#ffffff"
+                    text: qsTr("Номер оси x1'")
+                    font.pointSize: 10
+                }
+
+                Label {
+                    id: label4
+                    x: 0
+                    y: 71
+                    width: 172
+                    height: 19
+                    color: "#ffffff"
+                    text: qsTr("Номер оси для 'Мощности 2'")
+                    font.pointSize: 10
+                }
+
+                Label {
+                    id: label3
+                    x: 0
+                    y: 34
+                    width: 172
+                    height: 19
+                    color: "#ffffff"
+                    text: qsTr("Номер оси для 'Мощности 1'")
+                    font.pointSize: 10
+                }
+
+
+
+
+
             }
 
             Slider {
@@ -115,7 +190,7 @@ Item {
                     id: mcomboBox1
                 }
                 onCurrentIndexChanged: {
-                    console.log("setJy1"+currentIndex)
+                    //                    console.log("setJy1"+currentIndex)
                     if (joystick.ispresent) joystick.y1axis_ind=currentIndex
                 }
             }
@@ -130,7 +205,7 @@ Item {
                     id: mcomboBox2
                 }
                 onCurrentIndexChanged: {
-                    console.log("setJy2"+currentIndex)
+                    //                    console.log("setJy2"+currentIndex)
                     if (joystick.ispresent)joystick.y2axis_ind=currentIndex
                 }
             }
@@ -156,7 +231,7 @@ Item {
                     id: mcomboBox3
                 }
                 onCurrentIndexChanged: {
-                    console.log("setJx1"+currentIndex)
+                    //console.log("setJx1"+currentIndex)
                     if (joystick.ispresent) joystick.x1axis_ind=currentIndex
                 }
             }
@@ -182,7 +257,7 @@ Item {
                     id: mcomboBox4
                 }
                 onCurrentIndexChanged: {
-                    console.log("setJx2"+currentIndex)
+                    //console.log("setJx2"+currentIndex)
                     if (joystick.ispresent) joystick.x2axis_ind=currentIndex
                 }
             }
@@ -208,7 +283,7 @@ Item {
                     id: mcomboBox5
                 }
                 onCurrentIndexChanged: {
-                    console.log("setJb1" +currentIndex)
+                    //                    console.log("setJb1" +currentIndex)
                     if (joystick.ispresent) joystick.key_0_ind=currentIndex
                 }
             }
@@ -233,7 +308,7 @@ Item {
                     id: mcomboBox6
                 }
                 onCurrentIndexChanged: {
-                    console.log("setJb2" +currentIndex)
+                    //                    console.log("setJb2" +currentIndex)
                     if (joystick.ispresent) joystick.key_1_ind=currentIndex
                 }
             }
@@ -259,19 +334,18 @@ Item {
             text: qsTr(joystick.name)
             font.pointSize: 12
             onTextChanged: {
-                console.log("J:changed"+joystick.name+"axes:"+joystick.axes_number+"ispresent:"+joystick.ispresent)
-                for(var i=0; i<joystick.axes_number; i++) {
-                    mcomboBox1.append({text: i})
-                    mcomboBox2.append({text: i})
-                    mcomboBox3.append({text: i})
-                    mcomboBox4.append({text: i})
-                    //console.log("J:"+i)
+                console.log("Jchanged:"+joystick.name+" axes:"+joystick.axes_number+" ispresent:"+joystick.ispresent)
+                for(var ji=1; ji<=joystick.axes_number; ji++) {
+                    mcomboBox1.append({text: ji})
+                    mcomboBox2.append({text: ji})
+                    mcomboBox3.append({text: ji})
+                    mcomboBox4.append({text: ji})
+                    //console.log("Jax:"+ji)
                 }
-                for(var i=0; i<joystick.buttons_number; i++) {
-                    mcomboBox5.append({text: i})
-                    mcomboBox6.append({text: i})
-
-                    console.log("Jbutton:"+i)
+                for( ji=1; ji<=joystick.buttons_number; ji++) {
+                    mcomboBox5.append({text: ji})
+                    mcomboBox6.append({text: ji})
+                    //console.log("Jbutton:"+ji)
                 }
                 comboBox1.currentIndex=joystick.y1axis_ind
                 comboBox2.currentIndex=joystick.y2axis_ind
@@ -287,72 +361,10 @@ Item {
             x: 363
             y: 49
             text: qsTr("Закрыть")
-        }
-
-        Label {
-            id: label3
-            x: 34
-            y: 195
-            width: 172
-            height: 19
-            color: "#ffffff"
-            text: qsTr("Номер оси для 'Мощности 1'")
-            font.pointSize: 10
-        }
-
-        Label {
-            id: label4
-            x: 34
-            y: 232
-            width: 172
-            height: 19
-            color: "#ffffff"
-            text: qsTr("Номер оси для 'Мощности 2'")
-            font.pointSize: 10
-        }
-
-        Label {
-            id: label5
-            x: 34
-            y: 265
-            width: 172
-            height: 19
-            color: "#ffffff"
-            text: qsTr("Номер оси x1'")
-            font.pointSize: 10
-        }
-
-        Label {
-            id: label6
-            x: 34
-            y: 298
-            width: 172
-            height: 19
-            color: "#ffffff"
-            text: qsTr("Номер оси x2'")
-            font.pointSize: 10
-        }
-
-        Label {
-            id: label7
-            x: 34
-            y: 333
-            width: 172
-            height: 19
-            color: "#ffffff"
-            text: qsTr("Номер кнопки 1'")
-            font.pointSize: 10
-        }
-
-        Label {
-            id: label8
-            x: 34
-            y: 366
-            width: 172
-            height: 19
-            color: "#ffffff"
-            text: qsTr("Номер кнопки 2'")
-            font.pointSize: 10
+            onClicked: {
+                joystickDialog.visible=false;
+                mainRect.focus=true;
+            }
         }
         
     }

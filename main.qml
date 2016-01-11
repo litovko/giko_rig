@@ -2,7 +2,6 @@ import QtQuick 2.5
 import QtQuick.Window 2.2
 import QtQuick.Controls 1.4
 import Gyco 1.0
-
 import QmlVlc 0.1
 import QtMultimedia 5.5
 import Qt.labs.settings 1.0
@@ -274,6 +273,12 @@ Window {
 
         Keys.onPressed: {
 
+            if (event.key === Qt.Key_F1) {
+                help.visible=help.visible?false:true;
+//                joysetup.visible=false;
+//                settings.visible=false;
+//                menu.visible=false;
+            }
             if (event.key === Qt.Key_F2) rig.lamp=rig.lamp?false:true;
             if (event.key === Qt.Key_F3) rig.camera=rig.camera?false:true;;
             if (event.key === Qt.Key_F4) rig.engine=rig.engine?false:true;
@@ -583,10 +588,16 @@ Window {
         height: 500
         anchors.centerIn: parent
         joystick: j
-        visible: true
-
-
+        visible: false
     }
+    Help {
+        id: help
+        visible: false
+        width: 800
+        height: 600
+        anchors.centerIn: parent
+    }
+
     MyHourglass {
         x: 300
         y: 300
@@ -594,6 +605,20 @@ Window {
         anchors.centerIn: parent
         visible: cam1.timeout|cam2.timeout|cam3.timeout
     }
+    AxisVertical {
+        value: j.y2axis
+        height: 100
+        width: 10
+        anchors.centerIn: parent
+    }
+    AxisVertical {
+        value: j.x2axis
+        height: 100
+        width: 10
+        anchors.centerIn: parent
+        rotation: 90
+    }
+
     Component.onDestruction: {
         console.log("Good bye!")
         players[0].stop();
