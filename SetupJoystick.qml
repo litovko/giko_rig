@@ -51,7 +51,7 @@ Item {
             x: 18
             y: 97
             width: 464
-            height: 300
+            height: 333
             checked: true
             opacity: 1
 
@@ -160,6 +160,17 @@ Item {
                     height: 19
                     color: "#ffffff"
                     text: qsTr("Номер оси для 'Мощности 1'")
+                    font.pointSize: 10
+                }
+
+                Label {
+                    id: label9
+                    x: 1
+                    y: 236
+                    width: 172
+                    height: 19
+                    color: "#ffffff"
+                    text: qsTr("Номер кнопки 3'")
                     font.pointSize: 10
                 }
 
@@ -322,6 +333,31 @@ Item {
                 scale: 1.7
                 checked: joystick.key_1
             }
+
+            ComboBox {
+                id: comboBox7
+                x: 185
+                y: 294
+                width: 51
+                height: 20
+                model: ListModel {
+                    id: mcomboBox7
+                }
+                onCurrentIndexChanged: {
+                    //                    console.log("setJb2" +currentIndex)
+                    if (joystick.ispresent) joystick.key_2_ind=currentIndex
+                }
+            }
+
+            RadioButton {
+                id: radioButton3
+                x: 258
+                y: 296
+                text: qsTr("")
+                checked: joystick.key_2
+                scale: 1.7
+                clip: false
+            }
         }
 
         Label {
@@ -345,6 +381,7 @@ Item {
                 for( ji=1; ji<=joystick.buttons_number; ji++) {
                     mcomboBox5.append({text: ji})
                     mcomboBox6.append({text: ji})
+                    mcomboBox7.append({text: ji})
                     //console.log("Jbutton:"+ji)
                 }
                 comboBox1.currentIndex=joystick.y1axis_ind
@@ -353,6 +390,7 @@ Item {
                 comboBox4.currentIndex=joystick.x2axis_ind
                 comboBox5.currentIndex=joystick.key_0_ind
                 comboBox6.currentIndex=joystick.key_1_ind
+                comboBox7.currentIndex=joystick.key_2_ind
             }
         }
 

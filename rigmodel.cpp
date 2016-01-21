@@ -379,9 +379,11 @@ void cRigmodel::sendData()
 //        +";ana2:"+::QString().number(int(m_joystick_y2*127/100),10)
 //        +";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
     Data="{ana1:"+::QString().number(m_joystick_y1,10)
-            +";ana2:"+::QString().number(m_joystick_y2,10)
-            +";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
-    //qDebug()<<"Rig - send data: "<<Data;
+            +";ana2:"+::QString().number(m_joystick_y2,10);
+    if (m_rigtype=="gkgbu") Data=Data+";ana3:"+::QString().number(m_joystick_x1,10)+";gmod"+m_gmod;
+
+    Data=Data+";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
+    qDebug()<<"Rig - send data: "<<Data;
     bytesToWrite = (int)tcpClient.write(::QByteArray(Data.toLatin1()).data());
     if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
     if (bytesToWrite>=0)qDebug()<<"Rig: Data sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
@@ -457,4 +459,15 @@ void cRigmodel::readData()
     else {
         m_good_data=false; good_dataChanged();
     }
+}
+
+QString cRigmodel::gmod() const
+{
+    return m_gmod;
+}
+
+void cRigmodel::setGmod(const QString &gmod)
+{
+    m_gmod = gmod;
+    emit gmodChanged();
 }

@@ -3,6 +3,7 @@
 #include <QSettings>
 #include <QTime>
 #include <QDateTime>
+#include <QFileInfo>
 
 #define TIMER_CHECK 30000
 cCamera::cCamera(QObject *parent) : QObject(parent)
@@ -23,6 +24,7 @@ void cCamera::saveSettings()
     settings.setValue("Cam"+QString::number(m_index)+"OverlayText",m_overlaytext);
     settings.setValue("Cam"+QString::number(m_index)+"Enabled",m_cameraenabled);
     settings.setValue("Cam"+QString::number(m_index)+"Title",m_title);
+    settings.setValue("Cam"+QString::number(m_index)+"Histogram",m_histogram);
 }
 void cCamera::readSettings()
 {
@@ -33,6 +35,7 @@ void cCamera::readSettings()
     setCameraenabled(settings.value("Cam"+QString::number(m_index)+"Enabled",false).toBool());
     m_url1=url1(); //меняем строку запуска камеры
     setOverlaytext(settings.value("Cam"+QString::number(m_index)+"OverlayText","Cam"+QString::number(m_index)).toString());
+    setHistogram(settings.value("Cam"+QString::number(m_index)+"Histogram",0).toInt());
     qDebug()<<"Read settings Cam"<<QString::number(m_index)<<":"<<"Cam"<<QString::number(m_index)<<":"<<"readSettings addres:"<<m_address;
 }
 void cCamera::setTitle(const QString  &title)
@@ -392,7 +395,8 @@ QString cCamera::title() const
                 +"&blc=1&dynrange=0&awb=0&colorkiller="+::QString().number(m_colorkiller,10)
                 +"&exposurectrl=1&maxexposuretime=0&maxgain=0&nfltctrl=0&tnfltctrl=0&vidstb1=0&lensdistortcorrection=0&binning=2"
                 +"&img2a="+::QString().number(m_img2a,10)
-                +"&backlight=1&histogram=0"
+                +"&backlight=1"
+                +"&histogram=0"
                 +"&img2atype="+::QString().number(m_img2atype,10)
                 +"&priority=0 HTTP/1.1";
         qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"urlchange_videosettings:"<<s;
@@ -450,6 +454,12 @@ QString cCamera::title() const
         m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
         connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
         QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
+    }
+
+    int cCamera::get_filesize()
+    {
+        QFileInfo info(m_recordfile);
+        return info.size();
     }
     void cCamera::loadResponce(QNetworkReply *pReply)
     {
@@ -519,6 +529,38 @@ QString cCamera::title() const
         if (ok) return c;
         return 0;
     }
+    QString cCamera::parse_string(QString param){
+        QRegExp rx("^("+param+"=.*)");
+        QString s=m_parametr.at(m_parametr.indexOf(rx)); //qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"loadINI videocodeccombo:"<<s;
+        QStringList sl=s.split("=");
+        return sl.at(1);
+    }
+    
+    QString cCamera::recordfile() const
+    {
+        return m_recordfile;
+    }
+    
+    void cCamera::setRecordfile(const QString &recordfile)
+    {
+        m_recordfile = recordfile;
+        emit recordfileChanged();
+    }
+    
+    void cCamera::setHistogram(int histogram)
+    {
+        m_histogram = histogram;
+        histogramChanged();
+    }
+
+
+    
+    int cCamera::histogram() const
+    {
+        return m_histogram;
+    }
+
+
     void cCamera::loadINI(QNetworkReply* pReply)
     {
         qDebug()<<"loadINI: Cam"<<QString::number(m_index)<<":"<<"!!1";
@@ -549,6 +591,7 @@ QString cCamera::title() const
             setColorkiller(parse_int("colorkiller"));
             setImg2a(parse_int("img2a"));
             setImg2atype(parse_int("img2atype"));
+            setOverlaytext(parse_string("overlaytext1"));//overlaytext1
 //            qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"!!3";
         }
 //        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"!!4";

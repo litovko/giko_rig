@@ -20,6 +20,7 @@ class cRigmodel : public QObject
     Q_PROPERTY(int turns READ turns WRITE setTurns NOTIFY turnsChanged)
     Q_PROPERTY(int temperature READ temperature WRITE setTemperature NOTIFY temperatureChanged)
     Q_PROPERTY(QString rigtype READ rigtype WRITE setRigtype NOTIFY rigtypeChanged)
+    Q_PROPERTY(QString gmod READ gmod WRITE setGmod NOTIFY gmodChanged)
     //############ переменные - данные для отправки
     Q_PROPERTY(bool lamp READ lamp WRITE setLamp NOTIFY lampChanged)
     Q_PROPERTY(bool engine READ engine WRITE setEngine NOTIFY engineChanged)  //включение выключение мотора
@@ -110,6 +111,9 @@ public:
     bool client_connected()const;
     bool good_data()const;
 
+    QString gmod() const;
+    void setGmod(const QString &gmod);
+
 signals:
     void pressureChanged();
     void oiltempChanged();
@@ -119,7 +123,7 @@ signals:
     void turnsChanged();
     void temperatureChanged();
     void rigtypeChanged();
-
+    void gmodChanged();
     void lampChanged();
     void engineChanged();
     void pumpChanged();
@@ -159,7 +163,7 @@ private:
     int m_turns=0;
     int m_temperature=0;
     QString m_rigtype="grab2"; //grab2,grab6,gkgbu,tk-15
-
+    QString m_gmod="platf"; //platf,tower,bench,drill
 
     QString m_address="localhost";
     int m_port=1212;

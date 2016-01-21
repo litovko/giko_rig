@@ -13,6 +13,7 @@
 #define TIMEOUT 10000  //  таймаут для установки видеорежимов
 #define TIMEOUT_RESET 20000 //
 
+
 class cCamera : public QObject
 {
     Q_OBJECT
@@ -27,6 +28,8 @@ class cCamera : public QObject
     Q_PROPERTY(int videocodecres READ videocodecres WRITE setVideocodecres NOTIFY videocodecresChanged) // режим разрешения видиопотоков
     Q_PROPERTY(int mirctrl READ mirctrl WRITE setMirctrl NOTIFY mirctrlChanged) // режим зеркалирования изображения
     Q_PROPERTY(QString overlaytext READ overlaytext WRITE setOverlaytext NOTIFY overlaytextChanged)
+    Q_PROPERTY(QString recordfile READ recordfile WRITE setRecordfile NOTIFY recordfileChanged) //имя файля куда пишется поток
+//    Q_PROPERTY(QString recordfilesize READ recordfilesize  NOTIFY recordfilesizeChanged) //размер файла
 
 //====
     Q_PROPERTY(int comby READ comby WRITE setComby NOTIFY combyChanged) // комбинированный режим, доступный для выбора из диалогового окна
@@ -39,6 +42,7 @@ class cCamera : public QObject
     Q_PROPERTY(int colorkiller READ colorkiller WRITE setColorkiller NOTIFY colorkillerChanged)
     Q_PROPERTY(int img2a READ img2a WRITE setImg2a NOTIFY img2aChanged)
     Q_PROPERTY(int img2atype READ img2atype WRITE setImg2atype NOTIFY img2atypeChanged)
+    Q_PROPERTY(int histogram READ histogram WRITE setHistogram NOTIFY histogramChanged)
 
 
 //====
@@ -127,6 +131,14 @@ public:
     QString url2() const;
 
 
+    int histogram() const;
+
+
+    void setHistogram(int histogram);
+
+    QString recordfile() const;
+    void setRecordfile(const QString &recordfile);
+
 signals:
     void titleChanged();
     void addressChanged();
@@ -147,7 +159,7 @@ signals:
     void combyChanged();
     void combylistChanged();
     void overlaytextChanged();
-
+    void histogramChanged();
     void brightnessChanged();
     void contrastChanged();
     void saturationChanged();
@@ -156,6 +168,7 @@ signals:
     void colorkillerChanged();
     void img2aChanged();
     void img2atypeChanged();
+    void recordfileChanged();
 
     void downloaded();
     void timeoutChanged();
@@ -172,9 +185,11 @@ public slots:
     Q_INVOKABLE void setDateTimesettings();
     Q_INVOKABLE void get_parametrs(); // запросить параметры от камеры.
     Q_INVOKABLE void send_reset();
+    Q_INVOKABLE int get_filesize();
     void loadINI(QNetworkReply *pReply); //получить параметры от камеры после ответа.   
     void loadResponce(QNetworkReply *pReply);
     void stoptimeout();
+
 private:
     //переменные для загрузки INI-файла из камеры.
     QNetworkAccessManager *m_WebCtrl;
@@ -192,6 +207,7 @@ private:
     QString m_url1;//="rtsp://192.168.1.168:8553/PSIA/Streaming/channels/1?videoCodecType=MPEG4";
     QString m_url2="";
     int parse_int(QString param);
+    QString parse_string(QString param);
     int m_videocodec=0;
     int m_videocodeccombo=0;  //H.264
     int m_videocodecres=0;
@@ -202,6 +218,7 @@ private:
     int m_textenable=1;
     int m_textposition=0;  //0 - Top-Left; 1 - Top-Right
     QString m_overlaytext;
+    int m_histogram=0;
     int m_brightness=127;
     int m_contrast=127;
     int m_saturation=127;
@@ -218,6 +235,7 @@ private:
     QTimer timer_check;
     QTimer timer_timeout;
     bool m_timeout=false;
+    QString m_recordfile="";
 
 
 

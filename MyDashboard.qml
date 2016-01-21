@@ -15,18 +15,29 @@ Item {
         State {
             name: "grab2"
             PropertyChanges {target: power2;   visible: false}
+            PropertyChanges {target: power;   visible: true}
             PropertyChanges {target: turns;   visible: false}
+            PropertyChanges {target: gkgbu_pult;   visible: false}
+            PropertyChanges {target: row_left;   visible: true}
+            PropertyChanges {target: row_right;   visible: true}
         },
         State {
             name: "grab6"
             PropertyChanges {target: power2;   visible: true}
+            PropertyChanges {target: power;   visible: true}
             PropertyChanges {target: turns;   visible: false}
+            PropertyChanges {target: gkgbu_pult;   visible: false}
+            PropertyChanges {target: row_left;   visible: true}
+            PropertyChanges {target: row_right;   visible: true}
         },
         State {
             name: "gkgbu"
-            PropertyChanges {target: turns;   visible: true}
+            PropertyChanges {target: gkgbu_pult;   visible: true}
             PropertyChanges {target: power2;   visible: false}
-        //    PropertyChanges {target: dashBoard;   width: 540}
+            PropertyChanges {target: power;   visible: false}
+            PropertyChanges {target: turns;   visible: true}
+            PropertyChanges {target: row_left;   visible: false}
+            PropertyChanges {target: row_right;   visible: false}
         }
     ]
     onVisibleChildrenChanged: calculatesize()
@@ -48,8 +59,18 @@ Item {
 
     }
     onContainerheightChanged: calculatesize()
-
+    GKGBU {
+        id: gkgbu_pult
+        //anchors.centerIn: parent
+        height: dashboard.gaugesize+20
+        width: dashboard.gaugesize
+        joystick: j
+        rigmodel: source
+        btn0: j.key_0
+        z:4
+    }
     MyGauge {
+            id: row_left
             val:j.y1axis
             //anchors.fill: parent
             anchors.bottom: dbr.bottom
@@ -62,12 +83,15 @@ Item {
             z:3
         }
     MyGauge {
+        id: row_right
             val: gauge_value()
             function gauge_value(){
+                if (!j.ispresent) return 0
                 if (dashboard.state==="grab2") return j.y1axis
                 if (dashboard.state==="grab6") return j.y2axis
             }
             function gauge_color(){
+                if (!j.ispresent) return "transparent"
                 if (dashboard.state==="grab2") return j.y1axis>0?"yellow":"lightblue"
                 if (dashboard.state==="grab6") return j.y2axis>0?"yellow":"lightblue"
             }
@@ -151,6 +175,7 @@ Item {
 //                      NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
 //                      NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 400 }
 //                  }
+
                 Rectangle {
                     color:"transparent";
                     width:  gaugesize;
@@ -292,7 +317,6 @@ Item {
                         minorTickmarks:5
                     }
                 }
-
             }
         }
     }

@@ -147,6 +147,10 @@ bool cJoystick::key_1()
     return m_key_1;
 }
 
+bool cJoystick::key_2()
+{
+    return m_key_2;
+}
 // Initialize Joystick information
 // Get # of joysticks available
 // Populate # of axes and buttons
@@ -199,6 +203,8 @@ void cJoystick::updateData()
     qDebug()<<"X1:"<<m_x1axis<<" Y1:"<<m_y1axis<<"X2:"<<m_x2axis<<" Y2:"<<m_y2axis<<" B0:"<<m_key_0<<" B1:"<<m_key_1;}
     b=(joystick.at(current())->button[m_key_1_ind]);
     if (b==!m_key_1) { m_key_1=b; emit key_1Changed();}
+    b=(joystick.at(current())->button[m_key_2_ind]);
+    if (b==!m_key_2) { m_key_2=b; emit key_2Changed();}
 }
 
 void cJoystick::change_numbers()
@@ -222,6 +228,7 @@ void cJoystick::saveSettings()
         settings.setValue("Joystick-y2",m_y2axis_ind);
         settings.setValue("Joystick-b1",m_key_0_ind);
         settings.setValue("Joystick-b2",m_key_1_ind);
+        settings.setValue("Joystick-b3",m_key_2_ind);
 }
 
 void cJoystick::readSettings()
@@ -233,6 +240,7 @@ void cJoystick::readSettings()
     setY2axis_ind(settings.value("Joystick-y2",3).toInt());
     setKey_0_ind(settings.value("Joystick-b1",0).toInt());
     setKey_1_ind(settings.value("Joystick-b2",1).toInt());
+    setKey_2_ind(settings.value("Joystick-b3",2).toInt());
     qDebug()<<"Read settings Joystick";
 }
 
@@ -263,6 +271,16 @@ void cJoystick::setKey_1_ind(int key_1_ind)
     emit key_1_indChanged();
 }
 
+int cJoystick::key_2_ind() const
+{
+    return m_key_2_ind;
+}
+
+void cJoystick::setKey_2_ind(int key_2_ind)
+{
+    m_key_2_ind = key_2_ind;
+    emit key_2_indChanged();
+}
 int cJoystick::key_0_ind() const
 {
     return m_key_0_ind;

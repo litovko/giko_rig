@@ -64,16 +64,23 @@ Item {
 
             ComboBox {
                 id: cb_cam
-                x: 74
+                x: 72
                 y: -3
-                width: 164
+                width: 176
                 height: 20
+                z: 5
                 Component.onCompleted: {
 
-                    listCams.append({text: cam[0].title})
-                    listCams.append({text: cam[1].title})
-                    listCams.append({text: cam[2].title})
+                    listCams.append({text: cam[0].title+" ["+cam[0].address+"]"})
+                    listCams.append({text: cam[1].title+" ["+cam[1].address+"]"})
+                    listCams.append({text: cam[2].title+" ["+cam[2].address+"]"})
                     currentIndex=0
+                }
+                onVisibleChanged: {
+                    listCams.clear()
+                    listCams.append({text: cam[0].title+" ["+cam[0].address+"]"})
+                    listCams.append({text: cam[1].title+" ["+cam[1].address+"]"})
+                    listCams.append({text: cam[2].title+" ["+cam[2].address+"]"})
                 }
                 model: ListModel {
                     id: listCams
@@ -566,8 +573,10 @@ Item {
 
         Button {
             id: time
-            x: 255
-            y: 21
+            x: 82
+            y: 114
+            width: 110
+            height: 23
             text: qsTr("Установить время")
             opacity: 0.8
             tooltip: "Установка текущего времени"
@@ -580,9 +589,9 @@ Item {
 
         Button {
             id: btn_reset
-            x: 255
+            x: 243
             y: 114
-            width: 101
+            width: 113
             height: 23
             text: qsTr("Перезапуск камеры")
             tooltip: "Программынй ресет камеры"

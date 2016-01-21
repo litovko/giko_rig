@@ -16,7 +16,12 @@
 		<file>SetupSettings.qml</file>
 		<file>SetupJoystick.qml</file>
 		<file>Help.qml</file>
+		<file>Axis.qml</file>
 		<file>AxisVertical.qml</file>
+		<file>AxisHorizontal.qml</file>
+		<file>GKGBU.qml</file> 
 		<file>MyHourglass.qml</file>
+		<file>MyMenu.qml</file>
+		<file>MyMenuItem.qml</file>
     </qresource>
 </RCC>

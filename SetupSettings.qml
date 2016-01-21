@@ -93,6 +93,7 @@ Item {
                 rig.timer_send_interval=parseInt(rig_msec1.text);
                 rig.timer_connect_interval=parseInt(rig_msec2.text);
                 network_caching=parseInt(netcache.text);
+                filesize=cbfilesize.currentText
                 j.ispresent=cbj.checked
             }
         }
@@ -401,6 +402,36 @@ Item {
                 onCurrentIndexChanged: rig.rigtype=curtype()
                 model: ["Двухлепестковый - grab2", "Шестилепестковый - grab6", "ГКГБУ - gkgbu" ]
                 //currentIndex: curindex()
+            }
+        }
+
+        Label {
+            id: ltype1
+            x: 13
+            y: 373
+            width: 184
+            height: 13
+            color: "#ffffff"
+            text: qsTr("Размер нарезки видеофалов, Мб")
+            font.pointSize: 9
+            ComboBox {
+                id: cbfilesize
+                x: 201
+                y: -3
+                width: 69
+                height: 20
+                model: [500, 700, 1000, 1200]
+                Component.onCompleted: {
+                    currentIndex=0
+                    switch (win.filesize){
+                        case 500: currentIndex=0; break;
+                        case 700: currentIndex=1; break;
+                        case 1000: currentIndex=2; break;
+                        case 1200: currentIndex=3; break;
+                        default: currentIndex=0;
+                    }
+                }
+
             }
         }
 

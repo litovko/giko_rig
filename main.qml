@@ -5,6 +5,9 @@ import Gyco 1.0
 import QmlVlc 0.1
 import QtMultimedia 5.5
 import Qt.labs.settings 1.0
+import QtQuick.Extras 1.4
+import QtQml 2.2
+import Qt.labs.folderlistmodel 2.1
 
 Window {
     id: win
@@ -19,12 +22,8 @@ Window {
     property int network_caching: 250
     property string vlc_options: ",--nothing, --never ,:none=NAN"
     property string filepath: ""
-//    property string cam1title:"cam1"
-//    property string cam2title:"cam2"
-//    property string cam3title:"cam3"
-//    property int cam1index: 1
-//    property int cam2index: 2
-//    property int cam3index: 3
+    property int filesize: 700 //Mbyte
+
     property list<VlcPlayer> players:[
         VlcPlayer {
             id: vlcPlayer1;
@@ -61,17 +60,14 @@ Window {
     property list<RigCamera> cams: [
         RigCamera {
             id: cam1
-            //title: cam1title
             index: 1
         },
         RigCamera {
             id: cam2
-            //title: cam2title
             index: 2
         },
         RigCamera {
             id: cam3
-            //title: cam3title
             index: 3
         }
     ]
@@ -87,8 +83,7 @@ Window {
         property alias network_caching: win.network_caching
         property alias vlc_options: win.vlc_options
         property alias filepath: win.filepath
-
-
+        property alias filesize: win.filesize
     }
     function player_play(player_number){
         if (cams[0].timeout||cams[1].timeout||cams[2].timeout) return;
@@ -109,8 +104,19 @@ Window {
         if (camstate===7) return "Ошибка";
         return "";
     }
-    function getrecordoption(camindex){
+    function file_name(camindexx) {
         var dt=new Date();
+        var s=filepath+"hyco-"
+                +"cam"+(camindexx+1)+"-"
+                +cams[camindexx].overlaytext + "-"
+                + dt.toLocaleString(Qt.locale(),"dd-MM-yyyy_HH-mm-ss")
+                +".mpg"
+        //console.log("main: file_name->"+s)
+        return s
+    }
+
+    function getrecordoption(camindex){
+        //var dt=new Date();
         var vlc=vlc_options.split(',')
         console.log("getrecordoption"+win.vlc_options);
         if (camindex===undefined) console.assert("getrecordoption camindex undefined!!!")
@@ -121,25 +127,50 @@ Window {
             for (var i=0; i<vlc.length; i++) sopt.push(vlc[i]);
             return sopt;
         }
-        console.log("Camindex="+camindex);
-        console.log("Camindex="+camindex+"cam:" +cams[camindex].title+"text:"+cams[camindex].overlaytext);
-        console.log("FN Time:"+ dt + "FilePath:"+filepath );
+//        console.log("Camindex="+camindex);
+//        console.log("Camindex="+camindex+"cam:" +cams[camindex].title+"text:"+cams[camindex].overlaytext);
+//        console.log("FN Time:"+ dt + "FilePath:"+filepath );
+        var fn=file_name(camindex); cams[camindex].recordfile=fn;
         var popt=[":network-caching="+network_caching.toString()
-                  ,":sout=#stream_out_duplicate{dst=display,dst=std{access=file,mux=mp4,dst="+filepath+"hyco-"
-                  +"cam"+(camindex+1)+"-"
-                  +cams[camindex].overlaytext + "-"
-                  + dt.toLocaleString(Qt.locale(),"dd-MM-yyyy_HH-mm-ss")
-                  +".mpg}}"]
-        //var vlc=vlc_options.split(',');
+                  ,":sout=#stream_out_duplicate{dst=display,dst=std{access=file,mux=mp4,dst="
+                  + fn
+                  + "}}"
+                 ]
+//        var popt=[":network-caching="+network_caching.toString()
+//                  ,":sout=#stream_out_duplicate{dst=display,dst=std{access=file,mux=mp4,dst="+filepath+"hyco-"
+//                  +"cam"+(camindex+1)+"-"
+//                  +cams[camindex].overlaytext + "-"
+//                  + dt.toLocaleString(Qt.locale(),"dd-MM-yyyy_HH-mm-ss")
+//                  +".mpg}}"]
         for (var i=0; i<vlc.length; i++) popt.push(vlc[i]);
         console.log("Options with recording Cam"+(camindex+1)+":  "+popt);
         //:venc=ffmpeg,--no-audio,--high-priority,:threads=16
         return popt
     }
+    function check_file_size(){
+        if (recording===0) return;
+        console.log ("filesize:"+filesize+"##############################")
+        for (var i=0; i<3; i++) {
+            if(players[i].state===3) {
+                console.log ("file_name"+i+":"+cams[i].recordfile + "size:"+ cams[i].get_filesize())
+                if (cams[i].get_filesize()>=filesize*1024*1024) player_play(i);
+            }
+        } //for
+    }
+
+    Timer {
+        id: t_filesize
+        interval: 10000
+        repeat: true
+        onTriggered: check_file_size()
+        running: true
+    }
+
     RigModel {
         id: rig
         joystick_y1: j.y1axis
         joystick_y2: j.y2axis
+        joystick_x1: j.x1axis
     }
     function changestate(){
                     console.log("STATE: "+mainRect.state + " ind:" +cams[0].index+cams[1].index+cams[2].index);
@@ -273,41 +304,41 @@ Window {
 
         Keys.onPressed: {
 
-            if (event.key === Qt.Key_F1) {
+            if (event.key === Qt.Key_F1 || event.key === Qt.Key_1) {
                 help.visible=help.visible?false:true;
 //                joysetup.visible=false;
 //                settings.visible=false;
 //                menu.visible=false;
             }
-            if (event.key === Qt.Key_F2) rig.lamp=rig.lamp?false:true;
-            if (event.key === Qt.Key_F3) rig.camera=rig.camera?false:true;;
-            if (event.key === Qt.Key_F4) rig.engine=rig.engine?false:true;
-            if (event.key === Qt.Key_F8) {
+            if (event.key === Qt.Key_F2||event.key === Qt.Key_2) rig.lamp=rig.lamp?false:true;
+            if (event.key === Qt.Key_F3||event.key === Qt.Key_3) rig.camera=rig.camera?false:true;;
+            if (event.key === Qt.Key_F4||event.key === Qt.Key_4) rig.engine=rig.engine?false:true;
+            if (event.key === Qt.Key_F8||event.key === Qt.Key_8) {
                 if (dashboard.state==="grab2") dashboard.state="grab6"
                 else if (dashboard.state==="grab6") dashboard.state="gkgbu"
                      else  dashboard.state="grab2"
             }
-            if (event.key === Qt.Key_F9) {
+            if (event.key === Qt.Key_F9||event.key === Qt.Key_9) {
                 joysetup.visible=joysetup.visible?false:true;
                 settings.visible=false;
                 menu.visible=false;
             }
-            if (event.key === Qt.Key_F10) {
+            if (event.key === Qt.Key_F10||event.key === Qt.Key_0) {
                 menu.visible=menu.visible?false:true;
                 settings.visible=false;
                 joysetup.visible=false;
             }
-            if (event.key === Qt.Key_F11) {
+            if (event.key === Qt.Key_F11||event.key === Qt.Key_Minus) {
                 settings.visible=settings.visible?false:true;
                 menu.visible=false;
                 joysetup.visible=false;
             }
-            if (event.key === Qt.Key_F5) {
+            if (event.key === Qt.Key_F5||event.key === Qt.Key_5) {
                 if(cams[0].cameraenabled) player_play(0);
                 if(cams[1].cameraenabled) player_play(1);
                 if(cams[2].cameraenabled) player_play(2);
             }
-            if (event.key === Qt.Key_F6) {
+            if (event.key === Qt.Key_F6||event.key === Qt.Key_6) {
                 players[0].stop();
                 players[1].stop();
                 players[2].stop();
@@ -320,15 +351,15 @@ Window {
                 j.ispresent=false
                 if(j.y1axis<127) j.y1axis=j.y1axis+1;
             }
-            if (event.key === Qt.Key_PageDown) {
+            if (event.key === Qt.Key_PageDown||event.key === Qt.Key_Left) {
                 j.ispresent=false
                 if(j.y2axis>-127) j.y2axis=j.y2axis-1;
             }
-            if (event.key === Qt.Key_PageUp) {
+            if (event.key === Qt.Key_PageUp||event.key === Qt.Key_Right) {
                 j.ispresent=false
                 if(j.y2axis<127) j.y2axis=j.y2axis+1;
             }
-            if (event.key === Qt.Key_F12) win.visibility= win.visibility===Window.FullScreen?Window.Windowed:Window.FullScreen;
+            if (event.key === Qt.Key_F12||event.key === Qt.Key_Equal) win.visibility= win.visibility===Window.FullScreen?Window.Windowed:Window.FullScreen;
         }
 
 
@@ -420,12 +451,25 @@ Window {
             acceptedButtons: Qt.AllButtons
 
             onDoubleClicked: changestate()
+            onClicked: piemenu.visible=piemenu.visible?false:true
+        }
+
+        MyMenu {
+            id: piemenu
+            width: 600
+            height: 500
+            anchors.centerIn: parent
         }
 
         RigJoystick {
             id: j
             current: 0
             onKey_1Changed: if (key_1) changestate()
+            onKey_2Changed: if (key_2) {
+                                if(cams[0].cameraenabled) player_play(0);
+                                if(cams[1].cameraenabled) player_play(1);
+                                if(cams[2].cameraenabled) player_play(2);
+                            }
         }
         MyDashboard {
             height: 600
@@ -437,7 +481,7 @@ Window {
             containerheight: parent.height
             anchors { margins: 10;
                       top: parent.top;
-                      right: parent.right}
+                      right: parent.right}           
         }
 
         //###################################################################################################
@@ -604,19 +648,6 @@ Window {
         z:10
         anchors.centerIn: parent
         visible: cam1.timeout|cam2.timeout|cam3.timeout
-    }
-    AxisVertical {
-        value: j.y2axis
-        height: 100
-        width: 10
-        anchors.centerIn: parent
-    }
-    AxisVertical {
-        value: j.x2axis
-        height: 100
-        width: 10
-        anchors.centerIn: parent
-        rotation: 90
     }
 
     Component.onDestruction: {
