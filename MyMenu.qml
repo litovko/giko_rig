@@ -9,6 +9,7 @@ Item {
     visible: false
     property real itemheight: 100 
     property real itemwidth: 100
+    property string command: "Command"
     Rectangle {
         id: body
         color: "transparent"
@@ -23,7 +24,7 @@ Item {
             }
             GradientStop {
                 position: 1.00;
-                color: "#ffffff";
+                color: "#888888";
             }
         }
 
@@ -32,19 +33,55 @@ Item {
             anchors.margins: 20
             spacing: 20
             MyMenuItem {
-              width: 100
+              width: 120
               height:100
-              text: "NUMBER 1"
+              command: "PROGRAM SETTINGS"
+              text: "<p><b>Настройки<br> программы<br>[F11]   [-]<b></p>"
+              onPressedChanged: menu.command=pressed?command:"no command"
+            }
+            MyMenuItem {
+              width: 120
+              height:100
+              command: "CAMERA SETTINGS"
+              text: "<p><b>Настройки<br> камеры<br>[F10]   [0]<b></p>"
+              onPressedChanged: menu.command=pressed?command:"no command"
+            }
+            MyMenuItem {
+              width: 120
+              height:100
+              command: "CHANGE RIG TYPE"
+              text: "<p><b>Сменить<br> аппарат<br>[F8]   [8]<b></p>"
+              onPressedChanged: menu.command=pressed?command:"no command"
+            }
+//            MyMenuItem {
+//              width: 120
+//              height:100
+//              command: "CHANGE RIG TYPE"
+//              text: "<p><b>Сменить<br>аппарат<br>[F8]   [9]<b></p>"
+//              onPressedChanged: menu.command=pressed?command:"rig no command"
+//            }
+            MyMenuItem {
+              width: 120
+              height:100
+              command: "JOYSTICK SETTINGS"
+              text: "<p><b>Настройки<br> джойстика<br>[F9]   [9]<b></p>"
+              onPressedChanged: menu.command=pressed?command:"no command"
+            }
+            MyMenuItem {
+              width: 120
+              height:100
+              command: "PLAY"
+              text: "<p><b>СТАРТ<br> видео<br>[F5]   [5]<b></p>"
+              onPressedChanged: menu.command=pressed?command:"no command"
+            }
+            MyMenuItem {
+              width: 120
+              height:100
+              command: "STOP"
+              onVisibleChanged:  pressed=false
+              text: "<p><b>СТОП<br> видео<br>[F6]   [6]<b></p>"
+              onPressedChanged: menu.command=pressed?command:"no command"
             }
         }
-
-//        MouseArea {
-//            anchors.fill: parent
-//            hoverEnabled: true
-//            onContainsMouseChanged: body.border.width=containsMouse?3:1
-//              propagateComposedEvents:true
-//        }
-
-
     }
 }
