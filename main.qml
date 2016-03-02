@@ -7,7 +7,6 @@ import QtMultimedia 5.5
 import Qt.labs.settings 1.0
 import QtQuick.Extras 1.4
 import QtQml 2.2
-import Qt.labs.folderlistmodel 2.1
 
 Window {
     id: win
@@ -149,7 +148,7 @@ Window {
     }
     function check_file_size(){
         if (recording===0) return;
-        console.log ("filesize:"+filesize+"##############################")
+        //console.log ("filesize:"+filesize+"##############################")
         for (var i=0; i<3; i++) {
             if(players[i].state===3) {
                 console.log ("file_name"+i+":"+cams[i].recordfile + "size:"+ cams[i].get_filesize())
@@ -190,7 +189,102 @@ Window {
                               else if (mainRect.state==="3-KAM-bol3") mainRect.state="3-KAM-mal"
                                    else mainRect.state="3-KAM-mal"
 
-                }
+    }
+    function fcommand (cmd) {
+        console.log ("COMMAND="+cmd)
+        switch(cmd) {
+          case "STOP":
+              players[0].stop();
+              players[1].stop();
+              players[2].stop();
+              menu.visible=false;
+              camsettings.visible=false
+              joysetup.visible=false;
+              settings.visible=false;
+              help.visible=false
+              break;
+          case "PLAY":
+              if(cams[0].cameraenabled) player_play(0);
+              if(cams[1].cameraenabled) player_play(1);
+              if(cams[2].cameraenabled) player_play(2);
+              menu.visible=false;
+              camsettings.visible=false
+              settings.visible=false;
+              joysetup.visible=false
+              help.visible=false
+              break;
+          case "JOYSTICK SETTINGS":
+              joysetup.visible=!joysetup.visible;
+              settings.visible=false;
+              menu.visible=false;
+              camsettings.visible=false
+              help.visible=false
+              break;
+          case "PROGRAM SETTINGS":
+              settings.visible=!settings.visible;
+              menu.visible=false;
+              camsettings.visible=false
+              joysetup.visible=false;
+              help.visible=false
+              break;
+          case "CAMERA SETTINGS":
+              camsettings.visible=!camsettings.visible;
+              menu.visible=false
+              settings.visible=false;
+              joysetup.visible=false;
+              help.visible=false
+              break;
+          case "HELP":
+              help.visible=!help.visible
+              camsettings.visible=false;
+              menu.visible=false
+              settings.visible=false;
+              joysetup.visible=false;
+              break;
+          case "CHANGE RIG TYPE":
+              menu.visible=false
+              camsettings.visible=false
+              settings.visible=false;
+              joysetup.visible=false
+              help.visible=false
+              if (dashboard.state==="grab2") dashboard.state="grab6"
+              else if (dashboard.state==="grab6") dashboard.state="gkgbu"
+                   else  dashboard.state="grab2"
+              rig.rigtype=dashboard.state
+              break;
+          case "MENU":
+              menu.visible=menu.visible?false:true
+              camsettings.visible=false
+              settings.visible=false;
+              joysetup.visible=false
+              help.visible=false
+              break;
+          case "FULLSCREEN":
+              win.visibility = win.visibility===Window.FullScreen?Window.Maximized:Window.FullScreen;
+              break;
+          case "PICTURE":
+              picture.visible = !picture.visible;
+              break;
+          case "LAYOUT":
+              changestate();
+              break;
+          case "DEMO":
+              mainRect.state = "3-KAM-bol1" // "3-KAM-mal"
+              vlcPlayer1.mrl = "file:///"+win.filepath+"/01.3gp"
+              vlcPlayer1.play()
+              vlcPlayer2.mrl = "file:///"+win.filepath+"/02.3gp"
+              vlcPlayer1.play()
+              vlcPlayer3.mrl = "file:///"+win.filepath+"/03.3gp"
+              vlcPlayer1.play()
+              rig.engine=true;
+              rig.lamp=true;
+              rig.camera=true;
+              rig.good_data=true;
+              rig.client_connected=true;
+              break;
+        }
+    }
+
     Rectangle {
         id: mainRect
         color: 'black';
@@ -303,46 +397,21 @@ Window {
 
 
         Keys.onPressed: {
-
-            if (event.key === Qt.Key_F1 || event.key === Qt.Key_1) {
-                help.visible=help.visible?false:true;
-//                joysetup.visible=false;
-//                settings.visible=false;
-//                menu.visible=false;
-            }
-            if (event.key === Qt.Key_F2||event.key === Qt.Key_2) rig.lamp=rig.lamp?false:true;
-            if (event.key === Qt.Key_F3||event.key === Qt.Key_3) rig.camera=rig.camera?false:true;;
-            if (event.key === Qt.Key_F4||event.key === Qt.Key_4) rig.engine=rig.engine?false:true;
-            if (event.key === Qt.Key_F8||event.key === Qt.Key_8) {
-                if (dashboard.state==="grab2") dashboard.state="grab6"
-                else if (dashboard.state==="grab6") dashboard.state="gkgbu"
-                     else  dashboard.state="grab2"
-            }
-            if (event.key === Qt.Key_F9||event.key === Qt.Key_9) {
-                joysetup.visible=joysetup.visible?false:true;
-                settings.visible=false;
-                menu.visible=false;
-            }
-            if (event.key === Qt.Key_F10||event.key === Qt.Key_0) {
-                menu.visible=menu.visible?false:true;
-                settings.visible=false;
-                joysetup.visible=false;
-            }
-            if (event.key === Qt.Key_F11||event.key === Qt.Key_Minus) {
-                settings.visible=settings.visible?false:true;
-                menu.visible=false;
-                joysetup.visible=false;
-            }
-            if (event.key === Qt.Key_F5||event.key === Qt.Key_5) {
-                if(cams[0].cameraenabled) player_play(0);
-                if(cams[1].cameraenabled) player_play(1);
-                if(cams[2].cameraenabled) player_play(2);
-            }
-            if (event.key === Qt.Key_F6||event.key === Qt.Key_6) {
-                players[0].stop();
-                players[1].stop();
-                players[2].stop();
-            }
+            console.log("KeY:"+event.key)
+            if (event.key === Qt.Key_F1 || event.key === Qt.Key_1) win.fcommand("HELP")
+            if (event.key === Qt.Key_F2||event.key ===  Qt.Key_2)  rig.lamp=rig.lamp?false:true;
+            if (event.key === Qt.Key_F3||event.key ===  Qt.Key_3)  rig.camera=rig.camera?false:true;;
+            if (event.key === Qt.Key_F4||event.key ===  Qt.Key_4)  rig.engine=rig.engine?false:true;
+            if (event.key === Qt.Key_F8||event.key ===  Qt.Key_8)     win.fcommand("CHANGE RIG TYPE")
+            if (event.key === Qt.Key_F9||event.key ===  Qt.Key_9)     win.fcommand("JOYSTICK SETTINGS")
+            if (event.key === Qt.Key_F10||event.key === Qt.Key_0)     win.fcommand("CAMERA SETTINGS")
+            if (event.key === Qt.Key_F11||event.key === Qt.Key_Minus) win.fcommand("PROGRAM SETTINGS")
+            if (event.key === Qt.Key_F5||event.key ===  Qt.Key_5)     win.fcommand("PLAY")
+            if (event.key === Qt.Key_F6||event.key ===  Qt.Key_6)     win.fcommand("STOP")
+            if (event.key === Qt.Key_F12||event.key === Qt.Key_Equal) win.fcommand("FULLSCREEN")
+            if ((event.modifiers & Qt.ControlModifier)&&(event.key === Qt.Key_P)) win.fcommand("PICTURE")
+            if ((event.modifiers & Qt.ControlModifier)&&(event.key === Qt.Key_D)) win.fcommand("DEMO")
+            //if ((event.key === Qt.Key_D)) win.fcommand("DEMO")
             if (event.key === Qt.Key_Down) {
                 j.ispresent=false
                 if(j.y1axis>-127) j.y1axis=j.y1axis-1;
@@ -359,7 +428,7 @@ Window {
                 j.ispresent=false
                 if(j.y2axis<127) j.y2axis=j.y2axis+1;
             }
-            if (event.key === Qt.Key_F12||event.key === Qt.Key_Equal) win.visibility= win.visibility===Window.FullScreen?Window.Windowed:Window.FullScreen;
+
         }
 
 
@@ -448,28 +517,32 @@ Window {
 
         MouseArea {
             anchors.fill: parent
-            acceptedButtons: Qt.AllButtons
+            acceptedButtons: Qt.RightButton
+            onClicked: win.fcommand("MENU")
 
-            onDoubleClicked: changestate()
-            onClicked: piemenu.visible=piemenu.visible?false:true
         }
 
+
         MyMenu {
-            id: piemenu
-            width: 600
-            height: 500
+            id: menu
+            width: 440
+            height: 260
+            z:1
             anchors.centerIn: parent
+            onCommandChanged: win.fcommand(command)
+
         }
 
         RigJoystick {
             id: j
             current: 0
-            onKey_1Changed: if (key_1) changestate()
-            onKey_2Changed: if (key_2) {
-                                if(cams[0].cameraenabled) player_play(0);
-                                if(cams[1].cameraenabled) player_play(1);
-                                if(cams[2].cameraenabled) player_play(2);
-                            }
+            onKey_3Changed: if (key_3) fcommand("LAYOUT")
+            onKey_2Changed: if (key_2) fcommand("PLAY")
+//            {
+//                                if(cams[0].cameraenabled) player_play(0);
+//                                if(cams[1].cameraenabled) player_play(1);
+//                                if(cams[2].cameraenabled) player_play(2);
+//                            }
         }
         MyDashboard {
             height: 600
@@ -596,6 +669,14 @@ Window {
                 }
             }
         ]
+        Image {
+            id: picture
+            visible: false
+            fillMode: Image.PreserveAspectCrop
+            source: "file:///c:/Users/1/Documents/qt/giko_rig/skin/q.png"
+            anchors.fill: parent
+            anchors.margins: 20
+        }
         //###################################################################################################
     }
     ControlPanel {
@@ -608,7 +689,7 @@ Window {
         anchors { margins: 10; bottomMargin: 100; bottom: parent.bottom; left: parent.left}
     }
     SetupCamera {
-        id: menu
+        id: camsettings
         width: 600
         height: 500
         visible: false

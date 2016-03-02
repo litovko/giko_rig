@@ -9,15 +9,39 @@ Item {
     id: joystickDialog
     visible: true
     property RigJoystick joystick:null
+    states: [
+        State {
+            name: "Dialog"
+            PropertyChanges { target: rectangle1;  visible: true;}
+            PropertyChanges { target: message;  visible: false;}
 
+        },
+        State {
+            name: "Message"
+            PropertyChanges { target: rectangle1;  visible: false;}
+            PropertyChanges { target: message; width: 560; height: 62; radius: 10; anchors.verticalCenterOffset: 0; anchors.horizontalCenterOffset: 0;  visible: true;}
+
+            PropertyChanges {
+                target: gradientStop1
+                color: "#ffffff"
+            }
+
+            PropertyChanges {
+                target: button1
+                anchors.bottomMargin: 7
+            }
+        }
+    ]
+    Component.onCompleted: state= "Dialog"
     Rectangle {
         id: rectangle1
         width: 500
         height: 455
         gradient: Gradient {
             GradientStop {
+                id: gradientStop1
                 position: 1
-                color: "#ffffff"
+                color: "#f6f6f6"
             }
             
             GradientStop {
@@ -32,6 +56,7 @@ Item {
         opacity: 0.8
         border.width: 3
         radius: 10
+        visible: true
         z: 0
         border.color: "yellow"
 
@@ -51,14 +76,14 @@ Item {
             x: 18
             y: 97
             width: 464
-            height: 333
+            height: 345
             checked: true
             opacity: 1
 
             Label {
                 id: label1
                 x: 8
-                y: 34
+                y: 8
                 width: 87
                 height: 13
                 color: "#ffffff"
@@ -80,7 +105,7 @@ Item {
             Label {
                 id: label2
                 x: 8
-                y: 58
+                y: 37
                 width: 87
                 height: 13
                 color: "#ffffff"
@@ -104,7 +129,7 @@ Item {
                     width: 172
                     height: 19
                     color: "#ffffff"
-                    text: qsTr("Номер кнопки 2'")
+                    text: qsTr("Кнопка выбора группы упр.")
                     font.pointSize: 10
                 }
 
@@ -115,7 +140,7 @@ Item {
                     width: 172
                     height: 19
                     color: "#ffffff"
-                    text: qsTr("Номер кнопки 1'")
+                    text: qsTr("Кнопка разблокировки")
                     font.pointSize: 10
                 }
 
@@ -170,8 +195,49 @@ Item {
                     width: 172
                     height: 19
                     color: "#ffffff"
-                    text: qsTr("Номер кнопки 3'")
+                    text: qsTr("Кнопка запуска трансляции")
                     font.pointSize: 10
+                }
+
+                Label {
+                    id: label10
+                    x: 0
+                    y: 269
+                    width: 172
+                    height: 19
+                    color: "#ffffff"
+                    text: qsTr("Выбор  раскладки экрана")
+                    visible: true
+                    font.pointSize: 10
+                }
+
+                ComboBox {
+                    id: comboBox8
+                    x: 177
+                    y: 269
+                    width: 51
+                    height: 20
+                    visible: true
+                    model: ListModel {
+                        id: mcomboBox8
+                    }
+                    onCurrentIndexChanged: {
+                        if (!joystick.ispresent) return;
+                        if (comboBox5.currentIndex===currentIndex ||comboBox6.currentIndex===currentIndex||comboBox7.currentIndex===currentIndex)
+                        {joystickDialog.state="Message"; currentIndex=joystick.key_3_ind; return;}
+                        joystick.key_3_ind=currentIndex
+                    }
+                }
+
+                RadioButton {
+                    id: radioButton4
+                    x: 250
+                    y: 270
+                    text: qsTr("")
+                    visible: true
+                    checked: joystick.key_3
+                    scale: 1.7
+                    clip: false
                 }
 
 
@@ -183,7 +249,7 @@ Item {
             Slider {
                 id: sliderHorizontal1
                 x: 244
-                y: 91
+                y: 69
                 width: 200
                 height: 22
                 minimumValue: -127
@@ -194,7 +260,7 @@ Item {
             ComboBox {
                 id: comboBox1
                 x: 185
-                y: 92
+                y: 70
                 width: 51
                 height: 20
                 model: ListModel {
@@ -209,7 +275,7 @@ Item {
             ComboBox {
                 id: comboBox2
                 x: 185
-                y: 128
+                y: 107
                 width: 51
                 height: 20
                 model: ListModel {
@@ -224,7 +290,7 @@ Item {
             Slider {
                 id: sliderHorizontal2
                 x: 244
-                y: 127
+                y: 106
                 width: 200
                 height: 22
                 value: joystick.y2axis
@@ -235,7 +301,7 @@ Item {
             ComboBox {
                 id: comboBox3
                 x: 185
-                y: 161
+                y: 140
                 width: 51
                 height: 20
                 model: ListModel {
@@ -250,7 +316,7 @@ Item {
             Slider {
                 id: sliderHorizontal3
                 x: 244
-                y: 160
+                y: 139
                 width: 200
                 height: 22
                 minimumValue: -127
@@ -261,7 +327,7 @@ Item {
             ComboBox {
                 id: comboBox4
                 x: 185
-                y: 195
+                y: 174
                 width: 51
                 height: 20
                 model: ListModel {
@@ -276,7 +342,7 @@ Item {
             Slider {
                 id: sliderHorizontal4
                 x: 244
-                y: 194
+                y: 173
                 width: 200
                 height: 22
                 minimumValue: -127
@@ -287,22 +353,24 @@ Item {
             ComboBox {
                 id: comboBox5
                 x: 185
-                y: 230
+                y: 209
                 width: 51
                 height: 20
                 model: ListModel {
                     id: mcomboBox5
                 }
                 onCurrentIndexChanged: {
-                    //                    console.log("setJb1" +currentIndex)
-                    if (joystick.ispresent) joystick.key_0_ind=currentIndex
+                    if (!joystick.ispresent) return;
+                    if (comboBox6.currentIndex===currentIndex ||comboBox7.currentIndex===currentIndex||comboBox8.currentIndex===currentIndex)
+                    {joystickDialog.state="Message"; currentIndex=joystick.key_0_ind; return;}
+                    joystick.key_0_ind=currentIndex
                 }
             }
 
             RadioButton {
                 id: radioButton1
                 x: 258
-                y: 232
+                y: 211
                 text: qsTr("")
                 scale: 1.7
                 clip: false
@@ -312,22 +380,25 @@ Item {
             ComboBox {
                 id: comboBox6
                 x: 185
-                y: 261
+                y: 240
                 width: 51
                 height: 20
                 model: ListModel {
                     id: mcomboBox6
                 }
                 onCurrentIndexChanged: {
-                    //                    console.log("setJb2" +currentIndex)
-                    if (joystick.ispresent) joystick.key_1_ind=currentIndex
+                    if (!joystick.ispresent) return;
+                    if (comboBox5.currentIndex===currentIndex ||comboBox7.currentIndex===currentIndex||comboBox8.currentIndex===currentIndex)
+                    {joystickDialog.state="Message"; currentIndex=joystick.key_1_ind; return;}
+                    joystick.key_1_ind=currentIndex
                 }
+
             }
 
             RadioButton {
                 id: radioButton2
                 x: 258
-                y: 263
+                y: 242
                 text: qsTr("")
                 clip: false
                 scale: 1.7
@@ -337,22 +408,24 @@ Item {
             ComboBox {
                 id: comboBox7
                 x: 185
-                y: 294
+                y: 273
                 width: 51
                 height: 20
                 model: ListModel {
                     id: mcomboBox7
                 }
                 onCurrentIndexChanged: {
-                    //                    console.log("setJb2" +currentIndex)
-                    if (joystick.ispresent) joystick.key_2_ind=currentIndex
+                    if (!joystick.ispresent) return;
+                    if (comboBox5.currentIndex===currentIndex ||comboBox6.currentIndex===currentIndex||comboBox8.currentIndex===currentIndex)
+                    {joystickDialog.state="Message"; currentIndex=joystick.key_2_ind; return;}
+                    joystick.key_2_ind=currentIndex
                 }
             }
 
             RadioButton {
                 id: radioButton3
                 x: 258
-                y: 296
+                y: 275
                 text: qsTr("")
                 checked: joystick.key_2
                 scale: 1.7
@@ -382,6 +455,7 @@ Item {
                     mcomboBox5.append({text: ji})
                     mcomboBox6.append({text: ji})
                     mcomboBox7.append({text: ji})
+                    mcomboBox8.append({text: ji})
                     //console.log("Jbutton:"+ji)
                 }
                 comboBox1.currentIndex=joystick.y1axis_ind
@@ -391,6 +465,7 @@ Item {
                 comboBox5.currentIndex=joystick.key_0_ind
                 comboBox6.currentIndex=joystick.key_1_ind
                 comboBox7.currentIndex=joystick.key_2_ind
+                comboBox8.currentIndex=joystick.key_3_ind
             }
         }
 
@@ -407,5 +482,41 @@ Item {
         
     }
 
+    Rectangle {
+        id: message
+        height: 50
+        width: 550
+        color: "#090808"
+        border.width: 2
+        border.color: "yellow"
+        visible: false
+        gradient: Gradient {
+            GradientStop {
+                position: 0.00;
+                color: "#090808";
+            }
+            GradientStop {
+                position: 1.00;
+                color: "#d8d8f5";
+            }
+        }
+        anchors.centerIn: parent
+        Button {
+            id: button1
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            text: "OK"
+            Text {
+                color: "#b4aaf5"
+                text: "Этот номер уже назначен, выберите другое значение"
+                font.bold: true
+                font.pointSize: 14
+                anchors.bottom: parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+            onClicked: joystickDialog.state="Dialog"
+        }
+
+    }
     
 }

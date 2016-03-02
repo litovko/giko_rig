@@ -5,6 +5,7 @@
 #include <QDateTime>
 #include <QFileInfo>
 
+
 #define TIMER_CHECK 30000
 cCamera::cCamera(QObject *parent) : QObject(parent)
 {

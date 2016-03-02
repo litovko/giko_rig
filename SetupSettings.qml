@@ -387,7 +387,7 @@ Item {
                 height: 20
                 Component.onCompleted: currentIndex = curindex()
                 function curindex() {
-                    console.log("Setup Settings Settings curindex:"+rig.rigtype+"Текст:"+currentText)
+                    console.debug("Setup Settings Settings curindex:"+rig.rigtype+"Текст:"+currentText)
                     if (rig.rigtype==="grab2") return 0;
                     if (rig.rigtype==="grab6") return 1;
                     if (rig.rigtype==="gkgbu") return 2;

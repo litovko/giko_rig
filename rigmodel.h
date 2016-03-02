@@ -155,13 +155,13 @@ public slots:
     void sendData(); //слот должен вызываться любым событием, которое меняет данные, предназначенные для отправки.
     void readData(); //расклаываем полученные от сервера данные по параметрам
 private:
-    int m_pressure=0;
-    int m_oiltemp=0;
-    int m_voltage=0;
-    int m_voltage24=0;
-    int m_ampere=0;
+    int m_pressure=5;
+    int m_oiltemp=25;
+    int m_voltage=251;
+    int m_voltage24=25;
+    int m_ampere=21;
     int m_turns=0;
-    int m_temperature=0;
+    int m_temperature=25;
     QString m_rigtype="grab2"; //grab2,grab6,gkgbu,tk-15
     QString m_gmod="platf"; //platf,tower,bench,drill
 

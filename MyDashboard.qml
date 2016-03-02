@@ -45,7 +45,7 @@ Item {
 
         var num_gauge=flowrow.visibleChildren.length
         //console.log("Dashboard - recalculate width and height num gauges"+num_gauge)
-        var numrows=Math.floor(containerheight/(gaugesize+20))
+        var numrows=Math.floor((containerheight-20)/(gaugesize+20))
         numrows=numrows?numrows:num_gauge
         var numcolm=Math.ceil(num_gauge/numrows) //округляем в большую сторону
         numrows=Math.ceil(num_gauge/numcolm)
@@ -66,12 +66,12 @@ Item {
         width: dashboard.gaugesize
         joystick: j
         rigmodel: source
-        btn0: j.key_0
+        btn0: j.key_1
         z:4
     }
     MyGauge {
             id: row_left
-            val:j.y1axis
+            val:j.key_0*j.y1axis
             //anchors.fill: parent
             anchors.bottom: dbr.bottom
             anchors.left: dbr.left
@@ -79,7 +79,7 @@ Item {
             anchors.leftMargin: 2
             width:6
             height: dashBoard.height-20-width
-            color: j.y1axis>0?"yellow":"lightblue"
+            color: val>0?"yellow":"lightblue"
             z:3
         }
     MyGauge {
@@ -87,8 +87,8 @@ Item {
             val: gauge_value()
             function gauge_value(){
                 if (!j.ispresent) return 0
-                if (dashboard.state==="grab2") return j.y1axis
-                if (dashboard.state==="grab6") return j.y2axis
+                if (dashboard.state==="grab2") return j.key_0*j.y1axis
+                if (dashboard.state==="grab6") return j.key_0*j.y2axis
             }
             function gauge_color(){
                 if (!j.ispresent) return "transparent"
@@ -289,7 +289,7 @@ Item {
                         stepSize: 20
                         anchors.centerIn: parent
 
-                        value: j.y1axis>0?Math.round(j.y1axis*100/127):-Math.round(j.y1axis*100/127)
+                        value: j.key_0*( j.y1axis>0?Math.round(j.y1axis*100/127):-Math.round(j.y1axis*100/127))
                         centerТext: "%"
                         bottomText: "Мощность"
                         warningThreshold: maximumValue*0.9
@@ -310,7 +310,7 @@ Item {
                         stepSize: 20
                         anchors.centerIn: parent
 
-                        value: j.y2axis>0?Math.round(j.y2axis*100/127):-Math.round(j.y2axis*100/127)
+                        value: j.key_0*( j.y2axis>0?Math.round(j.y2axis*100/127):-Math.round(j.y2axis*100/127))
                         centerТext: "%"
                         bottomText: "Мощность2"
                         warningThreshold: maximumValue*0.9

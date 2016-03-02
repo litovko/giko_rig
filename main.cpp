@@ -38,10 +38,34 @@
 
 #define giko_name "HYCO"
 #define giko_program "Rig Console"
+#include <stdio.h>
+#include <stdlib.h>
+
+void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QByteArray localMsg = msg.toLocal8Bit();
+    switch (type) {
+    case QtDebugMsg:
+        fprintf(stderr, "D:%s\n (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtWarningMsg:
+        fprintf(stderr, "W:%s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtCriticalMsg:
+        fprintf(stderr, "C:%s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtFatalMsg:
+        fprintf(stderr, "F:%s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        abort();
+    }
+}
+
 
 int main(int argc, char *argv[])
 {
-    qDebug()<<QTime::currentTime().toString("hh:mm:ss:zzz ")<<"Start "<<giko_name<<"  "<<giko_program;
+    qInstallMessageHandler(myMessageOutput);
+    setlocale(LC_ALL, "");
+    qDebug()<<QTime::currentTime().toString("hh:mm:ss:zzz ")<<"Старт "<<giko_name<<"  "<<giko_program;
     RegisterQmlVlc();
     QSettings settings(giko_name, giko_program);
     int cache=settings.value("network_caching",150).toInt();
