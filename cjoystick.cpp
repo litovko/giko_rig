@@ -3,7 +3,7 @@
 #include <QTime>
 #include <QSettings>
 #define J_POLL_INTERVAL 50
-#define J_CHECK_INTERVAL 15000
+#define J_CHECK_INTERVAL 60000
 
 cJoystick::cJoystick(QObject *parent) : QObject(parent)
 {

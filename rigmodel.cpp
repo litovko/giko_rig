@@ -1,9 +1,6 @@
 #include "rigmodel.h"
 #include <QDebug>
 #include <QTime>
-
-
-
 //qDebug("idx: %d, name: %s (axes: %d, buttons: %d, hats: %d)",
 //       j->index,
 //       j->name.toLatin1().data(),

@@ -6,7 +6,7 @@
 #include <QFileInfo>
 
 
-#define TIMER_CHECK 30000
+#define TIMER_CHECK 60000
 cCamera::cCamera(QObject *parent) : QObject(parent)
 {
     connect(this, SIGNAL(indexChanged()),this, SLOT(readSettings()));
