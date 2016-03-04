@@ -22,6 +22,7 @@ Window {
     property string vlc_options: ",--nothing, --never ,:none=NAN"
     property string filepath: ""
     property int filesize: 700 //Mbyte
+    property variant curfilesize:[0,0,0]
 
     property list<VlcPlayer> players:[
         VlcPlayer {
@@ -117,10 +118,10 @@ Window {
     function getrecordoption(camindex){
         //var dt=new Date();
         var vlc=vlc_options.split(',')
-        console.log("getrecordoption"+win.vlc_options);
+        console.log("registry vlc options - cam"+camindex+": ("+win.vlc_options+")");
         if (camindex===undefined) console.assert("getrecordoption camindex undefined!!!")
         var sopt=[":network-caching="+network_caching.toString()];//, ":sout-all", ":sout-keep" ];
-        console.log("getrecordoption:"+sopt);
+        console.log("getrecordoption:()"+sopt+")");
         if (recording===0) {
             console.log("Cam"+(camindex+1)+" Options without recording:"+sopt);
             for (var i=0; i<vlc.length; i++) sopt.push(vlc[i]);
@@ -152,6 +153,8 @@ Window {
         for (var i=0; i<3; i++) {
             if(players[i].state===3) {
                 console.log ("file_name"+i+":"+cams[i].recordfile + "size:"+ cams[i].get_filesize())
+                if (curfilesize[i]===cams[i].get_filesize()) console.warn("NO RECORDIGNS!!!")
+                curfilesize[i]=cams[i].get_filesize();
                 if (cams[i].get_filesize()>=filesize*1024*1024) player_play(i);
             }
         } //for
