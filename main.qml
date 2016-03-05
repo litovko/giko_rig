@@ -22,7 +22,7 @@ Window {
     property string vlc_options: ",--nothing, --never ,:none=NAN"
     property string filepath: ""
     property int filesize: 700 //Mbyte
-    property variant curfilesize:[0,0,0]
+    property variant curfilesize:[-1,-1,-1]
 
     property list<VlcPlayer> players:[
         VlcPlayer {
@@ -91,6 +91,7 @@ Window {
         players[player_number].playlist.clear();
         players[player_number].playlist.addWithOptions(cams[player_number].url1,getrecordoption(player_number));
         players[player_number].play();
+        curfilesize[player_number]=-1;
     }
 
     function statename(camstate) {
@@ -121,7 +122,7 @@ Window {
         console.log("registry vlc options - cam"+camindex+": ("+win.vlc_options+")");
         if (camindex===undefined) console.assert("getrecordoption camindex undefined!!!")
         var sopt=[":network-caching="+network_caching.toString()];//, ":sout-all", ":sout-keep" ];
-        console.log("getrecordoption:()"+sopt+")");
+        console.log("getrecordoption:("+sopt+")");
         if (recording===0) {
             console.log("Cam"+(camindex+1)+" Options without recording:"+sopt);
             for (var i=0; i<vlc.length; i++) sopt.push(vlc[i]);
@@ -149,11 +150,10 @@ Window {
     }
     function check_file_size(){
         if (recording===0) return;
-        //console.log ("filesize:"+filesize+"##############################")
         for (var i=0; i<3; i++) {
             if(players[i].state===3) {
                 console.log ("file_name"+i+":"+cams[i].recordfile + "size:"+ cams[i].get_filesize())
-                if (curfilesize[i]===cams[i].get_filesize()) console.warn("NO RECORDIGNS!!!")
+                if (curfilesize[i]>=cams[i].get_filesize()) console.warn("NO RECORDINGS!!!")
                 curfilesize[i]=cams[i].get_filesize();
                 if (cams[i].get_filesize()>=filesize*1024*1024) player_play(i);
             }
@@ -433,9 +433,6 @@ Window {
             }
 
         }
-
-
-
 
         //        VlcMmPlayer {
         //            id: vlcMmPlayer;

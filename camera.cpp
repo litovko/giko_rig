@@ -4,6 +4,7 @@
 #include <QTime>
 #include <QDateTime>
 #include <QFileInfo>
+#include <QThreadPool>
 
 
 #define TIMER_CHECK 60000
@@ -13,6 +14,9 @@ cCamera::cCamera(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(videopageChanged()),this, SLOT(change_videopage()));
     connect(this, SIGNAL(videosettingsChanged()),this, SLOT(change_videosettings()));
     connect(this, SIGNAL(combyChanged()),this, SLOT(change_combyparametrs()));
+    m_WebCtrl= new QNetworkAccessManager(this);
+    connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (dispatcher(QNetworkReply*)));
+
     connect(&timer_check, SIGNAL(timeout()), this, SLOT(get_parametrs()));
     timer_check.start(TIMER_CHECK);
 }
@@ -263,10 +267,15 @@ QString cCamera::title() const
         m_timeout=false;
         emit timeoutChanged();
     }
-    
-    
 
-    //#############
+    void cCamera::dispatcher(QNetworkReply *pReply)
+    {
+        qDebug()<<"Cam"<<QString::number(m_index)<<" Dispatcher:"<<pReply->property("RequestType");
+        if (pReply->property("RequestType")=="ini") loadINI(pReply);
+        else loadResponce(pReply);
+        pReply->deleteLater();
+    }
+   //#############
 
     bool cCamera::videopage() const
     {
@@ -315,9 +324,10 @@ QString cCamera::title() const
         iniUrl.setPassword(USERPASS);
         iniUrl.setUserName(USERNAME);
         QNetworkRequest request(iniUrl);
-        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
-        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
+//        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
+//        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
         QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
+        p->setProperty("RequestType","change_videopage");
         m_url1=url1();
         emit url1Changed();  //при изменении настроке видеопотоков меняется  url для видео.
         qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"Cam"<<QString::number(m_index)<<":"<<"Поменяли настройки в соответствии с комбо-режимом: "<<s;
@@ -341,9 +351,10 @@ QString cCamera::title() const
         iniUrl.setPassword(USERPASS);
         iniUrl.setUserName(USERNAME);
         QNetworkRequest request(iniUrl);
-        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
-        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
+//        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
+//        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
         QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
+        p->setProperty("RequestType","videopagesettings");
         //commit_videosettings();
         //commit_multicast();
     }
@@ -359,9 +370,10 @@ QString cCamera::title() const
         iniUrl.setPassword(USERPASS);
         iniUrl.setUserName(USERNAME);
         QNetworkRequest request(iniUrl);
-        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
-        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
+//        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
+//        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
         QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
+        p->setProperty("RequestType","settimesettings");
     }
     //http://192.168.1.168/vb.htm?newdate=2012/12/09&newtime=13:18:33&dateformat=2&tstampformat=1&dateposition=0&timeposition=0
     void cCamera::setDateTimesettings()
@@ -380,9 +392,10 @@ QString cCamera::title() const
         iniUrl.setPassword(USERPASS);
         iniUrl.setUserName(USERNAME);
         QNetworkRequest request(iniUrl);
-        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
-        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
+//        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
+//        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
         QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
+        p->setProperty("RequestType","setdatetime");
     }
 
     void cCamera::change_videosettings()
@@ -405,10 +418,11 @@ QString cCamera::title() const
         iniUrl.setPassword(USERPASS);
         iniUrl.setUserName(USERNAME);
         QNetworkRequest request(iniUrl);
-        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
-        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
+//        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
+//        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
         QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
-        change_videopagesettings(); //поставил только для смены названия профиля.
+        p->setProperty("RequestType","change_videosettings");
+        change_videopagesettings(); // для смены названия профиля.
     }
     void cCamera::commit_videosettings()
     {
@@ -421,9 +435,10 @@ QString cCamera::title() const
         iniUrl.setPassword(USERPASS);
         iniUrl.setUserName(USERNAME);
         QNetworkRequest request(iniUrl);
-        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
-        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
+//        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
+//        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
         QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
+        p->setProperty("RequestType","commit_videosettings");
     }
 
     void cCamera::commit_multicast()
@@ -437,9 +452,10 @@ QString cCamera::title() const
         iniUrl.setPassword(USERPASS);
         iniUrl.setUserName(USERNAME);
         QNetworkRequest request(iniUrl);
-        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
-        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
+//        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
+//        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
         QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
+        p->setProperty("RequestType","multicast");
     }
     void cCamera::send_reset()
     {
@@ -452,9 +468,10 @@ QString cCamera::title() const
         iniUrl.setPassword(USERPASS);
         iniUrl.setUserName(USERNAME);
         QNetworkRequest request(iniUrl);
-        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
-        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
+//        m_WebCtrl= new QNetworkAccessManager(this); //litovko достаточно ли одной переменной???
+//        connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadResponce(QNetworkReply*)));
         QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
+        p->setProperty("RequestType","reset");
     }
 
     int cCamera::get_filesize()
@@ -465,7 +482,7 @@ QString cCamera::title() const
     void cCamera::loadResponce(QNetworkReply *pReply)
     {
         qDebug()<<"Cam"<<QString::number(m_index)<<" responce:"<<pReply->readAll();
-        pReply->deleteLater();
+        //pReply->deleteLater();
     }
 
     void cCamera::change_combyparametrs()
@@ -506,26 +523,23 @@ QString cCamera::title() const
 
     void cCamera::get_parametrs()
     {
-
        if (m_index==0||timeout()||!m_cameraenabled) return;
        QUrl iniUrl("http://"+m_address+"/ini.htm");  //http://192.168.1.168/ini.htm
-       qDebug()<<"Cam"<<QString::number(m_index)<<" get_parametrs by URL:" << iniUrl<<QTime().currentTime();
+       qDebug()<<"Cam"<<QString::number(m_index)<<" get_parametrs by URL:" << iniUrl;
        iniUrl.setPassword(USERPASS);
        iniUrl.setUserName(USERNAME);
        QNetworkRequest request(iniUrl);
-       m_WebCtrl= new QNetworkAccessManager(this);
-       qDebug()<<m_WebCtrl;
-       connect(m_WebCtrl, SIGNAL (finished(QNetworkReply*)), this, SLOT (loadINI(QNetworkReply*)));
        qDebug()<<request.url();
        QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
-       qDebug()<<"get_parametrs()- end"<<m_index;
+       p->setProperty("RequestType","ini");
+       qDebug()<<"ThreadsCount:"<<QThreadPool::globalInstance()->maxThreadCount();
     }
     int cCamera::parse_int(QString param){
         QRegExp rx("^("+param+"=.*)");
         QString s=m_parametr.at(m_parametr.indexOf(rx)); //qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"loadINI videocodeccombo:"<<s;
         QStringList sl=s.split("=");
         s=sl.at(1);
-        bool ok; int c,r;
+        bool ok; int c;
         c=s.toInt(&ok,10);
         if (ok) return c;
         return 0;
@@ -564,7 +578,7 @@ QString cCamera::title() const
 
     void cCamera::loadINI(QNetworkReply* pReply)
     {
-        qDebug()<<"loadINI: Cam"<<QString::number(m_index)<<":"<<"!!1";
+        qDebug()<<"loadINI: Cam"<<QString::number(m_index)<<":"<<"!!1"<<pReply->property("RequestType");
         if (pReply->error()!=QNetworkReply::NoError ) {
             qWarning()<<"Cam"<<QString::number(m_index)<<":"<<"Camera unavailable:"<<pReply->errorString();
 //            qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"!!8";
@@ -596,8 +610,7 @@ QString cCamera::title() const
 //            qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"!!3";
         }
 //        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"!!4";
-        pReply->deleteLater();
-//        m_WebCtrl->deleteLater();
+
 //        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"!!5";
 }
 

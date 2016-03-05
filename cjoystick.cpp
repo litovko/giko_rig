@@ -34,12 +34,12 @@ void cJoystick::checkJoystick()
     bool old=ispresent();
     if (joy==0){
         joy = new QJoystick();
-        qDebug()<<QTime().currentTime()<<"new QJoystick()";
+        qDebug()<<"new QJoystick()";
     }
     joysavail=joy->availableJoysticks();
 //    qDebug()<<"Joysticks available: "<<joysavail;
     setIspresent(joysavail);
-    qDebug()<<QTime().currentTime()<<"checkJoystick availbl:"<<joy->availableJoysticks();
+    qDebug()<<"checkJoystick availbl:"<<joy->availableJoysticks();
     if (old&&ispresent()) {
         //joy->setJoystick(current()); //закрываем и открываем снова джойстик.
         return;

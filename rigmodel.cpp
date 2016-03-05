@@ -1,6 +1,6 @@
 #include "rigmodel.h"
 #include <QDebug>
-#include <QTime>
+//#include <QTime>
 //qDebug("idx: %d, name: %s (axes: %d, buttons: %d, hats: %d)",
 //       j->index,
 //       j->name.toLatin1().data(),
@@ -301,10 +301,9 @@ bool cRigmodel::good_data() const
 
 void cRigmodel::start_client()
 {
-    QTime t;
     if (m_client_connected) return;
     bytesWritten = 0;
-    qDebug()<<"Rig Start client >>>"<<m_address<<"poprt"<<::QString().number(m_port)<<t.currentTime();;
+    qDebug()<<"Rig Start client >>>"<<m_address<<"poprt"<<::QString().number(m_port);
     
     tcpClient.connectToHost(m_address, m_port);
 

@@ -124,10 +124,10 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-    qDebug()<<QTime::currentTime().toString("hh:mm:ss:zzz ")<<"Engine loaded"<<giko_name<<"  "<<giko_program;
+    qDebug()<<"Engine loaded"<<giko_name<<"  "<<giko_program;
 
     return app.exec();
     toggle_log(false);
-    qDebug()<<QTime::currentTime().toString("hh:mm:ss:zzz ")<<"Good bye"<<giko_name<<"  "<<giko_program;
+    qDebug()<<"Good bye"<<giko_name<<"  "<<giko_program;
 }
 

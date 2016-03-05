@@ -60,7 +60,7 @@ class cCamera : public QObject
 
 public:
     explicit cCamera(QObject *parent = 0);
-    virtual ~cCamera() {saveSettings(); timer_check.stop();}
+    virtual ~cCamera() {saveSettings(); timer_check.stop(); if(m_WebCtrl) delete m_WebCtrl;}
 
     void setTitle(const QString  &title);
     QString title() const;
@@ -175,8 +175,8 @@ signals:
 public slots:
     void saveSettings();
     void readSettings();
-    void change_videopage(); //посылаем корректный запрос камере для изменения параметров
-    void change_videosettings(); //посылаем корректный запрос камере для изменения установок изображения
+    void change_videopage(); //посылаем  запрос камере для изменения параметров
+    void change_videosettings(); //посылаем  запрос камере для изменения установок изображения
     void change_videopagesettings(); // параметры положения текстовых надписей.
     void commit_videosettings(); // по документации необходим вызов функции установки флага
     void commit_multicast();
@@ -189,10 +189,11 @@ public slots:
     void loadINI(QNetworkReply *pReply); //получить параметры от камеры после ответа.   
     void loadResponce(QNetworkReply *pReply);
     void stoptimeout();
+    void dispatcher(QNetworkReply *pReply);
 
 private:
     //переменные для загрузки INI-файла из камеры.
-    QNetworkAccessManager *m_WebCtrl;
+    QNetworkAccessManager *m_WebCtrl=0;
     QByteArray m_DownloadedData;
     QStringList m_parametr; //храним все настройки, полученный из камеры в этой структуре.
     QUrl iniUrl; //URL запроса настроек камеры
