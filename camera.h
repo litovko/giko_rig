@@ -191,6 +191,7 @@ public slots:
     void stoptimeout();
     void dispatcher(QNetworkReply *pReply);
 
+    void onError(QNetworkReply::NetworkError networkError);
 private:
     //переменные для загрузки INI-файла из камеры.
     QNetworkAccessManager *m_WebCtrl=0;

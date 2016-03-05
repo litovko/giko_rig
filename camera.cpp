@@ -19,6 +19,7 @@ cCamera::cCamera(QObject *parent) : QObject(parent)
 
     connect(&timer_check, SIGNAL(timeout()), this, SLOT(get_parametrs()));
     timer_check.start(TIMER_CHECK);
+    get_parametrs();
 }
 void cCamera::saveSettings()
 {
@@ -520,6 +521,15 @@ QString cCamera::title() const
         QString s="нет данных";
         return s;
     }
+    void cCamera::onError(QNetworkReply::NetworkError networkError)
+    {
+        //reply->disconnect(); // Disconnect all signals
+
+//        if (networkError == QNetworkReply::ContentNotFoundError)
+//        {
+            qWarning()<<"Cam"<<QString::number(m_index)<<" NETWORK ERROR:"<<networkError;
+//        }
+    }
 
     void cCamera::get_parametrs()
     {
@@ -532,6 +542,7 @@ QString cCamera::title() const
        qDebug()<<request.url();
        QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
        p->setProperty("RequestType","ini");
+       connect(p, SIGNAL(error(QNetworkReply::NetworkError)),this,SLOT(onError( QNetworkReply::NetworkError)));
        qDebug()<<"ThreadsCount:"<<QThreadPool::globalInstance()->maxThreadCount();
     }
     int cCamera::parse_int(QString param){
