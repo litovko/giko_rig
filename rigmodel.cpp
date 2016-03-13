@@ -141,6 +141,7 @@ int cRigmodel::temperature() const
 
 void cRigmodel::setRigtype(const QString &rigtype)
 {
+    if (m_rigtype == rigtype) return;
     m_rigtype = rigtype;
     emit rigtypeChanged();
     qDebug()<<"Rig: rigtype:"<<m_rigtype;
@@ -374,9 +375,9 @@ void cRigmodel::sendData()
 //    Data="{ana1:"+::QString().number(int(m_joystick_y1*127/100),10)
 //        +";ana2:"+::QString().number(int(m_joystick_y2*127/100),10)
 //        +";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
-    Data="{ana1:"+::QString().number(m_joystick_y1,10)
-            +";ana2:"+::QString().number(m_joystick_y2,10);
-    if (m_rigtype=="gkgbu") Data=Data+";ana3:"+::QString().number(m_joystick_x1,10)+";gmod"+m_gmod;
+    Data="{ana1:"+::QString().number(m_joystick_y1,10);
+    if (m_rigtype=="gkgbu"||m_rigtype=="grab6") Data=Data +";ana2:"+::QString().number(m_joystick_y2,10);
+    if (m_rigtype=="gkgbu") Data=Data+";ana3:"+::QString().number(m_joystick_x1,10)+";gmod:"+m_gmod;
 
     Data=Data+";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
     qDebug()<<"Rig - send data: "<<Data;
@@ -403,7 +404,7 @@ void cRigmodel::readData()
         //qDebug()<<"CRC:"<<CRC; //CRC пока не проверяем - это отдельная тема.
         Data=Data.mid(1,m-1);
         //qDebug()<<"truncated :"<<Data;
-        //split=Data.split(';');
+        split=Data.split(';');
         //qDebug()<<"split:"<<split;
         QListIterator<QByteArray> i(split);
         QByteArray s, val;
@@ -445,15 +446,17 @@ void cRigmodel::readData()
                 qWarning()<<"Rig no good data for "<<"pwra:"<<val;}
             }
             if (s=="type"){
-                m_rigtype=val; emit rigtypeChanged();
+                setRigtype(val);
+                //m_rigtype=val; emit rigtypeChanged();
                 if (m_rigtype=="grab2"||m_rigtype=="grab6"||m_rigtype=="gkgbu"||m_rigtype=="tk-15") ok=true;
                 if(!ok) {m_good_data = false; emit good_dataChanged();
-                qWarning()<<"Rig no good data for "<<"type:"<<val;}
+                qWarning()<<"Rig: no good data for "<<"type:"<<val;}
             }
          }
     }
     else {
         m_good_data=false; good_dataChanged();
+        qWarning()<<"Rig: wrong data receved";
     }
 }
 
