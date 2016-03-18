@@ -94,6 +94,7 @@ Item {
                     width: lampSize
                     bottomText:cam[0].title
                     active:cam[0].camerapresent
+                    error: cam[0].onrequest
                 }
                 MyLamp{
                     id: camera2
@@ -102,6 +103,7 @@ Item {
                     bottomText:cam[1].title
                     active:cam[1].camerapresent
                     visible: cam[1].index
+                    error: cam[1].onrequest
                 }
                 MyLamp{
                     id: camera3
@@ -110,6 +112,7 @@ Item {
                     bottomText:cam[2].title
                     active:cam[2].camerapresent
                     visible: cam[2].index
+                    error: cam[2].onrequest
                 }
 
             }

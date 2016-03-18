@@ -6,6 +6,7 @@ Item {
     property bool active: false
     property string bottomText: "ЛАМПЫ[F2]"
     property int fontSize: 12
+    property bool error: false
     Rectangle {
         color: "transparent"
         anchors.margins: 20
@@ -19,7 +20,7 @@ Item {
                 active: lamp.active
                 width: lamp.height/3
                 height: lamp.height/3
-                color: "yellow"
+                color: !error?"yellow":"lightgray"
                 anchors.horizontalCenter: column.horizontalCenter
             }
             Rectangle {
@@ -32,7 +33,7 @@ Item {
                     text: lamp.bottomText;
                     font.pointSize: lamp.fontSize
                     //fontSizeMode: Text.Fit
-                    color: "yellow"
+                    color: !error?"yellow":"lightgray"
                     horizontalAlignment: Text.AlignHCenter;
                     verticalAlignment: Text.AlignVCenter;
                     anchors.fill:  parent

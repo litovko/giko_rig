@@ -528,19 +528,32 @@ QString cCamera::title() const
 //        if (networkError == QNetworkReply::ContentNotFoundError)
 //        {
             qWarning()<<"Cam"<<QString::number(m_index)<<" NETWORK ERROR:"<<networkError;
-//        }
+            //        }
+    }
+
+
+    bool cCamera::onrequest() const
+    {
+        return m_onrequest;
+    }
+
+    void cCamera::setOnrequest(bool onrequest)
+    {
+        m_onrequest = onrequest;
+        emit onrequestChanged();
     }
 
     void cCamera::get_parametrs()
     {
-       if (m_index==0||timeout()||!m_cameraenabled) return;
-       QUrl iniUrl("http://"+m_address+"/ini.htm");  //http://192.168.1.168/ini.htm
+        if (m_index==0||timeout()||!m_cameraenabled) return;
+        QUrl iniUrl("http://"+m_address+"/ini.htm");  //http://192.168.1.168/ini.htm
        qDebug()<<"Cam"<<QString::number(m_index)<<" get_parametrs by URL:" << iniUrl;
        iniUrl.setPassword(USERPASS);
        iniUrl.setUserName(USERNAME);
        QNetworkRequest request(iniUrl);
        qDebug()<<request.url();
        QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
+       setOnrequest(true);
        p->setProperty("RequestType","ini");
        connect(p, SIGNAL(error(QNetworkReply::NetworkError)),this,SLOT(onError( QNetworkReply::NetworkError)));
        qDebug()<<"ThreadsCount:"<<QThreadPool::globalInstance()->maxThreadCount();
@@ -589,6 +602,7 @@ QString cCamera::title() const
 
     void cCamera::loadINI(QNetworkReply* pReply)
     {
+        setOnrequest(false);
         qDebug()<<"loadINI: Cam"<<QString::number(m_index)<<":"<<"!!1"<<pReply->property("RequestType");
         if (pReply->error()!=QNetworkReply::NoError ) {
             qWarning()<<"Cam"<<QString::number(m_index)<<":"<<"Camera unavailable:"<<pReply->errorString();

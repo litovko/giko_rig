@@ -23,10 +23,12 @@ class cCamera : public QObject
     Q_PROPERTY(int index READ index WRITE setIndex NOTIFY indexChanged)
     Q_PROPERTY(bool camerapresent READ camerapresent NOTIFY camerapresentChanged)
     Q_PROPERTY(bool cameraenabled READ cameraenabled WRITE setCameraenabled NOTIFY cameraenabledChanged)
+    Q_PROPERTY(bool onrequest READ onrequest  NOTIFY onrequestChanged)
     Q_PROPERTY(int videocodec READ videocodec WRITE setVideocodec NOTIFY videocodecChanged) // режим количества видеопотоков
     Q_PROPERTY(int videocodeccombo READ videocodeccombo WRITE setVideocodeccombo NOTIFY videocodeccomboChanged) // режим типов видеопотоков - MPEG, H264
     Q_PROPERTY(int videocodecres READ videocodecres WRITE setVideocodecres NOTIFY videocodecresChanged) // режим разрешения видиопотоков
     Q_PROPERTY(int mirctrl READ mirctrl WRITE setMirctrl NOTIFY mirctrlChanged) // режим зеркалирования изображения
+
     Q_PROPERTY(QString overlaytext READ overlaytext WRITE setOverlaytext NOTIFY overlaytextChanged)
     Q_PROPERTY(QString recordfile READ recordfile WRITE setRecordfile NOTIFY recordfileChanged) //имя файля куда пишется поток
 //    Q_PROPERTY(QString recordfilesize READ recordfilesize  NOTIFY recordfilesizeChanged) //размер файла
@@ -139,12 +141,16 @@ public:
     QString recordfile() const;
     void setRecordfile(const QString &recordfile);
 
+    bool onrequest() const;
+    void setOnrequest(bool onrequest);
+
 signals:
     void titleChanged();
     void addressChanged();
     void indexChanged();
     void camerapresentChanged();
     void cameraenabledChanged();
+    void onrequestChanged();
     void url1Changed();
     void url2Changed();
     void videosettingsChanged();
@@ -192,6 +198,7 @@ public slots:
     void dispatcher(QNetworkReply *pReply);
 
     void onError(QNetworkReply::NetworkError networkError);
+
 private:
     //переменные для загрузки INI-файла из камеры.
     QNetworkAccessManager *m_WebCtrl=0;
@@ -206,6 +213,7 @@ private:
     bool m_cameraenabled=false;
     bool m_videopage;
     bool m_videosettings;
+    bool m_onrequest=false;
     QString m_url1;//="rtsp://192.168.1.168:8553/PSIA/Streaming/channels/1?videoCodecType=MPEG4";
     QString m_url2="";
     int parse_int(QString param);
