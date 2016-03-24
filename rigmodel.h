@@ -33,11 +33,12 @@ class cRigmodel : public QObject
     Q_PROPERTY(int joystick_y2 READ joystick_y2 WRITE setJoystick_y2 NOTIFY joystick_y2Changed)
 
     Q_PROPERTY(bool camera READ camera WRITE setCamera NOTIFY cameraChanged)
-    //############ адрес и порт
+    //############ адрес и порт и другие параметры
     Q_PROPERTY(QString address READ address WRITE setAddress NOTIFY addressChanged)
     Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
     Q_PROPERTY(int timer_send_interval READ timer_send_interval WRITE setTimer_send_interval NOTIFY timer_send_intervalChanged)
     Q_PROPERTY(int timer_connect_interval READ timer_connect_interval WRITE setTimer_connect_interval NOTIFY timer_connect_intervalChanged)
+    Q_PROPERTY(int freerun READ freerun WRITE setFreerun NOTIFY freerunChanged) // Valve free run  - свободный ход клапанов в процентах
     //############ свойства - статусы tcp соединения
 
     Q_PROPERTY(bool client_connected READ client_connected NOTIFY client_connectedChanged)
@@ -114,6 +115,9 @@ public:
     QString gmod() const;
     void setGmod(const QString &gmod);
 
+    int freerun() const;
+    void setFreerun(int freerun);
+
 signals:
     void pressureChanged();
     void oiltempChanged();
@@ -137,6 +141,7 @@ signals:
     void portChanged();
     void timer_send_intervalChanged();
     void timer_connect_intervalChanged();
+    void freerunChanged();
     void client_connectedChanged();
     void good_dataChanged();
 
@@ -155,6 +160,7 @@ public slots:
     void sendData(); //слот должен вызываться любым событием, которое меняет данные, предназначенные для отправки.
     void readData(); //расклаываем полученные от сервера данные по параметрам
 private:
+    int scaling(const int &value);
     int m_pressure=5;
     int m_oiltemp=25;
     int m_voltage=251;
@@ -167,7 +173,7 @@ private:
 
     QString m_address="localhost";
     int m_port=1212;
-
+    int m_freerun;
     bool m_client_connected = false;
 
 

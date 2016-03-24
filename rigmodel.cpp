@@ -39,6 +39,7 @@ void cRigmodel::saveSettings()
     QSettings settings("HYCO", "Rig Console");
     settings.setValue("RigAddress",m_address);
     settings.setValue("RigPort",m_port);
+    settings.setValue("RigFreerun",m_freerun);
     settings.setValue("RigSendInterval",m_timer_send_interval);
     settings.setValue("RigConnectInterval",m_timer_connect_interval);
 
@@ -50,6 +51,7 @@ void cRigmodel::readSettings()
     QSettings settings("HYCO", "Rig Console");
     m_address=settings.value("RigAddress","localhost").toString();
     m_port=settings.value("RigPort","1212").toInt();
+    setFreerun(settings.value("RigFreerun","0").toInt());
     m_timer_send_interval=settings.value("RigSendInterval","2000").toInt();
     m_timer_connect_interval=settings.value("RigConnectInterval","30000").toInt();
 
@@ -369,18 +371,18 @@ void cRigmodel::sendData()
             +   m_lamp*4
             + m_camera*8;
     QString Data; // Строка отправки данных.
-
 // проверяем, есть ли подключение клиента. Если подключения нет, то ничего не отправляем.
     if (!m_client_connected) return;
 //    Data="{ana1:"+::QString().number(int(m_joystick_y1*127/100),10)
 //        +";ana2:"+::QString().number(int(m_joystick_y2*127/100),10)
 //        +";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
-    Data="{ana1:"+::QString().number(m_joystick_y1,10);
-    if (m_rigtype=="gkgbu"||m_rigtype=="grab6") Data=Data +";ana2:"+::QString().number(m_joystick_y2,10);
-    if (m_rigtype=="gkgbu") Data=Data+";ana3:"+::QString().number(m_joystick_x1,10)+";gmod:"+m_gmod;
+    Data="{ana1:"+::QString().number(scaling(m_joystick_y1),10);
+    if (m_rigtype=="gkgbu"||m_rigtype=="grab6") Data=Data +";ana2:"+::QString().number(scaling(m_joystick_y2),10);
+    if (m_rigtype=="gkgbu") Data=Data+";ana3:"+::QString().number(scaling(m_joystick_x1),10)+";gmod:"+m_gmod;
 
-    Data=Data+";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
+    Data=Data+";dig1:"+::QString().number(data[0],10)+"}CONSDATA";
     qDebug()<<"Rig - send data: "<<Data;
+
     bytesToWrite = (int)tcpClient.write(::QByteArray(Data.toLatin1()).data());
     if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
     if (bytesToWrite>=0)qDebug()<<"Rig: Data sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
@@ -458,6 +460,31 @@ void cRigmodel::readData()
         m_good_data=false; good_dataChanged();
         qWarning()<<"Rig: wrong data receved";
     }
+}
+
+int cRigmodel::scaling(const int &value)
+{
+   if (value==0) return 0;
+   float df=127.0*m_freerun/100.0;
+   qDebug()<<"Rig - scale df: "<<df<<"f:"<<-df + value*(100-m_freerun)/100.0 <<" v:"<<value;
+   if  (value>0)
+     return ceil(df + value*(100-m_freerun)/100.0);
+   else
+     return -ceil(df - value*(100-m_freerun)/100.0);
+}
+
+int cRigmodel::freerun() const
+{
+    return m_freerun;
+}
+
+void cRigmodel::setFreerun(int freerun)
+{
+    if (m_freerun==freerun)  return;
+    if (freerun<0) m_freerun=0;
+    if (freerun>100) m_freerun=100;
+    if (freerun>=0||freerun<=100)  m_freerun = freerun;
+    emit freerunChanged();
 }
 
 QString cRigmodel::gmod() const

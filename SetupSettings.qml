@@ -92,6 +92,7 @@ Item {
                 console.log("Setup Settings cb"+cb_cam2.checked+" "+cb_cam3.checked)
                 rig.timer_send_interval=parseInt(rig_msec1.text);
                 rig.timer_connect_interval=parseInt(rig_msec2.text);
+                rig.freerun=parseInt(rig_msec3.text)
                 network_caching=parseInt(netcache.text);
                 filesize=cbfilesize.currentText
                 j.ispresent=cbj.checked
@@ -364,7 +365,7 @@ Item {
         CheckBox {
             id: cbj
             x: 19
-            y: 152
+            y: 178
             checked: j.ispresent
             text: qsTr("Джойстик")
         }
@@ -372,7 +373,7 @@ Item {
         Label {
             id: ltype
             x: 170
-            y: 153
+            y: 179
             width: 78
             height: 13
             color: "#ffffff"
@@ -424,15 +425,41 @@ Item {
                 Component.onCompleted: {
                     currentIndex=0
                     switch (win.filesize){
-                        case 500: currentIndex=0; break;
-                        case 700: currentIndex=1; break;
-                        case 1000: currentIndex=2; break;
-                        case 1200: currentIndex=3; break;
-                        default: currentIndex=0;
+                    case 500: currentIndex=0; break;
+                    case 700: currentIndex=1; break;
+                    case 1000: currentIndex=2; break;
+                    case 1200: currentIndex=3; break;
+                    default: currentIndex=0;
                     }
                 }
 
             }
+        }
+
+        Label {
+            id: lris3
+            x: 7
+            y: 147
+            width: 245
+            height: 13
+            color: "#ffffff"
+            text: qsTr("Свободный ход клапана, %")
+            horizontalAlignment: Text.AlignRight
+            TextField {
+                id: rig_msec3
+                x: 251
+                y: -3
+                width: 96
+                height: 20
+                text: rig.freerun
+                validator: IntValidator {
+                    top: 100
+                    bottom: 0
+                }
+                opacity: 0.8
+                placeholderText: qsTr("Свободный ход клапанов в процентах")
+            }
+            font.pointSize: 9
         }
 
     }

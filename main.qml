@@ -170,9 +170,9 @@ Window {
 
     RigModel {
         id: rig
-        joystick_y1: j.y1axis
-        joystick_y2: j.y2axis
-        joystick_x1: j.x1axis
+        joystick_y1: j.y1axis*j.key_0
+        joystick_y2: j.y2axis*j.key_0
+        joystick_x1: j.x1axis*j.key_0
     }
     function changestate(){
                     console.log("STATE: "+mainRect.state + " ind:" +cams[0].index+cams[1].index+cams[2].index);
