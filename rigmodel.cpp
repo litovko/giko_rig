@@ -42,6 +42,7 @@ void cRigmodel::saveSettings()
     settings.setValue("RigFreerun",m_freerun);
     settings.setValue("RigSendInterval",m_timer_send_interval);
     settings.setValue("RigConnectInterval",m_timer_connect_interval);
+    settings.setValue("RigCheckType",m_check_type);
 
 }
 
@@ -54,6 +55,7 @@ void cRigmodel::readSettings()
     setFreerun(settings.value("RigFreerun","0").toInt());
     m_timer_send_interval=settings.value("RigSendInterval","2000").toInt();
     m_timer_connect_interval=settings.value("RigConnectInterval","30000").toInt();
+    m_check_type=settings.value("RigCheckType","false").toBool();
 
 }
 
@@ -448,7 +450,7 @@ void cRigmodel::readData()
                 qWarning()<<"Rig no good data for "<<"pwra:"<<val;}
             }
             if (s=="type"){
-                setRigtype(val);
+                if (check_type()) setRigtype(val);
                 //m_rigtype=val; emit rigtypeChanged();
                 if (m_rigtype=="grab2"||m_rigtype=="grab6"||m_rigtype=="gkgbu"||m_rigtype=="tk-15") ok=true;
                 if(!ok) {m_good_data = false; emit good_dataChanged();
@@ -471,6 +473,17 @@ int cRigmodel::scaling(const int &value)
      return ceil(df + value*(100-m_freerun)/100.0);
    else
      return -ceil(df - value*(100-m_freerun)/100.0);
+}
+
+bool cRigmodel::check_type() const
+{
+    return m_check_type;
+}
+
+void cRigmodel::setCheck_type(bool check_type)
+{
+    m_check_type = check_type;
+    emit check_typeChanged();
 }
 
 int cRigmodel::freerun() const

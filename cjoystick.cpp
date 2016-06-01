@@ -98,13 +98,14 @@ void cJoystick::setCurrent(const int &current)
 }
 void cJoystick::setIspresent (const bool &pr)
 {
-    if(pr==m_ispresent) return;
-    setX1axis(0);
-    setX2axis(0);
-    setY1axis(0);
-    setY1axis(0);
+    //if(pr==m_ispresent) return;
+//    setX1axis(0);
+//    setX2axis(0);
+//    setY1axis(0);
+//    setY1axis(0);
+    m_key_0=!pr; //устанавливаем кнопку "Fire" в нажатое состояние для управления с помощью мышки и клавиатуры.
+    emit key_0Changed();
     m_ispresent=pr;
-
     emit ispresentChanged();
 }
 

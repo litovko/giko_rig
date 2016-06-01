@@ -39,6 +39,7 @@ class cRigmodel : public QObject
     Q_PROPERTY(int timer_send_interval READ timer_send_interval WRITE setTimer_send_interval NOTIFY timer_send_intervalChanged)
     Q_PROPERTY(int timer_connect_interval READ timer_connect_interval WRITE setTimer_connect_interval NOTIFY timer_connect_intervalChanged)
     Q_PROPERTY(int freerun READ freerun WRITE setFreerun NOTIFY freerunChanged) // Valve free run  - свободный ход клапанов в процентах
+    Q_PROPERTY(int check_type READ check_type WRITE setCheck_type NOTIFY check_typeChanged) // Есть возможность отключить определение типа устройства если контроллер установлен не в то устройство
     //############ свойства - статусы tcp соединения
 
     Q_PROPERTY(bool client_connected READ client_connected NOTIFY client_connectedChanged)
@@ -118,6 +119,9 @@ public:
     int freerun() const;
     void setFreerun(int freerun);
 
+    bool check_type() const;
+    void setCheck_type(bool check_type);
+
 signals:
     void pressureChanged();
     void oiltempChanged();
@@ -144,6 +148,7 @@ signals:
     void freerunChanged();
     void client_connectedChanged();
     void good_dataChanged();
+    void check_typeChanged();
 
 
 public slots:
@@ -188,6 +193,7 @@ private:
     int m_joystick_x2=0;
     int m_joystick_y2=0;
     bool m_good_data=false;
+    bool m_check_type=false;
 
 
 

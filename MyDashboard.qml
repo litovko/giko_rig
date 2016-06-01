@@ -81,17 +81,18 @@ Item {
             height: dashBoard.height-20-width
             color: val>0?"yellow":"lightblue"
             z:3
+            //onValChanged: { console.log("MyGauge key0:"+j.key_0); }
         }
     MyGauge {
         id: row_right
             val: gauge_value()
             function gauge_value(){
-                if (!j.ispresent) return 0
+                //if (!j.ispresent) return 0
                 if (dashboard.state==="grab2") return j.key_0*j.y1axis
                 if (dashboard.state==="grab6") return j.key_0*j.y2axis
             }
             function gauge_color(){
-                if (!j.ispresent) return "transparent"
+                //if (!j.ispresent) return "transparent"
                 if (dashboard.state==="grab2") return j.y1axis>0?"yellow":"lightblue"
                 if (dashboard.state==="grab6") return j.y2axis>0?"yellow":"lightblue"
             }

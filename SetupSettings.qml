@@ -29,6 +29,11 @@ Item {
                 position: 0
                 color: "#000000"
             }
+
+            GradientStop {
+                position: 0.401
+                color: "#ffffff"
+            }
         }
         anchors.left: parent.left
         anchors.leftMargin: 0
@@ -92,7 +97,8 @@ Item {
                 console.log("Setup Settings cb"+cb_cam2.checked+" "+cb_cam3.checked)
                 rig.timer_send_interval=parseInt(rig_msec1.text);
                 rig.timer_connect_interval=parseInt(rig_msec2.text);
-                rig.freerun=parseInt(rig_msec3.text)
+                rig.freerun=parseInt(rig_msec3.text);
+                rig.check_type=cb_check_type.checked;
                 network_caching=parseInt(netcache.text);
                 filesize=cbfilesize.currentText
                 j.ispresent=cbj.checked
@@ -307,6 +313,7 @@ Item {
                 onClicked: {
                     fileDialog.visible=true
                 }
+
                 FileDialog {
                     id: fileDialog
                     title: "Выберите каталог для видеозаписей"
@@ -364,16 +371,16 @@ Item {
 
         CheckBox {
             id: cbj
-            x: 19
-            y: 178
+            x: 387
+            y: 374
             checked: j.ispresent
             text: qsTr("Джойстик")
         }
 
         Label {
             id: ltype
-            x: 170
-            y: 179
+            x: 26
+            y: 181
             width: 78
             height: 13
             color: "#ffffff"
@@ -460,6 +467,15 @@ Item {
                 placeholderText: qsTr("Свободный ход клапанов в процентах")
             }
             font.pointSize: 9
+        }
+
+        CheckBox {
+            id: cb_check_type
+            x: 310
+            y: 179
+            text: qsTr("Автоопределение")
+            checked: rig.check_type
+            visible: true
         }
 
     }

@@ -170,6 +170,7 @@ Window {
 
     RigModel {
         id: rig
+
         joystick_y1: j.y1axis*j.key_0
         joystick_y2: j.y2axis*j.key_0
         joystick_x1: j.x1axis*j.key_0
@@ -417,10 +418,12 @@ Window {
             //if ((event.key === Qt.Key_D)) win.fcommand("DEMO")
             if (event.key === Qt.Key_Down) {
                 j.ispresent=false
+                console.log("JFire:"+j.key_0)
                 if(j.y1axis>-127) j.y1axis=j.y1axis-1;
             }
             if (event.key === Qt.Key_Up) {
                 j.ispresent=false
+                console.log("JFire:"+j.key_0)
                 if(j.y1axis<127) j.y1axis=j.y1axis+1;
             }
             if (event.key === Qt.Key_PageDown||event.key === Qt.Key_Left) {

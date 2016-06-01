@@ -16,15 +16,15 @@ Item {
         gradient: Gradient {
             GradientStop {
                 position: 0.00;
-                color: "#030c53";
+                color: "#050505";
             }
             GradientStop {
                 position: 0.50;
-                color: "#ffffff";
+                color: "#aaaaaa";
             }
             GradientStop {
                 position: 1.00;
-                color: "#030c53";
+                color: "#050505";
             }
         }
         opacity: ma.pressedButtons& Qt.LeftButton ? 0.4:0.7
