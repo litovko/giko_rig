@@ -4,6 +4,7 @@ Item {
     property string text: "Item1"
     property string command: "Command"
     property bool pressed: false
+    signal buttonClicked
 
     Rectangle {
         id: body
@@ -46,7 +47,8 @@ Item {
             hoverEnabled: true
             acceptedButtons: Qt.LeftButton
             //propagateComposedEvents: true
-            onPressed: menuitem.pressed=true
+
+            onPressed: {menuitem.pressed=true; menuitem.buttonClicked(); console.log("onPressed->onButtonClicked")  }
             onReleased: menuitem.pressed=false
         }
     }
