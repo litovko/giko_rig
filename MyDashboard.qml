@@ -184,7 +184,7 @@ Item {
                     Pribor {
                         width: parent.width-10; height: parent.height-10
                         anchors.centerIn: parent
-                        value: source.ampere
+                        value: (source.ampere/10).toFixed(1)
                         maximumValue: 100
                         warningThreshold: maximumValue*0.9
                         stepSize: 20
