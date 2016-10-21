@@ -47,6 +47,7 @@ LIBS += -lSDL
 #    DEFINES += SDL_WIN
 #}
 win32: LIBS += -L$$PWD/SDL/lib/ -lSDLmain
+message(LIBS $$LIBS)
 
 INCLUDEPATH += $$PWD/SDL/include
 DEPENDPATH += $$PWD/SDL/include
