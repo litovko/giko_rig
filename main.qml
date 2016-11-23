@@ -23,6 +23,7 @@ Window {
     property string filepath: ""
     property int filesize: 700 //Mbyte
     property variant curfilesize:[-1,-1,-1]
+    property bool onrecord: true; //true если меняется размер записываемого файла.
 
     property list<VlcPlayer> players:[
         VlcPlayer {
@@ -92,6 +93,7 @@ Window {
         players[player_number].playlist.addWithOptions(cams[player_number].url1,getrecordoption(player_number));
         players[player_number].play();
         curfilesize[player_number]=-1;
+        onrecord=true;
     }
 
     function statename(camstate) {
@@ -153,7 +155,10 @@ Window {
         for (var i=0; i<3; i++) {
             if(players[i].state===3) {
                 console.log ("file_name"+i+":"+cams[i].recordfile + "size:"+ cams[i].get_filesize())
-                if (curfilesize[i]>=cams[i].get_filesize()) console.warn("NO RECORDINGS!!!")
+                if (curfilesize[i]>=cams[i].get_filesize()) {
+                    console.warn("NO RECORDINGS!!!");
+                    onrecord=false;
+                }
                 curfilesize[i]=cams[i].get_filesize();
                 if (cams[i].get_filesize()>=filesize*1024*1024) player_play(i);
             }
@@ -478,6 +483,14 @@ Window {
                     bottom: parent.bottom
                     //right: parent.right
                     margins: 10
+                }
+                Text {
+                    text: "НЕТ ЗАПИСИ!!! - Проверь путь!"
+                    font.bold: true
+                    style: Text.Raised
+                    color: "red"
+                    font.pointSize: 20
+                    visible: !onrecord
                 }
                 Text {
                     text: "Тип аппарата:" + rig.rigtype

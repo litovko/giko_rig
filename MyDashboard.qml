@@ -236,7 +236,7 @@ Item {
                         maximumValue: 200
                         stepSize: 50
                         anchors.centerIn: parent
-                        value: source.pressure
+                        value: (source.pressure/10).toFixed(1)
                         centerТext: "кПа"
                         bottomText: "Давл. масла"
                         warningThreshold: maximumValue*0.9
@@ -252,7 +252,7 @@ Item {
                         maximumValue: 60
                         stepSize: 10
                         anchors.centerIn: parent
-                        value: source.voltage24
+                        value: (source.voltage24/10).toFixed(1)
                         centerТext: "V"
                         bottomText: "Шина 24В"
                         warningThreshold: 49
