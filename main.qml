@@ -409,7 +409,7 @@ Window {
             console.log("KeY:"+event.key)
             if (event.key === Qt.Key_F1 || event.key === Qt.Key_1) win.fcommand("HELP")
             if (event.key === Qt.Key_F2||event.key ===  Qt.Key_2)  rig.lamp=rig.lamp?false:true;
-            if (event.key === Qt.Key_F3||event.key ===  Qt.Key_3)  rig.camera=rig.camera?false:true;;
+            if (event.key === Qt.Key_F3||event.key ===  Qt.Key_3)  rig.camera=rig.camera?false:true;
             if (event.key === Qt.Key_F4||event.key ===  Qt.Key_4)  rig.engine=rig.engine?false:true;
             if (event.key === Qt.Key_F8||event.key ===  Qt.Key_8)     win.fcommand("CHANGE RIG TYPE")
             if (event.key === Qt.Key_F9||event.key ===  Qt.Key_9)     win.fcommand("JOYSTICK SETTINGS")
