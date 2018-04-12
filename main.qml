@@ -258,6 +258,7 @@ Window {
               help.visible=false
               if (dashboard.state==="grab2") dashboard.state="grab6"
               else if (dashboard.state==="grab6") dashboard.state="gkgbu"
+                   else if (dashboard.state==="gkgbu") dashboard.state="mgbu"
                    else  dashboard.state="grab2"
               rig.rigtype=dashboard.state
               break;

@@ -38,6 +38,15 @@ Item {
             PropertyChanges {target: turns;   visible: true}
             PropertyChanges {target: row_left;   visible: false}
             PropertyChanges {target: row_right;   visible: false}
+        },
+        State {
+            name: "mgbu"
+            PropertyChanges {target: gkgbu_pult;   visible: true}
+            PropertyChanges {target: power2;   visible: true}
+            PropertyChanges {target: power;   visible: true}
+            PropertyChanges {target: turns;   visible: true}
+            PropertyChanges {target: row_left;   visible: true}
+            PropertyChanges {target: row_right;   visible: true}
         }
     ]
     onVisibleChildrenChanged: calculatesize()
