@@ -7,7 +7,6 @@ import QtQuick.Controls.Styles 1.4
 Item {
     id:pr
 
-
     property real value : 0
     property real leftAngle: -75
     property real rightAngle: 75
