@@ -18,6 +18,7 @@ Item {
             PropertyChanges {target: power;   visible: true}
             PropertyChanges {target: turns;   visible: false}
             PropertyChanges {target: gkgbu_pult;   visible: false}
+            PropertyChanges {target: mgbu_pult;   visible: false}
             PropertyChanges {target: row_left;   visible: true}
             PropertyChanges {target: row_right;   visible: true}
         },
@@ -27,12 +28,14 @@ Item {
             PropertyChanges {target: power;   visible: true}
             PropertyChanges {target: turns;   visible: false}
             PropertyChanges {target: gkgbu_pult;   visible: false}
+            PropertyChanges {target: mgbu_pult;   visible: false}
             PropertyChanges {target: row_left;   visible: true}
             PropertyChanges {target: row_right;   visible: true}
         },
         State {
             name: "gkgbu"
             PropertyChanges {target: gkgbu_pult;   visible: true}
+            PropertyChanges {target: mgbu_pult;   visible: false}
             PropertyChanges {target: power2;   visible: false}
             PropertyChanges {target: power;   visible: false}
             PropertyChanges {target: turns;   visible: true}
@@ -41,7 +44,8 @@ Item {
         },
         State {
             name: "mgbu"
-            PropertyChanges {target: gkgbu_pult;   visible: true}
+            PropertyChanges {target: gkgbu_pult;   visible: false}
+            PropertyChanges {target: mgbu_pult;   visible: true}
             PropertyChanges {target: power2;   visible: true}
             PropertyChanges {target: power;   visible: true}
             PropertyChanges {target: turns;   visible: true}
@@ -70,6 +74,16 @@ Item {
     onContainerheightChanged: calculatesize()
     GKGBU {
         id: gkgbu_pult
+        //anchors.centerIn: parent
+        height: dashboard.gaugesize+20
+        width: dashboard.gaugesize
+        joystick: j
+        rigmodel: source
+        btn0: j.key_1
+        z:4
+    }
+    MGBU {
+        id: mgbu_pult
         //anchors.centerIn: parent
         height: dashboard.gaugesize+20
         width: dashboard.gaugesize

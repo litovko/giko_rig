@@ -3,8 +3,8 @@
         <file>main.qml</file>
         <file>Pribor.qml</file>
         <file>MyDashboard.qml</file>
-		<file>MyGauge.qml</file>
-		<file>MyLamp.qml</file>
+        <file>MyGauge.qml</file>
+        <file>MyLamp.qml</file>
         <file>skin/pause.png</file>
         <file>skin/play.png</file>
         <file>skin/needle.png</file>
@@ -12,16 +12,17 @@
         <file>ControlPanel.qml</file>
         <file>skin/settings.png</file>
         <file>MyBotton.qml</file>
-		<file>SetupCamera.qml</file>
-		<file>SetupSettings.qml</file>
-		<file>SetupJoystick.qml</file>
-		<file>Help.qml</file>
-		<file>Axis.qml</file>
-		<file>AxisVertical.qml</file>
-		<file>AxisHorizontal.qml</file>
-		<file>GKGBU.qml</file> 
-		<file>MyHourglass.qml</file>
-		<file>MyMenu.qml</file>
-		<file>MyMenuItem.qml</file>
+        <file>SetupCamera.qml</file>
+        <file>SetupSettings.qml</file>
+        <file>SetupJoystick.qml</file>
+        <file>Help.qml</file>
+        <file>Axis.qml</file>
+        <file>AxisVertical.qml</file>
+        <file>AxisHorizontal.qml</file>
+        <file>GKGBU.qml</file>
+        <file>MyHourglass.qml</file>
+        <file>MyMenu.qml</file>
+        <file>MyMenuItem.qml</file>
+        <file>MGBU.qml</file>
     </qresource>
 </RCC>
