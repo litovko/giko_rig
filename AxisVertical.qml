@@ -46,6 +46,22 @@ Item {
                border.color: "light blue"
                radius: 5
                y: (scale.height/2-runner.height/2)-axis.value*(scale.height-runner.height)/(axis.maximumValue-axis.minimunValue)
+//               MouseArea {
+//                   id: ma
+//                   anchors.fill: parent
+//                   hoverEnabled: true
+//                   drag.target: parent
+//                   drag.axis: Drag.YAxis
+//                   drag.minimumY: 0
+//                   drag.maximumY: scale.height-runner.height
+//                   //drag.minimumX: 0
+//                   //drag.maximumX: container.width - rect.width
+//               }
+//               onYChanged: {
+//                   //надо бы доделать
+
+//               }
+
                //    axis.value/(axis.maximumValue-axis.minimumValue)
                //y: axis.value
 //               onYChanged: {

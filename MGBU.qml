@@ -18,23 +18,31 @@ Item {
             name: "drill"
             PropertyChanges {target: name;   text: "Бурение"}
             PropertyChanges {target: y1;   text: qsTr("ВРАЩЕНИЕ")}
-            PropertyChanges {target: y2;   text: qsTr("ХОД - ОСЬ Y"); visible: true}
+            PropertyChanges {target: y2;   text: qsTr("ХОД-Y"); visible: true}
             PropertyChanges {target: x1;   text: qsTr("ОТВАЛ"); visible: false}
+        },
+        State {
+            name: "tore"
+            PropertyChanges {target: name;   text: "Отрыв"}
+            PropertyChanges {target: y1;   text: qsTr("ХОД-Y")}
+            PropertyChanges {target: y2;   text: qsTr("ПРАВАЯ"); visible: false}
+            PropertyChanges {target: x1;   text: qsTr("КАМЕРА"); visible: false}
         },
         State {
            name: "tool"
            PropertyChanges {target: name;   text: "Манипулятор"}
-           PropertyChanges {target: y1;   text: qsTr("СТРЕЛА")}
+           PropertyChanges {target: y1;   text: qsTr("ЗАМОК")}
            PropertyChanges {target: y2;   text: qsTr("ПРАВАЯ"); visible: false}
-           PropertyChanges {target: x1;   text: qsTr("БАШНЯ"); visible: true}
+           PropertyChanges {target: x1;   text: qsTr("КАРЕТКА"); visible: true}
         },
         State {
-            name: "horiz"
-            PropertyChanges {target: name;   text: "Аутригеры"}
-            PropertyChanges {target: y1;   text: qsTr("УГОЛ СТАНКА")}
+            name: "horiz1"
+            PropertyChanges {target: name;   text: "Горизонтирование"}
+            PropertyChanges {target: y1;   text: qsTr("Аутригер Лев.")}
             PropertyChanges {target: y2;   text: qsTr("ПРАВАЯ"); visible: false}
             PropertyChanges {target: x1;   text: qsTr("КАМЕРА"); visible: true}
         }
+
     ]
     onBtn0Changed: changestate()
     onStateChanged: rigmodel.gmod=state
@@ -42,9 +50,10 @@ Item {
 
     function changestate(){
       if (btn0===true) return
-      if (state==="drill") state="tool"
-      else if (state==="tool") state="horiz"
-           else  state="drill"
+      if (state==="drill") state="tore"
+      else if (state==="tore") state="tool"
+           else if (state==="tool") state="horiz"
+                else  state="drill"
 
     }
     Rectangle {
@@ -70,7 +79,7 @@ Item {
             id: ma
             anchors.fill: parent
             hoverEnabled: true
-            drag.target: parent
+            drag.target: mgbu
             drag.axis: Drag.XAndYAxis
             onDoubleClicked: changestate()
             //drag.minimumX: 0
@@ -98,12 +107,20 @@ Item {
                     id: s2
                     height: 8
                     width: 15
-                    color: mgbu.state==="tool"? "yellow":"transparent"
+                    color: mgbu.state==="tore"? "yellow":"transparent"
                     border.color: "#3f3f40"
                     radius:2
                 }
                 Rectangle {
                     id: s3
+                    height: 8
+                    width: 15
+                    color: mgbu.state==="tool"? "yellow":"transparent"
+                    border.color: "#3f3f40"
+                    radius:2
+                }
+                Rectangle {
+                    id: s4
                     height: 8
                     width: 15
                     color: mgbu.state==="horiz"? "yellow":"transparent"
