@@ -10,7 +10,7 @@ Item {
     property int gaugesize: 180-20 // 20 - поля: два по 10
     property int containerheight: 1080
 
-    state: "grab2"
+    state: rig.rigtype
     states: [
         State {
             name: "grab2"

@@ -36,17 +36,24 @@ Item {
            PropertyChanges {target: x1;   text: qsTr("КАРЕТКА"); visible: true}
         },
         State {
-            name: "horiz1"
+            name: "horiz"
             PropertyChanges {target: name;   text: "Горизонтирование"}
-            PropertyChanges {target: y1;   text: qsTr("Аутригер Лев.")}
-            PropertyChanges {target: y2;   text: qsTr("ПРАВАЯ"); visible: false}
-            PropertyChanges {target: x1;   text: qsTr("КАМЕРА"); visible: true}
+            PropertyChanges {target: y1;   text: qsTr("ЛЕВЫЙ")}
+            PropertyChanges {target: y2;   text: qsTr("ПРАВЫЙ"); visible: true}
+            PropertyChanges {target: x1;   text: qsTr("СРЕДНИЙ"); visible: true}
         }
 
     ]
     onBtn0Changed: changestate()
     onStateChanged: rigmodel.gmod=state
-
+    transitions: [
+            Transition {
+                 ColorAnimation { target: s1; duration: 500}
+                 ColorAnimation { target: s2; duration: 500}
+                 ColorAnimation { target: s3; duration: 500}
+                 ColorAnimation { target: s4; duration: 500}
+            }
+        ]
 
     function changestate(){
       if (btn0===true) return
@@ -61,7 +68,7 @@ Item {
         width: parent.width
         height: parent.height
         color: "transparent"
-        //onXChanged: console.log("X:"+x)
+
         gradient: Gradient {
             GradientStop {
                 position: 0.00;
@@ -102,6 +109,12 @@ Item {
                     color: mgbu.state==="drill"? "yellow":"transparent"
                     border.color: "#3f3f40"
                     radius:2
+
+                    ColorAnimation {
+                        from: "transparent"
+                        to: "yellow"
+                        duration: 200
+                    }
                 }
                 Rectangle {
                     id: s2

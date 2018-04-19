@@ -26,6 +26,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     timer_connect.start(m_timer_connect_interval);
     connect(&timer_send, SIGNAL(timeout()), this, SLOT(sendData()));
     timer_send.start(m_timer_send_interval);
+    emit rigtypeChanged();
 }
 void cRigmodel::saveSettings()
 {
@@ -446,7 +447,7 @@ void cRigmodel::readData()
             if (s=="type"){
                 if (check_type()) setRigtype(val);
                 //m_rigtype=val; emit rigtypeChanged();
-                if (m_rigtype=="grab2"||m_rigtype=="grab6"||m_rigtype=="gkgbu"||m_rigtype=="tk-15") ok=true;
+                if (m_rigtype=="grab2"||m_rigtype=="grab6"||m_rigtype=="gkgbu"||m_rigtype=="mgbu") ok=true;
                 if(!ok) {m_good_data = false; emit good_dataChanged();
                 qWarning()<<"Rig: no good data for "<<"type:"<<val;}
             }

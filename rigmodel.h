@@ -173,7 +173,7 @@ private:
     int m_ampere=21;
     int m_turns=0;
     int m_temperature=25;
-    QString m_rigtype="grab2"; //grab2,grab6,gkgbu,tk-15
+    QString m_rigtype="mgbu"; //grab2,grab6,gkgbu,mgbu
     QString m_gmod="platf"; //platf,tower,bench,drill
 
     QString m_address="localhost";
