@@ -6,6 +6,7 @@ Item {
     property RigJoystick joystick:null
     property RigModel rigmodel:null
     property bool btn0:false
+    property bool btn_lock:false //button to locking
 
     Settings {
         category: "MGBU"
@@ -45,7 +46,13 @@ Item {
 
     ]
     onBtn0Changed: changestate()
-    onStateChanged: rigmodel.gmod=state
+    onStateChanged: { rigmodel.gmod=state; joystick.lock=false}
+    onBtn_lockChanged: {
+        if (!joystick.lock&&btn_lock) {
+            joystick.lock=true
+        }
+        else if (joystick.lock&&btn_lock) joystick.lock=false
+    }
     transitions: [
             Transition {
                  ColorAnimation { target: s1; duration: 500}
@@ -97,6 +104,8 @@ Item {
             anchors.top: parent.top
             anchors.margins: 10
             spacing: 3
+
+
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
   //              anchors.top: parent.top
@@ -175,6 +184,14 @@ Item {
                        container: false
                 }
             }//Row
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter;
+                font.pointSize: 9
+                color: joystick.lock?"white":"transparent"
+                text: "Блокировка"
+
+            }
+
             AxisHorizontal {
               id: x1
               anchors.horizontalCenter: parent.horizontalCenter;
@@ -184,6 +201,7 @@ Item {
               text: qsTr("ОТВАЛ")
               container: false
             }
+
       }//Column
     }//body Rectangle
 }

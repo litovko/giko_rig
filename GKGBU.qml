@@ -6,6 +6,10 @@ Item {
     property RigJoystick joystick:null
     property RigModel rigmodel:null
     property bool btn0:false
+    property bool btn_lock:false //button to lock
+    property bool lock: false
+
+
 
     Settings {
         category: "GKGBU"
@@ -45,7 +49,10 @@ Item {
     ]
     onBtn0Changed: changestate()
     onStateChanged: rigmodel.gmod=state
-
+    onBtn_lockChanged: {
+        if (!lock&&j.key_0) lock=true
+        if (lock&&j.key_0) lock=false
+    }
 
     function changestate(){
       if (btn0===true) return
@@ -124,6 +131,7 @@ Item {
                     border.color: "#3f3f40"
                     radius:2
                 }
+
             } //Row
             Text{ id: name;
                 anchors.horizontalCenter: parent.horizontalCenter;

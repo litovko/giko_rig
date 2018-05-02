@@ -69,6 +69,7 @@ Item {
     onStateChanged: {
         console.log("DashBoard state:"+state);
         calculatesize()
+        j.lock=false
 
     }
     onContainerheightChanged: calculatesize()
@@ -80,21 +81,23 @@ Item {
         joystick: j
         rigmodel: source
         btn0: j.key_1
+        btn_lock: j.key_4
         z:4
     }
     MGBU {
         id: mgbu_pult
         //anchors.centerIn: parent
-        height: dashboard.gaugesize+20
+        height: dashboard.gaugesize+30
         width: dashboard.gaugesize
         joystick: j
         rigmodel: source
         btn0: j.key_1
+        btn_lock: j.key_4 // locker key
         z:4
     }
     MyGauge {
             id: row_left
-            val:j.key_0*j.y1axis
+            val:(j.key_0||j.lock)*j.y1axis
             //anchors.fill: parent
             anchors.bottom: dbr.bottom
             anchors.left: dbr.left
@@ -111,8 +114,8 @@ Item {
             val: gauge_value()
             function gauge_value(){
                 //if (!j.ispresent) return 0
-                if (dashboard.state==="grab2") return j.key_0*j.y1axis
-                if (dashboard.state==="grab6") return j.key_0*j.y2axis
+                if (dashboard.state==="grab2") return (j.key_0||j.lock)*j.y1axis
+                if (dashboard.state==="grab6") return (j.key_0||j.lock).y2axis
             }
             function gauge_color(){
                 //if (!j.ispresent) return "transparent"

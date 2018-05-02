@@ -160,6 +160,11 @@ bool cJoystick::key_3()
 {
     return m_key_3;
 }
+
+bool cJoystick::key_4()
+{
+    return m_key_4;
+}
 // Initialize Joystick information
 // Get # of joysticks available
 // Populate # of axes and buttons
@@ -211,6 +216,7 @@ void cJoystick::init_joysticks()
         if (m_key_1_ind>m_buttons_number-1) setKey_1_ind(0);
         if (m_key_2_ind>m_buttons_number-1) setKey_2_ind(0);
         if (m_key_3_ind>m_buttons_number-1) setKey_3_ind(0);
+        if (m_key_4_ind>m_buttons_number-1) setKey_4_ind(0);
 //        qDebug()<<"=========================================";
 //        qDebug()<<"m_y1axis_ind:"<<m_y1axis_ind;
 //        qDebug()<<"m_y2axis_ind:"<<m_y2axis_ind;
@@ -223,10 +229,12 @@ void cJoystick::updateData()
 {
     if (!m_ispresent) return;
     pollJoystick();
-    setY1axis(-joystick.at(current())->axis[m_y1axis_ind]*127/32767);
-    setX1axis(joystick.at(current())->axis[m_x1axis_ind]*127/32767);
-    setY2axis(-joystick.at(current())->axis[m_y2axis_ind]*127/32767);
-    setX2axis(joystick.at(current())->axis[m_x2axis_ind]*127/32767);
+    if (!m_lock) {
+        setY1axis(-joystick.at(current())->axis[m_y1axis_ind]*127/32767);
+        setX1axis(joystick.at(current())->axis[m_x1axis_ind]*127/32767);
+        setY2axis(-joystick.at(current())->axis[m_y2axis_ind]*127/32767);
+        setX2axis(joystick.at(current())->axis[m_x2axis_ind]*127/32767);
+    }
     bool b=(joystick.at(current())->button[m_key_0_ind]);
     if (b==!m_key_0) { m_key_0=b; emit key_0Changed();
     qDebug()<<"X1:"<<m_x1axis<<" Y1:"<<m_y1axis<<"X2:"<<m_x2axis<<" Y2:"<<m_y2axis<<" B0:"<<m_key_0<<" B1:"<<m_key_1;}
@@ -236,6 +244,9 @@ void cJoystick::updateData()
     if (b==!m_key_2) { m_key_2=b; emit key_2Changed();}
     b=(joystick.at(current())->button[m_key_3_ind]);
     if (b==!m_key_3) { m_key_3=b; emit key_3Changed();}
+    b=(joystick.at(current())->button[m_key_4_ind]);
+    if (b==!m_key_4) { m_key_4=b; emit key_4Changed();}
+
 }
 
 void cJoystick::change_numbers()
@@ -266,6 +277,7 @@ void cJoystick::saveSettings()
         settings.setValue("Joystick-b2",m_key_1_ind);
         settings.setValue("Joystick-b3",m_key_2_ind);
         settings.setValue("Joystick-b4",m_key_3_ind);
+        settings.setValue("Joystick-b5",m_key_4_ind);
 }
 
 void cJoystick::readSettings()
@@ -282,7 +294,22 @@ void cJoystick::readSettings()
     setKey_1_ind(settings.value("Joystick-b2",1).toInt());
     setKey_2_ind(settings.value("Joystick-b3",2).toInt());
     setKey_3_ind(settings.value("Joystick-b4",3).toInt());
+    setKey_4_ind(settings.value("Joystick-b5",4).toInt());
 }
+
+bool cJoystick::lock() const
+{
+    return m_lock;
+}
+
+void cJoystick::setLock(bool lock)
+{
+    if (m_lock==lock) return;
+    m_lock = lock;
+    qDebug()<<"Joystick Lock";
+    emit lockChanged();
+}
+
 
 int cJoystick::buttons_number() const
 {
@@ -331,6 +358,17 @@ void cJoystick::setKey_3_ind(int key_3_ind)
 {
     m_key_3_ind = key_3_ind;
     emit key_3_indChanged();
+}
+
+int cJoystick::key_4_ind() const
+{
+    return m_key_4_ind;
+}
+
+void cJoystick::setKey_4_ind(int key_4_ind)
+{
+    m_key_4_ind = key_4_ind;
+    emit key_4_indChanged();
 }
 
 int cJoystick::key_0_ind() const

@@ -36,7 +36,7 @@ Item {
     Rectangle {
         id: rectangle1
         width: 500
-        height: 455
+        height: 480
         gradient: Gradient {
             GradientStop {
                 id: gradientStop1
@@ -76,7 +76,7 @@ Item {
             x: 18
             y: 97
             width: 464
-            height: 345
+            height: 375
             checked: true
             opacity: 1
 
@@ -223,7 +223,7 @@ Item {
                     }
                     onCurrentIndexChanged: {
                         if (!joystick.ispresent) return;
-                        if (comboBox5.currentIndex===currentIndex ||comboBox6.currentIndex===currentIndex||comboBox7.currentIndex===currentIndex)
+                        if (comboBox5.currentIndex===currentIndex ||comboBox6.currentIndex===currentIndex||comboBox7.currentIndex===currentIndex||comboBox9.currentIndex===currentIndex)
                         {joystickDialog.state="Message"; currentIndex=joystick.key_3_ind; return;}
                         joystick.key_3_ind=currentIndex
                     }
@@ -361,7 +361,7 @@ Item {
                 }
                 onCurrentIndexChanged: {
                     if (!joystick.ispresent) return;
-                    if (comboBox6.currentIndex===currentIndex ||comboBox7.currentIndex===currentIndex||comboBox8.currentIndex===currentIndex)
+                    if (comboBox6.currentIndex===currentIndex ||comboBox7.currentIndex===currentIndex||comboBox8.currentIndex===currentIndex||comboBox9.currentIndex===currentIndex)
                     {joystickDialog.state="Message"; currentIndex=joystick.key_0_ind; return;}
                     joystick.key_0_ind=currentIndex
                 }
@@ -388,7 +388,7 @@ Item {
                 }
                 onCurrentIndexChanged: {
                     if (!joystick.ispresent) return;
-                    if (comboBox5.currentIndex===currentIndex ||comboBox7.currentIndex===currentIndex||comboBox8.currentIndex===currentIndex)
+                    if (comboBox5.currentIndex===currentIndex ||comboBox7.currentIndex===currentIndex||comboBox8.currentIndex===currentIndex||comboBox9.currentIndex===currentIndex)
                     {joystickDialog.state="Message"; currentIndex=joystick.key_1_ind; return;}
                     joystick.key_1_ind=currentIndex
                 }
@@ -416,7 +416,7 @@ Item {
                 }
                 onCurrentIndexChanged: {
                     if (!joystick.ispresent) return;
-                    if (comboBox5.currentIndex===currentIndex ||comboBox6.currentIndex===currentIndex||comboBox8.currentIndex===currentIndex)
+                    if (comboBox5.currentIndex===currentIndex ||comboBox6.currentIndex===currentIndex||comboBox8.currentIndex===currentIndex||comboBox9.currentIndex===currentIndex)
                     {joystickDialog.state="Message"; currentIndex=joystick.key_2_ind; return;}
                     joystick.key_2_ind=currentIndex
                 }
@@ -428,6 +428,34 @@ Item {
                 y: 275
                 text: qsTr("")
                 checked: joystick.key_2
+                scale: 1.7
+                clip: false
+            }
+            ComboBox {
+                id: comboBox9
+                x: 185
+                y: 340
+                width: 51
+                height: 20
+                visible: true
+                model: ListModel {
+                    id: mcomboBox9
+                }
+                onCurrentIndexChanged: {
+                    if (!joystick.ispresent) return;
+                    if (comboBox5.currentIndex===currentIndex ||comboBox6.currentIndex===currentIndex||comboBox7.currentIndex===currentIndex||comboBox8.currentIndex===currentIndex)
+                    {joystickDialog.state="Message"; currentIndex=joystick.key_4_ind; return;}
+                    joystick.key_4_ind=currentIndex
+                }
+            }
+
+            RadioButton {
+                id: radioButton5
+                x: 258
+                y: 341
+                text: qsTr("")
+                visible: true
+                checked: joystick.key_4
                 scale: 1.7
                 clip: false
             }
@@ -456,6 +484,7 @@ Item {
                     mcomboBox6.append({text: ji})
                     mcomboBox7.append({text: ji})
                     mcomboBox8.append({text: ji})
+                    mcomboBox9.append({text: ji})
                     //console.log("Jbutton:"+ji)
                 }
                 comboBox1.currentIndex=joystick.y1axis_ind
@@ -466,6 +495,7 @@ Item {
                 comboBox6.currentIndex=joystick.key_1_ind
                 comboBox7.currentIndex=joystick.key_2_ind
                 comboBox8.currentIndex=joystick.key_3_ind
+                comboBox9.currentIndex=joystick.key_4_ind
             }
         }
 
@@ -478,6 +508,18 @@ Item {
                 joystickDialog.visible=false;
                 mainRect.focus=true;
             }
+        }
+
+        Label {
+            id: label11
+            x: 33
+            y: 442
+            width: 172
+            height: 19
+            color: "#ffffff"
+            text: qsTr("Выбор кнопки защелки")
+            visible: true
+            font.pointSize: 10
         }
         
     }

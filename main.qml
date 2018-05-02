@@ -176,9 +176,9 @@ Window {
     RigModel {
         id: rig
 
-        joystick_y1: j.y1axis*j.key_0
-        joystick_y2: j.y2axis*j.key_0
-        joystick_x1: j.x1axis*j.key_0
+        joystick_y1: j.y1axis*(j.key_0||j.lock)
+        joystick_y2: j.y2axis*(j.key_0||j.lock)
+        joystick_x1: j.x1axis*(j.key_0||j.lock)
     }
     function changestate(){
                     console.log("STATE: "+mainRect.state + " ind:" +cams[0].index+cams[1].index+cams[2].index);
@@ -555,6 +555,8 @@ Window {
             current: 0
             onKey_3Changed: if (key_3) fcommand("LAYOUT")
             onKey_2Changed: if (key_2) fcommand("PLAY")
+            onKey_1Changed: if (key_1) fcommand("JKEY1")
+            onKey_0Changed: if (key_1) fcommand("JKEY0")
 //            {
 //                                if(cams[0].cameraenabled) player_play(0);
 //                                if(cams[1].cameraenabled) player_play(1);
