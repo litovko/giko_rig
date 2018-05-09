@@ -12,10 +12,10 @@ Item {
     property list<RigCamera> cam
     property int lampSize:100
     property int fontSize:15
+    signal lampClicked
 
     Rectangle {
-        height: parent.height
-        width: parent.width
+        anchors.fill: parent
         color: "transparent"
         border.color: "yellow"
         radius: 10
@@ -51,7 +51,7 @@ Item {
                     width: lampSize
                     bottomText:"СВЕТ[F2]"
                     active: source.lamp
-
+                    onLampClicked: controlPanel.lampClicked()
                 }
                 MyLamp{
                     id: pump

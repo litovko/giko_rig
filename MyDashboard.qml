@@ -1,9 +1,6 @@
 import QtQuick 2.5
 import Gyco 1.0
 
-
-
-
 Item {
     id: dashBoard
     property RigModel source
@@ -115,12 +112,12 @@ Item {
             function gauge_value(){
                 //if (!j.ispresent) return 0
                 if (dashboard.state==="grab2") return (j.key_0||j.lock)*j.y1axis
-                if (dashboard.state==="grab6") return (j.key_0||j.lock).y2axis
+                if (dashboard.state==="grab6"||dashboard.state==="mgbu") return (j.key_0||j.lock)*j.y2axis
             }
             function gauge_color(){
                 //if (!j.ispresent) return "transparent"
                 if (dashboard.state==="grab2") return j.y1axis>0?"yellow":"lightblue"
-                if (dashboard.state==="grab6") return j.y2axis>0?"yellow":"lightblue"
+                if (dashboard.state==="grab6"||dashboard.state==="mgbu") return j.y2axis>0?"yellow":"lightblue"
             }
             //anchors.fill: parent
             anchors.bottom: dbr.bottom

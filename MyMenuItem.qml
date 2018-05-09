@@ -48,7 +48,7 @@ Item {
             acceptedButtons: Qt.LeftButton
             //propagateComposedEvents: true
 
-            onPressed: {menuitem.pressed=true; menuitem.buttonClicked(); console.log("onPressed->onButtonClicked")  }
+            onPressed: {menuitem.pressed=true; menuitem.buttonClicked();   }
             onReleased: menuitem.pressed=false
         }
     }

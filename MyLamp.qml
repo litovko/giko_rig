@@ -7,6 +7,13 @@ Item {
     property string bottomText: "ЛАМПЫ[F2]"
     property int fontSize: 12
     property bool error: false
+    property string command: "Command"
+    signal lampClicked
+    MouseArea {
+        anchors.fill: parent
+        onClicked:  lampClicked()
+    }
+
     Rectangle {
         color: "transparent"
         anchors.margins: 20

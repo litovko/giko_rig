@@ -24,5 +24,7 @@
         <file>MyMenu.qml</file>
         <file>MyMenuItem.qml</file>
         <file>MGBU.qml</file>
+        <file>LampsSettings.qml</file>
+        <file>Tik.qml</file>
     </qresource>
 </RCC>

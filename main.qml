@@ -278,6 +278,11 @@ Window {
           case "LAYOUT":
               changestate();
               break;
+          case "LAMPS":
+              lampsSettings.visible=!lampsSettings.visible
+              lampsSettings.height=lampsSettings.visible?400:0
+
+              break;
           case "DEMO":
               mainRect.state = "3-KAM-bol1" // "3-KAM-mal"
               vlcPlayer1.mrl = "file:///"+win.filepath+"/01.3gp"
@@ -699,6 +704,7 @@ Window {
         //###################################################################################################
     }
     ControlPanel {
+        id: controlPanel
         source: rig
         cam: win.cams
         width: 1000
@@ -706,7 +712,18 @@ Window {
         lampSize: 90
         fontSize: 14
         anchors { margins: 10; bottomMargin: 100; bottom: parent.bottom; left: parent.left}
+        onLampClicked: fcommand("LAMPS")
     }
+    LampsSettings {
+        id: lampsSettings
+        width: 400
+        height: 400
+        visible: true
+        anchors { margins: 10; leftMargin: 0; bottom: controlPanel.top; left: controlPanel.left}
+
+
+    }
+
     SetupCamera {
         id: camsettings
         width: 600
