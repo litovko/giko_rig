@@ -280,7 +280,7 @@ Window {
               break;
           case "LAMPS":
               lampsSettings.visible=!lampsSettings.visible
-              lampsSettings.height=lampsSettings.visible?400:0
+              lampsSettings.height=lampsSettings.visible?160:0
 
               break;
           case "DEMO":
@@ -716,8 +716,8 @@ Window {
     }
     LampsSettings {
         id: lampsSettings
-        width: 400
-        height: 400
+        width: 250
+        height: 160
         visible: true
         anchors { margins: 10; leftMargin: 0; bottom: controlPanel.top; left: controlPanel.left}
 

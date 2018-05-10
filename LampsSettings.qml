@@ -1,43 +1,98 @@
 import QtQuick 2.0
-
+import QtQuick.Controls 1.4
+//import QtQuick.Window 2.0
+import QtQuick.Controls.Styles 1.4
 Item {
     id: lampsSettings
     Rectangle {
+        id: rec
         anchors.fill: parent
         border.color: "yellow"
         color: "transparent"
         radius: 10
-        Row{
-            anchors.bottom: parent.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
-            height: 30
-            anchors.margins: 10
-            spacing: 20
-            Tik{
-                rotation: -90
-                text: "Л1"
-                textrotate: 90
-                width: 30
-                height: 20
+        clip: true
+        gradient: Gradient {
+            GradientStop {
+                position: 0.00;
+                color: "black";
+            }
 
+            GradientStop {
+                position: 1.00;
+                color: "gray";
             }
-            Tik{
-                rotation: 90
-                text: "Л2"
-                width: 10
-                height: 20
+        }
+        opacity: 0.8
+        Text {
+            id: t
+            text: qsTr("X")
+            font.bold: true
+            font.pointSize: ma.containsMouse?10:8
+            color: ma.containsMouse?"yellow":"white"
+            anchors { margins: 5;  top: rec.top; left: rec.left}
+            MouseArea {
+                id:ma
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: {lampsSettings.visible=false; lampsSettings.height=0}
             }
-            Tik{
-                rotation: 90
-                text: "Л3"
-                width: 10
-                height: 20
+        }
+        Column {
+            anchors.fill: parent
+            anchors.margins: 20
+            spacing: 20
+
+            Label {
+                id: label1
+                width: 78
+                height: 16
+                color: "#ffffff"
+                text: qsTr("Лампа 1")
+                font.pointSize: 10
+                anchors.left: parent.left
+                Slider {
+                    width: rec.width/2
+                    anchors.left: parent.right
+                }
             }
-            Tik{
-                rotation: 90
-                text: "Л4"
-                width: 10
-                height: 20
+            Label {
+                id: label2
+                width: 78
+                height: 16
+                color: "#ffffff"
+                text: qsTr("Лампа 2")
+                font.pointSize: 10
+                anchors.left: parent.left
+                Slider {
+                    width: rec.width/2
+                    anchors.left: parent.right
+                }
+            }
+            Label {
+                id: label3
+                width: 78
+                height: 16
+                color: "#ffffff"
+                text: qsTr("Лампа 3")
+                font.pointSize: 10
+                anchors.left: parent.left
+                Slider {
+                    width: rec.width/2
+                    anchors.left: parent.right
+                }
+            }
+            Label {
+                id: label4
+                width: 78
+                height: 16
+                color: "#ffffff"
+                text: qsTr("Лампа 4")
+                font.pointSize: 10
+                anchors.left: parent.left
+                Slider {
+                    width: rec.width/2
+                    anchors.left: parent.right
+                }
             }
         }
     }

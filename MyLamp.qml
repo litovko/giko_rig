@@ -10,8 +10,10 @@ Item {
     property string command: "Command"
     signal lampClicked
     MouseArea {
+        id: ma
         anchors.fill: parent
         onClicked:  lampClicked()
+        hoverEnabled: true
     }
 
     Rectangle {
@@ -29,7 +31,15 @@ Item {
                 height: lamp.height/3
                 color: !error?"yellow":"lightgray"
                 anchors.horizontalCenter: column.horizontalCenter
+                Rectangle {
+                    anchors.fill: parent
+                    color:"transparent"
+                    border.color: ma.containsMouse?"yellow":"transparent"
+                    radius: 10
+                }
             }
+
+
             Rectangle {
                 id: tr
                 width: lamp.width
