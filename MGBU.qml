@@ -9,10 +9,15 @@ Item {
     property bool btn_lock:false //button to locking
 
     Settings {
+        id:settings
         category: "MGBU"
-        property alias x: body.x
-        property alias y: body.y
+        property alias x: mgbu.x
+        property alias y: mgbu.y
     }
+//    Component.onDestruction: {
+//        settings.x = mgbu.x
+//        settings.y = mgbu.y
+//    }
     state: "drill" //platf,tower,bench,drill
     states: [
         State {

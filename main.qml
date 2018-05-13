@@ -283,6 +283,18 @@ Window {
               lampsSettings.height=lampsSettings.visible?160:0
 
               break;
+          case "CAMERA ON":
+              rig.camera=rig.camera?false:true;
+              break;
+          case "ENGINE1":
+              rig.engine=rig.engine?false:true;
+              break;
+          case "ENGINE2":
+              console.log("TO DO THIS COMMAND")
+              break;
+          case "ENGINE3":
+              console.log("TO DO THIS COMMAND")
+              break;
           case "DEMO":
               mainRect.state = "3-KAM-bol1" // "3-KAM-mal"
               vlcPlayer1.mrl = "file:///"+win.filepath+"/01.3gp"
@@ -415,8 +427,8 @@ Window {
             console.log("KeY:"+event.key)
             if (event.key === Qt.Key_F1 || event.key === Qt.Key_1) win.fcommand("HELP")
             if (event.key === Qt.Key_F2||event.key ===  Qt.Key_2)  rig.lamp=rig.lamp?false:true;
-            if (event.key === Qt.Key_F3||event.key ===  Qt.Key_3)  rig.camera=rig.camera?false:true;
-            if (event.key === Qt.Key_F4||event.key ===  Qt.Key_4)  rig.engine=rig.engine?false:true;
+            if (event.key === Qt.Key_F3||event.key ===  Qt.Key_3)  win.fcommand("CAMERA ON")
+            if (event.key === Qt.Key_F4||event.key ===  Qt.Key_4)  win.fcommand("ENGINE1")
             if (event.key === Qt.Key_F8||event.key ===  Qt.Key_8)     win.fcommand("CHANGE RIG TYPE")
             if (event.key === Qt.Key_F9||event.key ===  Qt.Key_9)     win.fcommand("JOYSTICK SETTINGS")
             if (event.key === Qt.Key_F10||event.key === Qt.Key_0)     win.fcommand("CAMERA SETTINGS")
@@ -707,21 +719,19 @@ Window {
         id: controlPanel
         source: rig
         cam: win.cams
-        width: 1000
+        //width: 1000
         height: 100
         lampSize: 90
         fontSize: 14
-        anchors { margins: 10; bottomMargin: 100; bottom: parent.bottom; left: parent.left}
-        onLampClicked: fcommand("LAMPS")
+        //anchors { margins: 10; bottomMargin: 100; bottom: parent.bottom; left: parent.left}
+        onLampClicked: fcommand(cp_command)
     }
     LampsSettings {
         id: lampsSettings
         width: 250
         height: 160
-        visible: true
+        visible: false
         anchors { margins: 10; leftMargin: 0; bottom: controlPanel.top; left: controlPanel.left}
-
-
     }
 
     SetupCamera {

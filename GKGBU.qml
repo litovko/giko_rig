@@ -9,8 +9,6 @@ Item {
     property bool btn_lock:false //button to lock
     property bool lock: false
 
-
-
     Settings {
         category: "GKGBU"
         property alias x: body.x

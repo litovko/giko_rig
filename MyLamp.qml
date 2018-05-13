@@ -8,11 +8,11 @@ Item {
     property int fontSize: 12
     property bool error: false
     property string command: "Command"
-    signal lampClicked
+    signal lampClicked(string lamp_command)
     MouseArea {
         id: ma
         anchors.fill: parent
-        onClicked:  lampClicked()
+        onClicked:  lampClicked(command)
         hoverEnabled: true
     }
 

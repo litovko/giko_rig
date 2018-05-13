@@ -25,7 +25,7 @@ Item {
         opacity: 0.8
         Text {
             id: t
-            text: qsTr("X")
+            text: qsTr("[X]")
             font.bold: true
             font.pointSize: ma.containsMouse?10:8
             color: ma.containsMouse?"yellow":"white"

@@ -1,7 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Extras 1.4
 import QtQuick.Controls 1.4
-
+import Qt.labs.settings 1.0
 import QtQuick.Controls.Styles 1.4
 import Gyco 1.0
 
@@ -12,8 +12,20 @@ Item {
     property list<RigCamera> cam
     property int lampSize:100
     property int fontSize:15
-    signal lampClicked
-
+    signal lampClicked(string cp_command)
+    width: row.width+row.spacing
+    Settings {
+        category: "ControlPanel"
+        property alias x: controlPanel.x
+        property alias y: controlPanel.y
+    }
+    MouseArea {
+        id: ma
+        anchors.fill: parent
+        hoverEnabled: true
+        drag.target: controlPanel
+        drag.axis: Drag.XAndYAxis
+    }
     Rectangle {
         anchors.fill: parent
         color: "transparent"
@@ -37,7 +49,7 @@ Item {
             Row{
                 id: row
                 spacing: 20
-                width: parent.width
+                //width: parent.width
                 anchors.topMargin: 10
                 Component.onCompleted: {
                         for (var item in children) {
@@ -51,7 +63,8 @@ Item {
                     width: lampSize
                     bottomText:"СВЕТ[F2]"
                     active: source.lamp
-                    onLampClicked: controlPanel.lampClicked()
+                    command: "LAMPS"
+                    onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
                     id: pump
@@ -59,13 +72,35 @@ Item {
                     width: lampSize
                     bottomText:"КАМЕРЫ[F3]"
                     active:source.camera
+                    command: "CAMERA ON"
+                    onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
-                    id: engine
+                    id: engine1
                     height: lampSize
                     width: lampSize
-                    bottomText:"НАСОС[F4]"
+                    bottomText:"НАСОС1[F4]"
                     active:source.engine
+                    command: "ENGINE1"
+                    onLampClicked: controlPanel.lampClicked(lamp_command)
+                }
+                MyLamp{
+                    id: engine2
+                    height: lampSize
+                    width: lampSize
+                    bottomText:"НАСОС2"
+                    active:source.engine
+                    command: "ENGINE2"
+                    onLampClicked: controlPanel.lampClicked(lamp_command)
+                }
+                MyLamp{
+                    id: engine3
+                    height: lampSize
+                    width: lampSize
+                    bottomText:"ПРОМЫВКА"
+                    active:source.engine
+                    command: "ENGINE3"
+                    onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
                     id: connect
