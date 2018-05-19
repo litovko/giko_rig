@@ -27,7 +27,7 @@ Item {
         Text {
             id: t
             text: qsTr("[X]")
-            font.bold: true
+            font.bold:  true
             font.pointSize: ma.containsMouse?10:8
             color: ma.containsMouse?"yellow":"white"
             anchors { margins: 5;  top: rec.top; left: rec.left}

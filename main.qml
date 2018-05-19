@@ -286,7 +286,7 @@ Window {
           case "CAMERA ON":
               rig.camera=rig.camera?false:true;
               break;
-          case "CAMSET": //окно с выбором включенных камер
+          case "CAMSET": //окно с выбором включенных камер - не передаются параметры в rig
               camSettings.visible=!camSettings.visible
               camSettings.height=camSettings.visible?160:0
               break;
