@@ -72,7 +72,7 @@ Item {
                     width: lampSize
                     bottomText:"КАМЕРЫ[F3]"
                     active:source.camera
-                    command: "CAMERA ON"
+                    command: "CAMSET"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{

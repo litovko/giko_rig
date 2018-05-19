@@ -286,6 +286,10 @@ Window {
           case "CAMERA ON":
               rig.camera=rig.camera?false:true;
               break;
+          case "CAMSET": //окно с выбором включенных камер
+              camSettings.visible=!camSettings.visible
+              camSettings.height=camSettings.visible?160:0
+              break;
           case "ENGINE1":
               rig.engine=rig.engine?false:true;
               break;
@@ -729,11 +733,17 @@ Window {
     LampsSettings {
         id: lampsSettings
         width: 250
-        height: 160
+        height: 0
         visible: false
         anchors { margins: 10; leftMargin: 0; bottom: controlPanel.top; left: controlPanel.left}
     }
-
+    CAMSettings {
+        id: camSettings
+        width: 150
+        height: 0
+        visible: false
+        anchors { margins: 10; leftMargin: 160; bottom: controlPanel.top; left: controlPanel.left}
+    }
     SetupCamera {
         id: camsettings
         width: 600

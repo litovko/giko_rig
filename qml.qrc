@@ -26,5 +26,6 @@
         <file>MGBU.qml</file>
         <file>LampsSettings.qml</file>
         <file>Tik.qml</file>
+        <file>CAMSettings.qml</file>
     </qresource>
 </RCC>
