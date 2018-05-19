@@ -74,6 +74,7 @@ Item {
                     listCams.append({text: cam[0].title+" ["+cam[0].address+"]"})
                     listCams.append({text: cam[1].title+" ["+cam[1].address+"]"})
                     listCams.append({text: cam[2].title+" ["+cam[2].address+"]"})
+                    listCams.append({text: cam[3].title+" ["+cam[3].address+"]"})
                     currentIndex=0
                 }
                 onVisibleChanged: {
@@ -81,6 +82,7 @@ Item {
                     listCams.append({text: cam[0].title+" ["+cam[0].address+"]"})
                     listCams.append({text: cam[1].title+" ["+cam[1].address+"]"})
                     listCams.append({text: cam[2].title+" ["+cam[2].address+"]"})
+                    listCams.append({text: cam[3].title+" ["+cam[3].address+"]"})
                 }
                 model: ListModel {
                     id: listCams

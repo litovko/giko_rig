@@ -27,13 +27,10 @@ Item {
             
             GradientStop {
                 position: 0
-                color: "#000000"
+                color: "#101010"
             }
 
-            GradientStop {
-                position: 0.401
-                color: "#ffffff"
-            }
+
         }
         anchors.left: parent.left
         anchors.leftMargin: 0
@@ -86,13 +83,11 @@ Item {
                 cam[0].address=cam1_address.text
                 cam[1].address=cam2_address.text
                 cam[2].address=cam3_address.text
+                cam[3].address=cam4_address.text
                 cam[0].cameraenabled=cb_cam1.checked
                 cam[1].cameraenabled=cb_cam2.checked
                 cam[2].cameraenabled=cb_cam3.checked
-                //win.cam2index=cb_cam2.checked?2:0
-                //win.cam3index=cb_cam3.checked?3:0
-                //cb_cam1.checked=true;
-                //win.cam1index=cb_cam1.checked?1:0
+                cam[3].cameraenabled=cb_cam4.checked
 
                 console.log("Setup Settings cb"+cb_cam2.checked+" "+cb_cam3.checked)
                 rig.timer_send_interval=parseInt(rig_msec1.text);
@@ -209,7 +204,28 @@ Item {
                 readOnly: false
             }
         }
-        
+        Label {
+            id: lca3
+            x: 88
+            y: 312
+            width: 98
+            height: 13
+            color: "#ffffff"
+            text: qsTr("Адрес видеокамеры")
+            font.pointSize: 9
+            TextField {
+                id: cam4_address
+                x: 121
+                y: -3
+                width: 96
+                height: 20
+                text: cam[3].address
+                validator: adr_validator
+                opacity: 0.8
+                placeholderText: qsTr("IP-адрес видеокамеры")
+                readOnly: false
+            }
+        }
         Label {
             id: lris1
             x: 39
@@ -257,7 +273,7 @@ Item {
         Label {
             id: lcache
             x: 88
-            y: 311
+            y: 341
             width: 109
             height: 13
             color: "#ffffff"
@@ -367,6 +383,14 @@ Item {
             scale: 1
             checked: cam[2].cameraenabled
             //onCheckedChanged: cam[2].cameraenabled=checked
+        }
+        CheckBox {
+            id: cb_cam4
+            x: 333
+            y: 310
+            text: cam[3].title
+            scale: 1
+            checked: cam[3].cameraenabled
         }
 
         CheckBox {

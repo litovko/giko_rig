@@ -130,12 +130,15 @@ Item {
                     bottomText:cam[0].title
                     active:cam[0].camerapresent
                     error: cam[0].onrequest
+                    command: "LAYOUT"
+                    onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
                     id: camera2
                     height: lampSize
                     width: lampSize
                     bottomText:cam[1].title
+
                     active:cam[1].camerapresent
                     visible: cam[1].index
                     error: cam[1].onrequest
@@ -148,6 +151,15 @@ Item {
                     active:cam[2].camerapresent
                     visible: cam[2].index
                     error: cam[2].onrequest
+                }
+                MyLamp{
+                    id: camera4
+                    height: lampSize
+                    width: lampSize
+                    bottomText:cam[3].title
+                    active:cam[2].camerapresent
+                    visible: cam[3].index
+                    error: cam[3].onrequest
                 }
 
             }

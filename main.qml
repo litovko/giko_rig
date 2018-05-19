@@ -55,6 +55,16 @@ Window {
                 playlist.addWithOptions(cam3.url1,getrecordoption(3));
                 if(cams[2].index)play();
             }
+        },
+        VlcPlayer {
+            id: vlcPlayer4;
+            Component.onCompleted: {
+                if (cam4.index===0|| play_on_start===0) return
+                stop();
+                playlist.clear();
+                playlist.addWithOptions(cam4.url1,getrecordoption(3));
+                if(cams[2].index)play();
+            }
         }
 
     ]
@@ -70,6 +80,10 @@ Window {
         RigCamera {
             id: cam3
             index: 3
+        },
+        RigCamera {
+            id: cam4
+            index: 4
         }
     ]
 
@@ -425,6 +439,39 @@ Window {
                             }
                         }
             }
+            VlcVideoSurface {
+                id: surface4
+                source: win.players[3];
+                anchors.top: mainRect.top;
+                anchors.topMargin: 10;
+                anchors.left: mainRect.left;
+                anchors.leftMargin: anchors.topMargin;
+                width: mainRect.width / 1 - anchors.leftMargin * 2;
+                height: mainRect.height / 1 - anchors.topMargin * 2;
+                opacity: 1;
+                visible: false
+                Behavior on opacity {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                Behavior on width{
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                Behavior on height {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+            }
 
 
         Keys.onPressed: {
@@ -464,13 +511,7 @@ Window {
 
         }
 
-        //        VlcMmPlayer {
-        //            id: vlcMmPlayer;
-        //            //mrl: "http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_stereo.avi";
-        //            //mrl: "rtsp://stream.tn.com.ar/live/tnhd1";
-        //            //mrl: "rtsp://192.168.1.168:8553/PSIA/Streaming/channels/1?videoCodecType=MPEG4"
-        //            mrl: "rtsp://192.168.1.168:8557/PSIA/Streaming/channels/2?videoCodecType=H.264"
-        //        }
+
         Rectangle {
             id: statePannel
             x: 10
@@ -784,7 +825,7 @@ Window {
         y: 300
         z:10
         anchors.centerIn: parent
-        visible: cam1.timeout|cam2.timeout|cam3.timeout
+        visible: cam1.timeout|cam2.timeout|cam3.timeout|cam4.timeout
     }
 
     Component.onDestruction: {
