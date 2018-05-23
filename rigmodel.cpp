@@ -23,6 +23,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(cameraChanged()),this, SLOT(sendData()));
 
     connect(&timer_connect, SIGNAL(timeout()), this, SLOT(start_client()));
+    start_client();
     timer_connect.start(m_timer_connect_interval);
     connect(&timer_send, SIGNAL(timeout()), this, SLOT(sendData()));
     timer_send.start(m_timer_send_interval);
@@ -374,8 +375,8 @@ void cRigmodel::sendData()
 //        +";ana2:"+::QString().number(int(m_joystick_y2*127/100),10)
 //        +";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
     Data="{ana1:"+::QString().number(scaling(m_joystick_y1),10);
-    if (m_rigtype=="gkgbu"||m_rigtype=="grab6") Data=Data +";ana2:"+::QString().number(scaling(m_joystick_y2),10);
-    if (m_rigtype=="gkgbu") Data=Data+";ana3:"+::QString().number(scaling(m_joystick_x1),10)+";gmod:"+m_gmod;
+    if (m_rigtype=="gkgbu"||m_rigtype=="grab6"||m_rigtype=="mgbu") Data=Data +";ana2:"+::QString().number(scaling(m_joystick_y2),10);
+    if (m_rigtype=="gkgbu"||m_rigtype=="mgbu") Data=Data+";ana3:"+::QString().number(scaling(m_joystick_x1),10)+";gmod:"+m_gmod;
 
     Data=Data+";dig1:"+::QString().number(data[0],10)+"}CONSDATA";
     qDebug()<<"Rig - send data: "<<Data;

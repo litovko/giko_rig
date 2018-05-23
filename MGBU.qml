@@ -23,35 +23,43 @@ Item {
         State {
             name: "drill"
             PropertyChanges {target: name;   text: "Бурение"}
-            PropertyChanges {target: y1;   text: qsTr("ВРАЩЕНИЕ")}
+            PropertyChanges {target: y1;   text: qsTr("ВРАЩЕНИЕ"); visible: true}
             PropertyChanges {target: y2;   text: qsTr("ХОД-Y"); visible: true}
             PropertyChanges {target: x1;   text: qsTr("ОТВАЛ"); visible: false}
         },
         State {
             name: "tore"
             PropertyChanges {target: name;   text: "Отрыв"}
-            PropertyChanges {target: y1;   text: qsTr("ХОД-Y")}
-            PropertyChanges {target: y2;   text: qsTr("ПРАВАЯ"); visible: false}
+            PropertyChanges {target: y1;   text: qsTr("ХОД-Y"); visible: false}
+            PropertyChanges {target: y2;   text: qsTr("ХОД-Y"); visible: true}
             PropertyChanges {target: x1;   text: qsTr("КАМЕРА"); visible: false}
         },
         State {
            name: "tool"
            PropertyChanges {target: name;   text: "Манипулятор"}
-           PropertyChanges {target: y1;   text: qsTr("ЗАМОК")}
+           PropertyChanges {target: y1;   text: qsTr("ЗАМОК"); visible: true}
            PropertyChanges {target: y2;   text: qsTr("ПРАВАЯ"); visible: false}
            PropertyChanges {target: x1;   text: qsTr("КАРЕТКА"); visible: true}
         },
         State {
             name: "horiz"
             PropertyChanges {target: name;   text: "Горизонтирование"}
-            PropertyChanges {target: y1;   text: qsTr("ЛЕВЫЙ")}
+            PropertyChanges {target: y1;   text: qsTr("ЛЕВЫЙ"); visible: true}
             PropertyChanges {target: y2;   text: qsTr("ПРАВЫЙ"); visible: true}
             PropertyChanges {target: x1;   text: qsTr("СРЕДНИЙ"); visible: true}
         }
 
     ]
     onBtn0Changed: changestate()
-    onStateChanged: { rigmodel.gmod=state; joystick.lock=false}
+    onStateChanged: { rigmodel.gmod=mapgmod(state); joystick.lock=false}
+    function mapgmod(m){
+        if (m==="tore") return "bench"
+        if (m==="tool") return "tower"
+        if (m==="horiz") return "platf"
+        return "drill"
+    }
+
+    Component.onCompleted: rigmodel.gmod=mapgmod(state);
     onBtn_lockChanged: {
         if (!joystick.lock&&btn_lock) {
             joystick.lock=true
