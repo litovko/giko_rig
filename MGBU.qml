@@ -14,10 +14,7 @@ Item {
         property alias x: mgbu.x
         property alias y: mgbu.y
     }
-//    Component.onDestruction: {
-//        settings.x = mgbu.x
-//        settings.y = mgbu.y
-//    }
+
     state: "drill" //platf,tower,bench,drill
     states: [
         State {
