@@ -47,8 +47,13 @@ Item {
         }
 
     ]
-    onBtn0Changed: changestate()
-    onStateChanged: { rigmodel.gmod=mapgmod(state); joystick.lock=false}
+    onBtn0Changed: if(visible) changestate();
+    onStateChanged: {
+        //console.log("mapgmod(state)="+mapgmod(state)+" state="+state)
+        rigmodel.gmod=mapgmod(state);
+        joystick.lock=false;
+        //console.log("rigmodel="+rigmodel.gmod+" state="+state)
+    }
     function mapgmod(m){
         if (m==="tore") return "bench"
         if (m==="tool") return "tower"
@@ -73,6 +78,7 @@ Item {
         ]
 
     function changestate(){
+      //console.log("oldstate="+state)
       if (btn0===true) return
       if (state==="drill") state="tore"
       else if (state==="tore") state="tool"

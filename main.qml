@@ -556,7 +556,7 @@ Window {
                     visible: !onrecord
                 }
                 Text {
-                    text: "Тип аппарата:" + rig.rigtype
+                    text: "Тип аппарата:" + rig.rigtype+"."+rig.gmod
                     color: "lightblue"
                     font.pointSize: 12
                 }

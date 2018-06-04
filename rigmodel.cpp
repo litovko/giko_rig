@@ -21,6 +21,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(pumpChanged()),this, SLOT(sendData()));
     //connect(this, SIGNAL(joystickChanged()),this, SLOT(sendData()));
     connect(this, SIGNAL(cameraChanged()),this, SLOT(sendData()));
+    connect(this, SIGNAL(gmodChanged()),this, SLOT(sendData()));
 
     connect(&timer_connect, SIGNAL(timeout()), this, SLOT(start_client()));
     start_client();
@@ -408,13 +409,14 @@ void cRigmodel::readData()
         //qDebug()<<"split:"<<split;
         QListIterator<QByteArray> i(split);
         QByteArray s, val;
+        QString t="Rig tag:";
         bool ok=false;
         while (i.hasNext()){
              s=i.next();
              m=s.indexOf(":");
              val=s.mid(m+1); //данные после ":"
              s=s.left(m); // названия тэга
-            qDebug()<<"Rig tag:"<<s<<"value:"<<val;
+            //qDebug()<<"Rig tag:"<<s<<"value:"<<val;
             if (s=="toil") {
                 m_temperature=val.toInt(&ok,10); emit temperatureChanged();
                 if(!ok) {m_good_data = false; emit good_dataChanged();
@@ -504,5 +506,6 @@ QString cRigmodel::gmod() const
 void cRigmodel::setGmod(const QString &gmod)
 {
     m_gmod = gmod;
+    //qDebug()<<"gmod:"+m_gmod;
     emit gmodChanged();
 }

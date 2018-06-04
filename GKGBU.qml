@@ -45,7 +45,7 @@ Item {
             PropertyChanges {target: x1;   text: qsTr("КАМЕРА"); visible: false}
         }
     ]
-    onBtn0Changed: changestate()
+    onBtn0Changed: if(visible) changestate()
     onStateChanged: rigmodel.gmod=state
     onBtn_lockChanged: {
         if (!lock&&j.key_0) lock=true
