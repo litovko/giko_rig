@@ -233,7 +233,7 @@ Window {
               menu.visible=false;
               camsettings.visible=false
               settings.visible=false;
-              joysetup.visible=false
+              //joysetup.visible=false
               help.visible=false
               break;
           case "JOYSTICK SETTINGS":
@@ -618,12 +618,8 @@ Window {
             onKey_3Changed: if (key_3) fcommand("LAYOUT")
             onKey_2Changed: if (key_2) fcommand("PLAY")
             onKey_1Changed: if (key_1) fcommand("JKEY1")
-            onKey_0Changed: if (key_1) fcommand("JKEY0")
-//            {
-//                                if(cams[0].cameraenabled) player_play(0);
-//                                if(cams[1].cameraenabled) player_play(1);
-//                                if(cams[2].cameraenabled) player_play(2);
-//                            }
+            onKey_0Changed: if (key_0) fcommand("JKEY0")
+            devider: 1+key_5
         }
         MyDashboard {
             height: 600
