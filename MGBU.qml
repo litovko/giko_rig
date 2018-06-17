@@ -23,6 +23,8 @@ Item {
             PropertyChanges {target: y1;   text: qsTr("ВРАЩЕНИЕ"); visible: true}
             PropertyChanges {target: y2;   text: qsTr("ХОД-Y"); visible: true}
             PropertyChanges {target: x1;   text: qsTr("ОТВАЛ"); visible: false}
+            PropertyChanges {target: bubble; visible: false}
+            PropertyChanges {target: coordinate; visible: true}
         },
         State {
             name: "tore"
@@ -30,6 +32,8 @@ Item {
             PropertyChanges {target: y1;   text: qsTr("ХОД-Y"); visible: false}
             PropertyChanges {target: y2;   text: qsTr("ХОД-Y"); visible: true}
             PropertyChanges {target: x1;   text: qsTr("КАМЕРА"); visible: false}
+            PropertyChanges {target: bubble; visible: false}
+            PropertyChanges {target: coordinate; visible: true}
         },
         State {
            name: "tool"
@@ -37,6 +41,8 @@ Item {
            PropertyChanges {target: y1;   text: qsTr("ЗАМОК"); visible: true}
            PropertyChanges {target: y2;   text: qsTr("ПРАВАЯ"); visible: false}
            PropertyChanges {target: x1;   text: qsTr("КАРЕТКА"); visible: true}
+           PropertyChanges {target: bubble; visible: false}
+           PropertyChanges {target: coordinate; visible: true}
         },
         State {
             name: "horiz"
@@ -44,6 +50,8 @@ Item {
             PropertyChanges {target: y1;   text: qsTr("ЛЕВЫЙ"); visible: true}
             PropertyChanges {target: y2;   text: qsTr("ПРАВЫЙ"); visible: true}
             PropertyChanges {target: x1;   text: qsTr("СРЕДНИЙ"); visible: true}
+            PropertyChanges {target: bubble; visible: true}
+            PropertyChanges {target: coordinate; visible: false}
         }
 
     ]
@@ -86,6 +94,44 @@ Item {
                 else  state="drill"
 
     }
+    Rectangle {
+        id: bubble
+        height:300
+        width:300
+        anchors.bottom: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        color: "transparent"
+        opacity: 1
+        border.color: "yellow"
+        radius: 10
+        border.width: 1
+        MyBubble2 {
+            z: 1
+            anchors.margins: 5
+            anchors.fill: parent
+
+            roll: Math.round(0)
+            pitch: -Math.round(0)
+        }
+    }
+    Rectangle {
+        id: coordinate
+        height:300
+        width:300
+        anchors.bottom: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        color: "transparent"
+        opacity: 1
+        border.color: "yellow"
+        radius: 10
+        border.width: 1
+        Coordinate {
+            z: -1
+            anchors.margins: 0
+            anchors.fill: parent
+        }
+    }
+
     Rectangle {
         id: body
         width: parent.width

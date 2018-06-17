@@ -27,5 +27,7 @@
         <file>LampsSettings.qml</file>
         <file>Tik.qml</file>
         <file>CAMSettings.qml</file>
+        <file>MyBubble2.qml</file>
+        <file>Coordinate.qml</file>
     </qresource>
 </RCC>

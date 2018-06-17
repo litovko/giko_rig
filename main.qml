@@ -828,6 +828,8 @@ Window {
         visible: cam1.timeout|cam2.timeout|cam3.timeout|cam4.timeout
     }
 
+
+
     Component.onDestruction: {
         console.log("Good bye!")
         players[0].stop();
