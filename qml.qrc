@@ -29,5 +29,8 @@
         <file>CAMSettings.qml</file>
         <file>MyBubble2.qml</file>
         <file>Coordinate.qml</file>
+        <file>Pribor3.qml</file>
+        <file>Digital.qml</file>
+        <file>Dinagraph.qml</file>
     </qresource>
 </RCC>

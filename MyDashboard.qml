@@ -18,6 +18,11 @@ Item {
             PropertyChanges {target: mgbu_pult;   visible: false}
             PropertyChanges {target: row_left;   visible: true}
             PropertyChanges {target: row_right;   visible: true}
+            PropertyChanges {target: voltage_mgbu;   visible: false}
+            PropertyChanges {target: voltage;   visible: true}
+            PropertyChanges {target: current_mgbu;   visible: false}
+            PropertyChanges {target: current_a;   visible: true}
+            PropertyChanges {target: altimetr_mgbu;   visible: false}
         },
         State {
             name: "grab6"
@@ -28,6 +33,11 @@ Item {
             PropertyChanges {target: mgbu_pult;   visible: false}
             PropertyChanges {target: row_left;   visible: true}
             PropertyChanges {target: row_right;   visible: true}
+            PropertyChanges {target: voltage_mgbu;   visible: false}
+            PropertyChanges {target: voltage;   visible: true}
+            PropertyChanges {target: current_mgbu;   visible: false}
+            PropertyChanges {target: current_a;   visible: true}
+            PropertyChanges {target: altimetr_mgbu;   visible: false}
         },
         State {
             name: "gkgbu"
@@ -38,6 +48,11 @@ Item {
             PropertyChanges {target: turns;   visible: true}
             PropertyChanges {target: row_left;   visible: false}
             PropertyChanges {target: row_right;   visible: false}
+            PropertyChanges {target: voltage_mgbu;   visible: false}
+            PropertyChanges {target: voltage;   visible: true}
+            PropertyChanges {target: current_mgbu;   visible: false}
+            PropertyChanges {target: current_a;   visible: true}
+            PropertyChanges {target: altimetr_mgbu;   visible: false}
         },
         State {
             name: "mgbu"
@@ -48,6 +63,11 @@ Item {
             PropertyChanges {target: turns;   visible: true}
             PropertyChanges {target: row_left;   visible: true}
             PropertyChanges {target: row_right;   visible: true}
+            PropertyChanges {target: voltage_mgbu;   visible: true}
+            PropertyChanges {target: voltage;   visible: false}
+            PropertyChanges {target: current_mgbu;   visible: true}
+            PropertyChanges {target: current_a;   visible: false}
+            PropertyChanges {target: altimetr_mgbu;   visible: true}
         }
     ]
     onVisibleChildrenChanged: calculatesize()
@@ -112,12 +132,12 @@ Item {
             function gauge_value(){
                 //if (!j.ispresent) return 0
                 if (dashboard.state==="grab2") return (j.key_0||j.lock)*j.y1axis
-                if (dashboard.state==="grab6"||dashboard.state==="mgbu") return (j.key_0||j.lock)*j.y2axis
+                if (dashboard.state==="grab6"||dashboard.state==="mgbu"||dashboard.state==="gkgbu") return (j.key_0||j.lock)*j.y2axis
             }
             function gauge_color(){
                 //if (!j.ispresent) return "transparent"
                 if (dashboard.state==="grab2") return j.y1axis>0?"yellow":"lightblue"
-                if (dashboard.state==="grab6"||dashboard.state==="mgbu") return j.y2axis>0?"yellow":"lightblue"
+                if (dashboard.state==="grab6"||dashboard.state==="mgbu"||dashboard.state==="gkgbu") return j.y2axis>0?"yellow":"lightblue"
             }
             //anchors.fill: parent
             anchors.bottom: dbr.bottom
@@ -200,7 +220,52 @@ Item {
 //                      NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 400 }
 //                  }
 
+              Rectangle {
+                  id: voltage_mgbu
+                  color:"transparent";
+                  //opacity: 0.5
+                  width:  gaugesize;
+                  height: gaugesize;
+                  Pribor3 {
+                      width: parent.width-10; height: parent.height-10
+                      maximumValue: 600
+                      stepSize: 200
+                      anchors.centerIn: parent
+
+                      value1:  j.y1axis*4
+                      value2:  j.y2axis*4
+                      value3:  j.x1axis*4
+                      centerТext: "V"
+                      bottomText: "Вольт"
+                      warningThreshold: 500
+                      minorTickmarks:3
+                      thirdvisible: true
+                  }
+              }
+              Rectangle {
+                  id: current_mgbu
+                  color:"transparent";
+                  //opacity: 0.5
+                  width:  gaugesize;
+                  height: gaugesize;
+                  Pribor3 {
+                      width: parent.width-10; height: parent.height-10
+                      maximumValue: 50
+                      stepSize: 10
+                      anchors.centerIn: parent
+
+                      value1:  j.y1axis
+                      value2:  j.y2axis
+                      value3:  j.x1axis
+                      centerТext: "А"
+                      bottomText: "Ампер"
+                      warningThreshold: 30
+                      minorTickmarks:3
+                      thirdvisible: true
+                  }
+              }
                 Rectangle {
+                    id: current_a
                     color:"transparent";
                     width:  gaugesize;
                     height: gaugesize;
@@ -217,6 +282,7 @@ Item {
                     }
                  }
                 Rectangle {
+                    id: voltage
                     color:"transparent";
                     width:  gaugesize;
                     height: gaugesize;
@@ -339,6 +405,23 @@ Item {
                         bottomText: "Мощность2"
                         warningThreshold: maximumValue*0.9
                         minorTickmarks:5
+                    }
+                }
+                Rectangle {
+                    id: altimetr_mgbu
+                    color:"transparent";
+                    //opacity: 0.5
+                    width:  gaugesize;
+                    height: gaugesize;
+                    Digital {
+                        width: parent.width-10; height: parent.height-10
+                        value: 5000-j.x1axis*100
+                        maxvalue: 5000
+                        //interval: 100
+                        anchors.centerIn: parent
+                        digname: "Альтиметр"
+                        graphtimer: true
+
                     }
                 }
             }
