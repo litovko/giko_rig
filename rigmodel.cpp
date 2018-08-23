@@ -73,15 +73,15 @@ int cRigmodel::pressure() const
     return m_pressure;
 }
 
-void cRigmodel::setOiltemp(const int &oiltemp)
+void cRigmodel::setTemperature2(const int &temperature2)
 {
-    m_oiltemp = oiltemp;
-    emit oiltempChanged();
+    m_temperature2 = temperature2;
+    emit temperature2Changed();
 }
 
-int cRigmodel::oiltemp() const
+int cRigmodel::temperature2() const
 {
-    return m_oiltemp;
+    return m_temperature2;
 }
 
 
@@ -322,13 +322,13 @@ void cRigmodel::clientDisconnected()
     m_client_connected=false;
     m_good_data=false;
     m_pressure=0;
-    m_oiltemp=0;
+    m_temperature2=0;
     m_voltage=0;
     m_ampere=0;
     m_turns=0;
     m_temperature=0;
     emit pressureChanged();
-    emit oiltempChanged();
+    emit temperature2Changed();
     emit voltageChanged();
     emit ampereChanged();
     emit turnsChanged();
@@ -437,6 +437,16 @@ void cRigmodel::readData()
                 if(!ok) {m_good_data = false; emit good_dataChanged();
                 qWarning()<<"Rig no good data for "<<"pwrv:"<<val;}
             }
+            if (s=="pwrv2"){
+                m_voltage2=val.toInt(&ok,10); emit voltage2Changed();
+                if(!ok) {m_good_data = false; emit good_dataChanged();
+                qWarning()<<"Rig no good data for "<<"pwrv:"<<val;}
+            }
+            if (s=="pwrv3"){
+                m_voltage3=val.toInt(&ok,10); emit voltage3Changed();
+                if(!ok) {m_good_data = false; emit good_dataChanged();
+                qWarning()<<"Rig no good data for "<<"pwrv:"<<val;}
+            }
             if (s=="dc1v"){
                 setVoltage24(val.toInt(&ok,10));
                 if(!ok) {m_good_data = false; emit good_dataChanged();
@@ -444,6 +454,21 @@ void cRigmodel::readData()
             }
             if (s=="pwra"){
                 m_ampere=val.toInt(&ok,10); emit ampereChanged();
+                if(!ok) {m_good_data = false; emit good_dataChanged();
+                qWarning()<<"Rig no good data for "<<"pwra:"<<val;}
+            }
+            if (s=="pwra2"){
+                m_ampere2=val.toInt(&ok,10); emit ampere2Changed();
+                if(!ok) {m_good_data = false; emit good_dataChanged();
+                qWarning()<<"Rig no good data for "<<"pwra:"<<val;}
+            }
+            if (s=="pwra3"){
+                m_ampere3=val.toInt(&ok,10); emit ampere3Changed();
+                if(!ok) {m_good_data = false; emit good_dataChanged();
+                qWarning()<<"Rig no good data for "<<"pwra:"<<val;}
+            }
+            if (s=="altm"){
+                m_altitude=val.toInt(&ok,10); emit altitudeChanged();
                 if(!ok) {m_good_data = false; emit good_dataChanged();
                 qWarning()<<"Rig no good data for "<<"pwra:"<<val;}
             }
@@ -471,6 +496,138 @@ int cRigmodel::scaling(const int &value)
      return ceil(df + value*(100-m_freerun)/100.0);
    else
      return -ceil(df - value*(100-m_freerun)/100.0);
+}
+
+unsigned int cRigmodel::position() const
+{
+    return m_position;
+}
+
+void cRigmodel::setPosition(unsigned int position)
+{
+    m_position = position;
+    emit positionChanged();
+}
+
+int cRigmodel::pressure2() const
+{
+    return m_pressure2;
+}
+
+void cRigmodel::setPressure2(int pressure2)
+{
+    m_pressure2 = pressure2;
+    emit pressure2Changed();
+}
+
+int cRigmodel::light4() const
+{
+    return m_light4;
+}
+
+void cRigmodel::setLight4(int light4)
+{
+    m_light4 = light4;
+    emit light4Changed();
+}
+
+int cRigmodel::light3() const
+{
+    return m_light3;
+}
+
+void cRigmodel::setLight3(int light3)
+{
+    m_light3 = light3;
+    emit light3Changed();
+}
+
+int cRigmodel::light2() const
+{
+    return m_light2;
+}
+
+void cRigmodel::setLight2(int light2)
+{
+    m_light2 = light2;
+    emit light2Changed();
+}
+
+int cRigmodel::light1() const
+{
+    return m_light1;
+}
+
+void cRigmodel::setLight1(int light1)
+{
+    m_light1 = light1;
+    emit light1Changed();
+}
+
+int cRigmodel::voltage24_2() const
+{
+    return m_voltage24_2;
+}
+
+void cRigmodel::setVoltage24_2(int voltage24_1)
+{
+    m_voltage24_2 = voltage24_1;
+    emit voltage24_2Changed();
+}
+
+int cRigmodel::altitude() const
+{
+    return m_altitude;
+}
+
+void cRigmodel::setAltitude(int altitude)
+{
+    m_altitude = altitude;
+    emit altitudeChanged();
+}
+
+int cRigmodel::ampere3() const
+{
+    return m_ampere3;
+}
+
+void cRigmodel::setAmpere3(int ampere3)
+{
+    m_ampere3 = ampere3;
+    emit ampere3Changed();
+}
+
+int cRigmodel::ampere2() const
+{
+    return m_ampere2;
+}
+
+void cRigmodel::setAmpere2(int ampere2)
+{
+    m_ampere2 = ampere2;
+    emit ampere2Changed();
+}
+
+int cRigmodel::voltage3() const
+{
+    return m_voltage3;
+}
+
+void cRigmodel::setVoltage3(int voltage3)
+{
+    m_voltage3 = voltage3;
+    emit voltage3Changed();
+}
+
+int cRigmodel::voltage2() const
+{
+    return m_voltage2;
+}
+
+void cRigmodel::setVoltage2(int voltage2)
+{
+    m_voltage2 = voltage2;\
+    emit voltage2Changed();
 }
 
 bool cRigmodel::check_type() const

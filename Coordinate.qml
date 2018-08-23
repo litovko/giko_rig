@@ -27,7 +27,7 @@ Item {
         if (xvalue&4) y3.state="ON"; else y3.state="OFF"
         if (xvalue&8) y4.state="ON"; else y4.state="OFF"
         if (xvalue&16) y5.state="ON"; else y5.state="OFF"
-        if (xvalue&32) y5.state="ON"; else y6.state="OFF"
+        if (xvalue&32) y6.state="ON"; else y6.state="OFF"
         if (xvalue&64) y7.state="ON"; else y7.state="OFF"
     }
     Component.onCompleted: {

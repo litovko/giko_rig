@@ -232,9 +232,9 @@ Item {
                       stepSize: 200
                       anchors.centerIn: parent
 
-                      value1:  j.y1axis*4
-                      value2:  j.y2axis*4
-                      value3:  j.x1axis*4
+                      value1:  source.voltage
+                      value2:  source.voltage2
+                      value3:  source.voltage3
                       centerТext: "V"
                       bottomText: "Вольт"
                       warningThreshold: 500
@@ -254,9 +254,9 @@ Item {
                       stepSize: 10
                       anchors.centerIn: parent
 
-                      value1:  j.y1axis
-                      value2:  j.y2axis
-                      value3:  j.x1axis
+                      value1:  source.ampere
+                      value2:  source.ampere2
+                      value3:  source.ampere3
                       centerТext: "А"
                       bottomText: "Ампер"
                       warningThreshold: 30
@@ -415,13 +415,14 @@ Item {
                     height: gaugesize;
                     Digital {
                         width: parent.width-10; height: parent.height-10
-                        value: 5000-j.x1axis*100
+                        value: source.altitude
                         maxvalue: 5000
                         //interval: 100
                         anchors.centerIn: parent
+                        anchors.margins: 5
                         digname: "Альтиметр"
                         graphtimer: true
-
+                        digits: 0
                     }
                 }
             }

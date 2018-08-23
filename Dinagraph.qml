@@ -106,9 +106,21 @@ Item {
             //ctx.clearRect(0, 0, 20, 20)
             ctx.restore()
         }
+        function box(){
+            var ctx = getContext("2d")
+            ctx.save()
+            ctx.strokeStyle = "darkgray"
+            ctx.globalAlpha = 0.4
+            //ctx.setLineDash([5, 15]);
+
+            ctx.strokeRect(0, 0, canvas.width, canvas.height)
+            //ctx.stroke();
+            ctx.restore()
+        }
         onPaint: {
             if (graphtype===1) draw_1()
             else draw_2()
+            box()
             onpaint=false
         }
     }

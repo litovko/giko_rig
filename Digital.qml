@@ -47,9 +47,10 @@ Item {
         anchors.fill: parent
         Column {
             anchors.centerIn: parent
+            spacing: height/3
             Text {
                 id: t1
-                font.pointSize: dig.height/10
+                font.pointSize: dig.height/8
                 color: "yellow"
                 anchors.horizontalCenter: parent.horizontalCenter
 
@@ -57,7 +58,7 @@ Item {
             Text {
                 id:t2
                 text: (value).toFixed(digits)
-                font.pointSize: dig.height/10
+                font.pointSize: dig.height/8
                 color: "yellow"
                 anchors.horizontalCenter: parent.horizontalCenter
                 Rectangle {
