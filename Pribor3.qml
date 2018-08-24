@@ -13,7 +13,7 @@ Item {
     property real rightAngle: 75
     property real minimunValue: 0
     property real maximumValue: 100
-    property string centerТext: "Вольт"
+    property string centrТext: "Вольт"
     property string bottomText: "Напряжение"
     property real stepSize: 10
     property real minorTickmarks: 1
@@ -84,7 +84,7 @@ Item {
                     anchors.topMargin: 20
                 }
                 Text {
-                    text: centerТext
+                    text: centrТext
                     color: "white"
                     font.pixelSize: parent.width/6
                     style: Text.Outline

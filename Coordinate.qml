@@ -3,6 +3,7 @@ import QtQuick 2.0
 Item {
     property int xvalue: 0
     property int yvalue: 0
+    property int position: 0
     property alias backgroundopacity: r.opacity
     Rectangle {
         id: r
@@ -11,7 +12,9 @@ Item {
         opacity: 0.6
 
     }
-    onXvalueChanged: {
+    onXvalueChanged: xval()
+    onYvalueChanged: yval()
+    function xval() {
         //console.log(xvalue)
         if (xvalue&1) l1.state="ON"; else l1.state="OFF"
         if (xvalue&2) l2.state="ON"; else l2.state="OFF"
@@ -21,32 +24,47 @@ Item {
         if (xvalue&32) r3.state="ON"; else r3.state="OFF"
         if (xvalue&64) c.state="ON"; else c.state="OFF"
     }
-    onYvalueChanged: {
-        if (xvalue&1) y1.state="ON"; else y1.state="OFF"
-        if (xvalue&2) y2.state="ON"; else y2.state="OFF"
-        if (xvalue&4) y3.state="ON"; else y3.state="OFF"
-        if (xvalue&8) y4.state="ON"; else y4.state="OFF"
-        if (xvalue&16) y5.state="ON"; else y5.state="OFF"
-        if (xvalue&32) y6.state="ON"; else y6.state="OFF"
-        if (xvalue&64) y7.state="ON"; else y7.state="OFF"
+    function yval() {
+        if (yvalue&1) y1.state="ON"; else y1.state="OFF"
+        if (yvalue&2) y2.state="ON"; else y2.state="OFF"
+        if (yvalue&4) y3.state="ON"; else y3.state="OFF"
+        if (yvalue&8) y4.state="ON"; else y4.state="OFF"
+        if (yvalue&16) y5.state="ON"; else y5.state="OFF"
+        if (yvalue&32) y6.state="ON"; else y6.state="OFF"
+        if (yvalue&64) y7.state="ON"; else y7.state="OFF"
+//        console.log("Y:"+yvalue+" "+y1.state)
+//        console.log("P:"+position)
     }
-    Component.onCompleted: {
-        l1.state="OFF"
-        l2.state="OFF"
-        l3.state="OFF"
-        r1.state="OFF"
-        r2.state="OFF"
-        r3.state="OFF"
-        y1.state="OFF"
-        y2.state="OFF"
-        y3.state="OFF"
-        y4.state="OFF"
-        y5.state="OFF"
-        y6.state="OFF"
-        y7.state="OFF"
-        c.state="OFF"
+    onPositionChanged: {
+
+        xvalue=position&127
+        yvalue=position>>8
+        xval()
+        yval()
+        console.log("X:"+xvalue+" "+l1.state)
+        console.log("Y:"+yvalue+" "+y1.state)
+        console.log("P:"+position)
 
     }
+
+    Component.onCompleted: {
+//        l1.state="OFF"
+//        l2.state="OFF"
+//        l3.state="OFF"
+//        r1.state="OFF"
+//        r2.state="OFF"
+//        r3.state="OFF"
+//        y1.state="OFF"
+//        y2.state="OFF"
+//        y3.state="OFF"
+//        y4.state="OFF"
+//        y5.state="OFF"
+//        y6.state="OFF"
+//        y7.state="OFF"
+//        c.state="OFF"
+
+    }
+
 
     Rectangle {
         color: "transparent"

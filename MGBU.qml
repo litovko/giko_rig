@@ -126,9 +126,12 @@ Item {
         radius: 10
         border.width: 1
         Coordinate {
+            id: crd
             z: -1
             anchors.margins: 0
             anchors.fill: parent
+            position:  rigmodel.position
+
         }
     }
 

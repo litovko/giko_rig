@@ -59,7 +59,7 @@ class cRigmodel : public QObject
     Q_PROPERTY(bool good_data READ good_data  NOTIFY good_dataChanged)
 
 public:
-    explicit cRigmodel(QObject *parent = 0);
+        explicit cRigmodel(QObject *parent = nullptr);
     virtual ~cRigmodel() {saveSettings();}
     //############ занчения, получаемые по сети от контроллера
     void setPressure(const int &pressure);
@@ -239,12 +239,12 @@ private:
     int m_altitude=10;
     int m_turns=0;
     int m_temperature=25;
-    unsigned int m_position;
+    unsigned int m_position=60842;
     QString m_rigtype="mgbu"; //grab2,grab6,gkgbu,mgbu
 
 
     QString m_address="localhost";
-    int m_port=1212;
+    unsigned int m_port=1212;
     int m_freerun;
     bool m_client_connected = false;
 
@@ -288,7 +288,7 @@ private:
 #endif // RIGMODEL_H
 
 //voltage24_2
-//light - 4
+//light - 4 m_light1
 //temperature2
 //pressure2
 //position - unsigned int

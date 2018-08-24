@@ -235,7 +235,8 @@ Item {
                       value1:  source.voltage
                       value2:  source.voltage2
                       value3:  source.voltage3
-                      centerТext: "V"
+
+                      centrТext: "V"
                       bottomText: "Вольт"
                       warningThreshold: 500
                       minorTickmarks:3
@@ -257,7 +258,7 @@ Item {
                       value1:  source.ampere
                       value2:  source.ampere2
                       value3:  source.ampere3
-                      centerТext: "А"
+                      centrТext: "А"
                       bottomText: "Ампер"
                       warningThreshold: 30
                       minorTickmarks:3
@@ -276,7 +277,7 @@ Item {
                         maximumValue: 100
                         warningThreshold: maximumValue*0.9
                         stepSize: 20
-                        centerТext: "A"
+                        centrТext: "A"
                         bottomText: "Сила тока"
                         minorTickmarks:5
                     }
@@ -292,7 +293,7 @@ Item {
                         stepSize: 100
                         anchors.centerIn: parent
                         value: source.voltage
-                        centerТext: "V"
+                        centrТext: "V"
                         bottomText: "Напряжение"
                         warningThreshold: maximumValue*0.9
                         minorTickmarks: 5
@@ -309,7 +310,7 @@ Item {
                         stepSize: 20
                         anchors.centerIn: parent
                         value: source.temperature
-                        centerТext: "t\u00B0"
+                        centrТext: "t\u00B0"
                         bottomText: "Темп. масла"
                         warningThreshold: maximumValue*0.9
                         minorTickmarks:5
@@ -326,7 +327,7 @@ Item {
                         stepSize: 50
                         anchors.centerIn: parent
                         value: (source.pressure/10).toFixed(1)
-                        centerТext: "кПа"
+                        centrТext: "кПа"
                         bottomText: "Давл. масла"
                         warningThreshold: maximumValue*0.9
                         minorTickmarks:5
@@ -342,7 +343,7 @@ Item {
                         stepSize: 10
                         anchors.centerIn: parent
                         value: (source.voltage24/10).toFixed(1)
-                        centerТext: "V"
+                        centrТext: "V"
                         bottomText: "Шина 24В"
                         warningThreshold: 49
                         minorTickmarks:5
@@ -361,7 +362,7 @@ Item {
                         stepSize: 2
                         anchors.centerIn: parent
                         value: source.turns
-                        centerТext: "x100"
+                        centrТext: "x100"
                         bottomText: "Обороты"
                         warningThreshold: 9
                         minorTickmarks:3
@@ -380,7 +381,7 @@ Item {
                         anchors.centerIn: parent
 
                         value: j.key_0*( j.y1axis>0?Math.round(j.y1axis*100/127):-Math.round(j.y1axis*100/127))
-                        centerТext: "%"
+                        centrТext: "%"
                         bottomText: "Мощность"
                         warningThreshold: maximumValue*0.9
                         minorTickmarks:5
@@ -401,7 +402,7 @@ Item {
                         anchors.centerIn: parent
 
                         value: j.key_0*( j.y2axis>0?Math.round(j.y2axis*100/127):-Math.round(j.y2axis*100/127))
-                        centerТext: "%"
+                        centrТext: "%"
                         bottomText: "Мощность2"
                         warningThreshold: maximumValue*0.9
                         minorTickmarks:5

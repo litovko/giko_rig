@@ -29,6 +29,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     connect(&timer_send, SIGNAL(timeout()), this, SLOT(sendData()));
     timer_send.start(m_timer_send_interval);
     emit rigtypeChanged();
+    emit positionChanged();
 }
 void cRigmodel::saveSettings()
 {
@@ -48,7 +49,7 @@ void cRigmodel::readSettings()
 
     QSettings settings("HYCO", "Rig Console");
     m_address=settings.value("RigAddress","localhost").toString();
-    m_port=settings.value("RigPort","1212").toInt();
+    m_port=settings.value("RigPort","1212").toUInt();
     setFreerun(settings.value("RigFreerun","0").toInt());
     m_timer_send_interval=settings.value("RigSendInterval","2000").toInt();
     m_timer_connect_interval=settings.value("RigConnectInterval","30000").toInt();
