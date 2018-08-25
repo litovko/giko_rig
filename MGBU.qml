@@ -110,8 +110,8 @@ Item {
             anchors.margins: 5
             anchors.fill: parent
 
-            roll: Math.round(0)
-            pitch: -Math.round(0)
+            roll: rigmodel.tangag
+            pitch: rigmodel.kren
         }
     }
     Rectangle {

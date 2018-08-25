@@ -13,6 +13,7 @@ class cRigmodel : public QObject
 
     Q_OBJECT
     Q_PROPERTY(unsigned int position READ position WRITE setPosition NOTIFY positionChanged)
+    Q_PROPERTY(int leak READ leak WRITE setLeak NOTIFY leakChanged)
     Q_PROPERTY(int pressure READ pressure WRITE setPressure NOTIFY pressureChanged)
     Q_PROPERTY(int pressure2 READ pressure2 WRITE setPressure2 NOTIFY pressure2Changed)
     Q_PROPERTY(int temperature2 READ temperature2 WRITE setTemperature2 NOTIFY temperature2Changed)
@@ -25,6 +26,8 @@ class cRigmodel : public QObject
     Q_PROPERTY(int ampere2 READ ampere2 WRITE setAmpere2 NOTIFY ampere2Changed)
     Q_PROPERTY(int ampere3 READ ampere3 WRITE setAmpere3 NOTIFY ampere3Changed)
     Q_PROPERTY(int altitude READ altitude WRITE setAltitude NOTIFY altitudeChanged)
+    Q_PROPERTY(int tangag READ tangag WRITE setTangag NOTIFY tangagChanged)
+    Q_PROPERTY(int kren READ kren WRITE setKren NOTIFY krenChanged)
     Q_PROPERTY(int turns READ turns WRITE setTurns NOTIFY turnsChanged)
     Q_PROPERTY(int temperature READ temperature WRITE setTemperature NOTIFY temperatureChanged)
     Q_PROPERTY(QString rigtype READ rigtype WRITE setRigtype NOTIFY rigtypeChanged)
@@ -85,6 +88,7 @@ public:
 
     void setRigtype(const QString &rigtype);
     QString rigtype() const;
+    void setRigtypeInt(const int &rigtype);
 
     void setAddress(const QString  &address);
     QString address() const;
@@ -169,6 +173,19 @@ public:
     unsigned int position() const;
     void setPosition(unsigned int position);
 
+    void setGood_data(bool good_data);
+
+    void setClient_connected(bool client_connected);
+
+    int tangag() const;
+    void setTangag(int tangag);
+
+    int kren() const;
+    void setKren(int kren);
+
+    int leak() const;
+    void setLeak(int leak);
+
 signals:
     void positionChanged();
     void pressureChanged();
@@ -182,7 +199,10 @@ signals:
     void ampereChanged();
     void ampere2Changed();
     void ampere3Changed();
+    void leakChanged();
     void altitudeChanged();
+    void tangagChanged();
+    void krenChanged();
     void turnsChanged();
     void temperatureChanged();
     void rigtypeChanged();
@@ -223,11 +243,13 @@ public slots:
     void displayError(QAbstractSocket::SocketError socketError);
     void sendData(); //слот должен вызываться любым событием, которое меняет данные, предназначенные для отправки.
     void readData(); //расклаываем полученные от сервера данные по параметрам
+    void reset();
 private:
     int scaling(const int &value);
-    int m_pressure=5;
-    int m_pressure2=5;
-    int m_temperature2=25;
+    int m_pressure=50;
+    int m_pressure2=60;
+    int m_temperature=10;
+    int m_temperature2=20;
     int m_voltage=251;
     int m_voltage2=260;
     int m_voltage3=241;
@@ -236,9 +258,12 @@ private:
     int m_ampere=21;
     int m_ampere2=25;
     int m_ampere3=23;
+    int m_leak=20;
     int m_altitude=10;
+    int m_tangag=10;
+    int m_kren=10;
     int m_turns=0;
-    int m_temperature=25;
+
     unsigned int m_position=60842;
     QString m_rigtype="mgbu"; //grab2,grab6,gkgbu,mgbu
 
@@ -248,7 +273,8 @@ private:
     int m_freerun;
     bool m_client_connected = false;
 
-
+    std::map<std::string, std::function<void(int)>> _fmap;
+    bool handle_tag(const QString &tag,  const QString &val);
     //############ Данные для отправки
     bool m_lamp=false;
     bool m_camera=false;

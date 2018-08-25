@@ -23,6 +23,13 @@ Item {
             PropertyChanges {target: current_mgbu;   visible: false}
             PropertyChanges {target: current_a;   visible: true}
             PropertyChanges {target: altimetr_mgbu;   visible: false}
+            PropertyChanges {target: temperature;   visible: true}
+            PropertyChanges {target: temperature_mgbu;   visible: false}
+            PropertyChanges {target: pressure;   visible: true}
+            PropertyChanges {target: pressure_mgbu;   visible: false}
+            PropertyChanges {target: v24dc;   visible: true}
+            PropertyChanges {target: v24dc_mgbu;   visible: false}
+            PropertyChanges {target: leak;   visible: false}
         },
         State {
             name: "grab6"
@@ -38,6 +45,13 @@ Item {
             PropertyChanges {target: current_mgbu;   visible: false}
             PropertyChanges {target: current_a;   visible: true}
             PropertyChanges {target: altimetr_mgbu;   visible: false}
+            PropertyChanges {target: temperature;   visible: true}
+            PropertyChanges {target: temperature_mgbu;   visible: false}
+            PropertyChanges {target: pressure;   visible: true}
+            PropertyChanges {target: pressure_mgbu;   visible: false}
+            PropertyChanges {target: v24dc;   visible: true}
+            PropertyChanges {target: v24dc_mgbu;   visible: false}
+            PropertyChanges {target: leak;   visible: false}
         },
         State {
             name: "gkgbu"
@@ -53,6 +67,13 @@ Item {
             PropertyChanges {target: current_mgbu;   visible: false}
             PropertyChanges {target: current_a;   visible: true}
             PropertyChanges {target: altimetr_mgbu;   visible: false}
+            PropertyChanges {target: temperature;   visible: true}
+            PropertyChanges {target: temperature_mgbu;   visible: false}
+            PropertyChanges {target: pressure;   visible: true}
+            PropertyChanges {target: pressure_mgbu;   visible: false}
+            PropertyChanges {target: v24dc;   visible: true}
+            PropertyChanges {target: v24dc_mgbu;   visible: false}
+            PropertyChanges {target: leak;   visible: false}
         },
         State {
             name: "mgbu"
@@ -68,8 +89,16 @@ Item {
             PropertyChanges {target: current_mgbu;   visible: true}
             PropertyChanges {target: current_a;   visible: false}
             PropertyChanges {target: altimetr_mgbu;   visible: true}
+            PropertyChanges {target: temperature;   visible: false}
+            PropertyChanges {target: temperature_mgbu;   visible: true}
+            PropertyChanges {target: pressure;   visible: false}
+            PropertyChanges {target: pressure_mgbu;   visible: true}
+            PropertyChanges {target: v24dc;   visible: false}
+            PropertyChanges {target: v24dc_mgbu;   visible: true}
+            PropertyChanges {target: leak;   visible: true}
         }
     ]
+    Component.objectName: calculatesize()
     onVisibleChildrenChanged: calculatesize()
     function calculatesize(){
 
@@ -187,14 +216,14 @@ Item {
                 }
 
                 onPressed: {
-                    if ((dashboard.state==="grab6")&&(ma.mouseX>width/2))
+                    if ((dashboard.state==="grab6"||dashboard.state==="mgbu")&&(ma.mouseX>width/2))
                          j.y2axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
                     else j.y1axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
                     j.ispresent=false;
                 }
                 onPositionChanged: {
                     if (ma.pressedButtons&(Qt.LeftButton|Qt.RightButton)&&ma.containsMouse)
-                      if ((dashboard.state==="grab6")&&(ma.mouseX>width/2)) j.y2axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
+                      if ((dashboard.state==="grab6"||dashboard.state==="mgbu")&&(ma.mouseX>width/2)) j.y2axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
                       else    j.y1axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
                     else j.y1axis=0;
                     //console.log("Joy Y:"+j.yaxis+"btn:"+(ma.pressedButtons&(Qt.LeftButton|Qt.RightButton)))
@@ -255,9 +284,9 @@ Item {
                       stepSize: 10
                       anchors.centerIn: parent
 
-                      value1:  source.ampere
-                      value2:  source.ampere2
-                      value3:  source.ampere3
+                      value1:  (source.ampere/10).toFixed(1)
+                      value2:  (source.ampere2/10).toFixed(1)
+                      value3:  (source.ampere3/10).toFixed(1)
                       centrТext: "А"
                       bottomText: "Ампер"
                       warningThreshold: 30
@@ -299,7 +328,9 @@ Item {
                         minorTickmarks: 5
                     }
                 }
+
                 Rectangle {
+                    id: temperature
                     color:"transparent";
                     width:  gaugesize;
                     height: gaugesize;
@@ -317,6 +348,27 @@ Item {
                     }
                 }
                 Rectangle {
+                    id: temperature_mgbu
+                    color:"transparent";
+                    width:  gaugesize;
+                    height: gaugesize;
+                    Pribor3 {
+                        width: parent.width-10; height: parent.height-10
+                        maximumValue: 120
+                        minimunValue: -20
+                        stepSize: 20
+                        anchors.centerIn: parent
+                        value1: source.temperature
+                        value2: source.temperature2
+                        thirdvisible: false
+                        centrТext: "t\u00B0"
+                        bottomText: "Темп. масла"
+                        warningThreshold: maximumValue*0.9
+                        minorTickmarks:5
+                    }
+                }
+                Rectangle {
+                    id: pressure
                     color:"transparent";
                     //opacity: 0.5
                     width:  gaugesize;
@@ -334,6 +386,27 @@ Item {
                     }
                 }
                 Rectangle {
+                    id: pressure_mgbu
+                    color:"transparent";
+                    //opacity: 0.5
+                    width:  gaugesize;
+                    height: gaugesize;
+                    Pribor3 {
+                        width: parent.width-10; height: parent.height-10
+                        maximumValue: 200
+                        stepSize: 50
+                        anchors.centerIn: parent
+                        value1: (source.pressure/10).toFixed(1)
+                        value2: (source.pressure2/10).toFixed(1)
+                        thirdvisible: false
+                        centrТext: "кПа"
+                        bottomText: "Давл. масла"
+                        warningThreshold: maximumValue*0.9
+                        minorTickmarks:5
+                    }
+                }
+                Rectangle {
+                    id: v24dc
                     color:"transparent";
                     width:  gaugesize;
                     height: gaugesize;
@@ -350,6 +423,25 @@ Item {
                     }
                 }
                 Rectangle {
+                    id: v24dc_mgbu
+                    color:"transparent";
+                    width:  gaugesize;
+                    height: gaugesize;
+                    Pribor3 {
+                        width: parent.width-10; height: parent.height-10
+                        maximumValue: 60
+                        stepSize: 10
+                        anchors.centerIn: parent
+                        value1: (source.voltage24/10).toFixed(1)
+                        value2: (source.voltage24_2/10).toFixed(1)
+                        thirdvisible: false
+                        centrТext: "V"
+                        bottomText: "Шина 24В"
+                        warningThreshold: 49
+                        minorTickmarks:5
+                    }
+                }
+                Rectangle {
                     id: turns
                     color:"transparent";
                     width:  gaugesize;
@@ -358,14 +450,15 @@ Item {
                     onVisibleChanged: calculatesize()
                     Pribor {
                         width: parent.width-10; height: parent.height-10
-                        maximumValue: 10
-                        stepSize: 2
+                        maximumValue: 900
+                        stepSize: 300
                         anchors.centerIn: parent
-                        value: source.turns
-                        centrТext: "x100"
+                        centrТext: "об/мин"
+                        value: source.turns// (source.turns/100).toFixed()
+
                         bottomText: "Обороты"
-                        warningThreshold: 9
-                        minorTickmarks:3
+                        warningThreshold: 800
+                        minorTickmarks:5
                     }
                 }
                 Rectangle {
@@ -406,6 +499,23 @@ Item {
                         bottomText: "Мощность2"
                         warningThreshold: maximumValue*0.9
                         minorTickmarks:5
+                    }
+                }
+                Rectangle {
+                    id: leak
+                    color:"transparent";
+                    width:  gaugesize;
+                    height: gaugesize;
+                    Pribor {
+                        width: parent.width-10; height: parent.height-10
+                        maximumValue: 500
+                        stepSize: 100
+                        anchors.centerIn: parent
+                        value: source.leak
+                        centrТext: "Z"
+                        bottomText: "Изоляция"
+                        warningThreshold: maximumValue*0.2
+                        minorTickmarks: 5
                     }
                 }
                 Rectangle {

@@ -115,7 +115,7 @@ Item {
                 Text {
                     text: value3.toString()
                     //color: "white"
-                    color: pr.value >= warningThreshold ? "#e34c22" : "lightpink"
+                    color: pr.value3 >= warningThreshold ? "#e34c22" : "lightpink"
                     font.pixelSize: parent.width/6
                     style: Text.Outline
                     anchors.top: rpmText.bottom
@@ -201,6 +201,7 @@ Item {
         width: parent.width
         height: parent.width
         value: pr.value3
+        visible: pr.thirdvisible
         minimumValue: pr.minimunValue; maximumValue: pr.maximumValue
         style: CircularGaugeStyle {
 
@@ -250,9 +251,6 @@ Item {
 
             background: Canvas {
                 visible: false
-
-
-
             }
         }
 

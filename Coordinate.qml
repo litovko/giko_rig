@@ -41,9 +41,9 @@ Item {
         yvalue=position>>8
         xval()
         yval()
-        console.log("X:"+xvalue+" "+l1.state)
-        console.log("Y:"+yvalue+" "+y1.state)
-        console.log("P:"+position)
+//        console.log("X:"+xvalue+" "+l1.state)
+//        console.log("Y:"+yvalue+" "+y1.state)
+//        console.log("P:"+position)
 
     }
 

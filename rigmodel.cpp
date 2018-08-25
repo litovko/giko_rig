@@ -1,10 +1,35 @@
 #include "rigmodel.h"
 #include <QDebug>
 
+#include <functional>
 
 cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 {
     readSettings();
+
+    //=======
+    using namespace std::placeholders;
+    _fmap["spxy"]  = std::bind(&cRigmodel::setPosition, this, _1);
+    _fmap["toil"]  = std::bind(&cRigmodel::setTemperature, this, _1);
+    _fmap["toil2"] = std::bind(&cRigmodel::setTemperature2, this, _1);
+    _fmap["poil"]  = std::bind(&cRigmodel::setPressure, this, _1);
+    _fmap["poil2"] = std::bind(&cRigmodel::setPressure2, this, _1);
+    _fmap["pwrv"]  = std::bind(&cRigmodel::setVoltage, this, _1);
+    _fmap["pwrv2"] = std::bind(&cRigmodel::setVoltage2, this, _1);
+    _fmap["pwrv3"] = std::bind(&cRigmodel::setVoltage3, this, _1);
+    _fmap["pwra"]  = std::bind(&cRigmodel::setAmpere, this, _1);
+    _fmap["pwra2"] = std::bind(&cRigmodel::setAmpere2, this, _1);
+    _fmap["pwra3"] = std::bind(&cRigmodel::setAmpere3, this, _1);
+    _fmap["altm"]  = std::bind(&cRigmodel::setAltitude, this, _1);
+    _fmap["drpm"]  = std::bind(&cRigmodel::setTurns, this, _1);
+    _fmap["dc1v"]  = std::bind(&cRigmodel::setVoltage24, this, _1);
+    _fmap["dc2v"]  = std::bind(&cRigmodel::setVoltage24_2, this, _1);
+    _fmap["tang"]  = std::bind(&cRigmodel::setTangag, this, _1);
+    _fmap["kren"]  = std::bind(&cRigmodel::setKren, this, _1);
+    _fmap["leak"]  = std::bind(&cRigmodel::setLeak, this, _1);
+    _fmap["type"]  = std::bind(&cRigmodel::setRigtypeInt, this, _1);
+    reset();
+    //=======
     connect(this, SIGNAL(addressChanged()), this, SLOT(saveSettings()));
     connect(this, SIGNAL(timer_send_intervalChanged()), this, SLOT(updateSendTimer()));
     //connect(this, SIGNAL(portChanged()), this, SLOT(saveSettings()));
@@ -14,7 +39,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     connect(&tcpClient, SIGNAL(readyRead()),this, SLOT(readData()));
     connect(&tcpClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(displayError(QAbstractSocket::SocketError)));
 
-    connect(&tcpClient, SIGNAL(connected()),this, SLOT(sendData())); //при установке исходящего соединения с аппаратом посылаем текущие данные.  !!! litovko
+    //connect(&tcpClient, SIGNAL(connected()),this, SLOT(sendData())); //при установке исходящего соединения с аппаратом посылаем текущие данные.  !!! litovko
     //при изменении пользователем любого параметра сразу передаем данные
     connect(this, SIGNAL(lampChanged()),this, SLOT(sendData()));
     connect(this, SIGNAL(engineChanged()),this, SLOT(sendData()));
@@ -31,6 +56,11 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     emit rigtypeChanged();
     emit positionChanged();
 }
+void cRigmodel::reset()
+{
+    for (auto const& f : _fmap) f.second(0);
+}
+
 void cRigmodel::saveSettings()
 {
     qDebug()<<"Rig saveSettings addres:"<<m_address<<"port:"<<m_port;
@@ -152,6 +182,11 @@ void cRigmodel::setRigtype(const QString &rigtype)
 QString cRigmodel::rigtype() const
 {
     return m_rigtype;
+}
+
+void cRigmodel::setRigtypeInt(const int &rigtype)
+{
+
 }
 
 void cRigmodel::setLamp(const bool &lamp)
@@ -316,26 +351,14 @@ void cRigmodel::clientConnected()
     qDebug()<<"Rig Client connected to address >>>"+this->address()+" port:"+ ::QString().number(m_port);
     m_client_connected=true;
     emit client_connectedChanged();
+    sendData();
 }
 void cRigmodel::clientDisconnected()
 {
     qDebug()<<"Rig Client disconnected form address >>>"+this->address()+" port:"+ this->port();
-    m_client_connected=false;
-    m_good_data=false;
-    m_pressure=0;
-    m_temperature2=0;
-    m_voltage=0;
-    m_ampere=0;
-    m_turns=0;
-    m_temperature=0;
-    emit pressureChanged();
-    emit temperature2Changed();
-    emit voltageChanged();
-    emit ampereChanged();
-    emit turnsChanged();
-    emit temperatureChanged();
-    emit client_connectedChanged();
-    emit good_dataChanged();
+    setClient_connected(false);
+    setGood_data(false);
+    reset();
 }
 
 
@@ -351,12 +374,11 @@ void cRigmodel::updateClientProgress(qint64 numBytes)
 
 void cRigmodel::displayError(QAbstractSocket::SocketError socketError)
 {
-    if (socketError == QTcpSocket::RemoteHostClosedError)   //litovko надо уточнить зачем эта проверка
-        return;
-    qDebug()<<"Rig Network error >>>"+tcpClient.errorString();
-
-
+    qDebug()<<"Rig Network error >>> "<<tcpClient.errorString()<<"socketError ->"<<socketError;
     tcpClient.close();
+    setClient_connected(false);
+    setGood_data(false);
+    reset();
 
 }
 
@@ -387,7 +409,27 @@ void cRigmodel::sendData()
     if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
     if (bytesToWrite>=0)qDebug()<<"Rig: Data sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
 }
+bool cRigmodel::handle_tag(const QString &tag, const QString &val)
+{
+    bool ok=false;
+    auto it = _fmap.find(tag.toUtf8().constData());
+    if(it != _fmap.end()) {
+        if (val=="type") {
+            setRigtype(val);
+            ;
+            if(!(ok=(m_rigtype=="grab2"||m_rigtype=="grab6"||m_rigtype=="gkgbu"||m_rigtype=="mgbu")))
+                qWarning()<<"Data! Wrong rig type <"<<val<<">";
 
+        }
+        else {
+          auto v=val.toInt(&ok,10);
+          if (ok) it->second(v);
+        }
+    }
+    else  qWarning()<<"Data! For tag <"<<tag<<"> handle not found!";
+
+    return ok;
+}
 
 void cRigmodel::readData()
 {
@@ -399,9 +441,9 @@ void cRigmodel::readData()
     Data = tcpClient.readAll();
     qDebug()<<"Rig read :"<<Data;
     // {toil=29;poil=70;drpm=15;pwrv=33;pwra=3}FAFBFCFD
-    //m_good_data = false; emit good_dataChanged();
+
     if (Data.startsWith("{")&&(m=Data.indexOf("}"))>0) {
-        m_good_data = true; emit good_dataChanged();
+        setGood_data(true);
         CRC=Data.mid(m+1);
         //qDebug()<<"CRC:"<<CRC; //CRC пока не проверяем - это отдельная тема.
         Data=Data.mid(1,m-1);
@@ -410,83 +452,20 @@ void cRigmodel::readData()
         //qDebug()<<"split:"<<split;
         QListIterator<QByteArray> i(split);
         QByteArray s, val;
-        QString t="Rig tag:";
-        bool ok=false;
         while (i.hasNext()){
              s=i.next();
              m=s.indexOf(":");
              val=s.mid(m+1); //данные после ":"
-             s=s.left(m); // названия тэга
-            //qDebug()<<"Rig tag:"<<s<<"value:"<<val;
-            if (s=="toil") {
-                m_temperature=val.toInt(&ok,10); emit temperatureChanged();
-                if(!ok) {m_good_data = false; emit good_dataChanged();
-                qWarning()<<"Rig no good data for "<<"toil:"<<val;}
-            }
-            if (s=="poil"){
-                m_pressure=val.toInt(&ok,10); emit pressureChanged();
-                if(!ok) {m_good_data = false; emit good_dataChanged();
-                qWarning()<<"Rig no good data for "<<"poil:"<<val;}
-            }
-            if (s=="drpm"){
-                m_turns=val.toInt(&ok,10); emit turnsChanged();
-                if(!ok) {m_good_data = false; emit good_dataChanged();
-                qWarning()<<"Rig no good data for "<<"drpm:"<<val;}
-            }
-            if (s=="pwrv"){
-                m_voltage=val.toInt(&ok,10); emit voltageChanged();
-                if(!ok) {m_good_data = false; emit good_dataChanged();
-                qWarning()<<"Rig no good data for "<<"pwrv:"<<val;}
-            }
-            if (s=="pwrv2"){
-                m_voltage2=val.toInt(&ok,10); emit voltage2Changed();
-                if(!ok) {m_good_data = false; emit good_dataChanged();
-                qWarning()<<"Rig no good data for "<<"pwrv:"<<val;}
-            }
-            if (s=="pwrv3"){
-                m_voltage3=val.toInt(&ok,10); emit voltage3Changed();
-                if(!ok) {m_good_data = false; emit good_dataChanged();
-                qWarning()<<"Rig no good data for "<<"pwrv:"<<val;}
-            }
-            if (s=="dc1v"){
-                setVoltage24(val.toInt(&ok,10));
-                if(!ok) {m_good_data = false; emit good_dataChanged();
-                qWarning()<<"Rig no good data for "<<"dc1v:"<<val;}
-            }
-            if (s=="pwra"){
-                m_ampere=val.toInt(&ok,10); emit ampereChanged();
-                if(!ok) {m_good_data = false; emit good_dataChanged();
-                qWarning()<<"Rig no good data for "<<"pwra:"<<val;}
-            }
-            if (s=="pwra2"){
-                m_ampere2=val.toInt(&ok,10); emit ampere2Changed();
-                if(!ok) {m_good_data = false; emit good_dataChanged();
-                qWarning()<<"Rig no good data for "<<"pwra:"<<val;}
-            }
-            if (s=="pwra3"){
-                m_ampere3=val.toInt(&ok,10); emit ampere3Changed();
-                if(!ok) {m_good_data = false; emit good_dataChanged();
-                qWarning()<<"Rig no good data for "<<"pwra:"<<val;}
-            }
-            if (s=="altm"){
-                m_altitude=val.toInt(&ok,10); emit altitudeChanged();
-                if(!ok) {m_good_data = false; emit good_dataChanged();
-                qWarning()<<"Rig no good data for "<<"pwra:"<<val;}
-            }
-            if (s=="type"){
-                if (check_type()) setRigtype(val);
-                //m_rigtype=val; emit rigtypeChanged();
-                if (m_rigtype=="grab2"||m_rigtype=="grab6"||m_rigtype=="gkgbu"||m_rigtype=="mgbu") ok=true;
-                if(!ok) {m_good_data = false; emit good_dataChanged();
-                qWarning()<<"Rig: no good data for "<<"type:"<<val;}
-            }
-         }
+             s=s.left(m); // название тэга
+             setGood_data( handle_tag(s,val) );
+        }
     }
     else {
-        m_good_data=false; good_dataChanged();
+        setGood_data(false);
         qWarning()<<"Rig: wrong data receved";
     }
 }
+
 
 int cRigmodel::scaling(const int &value)
 {
@@ -496,7 +475,55 @@ int cRigmodel::scaling(const int &value)
    if  (value>0)
      return ceil(df + value*(100-m_freerun)/100.0);
    else
-     return -ceil(df - value*(100-m_freerun)/100.0);
+       return -ceil(df - value*(100-m_freerun)/100.0);
+}
+
+int cRigmodel::leak() const
+{
+    return m_leak;
+}
+
+void cRigmodel::setLeak(int leak)
+{
+    m_leak = leak;
+    emit leakChanged();
+}
+
+int cRigmodel::kren() const
+{
+    return m_kren;
+}
+
+void cRigmodel::setKren(int kren)
+{
+    m_kren = kren;
+    emit krenChanged();
+}
+
+int cRigmodel::tangag() const
+{
+    return m_tangag;
+}
+
+void cRigmodel::setTangag(int tangag)
+{
+    m_tangag = tangag;
+    emit tangagChanged();
+}
+
+void cRigmodel::setClient_connected(bool client_connected)
+{
+    m_client_connected = client_connected;
+    emit client_connectedChanged();
+}
+
+
+
+void cRigmodel::setGood_data(bool good_data)
+{
+    if(m_good_data == good_data) return;
+    m_good_data = good_data;
+    emit good_dataChanged();
 }
 
 unsigned int cRigmodel::position() const
