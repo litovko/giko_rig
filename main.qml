@@ -72,18 +72,22 @@ Window {
         RigCamera {
             id: cam1
             index: 1
+            type: 1+(rig.rigtype==="mgbu" )
         },
         RigCamera {
             id: cam2
             index: 2
+            type: 1+(rig.rigtype==="mgbu" )
         },
         RigCamera {
             id: cam3
             index: 3
+            type: 1+(rig.rigtype==="mgbu" )
         },
         RigCamera {
             id: cam4
             index: 4
+            type: 1+(rig.rigtype==="mgbu" )
         }
     ]
 

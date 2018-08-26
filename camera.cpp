@@ -7,7 +7,7 @@
 #include <QThreadPool>
 
 
-#define TIMER_CHECK 60000
+#define TIMER_CHECK 30000
 cCamera::cCamera(QObject *parent) : QObject(parent)
 {
     connect(this, SIGNAL(indexChanged()),this, SLOT(readSettings()));
@@ -59,10 +59,10 @@ QString cCamera::title() const
     {
         m_address = address;
         m_url1=url1();
-        m_camerapresent=false;
+        setCamerapresent(false);
         emit url1Changed();
         emit addressChanged();
-        emit camerapresentChanged();
+
     }
 
     QString cCamera::address() const
@@ -301,9 +301,17 @@ QString cCamera::title() const
     QString cCamera::url1() const
     {
         QString s;
+        if (m_type==2) {
+           s="rtsp://"+m_address+":554/main";
+
+//                   rtsp://192.168.123.143:554/main - для основного потока
+//                   rtsp://192.168.123.143:554/sub - для вспомогательного потока
+        }
+        else {
         if(m_videocodeccombo==1) s="rtsp://"+m_address+":8553/PSIA/Streaming/channels/1?videoCodecType=MPEG4";
-        if(m_videocodeccombo==0) s="rtsp://"+m_address+":8557/PSIA/Streaming/channels/2?videoCodecType=H.264";
-        //qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"Cam"<<QString::number(m_index)<<":"<<"url1(): url потока камеры:"<< s;
+        if(m_videocodeccombo==0) s="rtsp://"+m_address+":8557/PSIA/Streaming/channels/2?videoCodecType=H.264";        
+        }
+
         return s;
     }
     QString cCamera::url2() const
@@ -523,12 +531,27 @@ QString cCamera::title() const
     }
     void cCamera::onError(QNetworkReply::NetworkError networkError)
     {
-        //reply->disconnect(); // Disconnect all signals
 
-//        if (networkError == QNetworkReply::ContentNotFoundError)
-//        {
             qWarning()<<"Cam"<<QString::number(m_index)<<" NETWORK ERROR:"<<networkError;
-            //        }
+        setCamerapresent(false);
+    }
+
+    void cCamera::setCamerapresent(bool camerapresent)
+    {
+        m_camerapresent = camerapresent;
+        emit camerapresentChanged();
+    }
+
+    int cCamera::type() const
+    {
+        return m_type;
+    }
+
+    void cCamera::setType(int type)
+    {
+        m_type = type;
+        emit typeChanged();
+        qDebug()<<"Camera type changed:"<<type;
     }
 
 
@@ -545,13 +568,20 @@ QString cCamera::title() const
 
     void cCamera::get_parametrs()
     {
+        QUrl iniUrl;
         if (m_index==0||timeout()||!m_cameraenabled) return;
-        QUrl iniUrl("http://"+m_address+"/ini.htm");  //http://192.168.1.168/ini.htm
-       qDebug()<<"Cam"<<QString::number(m_index)<<" get_parametrs by URL:" << iniUrl;
+       if (m_type==1) iniUrl=("http://"+m_address+"/ini.htm");  //http://192.168.1.168/ini.htm
+       else iniUrl=("http://"+m_address+"/login.html");  //http://192.168.1.168/login.html
+
        iniUrl.setPassword(USERPASS);
        iniUrl.setUserName(USERNAME);
+       if (m_type==2) {
+           iniUrl.setPassword(USERPASS_MGBU);
+           iniUrl.setUserName(USERNAME_MGBU);
+       }
+       qDebug()<<"Cam"<<QString::number(m_index)<<" get_parametrs by URL:" << iniUrl;
        QNetworkRequest request(iniUrl);
-       qDebug()<<request.url();
+       qDebug()<<"HTTP Request:"<<request.url();
        QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
        setOnrequest(true);
        p->setProperty("RequestType","ini");
@@ -602,18 +632,34 @@ QString cCamera::title() const
 
     void cCamera::loadINI(QNetworkReply* pReply)
     {
+        if (m_type==2) {
+
+            qDebug()<<pReply->errorString();
+        }
         setOnrequest(false);
-        qDebug()<<"loadINI: Cam"<<QString::number(m_index)<<":"<<"!!1"<<pReply->property("RequestType");
+        qDebug()<<"loadINI: Cam"<<QString::number(m_index)<<":"<<pReply->property("RequestType");
         if (pReply->error()!=QNetworkReply::NoError ) {
             qWarning()<<"Cam"<<QString::number(m_index)<<":"<<"Camera unavailable:"<<pReply->errorString();
 //            qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"!!8";
-            m_camerapresent=false;
-            emit camerapresentChanged();
+            setCamerapresent(false);
         }
         else
         {
             m_DownloadedData.clear();
             m_DownloadedData = pReply->readAll();
+            //qDebug()<<m_DownloadedData;
+            if(m_type==2) {
+
+                if (m_DownloadedData.indexOf("<html>")>=0) {
+                  setCamerapresent(true);
+                  return;
+                }
+                else {
+                    setCamerapresent(false);
+                    return;
+                }
+
+            }
             m_parametr.clear(); m_parametr=::QString(m_DownloadedData).split("<br>",QString::SkipEmptyParts);
             m_camerapresent=true;  emit camerapresentChanged();
             int c,r;

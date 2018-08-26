@@ -4,6 +4,7 @@ import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
 import QmlVlc 0.1
 import Gyco 1.0
+
 Item {
     id: setupDialog
     visible: true
@@ -14,6 +15,8 @@ Item {
 //    property int currentplayer: 0
     antialiasing: false
     onVisibleChanged: spinBox_videomode.currentIndex=cam[currentcam].comby;
+
+
     Rectangle {
         id: rectangle1
         width: 500

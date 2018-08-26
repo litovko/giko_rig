@@ -8,8 +8,10 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
-#define USERNAME "user"
-#define USERPASS "9999"
+#define USERNAME "user"  //"admin"
+#define USERPASS "9999" //"scam"
+#define USERNAME_MGBU "admin"
+#define USERPASS_MGBU "scam"
 #define TIMEOUT 10000  //  таймаут для установки видеорежимов
 #define TIMEOUT_RESET 20000 //
 
@@ -28,6 +30,7 @@ class cCamera : public QObject
     Q_PROPERTY(int videocodeccombo READ videocodeccombo WRITE setVideocodeccombo NOTIFY videocodeccomboChanged) // режим типов видеопотоков - MPEG, H264
     Q_PROPERTY(int videocodecres READ videocodecres WRITE setVideocodecres NOTIFY videocodecresChanged) // режим разрешения видиопотоков
     Q_PROPERTY(int mirctrl READ mirctrl WRITE setMirctrl NOTIFY mirctrlChanged) // режим зеркалирования изображения
+    Q_PROPERTY(int type READ type WRITE setType NOTIFY typeChanged) // режим зеркалирования изображения
 
     Q_PROPERTY(QString overlaytext READ overlaytext WRITE setOverlaytext NOTIFY overlaytextChanged)
     Q_PROPERTY(QString recordfile READ recordfile WRITE setRecordfile NOTIFY recordfileChanged) //имя файля куда пишется поток
@@ -144,9 +147,15 @@ public:
     bool onrequest() const;
     void setOnrequest(bool onrequest);
 
+    int type() const;
+    void setType(int type);
+
+    void setCamerapresent(bool camerapresent);
+
 signals:
     void titleChanged();
     void addressChanged();
+    void typeChanged();
     void indexChanged();
     void camerapresentChanged();
     void cameraenabledChanged();
@@ -208,6 +217,7 @@ private:
 private:
     QString m_address;
     QString m_title;
+    int m_type=1; //тип камеры - 1 - для телегрейферов и ГКГБУ 2 - камеры ЮМГ для МГБУ
     int m_index=0;
     bool m_camerapresent=false;  //доступна ли камера по сети?
     bool m_cameraenabled=false;
