@@ -39,13 +39,22 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     connect(&tcpClient, SIGNAL(readyRead()),this, SLOT(readData()));
     connect(&tcpClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(displayError(QAbstractSocket::SocketError)));
 
-    //connect(&tcpClient, SIGNAL(connected()),this, SLOT(sendData())); //при установке исходящего соединения с аппаратом посылаем текущие данные.  !!! litovko
+    connect(&tcpClient, SIGNAL(connected()),this, SLOT(sendKoeff()));  //первая посылка данных - коэффициенты
     //при изменении пользователем любого параметра сразу передаем данные
     connect(this, SIGNAL(lampChanged()),this, SLOT(sendData()));
+    connect(this, SIGNAL(light1Changed()),this, SLOT(sendData()));
+    connect(this, SIGNAL(light2Changed()),this, SLOT(sendData()));
+    connect(this, SIGNAL(light3Changed()),this, SLOT(sendData()));
+    connect(this, SIGNAL(light4Changed()),this, SLOT(sendData()));
     connect(this, SIGNAL(engineChanged()),this, SLOT(sendData()));
+    connect(this, SIGNAL(engine2Changed()),this, SLOT(sendData()));
     connect(this, SIGNAL(pumpChanged()),this, SLOT(sendData()));
     //connect(this, SIGNAL(joystickChanged()),this, SLOT(sendData()));
     connect(this, SIGNAL(cameraChanged()),this, SLOT(sendData()));
+    connect(this, SIGNAL(camera1Changed()),this, SLOT(sendData()));
+    connect(this, SIGNAL(camera2Changed()),this, SLOT(sendData()));
+    connect(this, SIGNAL(camera3Changed()),this, SLOT(sendData()));
+    connect(this, SIGNAL(camera4Changed()),this, SLOT(sendData()));
     connect(this, SIGNAL(gmodChanged()),this, SLOT(sendData()));
 
     connect(&timer_connect, SIGNAL(timeout()), this, SLOT(start_client()));
@@ -71,6 +80,13 @@ void cRigmodel::saveSettings()
     settings.setValue("RigSendInterval",m_timer_send_interval);
     settings.setValue("RigConnectInterval",m_timer_connect_interval);
     settings.setValue("RigCheckType",m_check_type);
+    settings.setValue("Rig_KNPA",m_knpa);
+    settings.setValue("Rig_KNPV",m_knpv);
+    settings.setValue("Rig_KNPI",m_knpi);
+    settings.setValue("Rig_LIMA",m_lima);
+    settings.setValue("Rig_LIMV",m_limv);
+    settings.setValue("Rig_LIMZ",m_limz);
+
 
 }
 
@@ -85,6 +101,13 @@ void cRigmodel::readSettings()
     m_timer_connect_interval=settings.value("RigConnectInterval","30000").toInt();
     m_check_type=settings.value("RigCheckType","false").toBool();
 
+    m_knpa=settings.value("Rig_KNPA","false").toInt();
+    m_knpv=settings.value("Rig_KNPV","false").toInt();
+    m_knpi=settings.value("Rig_KNPI","false").toInt();
+
+    m_lima=settings.value("Rig_LIMA","false").toInt();
+    m_limv=settings.value("Rig_LIMV","false").toInt();
+    m_limz=settings.value("Rig_LIMZ","false").toInt();
 }
 
 void cRigmodel::updateSendTimer()
@@ -387,11 +410,17 @@ void cRigmodel::displayError(QAbstractSocket::SocketError socketError)
 
 void cRigmodel::sendData()
 {
-    char data[5]={0,32,33,34,35};
+    int data[9]={31,32,33,34,35,36,37,38,39};
     data[0] = m_engine*1
             +   m_pump*2
             +   m_lamp*4
-            + m_camera*8;
+            + m_camera*8
+            + m_camera1*16
+            + m_camera2*32
+            + m_camera3*64
+            + m_camera4*128
+            + m_engine2*256
+            ;
     QString Data; // Строка отправки данных.
 // проверяем, есть ли подключение клиента. Если подключения нет, то ничего не отправляем.
     if (!m_client_connected) return;
@@ -401,6 +430,8 @@ void cRigmodel::sendData()
     Data="{ana1:"+::QString().number(scaling(m_joystick_y1),10);
     if (m_rigtype=="gkgbu"||m_rigtype=="grab6"||m_rigtype=="mgbu") Data=Data +";ana2:"+::QString().number(scaling(m_joystick_y2),10);
     if (m_rigtype=="gkgbu"||m_rigtype=="mgbu") Data=Data+";ana3:"+::QString().number(scaling(m_joystick_x1),10)+";gmod:"+m_gmod;
+    //яркости прожекторов
+    if (m_rigtype=="mgbu") Data=Data+";light:"+::QString().number(m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16));
 
     Data=Data+";dig1:"+::QString().number(data[0],10)+"}CONSDATA";
     qDebug()<<"Rig - send data: "<<Data;
@@ -429,6 +460,61 @@ bool cRigmodel::handle_tag(const QString &tag, const QString &val)
     else  qWarning()<<"Data! For tag <"<<tag<<"> handle not found!";
 
     return ok;
+}
+
+bool cRigmodel::camera4() const
+{
+    return m_camera4;
+}
+
+void cRigmodel::setCamera4(bool camera4)
+{
+    m_camera4 = camera4;
+    emit camera4Changed();
+}
+
+bool cRigmodel::camera3() const
+{
+    return m_camera3;
+}
+
+void cRigmodel::setCamera3(bool camera3)
+{
+    m_camera3 = camera3;
+    emit camera3Changed();
+}
+
+bool cRigmodel::camera2() const
+{
+    return m_camera2;
+}
+
+void cRigmodel::setCamera2(bool camera2)
+{
+    m_camera2 = camera2;
+    emit camera2Changed();
+}
+
+bool cRigmodel::camera1() const
+{
+    return m_camera1;
+}
+
+void cRigmodel::setCamera1(bool camera1)
+{
+    m_camera1 = camera1;
+    emit camera1Changed();
+}
+
+bool cRigmodel::engine2() const
+{
+    return m_engine2;
+}
+
+void cRigmodel::setEngine2(bool engine2)
+{
+    m_engine2 = engine2;
+    emit engine2Changed();
 }
 
 void cRigmodel::readData()
@@ -464,6 +550,27 @@ void cRigmodel::readData()
         setGood_data(false);
         qWarning()<<"Rig: wrong data receved";
     }
+}
+
+void cRigmodel::sendKoeff()
+{
+    if(m_rigtype!="mgbu") return;
+    QString Data; // Строка отправки данных.
+// проверяем, есть ли подключение клиента. Если подключения нет, то ничего не отправляем.
+    if (!m_client_connected) return;
+
+    Data="{knpa:"+::QString().number(m_knpa,10);
+    Data=Data+";knpv:"+::QString().number(m_knpv,10);
+    Data=Data+";knpi:"+::QString().number(m_knpi,10);
+    Data=Data+";lima:"+::QString().number(m_lima,10);
+    Data=Data+";limv:"+::QString().number(m_limv,10);
+    Data=Data+";limz:"+::QString().number(m_limz,10);
+    Data=Data+"}CONSDATA";
+    qDebug()<<"Rig - send data: "<<Data;
+
+    bytesToWrite = (int)tcpClient.write(::QByteArray(Data.toLatin1()).data());
+    if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
+    if (bytesToWrite>=0)qDebug()<<"Rig: Data sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
 }
 
 

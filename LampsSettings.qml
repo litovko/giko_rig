@@ -4,6 +4,10 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 Item {
     id: lampsSettings
+    property alias lamp1: sl1.value
+    property alias lamp2: sl2.value
+    property alias lamp3: sl3.value
+    property alias lamp4: sl4.value
     Rectangle {
         id: rec
         anchors.fill: parent
@@ -51,8 +55,11 @@ Item {
                 font.pointSize: 10
                 anchors.left: parent.left
                 Slider {
+                    id: sl1
                     width: rec.width/2
                     anchors.left: parent.right
+                    maximumValue: 15
+                    minimumValue: 0
                 }
             }
             Label {
@@ -64,8 +71,11 @@ Item {
                 font.pointSize: 10
                 anchors.left: parent.left
                 Slider {
+                    id: sl2
                     width: rec.width/2
                     anchors.left: parent.right
+                    maximumValue: 15
+                    minimumValue: 0
                 }
             }
             Label {
@@ -77,8 +87,11 @@ Item {
                 font.pointSize: 10
                 anchors.left: parent.left
                 Slider {
+                    id: sl3
                     width: rec.width/2
                     anchors.left: parent.right
+                    maximumValue: 15
+                    minimumValue: 0
                 }
             }
             Label {
@@ -90,8 +103,11 @@ Item {
                 font.pointSize: 10
                 anchors.left: parent.left
                 Slider {
+                    id: sl4
                     width: rec.width/2
                     anchors.left: parent.right
+                    maximumValue: 15
+                    minimumValue: 0
                 }
             }
         }

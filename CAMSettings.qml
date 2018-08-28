@@ -3,7 +3,11 @@ import QtQuick.Controls 1.4
 //import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
 Item {
-    id: lampsSettings
+    id: camSettings
+    property alias cam1: checkBox1.checked
+    property alias cam2: checkBox2.checked
+    property alias cam3: checkBox3.checked
+    property alias cam4: checkBox4.checked
     Rectangle {
         id: rec
         anchors.fill: parent
@@ -35,7 +39,7 @@ Item {
                 id:ma
                 anchors.fill: parent
                 hoverEnabled: true
-                onClicked: {lampsSettings.visible=false; lampsSettings.height=0}
+                onClicked: {camSettings.visible=false; camSettings.height=0}
             }
         }
         Column {

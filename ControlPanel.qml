@@ -67,7 +67,7 @@ Item {
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
-                    id: pump
+                    id: cam_onoff
                     height: lampSize
                     width: lampSize
                     bottomText:"КАМЕРЫ[F3]"
@@ -89,7 +89,7 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:"НАСОС2"
-                    active:source.engine
+                    active:source.engine2
                     command: "ENGINE2"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
@@ -98,8 +98,8 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:"ПРОМЫВКА"
-                    active:source.engine
-                    command: "ENGINE3"
+                    active:source.pump
+                    command: "PUMP"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{

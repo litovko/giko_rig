@@ -34,8 +34,9 @@ class cRigmodel : public QObject
     Q_PROPERTY(QString gmod READ gmod WRITE setGmod NOTIFY gmodChanged)
     //############ переменные - данные для отправки
     Q_PROPERTY(bool lamp READ lamp WRITE setLamp NOTIFY lampChanged)
-    Q_PROPERTY(bool engine READ engine WRITE setEngine NOTIFY engineChanged)  //включение выключение мотора
-    Q_PROPERTY(bool pump READ pump WRITE setPump NOTIFY pumpChanged)  //включение выключение мотора
+    Q_PROPERTY(bool engine READ engine WRITE setEngine NOTIFY engineChanged)  //включение выключение мотора 1
+    Q_PROPERTY(bool engine2 READ engine2 WRITE setEngine2 NOTIFY engine2Changed)  //включение выключение мотора 2
+    Q_PROPERTY(bool pump READ pump WRITE setPump NOTIFY pumpChanged)  //включение выключение мотора промывки
 //    Q_PROPERTY(int joystick READ joystick WRITE setJoystick NOTIFY joystickChanged)
 
     Q_PROPERTY(int joystick_x1 READ joystick_x1 WRITE setJoystick_x1 NOTIFY joystick_x1Changed)
@@ -44,8 +45,12 @@ class cRigmodel : public QObject
     Q_PROPERTY(int joystick_y2 READ joystick_y2 WRITE setJoystick_y2 NOTIFY joystick_y2Changed)
 
     Q_PROPERTY(bool camera READ camera WRITE setCamera NOTIFY cameraChanged)
+    Q_PROPERTY(bool camera1 READ camera1 WRITE setCamera1 NOTIFY camera1Changed)
+    Q_PROPERTY(bool camera2 READ camera2 WRITE setCamera2 NOTIFY camera2Changed)
+    Q_PROPERTY(bool camera3 READ camera3 WRITE setCamera3 NOTIFY camera3Changed)
+    Q_PROPERTY(bool camera4 READ camera4 WRITE setCamera4 NOTIFY camera4Changed)
 
-    Q_PROPERTY(int light1 READ light1 WRITE setLight1 NOTIFY light1Changed)
+    Q_PROPERTY(int light1 READ light1 WRITE setLight1 NOTIFY light1Changed) //яркость - 16 градаций
     Q_PROPERTY(int light2 READ light2 WRITE setLight2 NOTIFY light2Changed)
     Q_PROPERTY(int light3 READ light3 WRITE setLight3 NOTIFY light3Changed)
     Q_PROPERTY(int light4 READ light4 WRITE setLight4 NOTIFY light4Changed)
@@ -186,6 +191,21 @@ public:
     int leak() const;
     void setLeak(int leak);
 
+    bool engine2() const;
+    void setEngine2(bool engine2);
+
+    bool camera1() const;
+    void setCamera1(bool camera1);
+
+    bool camera2() const;
+    void setCamera2(bool camera2);
+
+    bool camera3() const;
+    void setCamera3(bool camera3);
+
+    bool camera4() const;
+    void setCamera4(bool camera4);
+
 signals:
     void positionChanged();
     void pressureChanged();
@@ -209,6 +229,7 @@ signals:
     void gmodChanged();
     void lampChanged();
     void engineChanged();
+    void engine2Changed();
     void pumpChanged();
     void joystickChanged();
     void joystick_x1Changed();
@@ -220,6 +241,10 @@ signals:
     void light3Changed();
     void light4Changed();
     void cameraChanged();
+    void camera1Changed();
+    void camera2Changed();
+    void camera3Changed();
+    void camera4Changed();
     void addressChanged();
     void portChanged();
     void timer_send_intervalChanged();
@@ -243,6 +268,7 @@ public slots:
     void displayError(QAbstractSocket::SocketError socketError);
     void sendData(); //слот должен вызываться любым событием, которое меняет данные, предназначенные для отправки.
     void readData(); //расклаываем полученные от сервера данные по параметрам
+    void sendKoeff();
     void reset();
 private:
     int scaling(const int &value);
@@ -278,7 +304,12 @@ private:
     //############ Данные для отправки
     bool m_lamp=false;
     bool m_camera=false;
+    bool m_camera1=false;
+    bool m_camera2=false;
+    bool m_camera3=false;
+    bool m_camera4=false;
     bool m_engine=false;
+    bool m_engine2=false;
     bool m_pump=false;
     int m_joystick=0;
     int m_joystick_x1=0;
@@ -289,6 +320,13 @@ private:
     int m_light2=0;
     int m_light3=0;
     int m_light4=0;
+            //коэффициенты и пороги
+    int m_knpa=1; //коэффициент тока
+    int m_knpv=1; //коэффициент наприяжения
+    int m_knpi=1; //коэффициент давлени масла
+    int m_lima=100000; //порог по току
+    int m_limv=100000; //порог по напряжению
+    int m_limz=100000; //порог по току утечки
     QString m_gmod="platf"; //platf,tower,bench,drill
 
     bool m_good_data=false;

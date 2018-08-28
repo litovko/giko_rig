@@ -13,6 +13,7 @@ Window {
     //    visibility: Window.FullScreen
     title: "HYCO RIG CONSOLE ПУЛЬТ УПРАВЛЕНИЯ ПОДВОДНЫМ АППАРАТОМ"
     visible: true
+
     height: 720
     width: 1280
     color: "transparent"
@@ -24,6 +25,7 @@ Window {
     property int filesize: 700 //Mbyte
     property variant curfilesize:[-1,-1,-1]
     property bool onrecord: true; //true если меняется размер записываемого файла.
+    property bool camera_umg: false //false - камеры ПМГРЭ true - камеры ЮМГ
 
     property list<VlcPlayer> players:[
         VlcPlayer {
@@ -72,22 +74,22 @@ Window {
         RigCamera {
             id: cam1
             index: 1
-            type: 1+(rig.rigtype==="mgbu" )
+            type: 1+win.camera_umg
         },
         RigCamera {
             id: cam2
             index: 2
-            type: 1+(rig.rigtype==="mgbu" )
+            type: 1+win.camera_umg
         },
         RigCamera {
             id: cam3
             index: 3
-            type: 1+(rig.rigtype==="mgbu" )
+            type: 1+win.camera_umg
         },
         RigCamera {
             id: cam4
             index: 4
-            type: 1+(rig.rigtype==="mgbu" )
+            type: 1+win.camera_umg
         }
     ]
 
@@ -103,6 +105,7 @@ Window {
         property alias vlc_options: win.vlc_options
         property alias filepath: win.filepath
         property alias filesize: win.filesize
+        property alias camera_umg: win.camera_umg
     }
     function player_play(player_number){
         if (cams[0].timeout||cams[1].timeout||cams[2].timeout) return;
@@ -193,10 +196,17 @@ Window {
 
     RigModel {
         id: rig
-
         joystick_y1: j.y1axis*(j.key_0||j.lock)
         joystick_y2: j.y2axis*(j.key_0||j.lock)
         joystick_x1: j.x1axis*(j.key_0||j.lock)
+        light1: lampsSettings.lamp1
+        light2: lampsSettings.lamp2
+        light3: lampsSettings.lamp3
+        light4: lampsSettings.lamp4
+        camera1: camSettings.cam1
+        camera2: camSettings.cam2
+        camera3: camSettings.cam3
+        camera4: camSettings.cam4
     }
     function changestate(){
                     console.log("STATE: "+mainRect.state + " ind:" +cams[0].index+cams[1].index+cams[2].index);
@@ -312,10 +322,11 @@ Window {
               rig.engine=rig.engine?false:true;
               break;
           case "ENGINE2":
-              console.log("TO DO THIS COMMAND")
+              rig.engine2=rig.engine2?false:true;
+
               break;
-          case "ENGINE3":
-              console.log("TO DO THIS COMMAND")
+          case "PUMP":
+              rig.pump=rig.pump?false:true;
               break;
           case "DEMO":
               mainRect.state = "3-KAM-bol1" // "3-KAM-mal"
