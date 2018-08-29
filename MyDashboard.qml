@@ -98,16 +98,21 @@ Item {
             PropertyChanges {target: leak;   visible: true}
         }
     ]
-    Component.objectName: calculatesize()
+    Component.onCompleted: calculatesize()
     onVisibleChildrenChanged: calculatesize()
     function calculatesize(){
-
+        console.log("state:"+state)
         var num_gauge=flowrow.visibleChildren.length
+        console.log(flowrow.visibleChildren[1].objectName)
+        console.log("NUMG:"+num_gauge)
         //console.log("Dashboard - recalculate width and height num gauges"+num_gauge)
         var numrows=Math.floor((containerheight-20)/(gaugesize+20))
         numrows=numrows?numrows:num_gauge
+        console.log("NUMR:"+numrows)
         var numcolm=Math.ceil(num_gauge/numrows) //округляем в большую сторону
+        console.log("NUMC:"+numcolm)
         numrows=Math.ceil(num_gauge/numcolm)
+        console.log("NUMR:"+numrows)
         dashBoard.width=(numcolm)*(gaugesize+20)
         dashBoard.height=(gaugesize+20)*numrows
     }
@@ -255,6 +260,7 @@ Item {
                   //opacity: 0.5
                   width:  gaugesize;
                   height: gaugesize;
+                  objectName: "voltage_mgbu"
                   Pribor3 {
                       width: parent.width-10; height: parent.height-10
                       maximumValue: 600
@@ -278,6 +284,7 @@ Item {
                   //opacity: 0.5
                   width:  gaugesize;
                   height: gaugesize;
+                  objectName: "current_mgbu"
                   Pribor3 {
                       width: parent.width-10; height: parent.height-10
                       maximumValue: 50
@@ -299,6 +306,7 @@ Item {
                     color:"transparent";
                     width:  gaugesize;
                     height: gaugesize;
+                    objectName: "current_a"
                     Pribor {
                         width: parent.width-10; height: parent.height-10
                         anchors.centerIn: parent
@@ -316,6 +324,7 @@ Item {
                     color:"transparent";
                     width:  gaugesize;
                     height: gaugesize;
+                    objectName: "voltage"
                     Pribor {
                         width: parent.width-10; height: parent.height-10
                         maximumValue: 500
@@ -334,6 +343,7 @@ Item {
                     color:"transparent";
                     width:  gaugesize;
                     height: gaugesize;
+                    objectName: "temperature"
                     Pribor {
                         width: parent.width-10; height: parent.height-10
                         maximumValue: 120
@@ -447,7 +457,7 @@ Item {
                     width:  gaugesize;
                     height: gaugesize;
                     visible: dashboard.state==="gkgbu"?true:false
-                    onVisibleChanged: calculatesize()
+                    //onVisibleChanged: calculatesize()
                     Pribor {
                         width: parent.width-10; height: parent.height-10
                         maximumValue: 900
@@ -487,7 +497,7 @@ Item {
                     width:  gaugesize;
                     height: gaugesize;
                     visible: dashboard.state==="grab6"
-                    onVisibleChanged: calculatesize()
+                    //onVisibleChanged: calculatesize()
                     Pribor {
                         width: parent.width-10; height: parent.height-10
                         maximumValue: 100

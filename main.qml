@@ -301,7 +301,7 @@ Window {
               win.visibility = win.visibility===Window.FullScreen?Window.Maximized:Window.FullScreen;
               break;
           case "PICTURE":
-              picture.visible = !picture.visible;
+              //picture.visible = !picture.visible;
               break;
           case "LAYOUT":
               changestate();
@@ -592,7 +592,7 @@ Window {
                     id: t2
                     color: "yellow"
                     font.pointSize: 12
-                    visible: cams[1].index
+                    visible: cams[1].cameraenabled
                     //anchors.centerIn: parent
                     text: "Статус видео 2: "+statename(vlcPlayer2.state)
                 }
@@ -600,9 +600,17 @@ Window {
                     id: t3
                     color: "yellow"
                     font.pointSize: 12
-                    visible: cams[2].index
+                    visible: cams[2].cameraenabled
                     //anchors.centerIn: parent
                     text: "Статус видео 3: "+statename(vlcPlayer3.state)
+                }
+                Text {
+                    id: t4
+                    color: "yellow"
+                    font.pointSize: 12
+                    visible: cams[3].cameraenabled
+                    //anchors.centerIn: parent
+                    text: "Статус видео 4: "+statename(vlcPlayer4.state)
                 }
             }
         }
@@ -761,14 +769,14 @@ Window {
                 }
             }
         ]
-        Image {
-            id: picture
-            visible: false
-            fillMode: Image.PreserveAspectCrop
-            source: "file:///c:/Users/1/Documents/qt/giko_rig/skin/q.png"
-            anchors.fill: parent
-            anchors.margins: 20
-        }
+//        Image {
+//            id: picture
+//            visible: false
+//            fillMode: Image.PreserveAspectCrop
+//            source: "file:///c:/Users/1/Documents/qt/giko_rig/skin/q.png"
+//            anchors.fill: parent
+//            anchors.margins: 20
+//        }
         //###################################################################################################
     }
     ControlPanel {
