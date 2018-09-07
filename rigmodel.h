@@ -7,7 +7,7 @@
 #include <QString>
 #include <QTimer>
 #include <QSettings>
-
+#include <QtGlobal>
 class cRigmodel : public QObject
 {
 
@@ -98,8 +98,8 @@ public:
     void setAddress(const QString  &address);
     QString address() const;
 
-    void setPort(const int &port);
-    int  port() const;
+    void setPort(const quint16 &port);
+    quint16  port() const;
 
     void setTimer_send_interval(const int &timer_send_interval);
     int  timer_send_interval() const;
@@ -289,13 +289,13 @@ private:
     int m_tangag=10;
     int m_kren=10;
     int m_turns=0;
-
+    QString gmod_decode(QString gmod) const;
     unsigned int m_position=60842;
     QString m_rigtype="mgbu"; //grab2,grab6,gkgbu,mgbu
 
 
     QString m_address="localhost";
-    unsigned int m_port=1212;
+    quint16 m_port=1212;
     int m_freerun;
     bool m_client_connected = false;
 

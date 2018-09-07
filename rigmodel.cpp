@@ -58,7 +58,8 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(gmodChanged()),this, SLOT(sendData()));
 
     connect(&timer_connect, SIGNAL(timeout()), this, SLOT(start_client()));
-    start_client();
+    //start_client();
+    QTimer::singleShot(3000, this, SLOT(start_client())); //конектимся через 3 секунды после выполнения конструктора
     timer_connect.start(m_timer_connect_interval);
     connect(&timer_send, SIGNAL(timeout()), this, SLOT(sendData()));
     timer_send.start(m_timer_send_interval);
@@ -72,7 +73,7 @@ void cRigmodel::reset()
 
 void cRigmodel::saveSettings()
 {
-    qDebug()<<"Rig saveSettings addres:"<<m_address<<"port:"<<m_port;
+    //qDebug()<<"Rig saveSettings addres:"<<m_address<<"port:"<<m_port;
     QSettings settings("HYCO", "Rig Console");
     settings.setValue("RigAddress",m_address);
     settings.setValue("RigPort",m_port);
@@ -95,7 +96,7 @@ void cRigmodel::readSettings()
 
     QSettings settings("HYCO", "Rig Console");
     m_address=settings.value("RigAddress","localhost").toString();
-    m_port=settings.value("RigPort","1212").toUInt();
+    m_port=static_cast<quint16>(settings.value("RigPort","1212").toUInt());
     setFreerun(settings.value("RigFreerun","0").toInt());
     m_timer_send_interval=settings.value("RigSendInterval","2000").toInt();
     m_timer_connect_interval=settings.value("RigConnectInterval","30000").toInt();
@@ -199,7 +200,7 @@ void cRigmodel::setRigtype(const QString &rigtype)
     if (m_rigtype == rigtype) return;
     m_rigtype = rigtype;
     emit rigtypeChanged();
-    qDebug()<<"Rig: rigtype:"<<m_rigtype;
+    //qDebug()<<"Rig: rigtype:"<<m_rigtype;
 }
 
 QString cRigmodel::rigtype() const
@@ -216,7 +217,7 @@ void cRigmodel::setLamp(const bool &lamp)
 {
     m_lamp = lamp;
     emit lampChanged();
-    qDebug()<<"RIG: Lamp swithced";
+    //qDebug()<<"RIG: Lamp swithced";
 }
 
 bool cRigmodel::lamp() const
@@ -228,7 +229,7 @@ void cRigmodel::setCamera(const bool &camera)
 {
     m_camera = camera;
     emit cameraChanged();
-    qDebug()<<"Rig Camera power switched";
+    //qDebug()<<"Rig Camera power switched";
 }
 
 bool cRigmodel::camera() const
@@ -312,12 +313,12 @@ QString cRigmodel::address() const
     return m_address;
 }
 
-int cRigmodel::port() const
+quint16 cRigmodel::port() const
 {
     return m_port;
 }
 
-void cRigmodel::setPort(const int  &port)
+void cRigmodel::setPort(const quint16  &port)
 {
     m_port = port;
     emit portChanged();
@@ -372,13 +373,13 @@ void cRigmodel::start_client()
 void cRigmodel::clientConnected()
 {
     qDebug()<<"Rig Client connected to address >>>"+this->address()+" port:"+ ::QString().number(m_port);
-    m_client_connected=true;
-    emit client_connectedChanged();
-    sendData();
+    //qDebug()<<"Rig Network state >>> "<<tcpClient.errorString();
+    setClient_connected(true);
+    //sendData();
 }
 void cRigmodel::clientDisconnected()
 {
-    qDebug()<<"Rig Client disconnected form address >>>"+this->address()+" port:"+ this->port();
+    qDebug()<<"Rig Client disconnected form address >>>"+this->address()+" port:"+ QString::number(port());
     setClient_connected(false);
     setGood_data(false);
     reset();
@@ -391,7 +392,7 @@ void cRigmodel::clientDisconnected()
 void cRigmodel::updateClientProgress(qint64 numBytes)
 {
     // callen when the TCP client has written some bytes
-    bytesWritten += (int)numBytes;
+    bytesWritten += static_cast<quint16>(numBytes);
     //qDebug()<<"Rig Update client progress >>>"+::QString().number(bytesWritten);
 }
 
@@ -429,16 +430,16 @@ void cRigmodel::sendData()
 //        +";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
     Data="{ana1:"+::QString().number(scaling(m_joystick_y1),10);
     if (m_rigtype=="gkgbu"||m_rigtype=="grab6"||m_rigtype=="mgbu") Data=Data +";ana2:"+::QString().number(scaling(m_joystick_y2),10);
-    if (m_rigtype=="gkgbu"||m_rigtype=="mgbu") Data=Data+";ana3:"+::QString().number(scaling(m_joystick_x1),10)+";gmod:"+m_gmod;
+    if (m_rigtype=="gkgbu"||m_rigtype=="mgbu") Data=Data+";ana3:"+::QString().number(scaling(m_joystick_x1),10)+";gmod:"+gmod_decode(m_gmod);
     //яркости прожекторов
-    if (m_rigtype=="mgbu") Data=Data+";light:"+::QString().number(m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16));
+    if (m_rigtype=="mgbu") Data=Data+";svet:"+::QString().number(m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16));
 
     Data=Data+";dig1:"+::QString().number(data[0],10)+"}CONSDATA";
-    qDebug()<<"Rig - send data: "<<Data;
+    //qDebug()<<"Rig - send data: "<<Data;
 
-    bytesToWrite = (int)tcpClient.write(::QByteArray(Data.toLatin1()).data());
+    bytesToWrite = static_cast<int>(tcpClient.write(::QByteArray(Data.toLatin1()).data()));
     if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
-    if (bytesToWrite>=0)qDebug()<<"Rig: Data sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
+    if (bytesToWrite>=0)qDebug()<<"Rig:sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
 }
 bool cRigmodel::handle_tag(const QString &tag, const QString &val)
 {
@@ -447,6 +448,7 @@ bool cRigmodel::handle_tag(const QString &tag, const QString &val)
     if(it != _fmap.end()) {
         if (val=="type") {
             setRigtype(val);
+            if (rigtype()=="mgbu_") setRigtype("mgbu")
             ;
             if(!(ok=(m_rigtype=="grab2"||m_rigtype=="grab6"||m_rigtype=="gkgbu"||m_rigtype=="mgbu")))
                 qWarning()<<"Data! Wrong rig type <"<<val<<">";
@@ -566,23 +568,33 @@ void cRigmodel::sendKoeff()
     Data=Data+";limv:"+::QString().number(m_limv,10);
     Data=Data+";limz:"+::QString().number(m_limz,10);
     Data=Data+"}CONSDATA";
-    qDebug()<<"Rig - send data: "<<Data;
+    //qDebug()<<"Rig - send data: "<<Data;
 
-    bytesToWrite = (int)tcpClient.write(::QByteArray(Data.toLatin1()).data());
+    bytesToWrite = static_cast<int>(tcpClient.write(::QByteArray(Data.toLatin1()).data()));
     if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
-    if (bytesToWrite>=0)qDebug()<<"Rig: Data sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
+    if (bytesToWrite>=0)qDebug()<<"Rig:sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
 }
 
 
 int cRigmodel::scaling(const int &value)
 {
    if (value==0) return 0;
-   float df=127.0*m_freerun/100.0;
-   qDebug()<<"Rig - scale df: "<<df<<"f:"<<-df + value*(100-m_freerun)/100.0 <<" v:"<<value;
+   double df=127.0*m_freerun/100.0;
+   //qDebug()<<"Rig - scale df: "<<df<<"f:"<<-df + value*(100-m_freerun)/100.0 <<" v:"<<value;
    if  (value>0)
      return ceil(df + value*(100-m_freerun)/100.0);
    else
        return -ceil(df - value*(100-m_freerun)/100.0);
+}
+
+QString cRigmodel::gmod_decode(QString gmod) const
+{
+    if (rigtype()!="mgbu") return gmod;
+    if (gmod=="drill") return "grup1";
+    if (gmod=="bench") return "grup2";
+    if (gmod=="tower") return "grup3";
+    if (gmod=="platf") return "grup4";
+    return "unknw";
 }
 
 int cRigmodel::leak() const

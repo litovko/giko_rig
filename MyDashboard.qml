@@ -101,24 +101,25 @@ Item {
     Component.onCompleted: calculatesize()
     onVisibleChildrenChanged: calculatesize()
     function calculatesize(){
-        console.log("state:"+state)
-        var num_gauge=flowrow.visibleChildren.length
-        console.log(flowrow.visibleChildren[1].objectName)
-        console.log("NUMG:"+num_gauge)
-        //console.log("Dashboard - recalculate width and height num gauges"+num_gauge)
+
+        // ВРЕТ ФУНКЦИЯ СТРАШНО
+        //var num_gauge=flowrow.visibleChildren.length
+        var num_gauge=6
+        if (state=="mgbu") num_gauge=10 //прописал железно
+        if (state=="grab6") num_gauge=7
         var numrows=Math.floor((containerheight-20)/(gaugesize+20))
         numrows=numrows?numrows:num_gauge
-        console.log("NUMR:"+numrows)
+
         var numcolm=Math.ceil(num_gauge/numrows) //округляем в большую сторону
-        console.log("NUMC:"+numcolm)
+
         numrows=Math.ceil(num_gauge/numcolm)
-        console.log("NUMR:"+numrows)
+
         dashBoard.width=(numcolm)*(gaugesize+20)
         dashBoard.height=(gaugesize+20)*numrows
     }
 
     onStateChanged: {
-        console.log("DashBoard state:"+state);
+
         calculatesize()
         j.lock=false
 
