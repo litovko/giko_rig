@@ -27,6 +27,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     _fmap["tang"]  = std::bind(&cRigmodel::setTangag, this, _1);
     _fmap["kren"]  = std::bind(&cRigmodel::setKren, this, _1);
     _fmap["leak"]  = std::bind(&cRigmodel::setLeak, this, _1);
+    _fmap["vchs"]  = std::bind(&cRigmodel::setLeak_voltage, this, _1);
     _fmap["type"]  = std::bind(&cRigmodel::setRigtypeInt, this, _1);
     reset();
     //=======
@@ -59,7 +60,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 
     connect(&timer_connect, SIGNAL(timeout()), this, SLOT(start_client()));
     //start_client();
-    QTimer::singleShot(3000, this, SLOT(start_client())); //конектимся через 3 секунды после выполнения конструктора
+    QTimer::singleShot(1000, this, SLOT(start_client())); //конектимся через 3 секунды после выполнения конструктора
     timer_connect.start(m_timer_connect_interval);
     connect(&timer_send, SIGNAL(timeout()), this, SLOT(sendData()));
     timer_send.start(m_timer_send_interval);
@@ -69,6 +70,16 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 void cRigmodel::reset()
 {
     for (auto const& f : _fmap) f.second(0);
+}
+
+void cRigmodel::reconnect()
+{
+    tcpClient.disconnectFromHost();
+    tcpClient.close();
+    tcpClient.abort();
+    setClient_connected(false);
+    QTimer::singleShot(2000, this, SLOT(start_client())); //конектимся через 3 секунды после выполнения конструктора
+
 }
 
 void cRigmodel::saveSettings()
@@ -393,7 +404,7 @@ void cRigmodel::updateClientProgress(qint64 numBytes)
 {
     // callen when the TCP client has written some bytes
     bytesWritten += static_cast<quint16>(numBytes);
-    //qDebug()<<"Rig Update client progress >>>"+::QString().number(bytesWritten);
+    qDebug()<<"Rig Update client progress >>>"+::QString().number(bytesWritten);
 }
 
 void cRigmodel::displayError(QAbstractSocket::SocketError socketError)
@@ -417,10 +428,10 @@ void cRigmodel::sendData()
             +   m_lamp*4
             //+ m_camera*8
             + m_engine2*8
-            + m_camera1*16
-            + m_camera2*32
-            + m_camera3*64
-            + m_camera4*128            
+            + m_camera1*16*m_camera
+            + m_camera2*32*m_camera
+            + m_camera3*64*m_camera
+            + m_camera4*128*m_camera
             ;
     QString Data; // Строка отправки данных.
 // проверяем, есть ли подключение клиента. Если подключения нет, то ничего не отправляем.
@@ -587,6 +598,17 @@ int cRigmodel::scaling(const int &value)
        return -ceil(df - value*(100-m_freerun)/100.0);
 }
 
+int cRigmodel::leak_voltage() const
+{
+    return m_leak_voltage;
+}
+
+void cRigmodel::setLeak_voltage(int leak_voltage)
+{
+    m_leak_voltage = leak_voltage;
+    emit leak_voltageChanged();
+}
+
 QString cRigmodel::gmod_decode(QString gmod) const
 {
     if (rigtype()!="mgbu") return gmod;
@@ -594,7 +616,7 @@ QString cRigmodel::gmod_decode(QString gmod) const
     if (gmod=="bench") return "grup2";
     if (gmod=="tower") return "grup3";
     if (gmod=="platf") return "grup4";
-    return "unknw";
+    return gmod;
 }
 
 int cRigmodel::leak() const

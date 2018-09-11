@@ -40,6 +40,7 @@ void cCamera::readSettings()
     setComby(settings.value("Cam"+QString::number(m_index)+"Comby",0).toInt());
     setCameraenabled(settings.value("Cam"+QString::number(m_index)+"Enabled",false).toBool());
     m_url1=url1(); //меняем строку запуска камеры
+    emit url1Changed();
     setOverlaytext(settings.value("Cam"+QString::number(m_index)+"OverlayText","Cam"+QString::number(m_index)).toString());
     setHistogram(settings.value("Cam"+QString::number(m_index)+"Histogram",0).toInt());
     qDebug()<<"Read settings Cam"<<QString::number(m_index)<<":"<<"Cam"<<QString::number(m_index)<<":"<<"readSettings addres:"<<m_address;
@@ -92,6 +93,7 @@ QString cCamera::title() const
         m_index = index;
         get_parametrs();
         emit indexChanged();
+        emit url1Changed();
         //emit addressChanged();
     }
     //#############
@@ -301,7 +303,7 @@ QString cCamera::title() const
     QString cCamera::url1() const
     {
         QString s;
-        if (m_type==2) {
+        if (m_type==2) { // камеры ЮМГ
            s="rtsp://"+m_address+":554/main";
 
 //                   rtsp://192.168.123.143:554/main - для основного потока
@@ -551,7 +553,8 @@ QString cCamera::title() const
     {
         m_type = type;
         emit typeChanged();
-        qDebug()<<"Camera type changed:"<<type;
+        emit url1Changed();
+        qDebug()<<"Camera type changed"<<" ind:"<<index()<< type<<" url: "<< url1();
     }
 
 

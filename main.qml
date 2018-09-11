@@ -306,6 +306,18 @@ Window {
           case "LAYOUT":
               changestate();
               break;
+          case "LAYOUT_CAM1":
+              mainRect.state=cmd;
+              break;
+          case "LAYOUT_CAM2":
+              mainRect.state=cmd;
+              break;
+          case "LAYOUT_CAM3":
+              mainRect.state=cmd;
+              break;
+          case "LAYOUT_CAM4":
+              mainRect.state=cmd;
+              break;
           case "LAMPS":
               lampsSettings.visible=!lampsSettings.visible
               lampsSettings.height=lampsSettings.visible?160:0
@@ -324,6 +336,9 @@ Window {
           case "ENGINE2":
               rig.engine2=rig.engine2?false:true;
 
+              break;
+          case "RECONNECT":
+              rig.reconnect();
               break;
           case "PUMP":
               rig.pump=rig.pump?false:true;
@@ -659,6 +674,28 @@ Window {
 
         //###################################################################################################
         states: [
+            State { // первая камера
+                name: "LAYOUT_CAM1"
+                PropertyChanges { target: surface1; z: 0;opacity: 1; visible: cams[1].cameraenabled;
+                    height: mainRect.height / 1 - anchors.topMargin * 2;
+                    width: mainRect.width / 1 - anchors.leftMargin * 2;
+                    anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface2; z: 1; opacity: 0.6; visible: cams[2].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface3; z: 1; opacity: 0.6; visible: cams[3].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface2.bottom}
+                PropertyChanges { target: surface4; z: 1; opacity: 0.6; visible: cams[4].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface3.bottom}
+
+            },
+            State { // первая камера
+                name: "LAYOUT_CAM2"
+                PropertyChanges { target: surface2; z: 0;opacity: 1; visible: cams[2].cameraenabled;
+                    height: mainRect.height / 1 - anchors.topMargin * 2;
+                    width: mainRect.width / 1 - anchors.leftMargin * 2;
+                    anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface1; z: 1; opacity: 0.6; visible: cams[1].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface3; z: 1; opacity: 0.6; visible: cams[3].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface1.bottom}
+                PropertyChanges { target: surface4; z: 1; opacity: 0.6; visible: cams[4].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface3.bottom}
+
+            },
             State { // первая камера
                 name: "3-KAM-bol1"
                 PropertyChanges { target: surface1; z: 0;opacity: 1; visible: true;

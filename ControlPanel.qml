@@ -108,6 +108,8 @@ Item {
                     width: lampSize
                     bottomText:"СВЯЗЬ"
                     active:source.client_connected
+                    command: "RECONNECT"
+                    onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
                     id: data
@@ -130,7 +132,8 @@ Item {
                     bottomText:cam[0].title
                     active:cam[0].camerapresent
                     error: cam[0].onrequest
-                    command: "LAYOUT"
+                    visible: cam[0].cameraenabled
+                    command: "LAYOUT_CAM1"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
@@ -138,10 +141,11 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:cam[1].title
-
+                    visible: cam[1].cameraenabled
                     active:cam[1].camerapresent
-                    visible: cam[1].index
                     error: cam[1].onrequest
+                    command: "LAYOUT_CAM2"
+                    onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
                     id: camera3
@@ -149,8 +153,10 @@ Item {
                     width: lampSize
                     bottomText:cam[2].title
                     active:cam[2].camerapresent
-                    visible: cam[2].index
+                    visible: cam[2].cameraenabled
                     error: cam[2].onrequest
+                    command: "LAYOUT_CAM3"
+                    onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
                     id: camera4
@@ -158,8 +164,10 @@ Item {
                     width: lampSize
                     bottomText:cam[3].title
                     active:cam[2].camerapresent
-                    visible: cam[3].index
+                    visible: cam[3].cameraenabled
                     error: cam[3].onrequest
+                    command: "LAYOUT_CAM4"
+                    onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
 
             }

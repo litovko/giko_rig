@@ -25,7 +25,7 @@ class cJoystick : public QObject
     Q_PROPERTY(int y2axis_ind READ y2axis_ind  WRITE setY2axis_ind NOTIFY y2axis_indChanged)
     Q_PROPERTY(bool ispresent READ ispresent WRITE setIspresent  NOTIFY ispresentChanged)
     Q_PROPERTY(bool lock READ lock WRITE setLock  NOTIFY lockChanged)
-    Q_PROPERTY(int devider READ devider WRITE setDevider NOTIFY deviderChanged)
+    Q_PROPERTY(int devider READ devider WRITE setDevider NOTIFY deviderChanged) //делитель выходных значений джойстика
     Q_PROPERTY(int key_0_ind READ key_0_ind WRITE setKey_0_ind NOTIFY key_0_indChanged)
     Q_PROPERTY(int key_1_ind READ key_1_ind WRITE setKey_1_ind NOTIFY key_1_indChanged)
     Q_PROPERTY(int key_2_ind READ key_2_ind WRITE setKey_2_ind NOTIFY key_2_indChanged)

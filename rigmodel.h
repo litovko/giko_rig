@@ -14,6 +14,7 @@ class cRigmodel : public QObject
     Q_OBJECT
     Q_PROPERTY(unsigned int position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(int leak READ leak WRITE setLeak NOTIFY leakChanged)
+    Q_PROPERTY(int leak_voltage READ leak_voltage WRITE setLeak_voltage NOTIFY leak_voltageChanged)
     Q_PROPERTY(int pressure READ pressure WRITE setPressure NOTIFY pressureChanged)
     Q_PROPERTY(int pressure2 READ pressure2 WRITE setPressure2 NOTIFY pressure2Changed)
     Q_PROPERTY(int temperature2 READ temperature2 WRITE setTemperature2 NOTIFY temperature2Changed)
@@ -206,6 +207,9 @@ public:
     bool camera4() const;
     void setCamera4(bool camera4);
 
+    int leak_voltage() const;
+    void setLeak_voltage(int leak_voltage);
+
 signals:
     void positionChanged();
     void pressureChanged();
@@ -220,6 +224,7 @@ signals:
     void ampere2Changed();
     void ampere3Changed();
     void leakChanged();
+    void leak_voltageChanged();
     void altitudeChanged();
     void tangagChanged();
     void krenChanged();
@@ -270,6 +275,7 @@ public slots:
     void readData(); //расклаываем полученные от сервера данные по параметрам
     void sendKoeff();
     void reset();
+    Q_INVOKABLE void reconnect();
 private:
     int scaling(const int &value);
     int m_pressure=50;
@@ -285,6 +291,7 @@ private:
     int m_ampere2=25;
     int m_ampere3=23;
     int m_leak=20;
+    int m_leak_voltage=20;
     int m_altitude=10;
     int m_tangag=10;
     int m_kren=10;

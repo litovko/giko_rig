@@ -90,7 +90,7 @@ Item {
                 model: ListModel {
                     id: listCams
                 }
-                onCurrentIndexChanged: currentcam=currentIndex
+                onCurrentIndexChanged: {currentcam=currentIndex; camurl.text= cam[currentcam].url1}
             }
         }
         Label {

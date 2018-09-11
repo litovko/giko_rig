@@ -407,8 +407,8 @@ Item {
                         maximumValue: 200
                         stepSize: 50
                         anchors.centerIn: parent
-                        value1: (source.pressure/10).toFixed(1)
-                        value2: (source.pressure2/10).toFixed(1)
+                        value1: source.pressure
+                        value2: source.pressure2
                         thirdvisible: false
                         centrТext: "кПа"
                         bottomText: "Давл. масла"
@@ -517,12 +517,14 @@ Item {
                     color:"transparent";
                     width:  gaugesize;
                     height: gaugesize;
-                    Pribor {
+                    Pribor3 {
                         width: parent.width-10; height: parent.height-10
                         maximumValue: 500
                         stepSize: 100
                         anchors.centerIn: parent
-                        value: source.leak
+                        value1: source.leak
+                        value2: source.leak_voltage
+                        thirdvisible: false
                         centrТext: "Z"
                         bottomText: "Изоляция"
                         warningThreshold: maximumValue*0.2

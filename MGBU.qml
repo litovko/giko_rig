@@ -40,7 +40,7 @@ Item {
            PropertyChanges {target: name;   text: "Манипулятор"}
            PropertyChanges {target: y1;   text: qsTr("ЗАМОК"); visible: true}
            PropertyChanges {target: y2;   text: qsTr("ПРАВАЯ"); visible: false}
-           PropertyChanges {target: x1;   text: qsTr("КАРЕТКА"); visible: true}
+           PropertyChanges {target: x1;   text: qsTr("СТРЕЛА"); visible: true}
            PropertyChanges {target: bubble; visible: false}
            PropertyChanges {target: coordinate; visible: true}
         },
@@ -100,8 +100,8 @@ Item {
         width:300
         anchors.bottom: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        color: "transparent"
-        opacity: 1
+        color: "black"
+        opacity: 0.6
         border.color: "yellow"
         radius: 10
         border.width: 1
