@@ -11,15 +11,15 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     using namespace std::placeholders;
     _fmap["spxy"]  = std::bind(&cRigmodel::setPosition, this, _1);
     _fmap["toil"]  = std::bind(&cRigmodel::setTemperature, this, _1);
-    _fmap["toil2"] = std::bind(&cRigmodel::setTemperature2, this, _1);
+    _fmap["toi2"] = std::bind(&cRigmodel::setTemperature2, this, _1);
     _fmap["poil"]  = std::bind(&cRigmodel::setPressure, this, _1);
-    _fmap["poil2"] = std::bind(&cRigmodel::setPressure2, this, _1);
+    _fmap["poi2"] = std::bind(&cRigmodel::setPressure2, this, _1);
     _fmap["pwrv"]  = std::bind(&cRigmodel::setVoltage, this, _1);
-    _fmap["pwrv2"] = std::bind(&cRigmodel::setVoltage2, this, _1);
-    _fmap["pwrv3"] = std::bind(&cRigmodel::setVoltage3, this, _1);
+    _fmap["pwv2"] = std::bind(&cRigmodel::setVoltage2, this, _1);
+    _fmap["pwv3"] = std::bind(&cRigmodel::setVoltage3, this, _1);
     _fmap["pwra"]  = std::bind(&cRigmodel::setAmpere, this, _1);
-    _fmap["pwra2"] = std::bind(&cRigmodel::setAmpere2, this, _1);
-    _fmap["pwra3"] = std::bind(&cRigmodel::setAmpere3, this, _1);
+    _fmap["pwa2"] = std::bind(&cRigmodel::setAmpere2, this, _1);
+    _fmap["pwa3"] = std::bind(&cRigmodel::setAmpere3, this, _1);
     _fmap["altm"]  = std::bind(&cRigmodel::setAltitude, this, _1);
     _fmap["drpm"]  = std::bind(&cRigmodel::setTurns, this, _1);
     _fmap["dc1v"]  = std::bind(&cRigmodel::setVoltage24, this, _1);
@@ -415,12 +415,12 @@ void cRigmodel::sendData()
     data[0] = m_engine*1
             +   m_pump*2
             +   m_lamp*4
-            + m_camera*8
+            //+ m_camera*8
+            + m_engine2*8
             + m_camera1*16
             + m_camera2*32
             + m_camera3*64
-            + m_camera4*128
-            + m_engine2*256
+            + m_camera4*128            
             ;
     QString Data; // Строка отправки данных.
 // проверяем, есть ли подключение клиента. Если подключения нет, то ничего не отправляем.
