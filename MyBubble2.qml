@@ -18,7 +18,7 @@ Item {
     {
         var r=10
         c.save();
-        c.strokeStyle = Qt.rgba(0.5, 0.5, 1.0, 0.8)
+        c.strokeStyle = Qt.rgba(0.7, 0.7, 1.0, 1)
         c.lineWidth = 2
         c.beginPath()
         c.translate(width/2, height/2)
@@ -39,7 +39,7 @@ Item {
         var r=25
         var step=30
         c.save();
-        c.strokeStyle = Qt.rgba(0.5, 0.5, 1.0, 0.8)
+        c.strokeStyle = Qt.rgba(0.7, 0.7, 1.0, 1)
         c.lineWidth = 1
         c.beginPath()
         c.translate(width/2, height/2)
@@ -60,7 +60,7 @@ Item {
     function hline(c,angle, rad)
     {
         c.save();
-        c.strokeStyle = Qt.rgba(1.0, 1.0, 1.0, 0.5)
+        c.strokeStyle = Qt.rgba(1.0, 1.0, 1.0, 1)
         c.beginPath()
         c.moveTo(0,height/2);
         c.lineTo(width/2-rad,height/2);
@@ -74,7 +74,7 @@ Item {
         var m=angle*(height-15)/2/60;
         c.save();
         c.lineWidth = 5
-        c.strokeStyle = Qt.rgba(0.0, 1.0, 0, 0.8)
+        c.strokeStyle = Qt.rgba(0.0, 1.0, 0, 1)
         c.beginPath()
         c.translate(width/2, height/2)
         c.moveTo(-rad,m);
@@ -93,7 +93,7 @@ Item {
         var height_grad=60
         var font_size=15
         var tick_size=(height-font_size)/2/height_grad
-        var st=Qt.rgba(0.0, 1.0, 0.0, 0.8)
+        var st=Qt.rgba(0.0, 1.0, 0.0, 1)
         c.save();
         c.strokeStyle = st
         c.beginPath()
@@ -127,7 +127,7 @@ Item {
     function line(c, x1,y1,x2,y2)
     {
         c.save();
-        c.strokeStyle = Qt.rgba(1.0, 1.0, 1.0, 0.5)
+        c.strokeStyle = Qt.rgba(1.0, 1.0, 1.0, 1)
         c.lineWidth = 1
         c.beginPath()
         c.lineCap="butt"
@@ -190,6 +190,7 @@ Item {
         onPaint: {
             var ctx = getContext('2d')
             ctx.clearRect(0, 0, width, height)
+            //ctx.globalAlpha = 1
             //ctx.strokeStyle = "lightyellow"
             ctx.lineWidth =2
 //            ctx.strokeStyle = "#cf0";

@@ -101,7 +101,7 @@ Item {
         anchors.bottom: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         color: "black"
-        opacity: 0.6
+        opacity: 0.8
         border.color: "yellow"
         radius: 10
         border.width: 1
