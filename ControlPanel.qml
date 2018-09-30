@@ -85,6 +85,7 @@ Item {
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
+                    visible: false
                     id: engine2
                     height: lampSize
                     width: lampSize

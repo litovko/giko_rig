@@ -253,7 +253,14 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter;
                 font.pointSize: 9
                 color: joystick.lock?"white":"transparent"
-                text: "Блокировка"
+                text: "Защелка"
+
+            }
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter;
+                font.pointSize: 9
+                color: joystick.key_0||joystick.lock?"white":"red"
+                text: joystick.key_0||joystick.lock?"Работа":"Заблокировано"
 
             }
 

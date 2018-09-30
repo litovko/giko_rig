@@ -139,8 +139,8 @@ Item {
     MGBU {
         id: mgbu_pult
         //anchors.centerIn: parent
-        height: dashboard.gaugesize+30
-        width: dashboard.gaugesize
+        height: dashboard.gaugesize+48
+        width: dashboard.gaugesize+48
         joystick: j
         rigmodel: source
         btn0: j.key_1
@@ -484,7 +484,7 @@ Item {
                         stepSize: 20
                         anchors.centerIn: parent
 
-                        value: j.key_0*( j.y1axis>0?Math.round(j.y1axis*100/127):-Math.round(j.y1axis*100/127))
+                        value: (j.key_0||j.lock)*( j.y1axis>0?Math.round(j.y1axis*100/127):-Math.round(j.y1axis*100/127))
                         centrТext: "%"
                         bottomText: "Мощность"
                         warningThreshold: maximumValue*0.9
@@ -505,7 +505,7 @@ Item {
                         stepSize: 20
                         anchors.centerIn: parent
 
-                        value: j.key_0*( j.y2axis>0?Math.round(j.y2axis*100/127):-Math.round(j.y2axis*100/127))
+                        value: (j.key_0||j.lock)*( j.y2axis>0?Math.round(j.y2axis*100/127):-Math.round(j.y2axis*100/127))
                         centrТext: "%"
                         bottomText: "Мощность2"
                         warningThreshold: maximumValue*0.9
