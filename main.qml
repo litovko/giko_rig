@@ -26,47 +26,28 @@ Window {
     property variant curfilesize:[-1,-1,-1]
     property bool onrecord: true; //true если меняется размер записываемого файла.
     property bool camera_umg: false //false - камеры ПМГРЭ true - камеры ЮМГ
+    property string streaming: ":sout=#duplicate{dst=display,dst=std{access=file,mux=mp4,dst=" //параметры стриминга vlc при записи - дубликация потоков
+    //":sout=#duplicate{dst=display,dst=std{access=file,mux=mp4,dst="
+    // regedit
+    //:sout=#duplicate{dst=display, dst=std{access=file,mux=mpeg1,dst=
+    //-nothing,--never ,:none=NAN,--sout-mux-caching=5000, --file-caching=5000,--no-audio
 
     property list<VlcPlayer> players:[
         VlcPlayer {
             id: vlcPlayer1;
-            Component.onCompleted: {
-                if (cam1.index===0 || play_on_start===0) return
-                stop();
-                playlist.clear();
-                playlist.addWithOptions(cam1.url1,getrecordoption(1));
-                if(cams[0].index)play();
-            }
+
         },
         VlcPlayer {
             id: vlcPlayer2;
-            Component.onCompleted: {
-                if (cam2.index===0|| play_on_start===0) return
-                stop();
-                playlist.clear();
-                playlist.addWithOptions(cam2.url1,getrecordoption(2));
-                if(cams[1].index)play();
-            }
+
         },
         VlcPlayer {
             id: vlcPlayer3;
-            Component.onCompleted: {
-                if (cam3.index===0|| play_on_start===0) return
-                stop();
-                playlist.clear();
-                playlist.addWithOptions(cam3.url1,getrecordoption(3));
-                if(cams[2].index)play();
-            }
+
         },
         VlcPlayer {
             id: vlcPlayer4;
-            Component.onCompleted: {
-                if (cam4.index===0|| play_on_start===0) return
-                stop();
-                playlist.clear();
-                playlist.addWithOptions(cam4.url1,getrecordoption(3));
-                if(cams[2].index)play();
-            }
+
         }
 
     ]
@@ -106,9 +87,10 @@ Window {
         property alias filepath: win.filepath
         property alias filesize: win.filesize
         property alias camera_umg: win.camera_umg
+        property alias streaming: win.streaming
     }
     function player_play(player_number){
-        if (cams[0].timeout||cams[1].timeout||cams[2].timeout) return;
+        if (cams[0].timeout||cams[1].timeout||cams[2].timeout||cams[3].timeout) return;
         players[player_number].stop();
         players[player_number].playlist.clear();
         players[player_number].playlist.addWithOptions(cams[player_number].url1,getrecordoption(player_number));
@@ -151,21 +133,19 @@ Window {
             for (var i=0; i<vlc.length; i++) sopt.push(vlc[i]);
             return sopt;
         }
-//        console.log("Camindex="+camindex);
-//        console.log("Camindex="+camindex+"cam:" +cams[camindex].title+"text:"+cams[camindex].overlaytext);
-//        console.log("FN Time:"+ dt + "FilePath:"+filepath );
+
         var fn=file_name(camindex); cams[camindex].recordfile=fn;
+//        var popt=[":network-caching="+network_caching.toString()
+//                  ,":sout=#stream_out_duplicate{dst=display,dst=std{access=file,mux=mp4,dst="
+//                  + fn
+//                  + "}}"
+//                 ]
         var popt=[":network-caching="+network_caching.toString()
-                  ,":sout=#stream_out_duplicate{dst=display,dst=std{access=file,mux=mp4,dst="
+                  , streaming
                   + fn
                   + "}}"
                  ]
-//        var popt=[":network-caching="+network_caching.toString()
-//                  ,":sout=#stream_out_duplicate{dst=display,dst=std{access=file,mux=mp4,dst="+filepath+"hyco-"
-//                  +"cam"+(camindex+1)+"-"
-//                  +cams[camindex].overlaytext + "-"
-//                  + dt.toLocaleString(Qt.locale(),"dd-MM-yyyy_HH-mm-ss")
-//                  +".mpg}}"]
+
         for (var i=0; i<vlc.length; i++) popt.push(vlc[i]);
         console.log("Options with recording Cam"+(camindex+1)+":  "+popt);
         //:venc=ffmpeg,--no-audio,--high-priority,:threads=16
@@ -173,7 +153,7 @@ Window {
     }
     function check_file_size(){
         if (recording===0) return;
-        for (var i=0; i<3; i++) {
+        for (var i=0; i<4; i++) {
             if(players[i].state===3) {
                 console.log ("file_name"+i+":"+cams[i].recordfile + "size:"+ cams[i].get_filesize())
                 if (curfilesize[i]>=cams[i].get_filesize()) {
@@ -209,8 +189,18 @@ Window {
         camera4: camSettings.cam4
     }
     function changestate(){
-                    console.log("STATE: "+mainRect.state + " ind:" +cams[0].index+cams[1].index+cams[2].index);
-                    console.log((cams[1].cameraenabled+"  "+cams[2].cameraenabled));
+
+                    console.log("STATE: "+mainRect.state + " ind:" +cams[0].index+cams[1].index+cams[2].index+cams[3].index);
+
+        if (rig.rigtype==="mgbu") {
+            console.log("CHANGE LAYOUT FOR MGBU")
+            if(mainRect.state==="LAYOUT_CAM4") { mainRect.state="4-KAM-all"; return}
+            if(mainRect.state==="LAYOUT_CAM3") { mainRect.state="LAYOUT_CAM4"; return}
+            if(mainRect.state==="LAYOUT_CAM2") { mainRect.state="LAYOUT_CAM3"; return}
+            if(mainRect.state==="LAYOUT_CAM1") { mainRect.state="LAYOUT_CAM2"; return}
+            if(mainRect.state==="4-KAM-all") {   mainRect.state="LAYOUT_CAM1"; return}
+            mainRect.state="4-KAM-all"; return;
+        }
                     if ((!cams[1].cameraenabled&&!cams[2].cameraenabled)) // только одна камера
                         if (mainRect.state==="1-KAM-bol") mainRect.state="1-KAM-mal"
                         else mainRect.state="1-KAM-bol"
@@ -234,6 +224,7 @@ Window {
               players[0].stop();
               players[1].stop();
               players[2].stop();
+              players[3].stop();
               menu.visible=false;
               camsettings.visible=false
               joysetup.visible=false;
@@ -244,6 +235,7 @@ Window {
               if(cams[0].cameraenabled) player_play(0);
               if(cams[1].cameraenabled) player_play(1);
               if(cams[2].cameraenabled) player_play(2);
+              if(cams[3].cameraenabled) player_play(3);
               menu.visible=false;
               camsettings.visible=false
               settings.visible=false;
@@ -388,6 +380,13 @@ Window {
                                 easing.type: Easing.InOutQuad
                             }
                         }
+                Behavior on y {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
                 Behavior on width{
 
                             NumberAnimation {
@@ -415,6 +414,13 @@ Window {
                 opacity: 1;
                 visible: false
                 Behavior on opacity {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                Behavior on y {
 
                             NumberAnimation {
                                 duration: 600
@@ -454,6 +460,13 @@ Window {
                                 easing.type: Easing.InOutQuad
                             }
                         }
+                Behavior on y {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
                 Behavior on width{
 
                             NumberAnimation {
@@ -481,6 +494,13 @@ Window {
                 opacity: 1;
                 visible: false
                 Behavior on opacity {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                Behavior on y {
 
                             NumberAnimation {
                                 duration: 600
@@ -676,27 +696,49 @@ Window {
         states: [
             State { // первая камера
                 name: "LAYOUT_CAM1"
-                PropertyChanges { target: surface1; z: 0;opacity: 1; visible: cams[1].cameraenabled;
-                    height: mainRect.height / 1 - anchors.topMargin * 2;
-                    width: mainRect.width / 1 - anchors.leftMargin * 2;
-                    anchors.left: mainRect.left; anchors.top: mainRect.top}
-                PropertyChanges { target: surface2; z: 1; opacity: 0.6; visible: cams[2].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: mainRect.top}
-                PropertyChanges { target: surface3; z: 1; opacity: 0.6; visible: cams[3].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface2.bottom}
-                PropertyChanges { target: surface4; z: 1; opacity: 0.6; visible: cams[4].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface3.bottom}
+                PropertyChanges { target: surface1; z: 0;opacity: 1; visible: cams[0].cameraenabled;
+                    height: mainRect.height / 1 - 10;
+                    width: mainRect.width / 1 - 10;
+                    anchors.centerIn: parent}
+                PropertyChanges { target: surface2; z: 1; opacity: 0.6; visible: cams[1].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface3; z: 1; opacity: 0.6; visible: cams[2].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface2.bottom}
+                PropertyChanges { target: surface4; z: 1; opacity: 0.6; visible: cams[3].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface3.bottom}
 
             },
-            State { // первая камера
+            State { // вторая камера
                 name: "LAYOUT_CAM2"
-                PropertyChanges { target: surface2; z: 0;opacity: 1; visible: cams[2].cameraenabled;
-                    height: mainRect.height / 1 - anchors.topMargin * 2;
-                    width: mainRect.width / 1 - anchors.leftMargin * 2;
-                    anchors.left: mainRect.left; anchors.top: mainRect.top}
-                PropertyChanges { target: surface1; z: 1; opacity: 0.6; visible: cams[1].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: mainRect.top}
-                PropertyChanges { target: surface3; z: 1; opacity: 0.6; visible: cams[3].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface1.bottom}
-                PropertyChanges { target: surface4; z: 1; opacity: 0.6; visible: cams[4].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface3.bottom}
+                PropertyChanges { target: surface2; z: 0;opacity: 1; visible: cams[1].cameraenabled;
+                    height: mainRect.height / 1 - 10;
+                    width: mainRect.width / 1 - 10;
+                    anchors.centerIn: parent}
+                PropertyChanges { target: surface1; z: 1; opacity: 0.6; visible: cams[0].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface3; z: 1; opacity: 0.6; visible: cams[2].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface1.bottom}
+                PropertyChanges { target: surface4; z: 1; opacity: 0.6; visible: cams[3].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface3.bottom}
 
             },
-            State { // первая камера
+            State { // третья камера
+                name: "LAYOUT_CAM3"
+                PropertyChanges { target: surface3; z: 0;opacity: 1; visible: cams[2].cameraenabled;
+                    height: mainRect.height / 1 - 10;
+                    width: mainRect.width / 1 - 10;
+                    anchors.centerIn: parent}
+                PropertyChanges { target: surface1; z: 1; opacity: 0.6; visible: cams[0].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface2; z: 1; opacity: 0.6; visible: cams[1].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface1.bottom}
+                PropertyChanges { target: surface4; z: 1; opacity: 0.6; visible: cams[3].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface2.bottom}
+
+            },
+            State { // четвертая камера
+                name: "LAYOUT_CAM4"
+                PropertyChanges { target: surface4; z: 0;opacity: 1; visible: cams[3].cameraenabled;
+                    height: mainRect.height / 1 - 10;
+                    width: mainRect.width / 1 - 10;
+                    anchors.centerIn: parent}
+                PropertyChanges { target: surface1; z: 1; opacity: 0.6; visible: cams[0].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface2; z: 1; opacity: 0.6; visible: cams[1].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface1.bottom}
+                PropertyChanges { target: surface3; z: 1; opacity: 0.6; visible: cams[2].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface2.bottom}
+
+            },
+            State { // бол 1 камера
                 name: "3-KAM-bol1"
                 PropertyChanges { target: surface1; z: 0;opacity: 1; visible: true;
                     height: mainRect.height / 1 - anchors.topMargin * 2;
@@ -704,6 +746,15 @@ Window {
                     anchors.left: mainRect.left; anchors.top: mainRect.top}
                 PropertyChanges { target: surface2; z: 1; opacity: 0.6; visible: true; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: mainRect.top}
                 PropertyChanges { target: surface3; z: 1; opacity: 0.6; visible: true; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface2.bottom}
+
+            },
+            State { // четыре камеры по центру
+                name: "4-KAM-all"
+                PropertyChanges { target: surface1; z: 1; opacity: 0.6; visible: cams[0].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface2; z: 1; opacity: 0.6; visible: cams[1].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: surface1.right; anchors.top: mainRect.top}
+                PropertyChanges { target: surface3; z: 1; opacity: 0.6; visible: cams[2].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface1.bottom}
+                PropertyChanges { target: surface4; z: 1; opacity: 0.6; visible: cams[3].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: surface1.right; anchors.top: surface2.bottom}
+
 
             },
             State { // три камеры рядом
@@ -891,6 +942,7 @@ Window {
         players[0].stop();
         players[1].stop();
         players[2].stop();
+        players[3].stop();
         console.log("All players stopped")
     }
 }
