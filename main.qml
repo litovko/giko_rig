@@ -123,6 +123,7 @@ Window {
 
     function getrecordoption(camindex){
         //var dt=new Date();
+        var i;
         var vlc=vlc_options.split(',')
         console.log("registry vlc options - cam"+camindex+": ("+win.vlc_options+")");
         if (camindex===undefined) console.assert("getrecordoption camindex undefined!!!")
@@ -130,7 +131,7 @@ Window {
         console.log("getrecordoption:("+sopt+")");
         if (recording===0) {
             console.log("Cam"+(camindex+1)+" Options without recording:"+sopt);
-            for (var i=0; i<vlc.length; i++) sopt.push(vlc[i]);
+            for (i=0; i<vlc.length; i++) sopt.push(vlc[i]);
             return sopt;
         }
 
@@ -146,7 +147,7 @@ Window {
                   + "}}"
                  ]
 
-        for (var i=0; i<vlc.length; i++) popt.push(vlc[i]);
+        for ( i=0; i<vlc.length; i++) popt.unshift(vlc[i]);
         console.log("Options with recording Cam"+(camindex+1)+":  "+popt);
         //:venc=ffmpeg,--no-audio,--high-priority,:threads=16
         return popt

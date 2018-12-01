@@ -100,17 +100,17 @@ int main(int argc, char *argv[])
     RegisterQmlVlc();
     QSettings settings(giko_name, giko_program);
     int cache=settings.value("network_caching",150).toInt();
-    int vlc_debug=settings.value("vlc_debug",0).toInt();
+    int vlc_debug=settings.value("vlc_debug",2).toInt();
     QmlVlcConfig& config = QmlVlcConfig::instance();
     config.enableAdjustFilter( false );
-    config.enableMarqueeFilter( false );
-    config.enableLogoFilter( false );
-    config.setTrustedEnvironment(true);
+    config.enableMarqueeFilter( true ); //litovko
+    //config.enableLogoFilter( false );
+    config.setTrustedEnvironment(true); // не будет воприниматься :sout иначе.
     config.setNetworkCacheTime(cache);
     config.enableNoVideoTitleShow(true);
     //config.enableRecord( true );
     config.enableDebug( vlc_debug );
-    //config.enableRecord( true);
+
 
 
     qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
@@ -126,8 +126,11 @@ int main(int argc, char *argv[])
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     qDebug()<<"Engine loaded"<<giko_name<<"  "<<giko_program;
 
-    return app.exec();
+    int ex=app.exec();
+    settings.setValue("vlc_debug", vlc_debug);
+
     toggle_log(false);
     qDebug()<<"Good bye"<<giko_name<<"  "<<giko_program;
+    return ex;
 }
 
