@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright © 2014-2015, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2015, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -23,23 +23,22 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include "QmlVlcMmPlayer.h"
+#include "QmlVlcMediaListPlayer.h"
 
 #include "QmlVlcConfig.h"
 
-QmlVlcMmPlayer::QmlVlcMmPlayer( QObject* parent )
-    : QmlVlcPlayerProxy( std::make_shared<vlc::player>(), parent ),
-      m_libvlc( 0 ),
-      m_videoOutput( player_ptr() )
+QmlVlcMediaListPlayer::QmlVlcMediaListPlayer( QObject* parent )
+    : QmlVlcMediaListPlayerProxy( std::make_shared<vlc::media_list_player>(), parent ),
+      m_libvlc( nullptr )
 {
     m_libvlc = QmlVlcConfig::instance().createLibvlcInstance();
-    if( m_libvlc ) {
+    if( m_libvlc )
         player().open( m_libvlc );
-        m_videoOutput.init();
-    }
+    else
+        qCritical( "Couldn't create libvlc instance. Check vlc plugins dir." );
 }
 
-QmlVlcMmPlayer::~QmlVlcMmPlayer()
+QmlVlcMediaListPlayer::~QmlVlcMediaListPlayer()
 {
     classEnd();
 

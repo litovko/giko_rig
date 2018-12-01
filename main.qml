@@ -96,7 +96,9 @@ Window {
         players[player_number].playlist.addWithOptions(cams[player_number].url1,getrecordoption(player_number));
         players[player_number].play();
         curfilesize[player_number]=-1;
+        cams[player_number].star();
         onrecord=true;
+        subtitle.count=0;
     }
 
     function statename(camstate) {
@@ -121,6 +123,7 @@ Window {
         return s
     }
 
+
     function getrecordoption(camindex){
         //var dt=new Date();
         var i;
@@ -135,7 +138,7 @@ Window {
             return sopt;
         }
 
-        var fn=file_name(camindex); cams[camindex].recordfile=fn;
+        var fn=file_name(camindex); cams[camindex].recordfile=fn; //The recorded file name stored in camera object
 //        var popt=[":network-caching="+network_caching.toString()
 //                  ,":sout=#stream_out_duplicate{dst=display,dst=std{access=file,mux=mp4,dst="
 //                  + fn
@@ -173,6 +176,20 @@ Window {
         repeat: true
         onTriggered: check_file_size()
         running: true
+    }
+    Timer {
+        id: subtitle
+        interval:1000
+        repeat: true
+        onTriggered: write_subtitle()
+        running: recording
+        property int count: 0
+    }
+    function write_subtitle(){
+        if(vlcPlayer1.state!=3) return;
+        subtitle.count+=1;
+        console.log( "CAM1 POSITION: "+vlcPlayer1.time+ " = " + vlcPlayer1.input.length + " = " + vlcPlayer1.input.time)
+        cam1.write_subtitles(vlcPlayer1.time,subtitle.count);
     }
 
     RigModel {

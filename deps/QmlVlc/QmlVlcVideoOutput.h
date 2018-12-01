@@ -28,8 +28,12 @@
 #include <cassert>
 #include <memory>
 
-#include <QSharedPointer>
 #include <QQmlParserStatus>
+
+#ifdef QMLVLC_QTMULTIMEDIA_ENABLE
+#include <QVideoSurfaceFormat>
+#include <QAbstractVideoSurface>
+#endif
 
 #ifndef Q_MOC_RUN
 #include "libvlc_wrapper/vlc_player.h"
@@ -38,7 +42,7 @@
 
 #include "QmlVlcVideoFrame.h"
 
-class QmlVlcGenericVideoSurface; //#include "QmlVlcGenericVideoSurface.h"
+class QmlVlcVideoSurface; //#include "QmlVlcVideoSurface.h"
 
 class QmlVlcVideoOutput
     : public QObject,
@@ -46,19 +50,35 @@ class QmlVlcVideoOutput
 {
     Q_OBJECT
 public:
-    explicit QmlVlcVideoOutput( const std::shared_ptr<vlc::player>& player,
+    explicit QmlVlcVideoOutput( const std::shared_ptr<vlc::player_core>& player,
                                 QObject* parent = 0 );
     void init();
     ~QmlVlcVideoOutput();
 
-    void registerVideoSurface( QmlVlcGenericVideoSurface* s );
-    void unregisterVideoSurface( QmlVlcGenericVideoSurface* s );
+    void registerVideoSurface( QmlVlcVideoSurface* s );
+    void unregisterVideoSurface( QmlVlcVideoSurface* s );
 
-    QList<QmlVlcGenericVideoSurface*> attachedSurfaces() const
+    QList<QmlVlcVideoSurface*> attachedSurfaces() const
         { return m_attachedSurfaces; }
+
+    std::shared_ptr<const QmlVlcI420Frame> renderFrame() const
+        { return m_renderFrame; }
+
+#ifdef QMLVLC_QTMULTIMEDIA_ENABLE
+    QAbstractVideoSurface* videoSurface() const
+        { return m_videoSurface; }
+    void setVideoSurface( QAbstractVideoSurface* s );
+#endif
 
 private:
     Q_INVOKABLE void frameUpdated();
+
+#ifdef QMLVLC_QTMULTIMEDIA_ENABLE
+    Q_INVOKABLE void updateSurfaceFormat( const QVideoSurfaceFormat& newFormat );
+    Q_INVOKABLE void cleanupVideoSurface();
+
+    void initVideoSurface( const QVideoSurfaceFormat& format );
+#endif
 
 private:
     //for libvlc_video_set_format_callbacks
@@ -75,10 +95,16 @@ private:
     //end (for libvlc_video_set_callbacks)
 
 private:
-    std::shared_ptr<vlc::player> m_player;
+    std::shared_ptr<vlc::player_core> m_player;
 
-    QList<QmlVlcGenericVideoSurface*> m_attachedSurfaces;
+    QList<QmlVlcVideoSurface*> m_attachedSurfaces;
 
-    QSharedPointer<QmlVlcI420Frame> m_decodeFrame;
-    QSharedPointer<QmlVlcI420Frame> m_renderFrame;
+    std::deque<std::shared_ptr<QmlVlcI420Frame> > m_frames;
+    std::list<std::shared_ptr<QmlVlcI420Frame> > m_lockedFrames;
+    std::shared_ptr<QmlVlcI420Frame> m_renderFrame;
+
+#ifdef QMLVLC_QTMULTIMEDIA_ENABLE
+    QVideoSurfaceFormat m_surfaceFormat;
+    QAbstractVideoSurface* m_videoSurface;
+#endif
 };

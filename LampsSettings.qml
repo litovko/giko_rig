@@ -2,12 +2,21 @@ import QtQuick 2.0
 import QtQuick.Controls 1.4
 //import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
+import Qt.labs.settings 1.0
 Item {
     id: lampsSettings
     property alias lamp1: sl1.value
     property alias lamp2: sl2.value
     property alias lamp3: sl3.value
     property alias lamp4: sl4.value
+    Settings{
+        category: "lamps_settings"
+        property alias lamp1: sl1.value
+        property alias lamp2: sl2.value
+        property alias lamp3: sl3.value
+        property alias lamp4: sl4.value
+    }
+
     Rectangle {
         id: rec
         anchors.fill: parent

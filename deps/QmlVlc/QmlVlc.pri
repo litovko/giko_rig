@@ -10,7 +10,6 @@ HEADERS += \
     $$PWD/QmlVlcMarquee.h \
     $$PWD/QmlVlcMedia.h \
     $$PWD/QmlVlcPlayerProxy.h \
-    $$PWD/QmlVlcSurfacePlayerProxy.h \
     $$PWD/QmlVlcPlayer.h \
     $$PWD/QmlVlcPlaylist.h \
     $$PWD/QmlVlcPositions.h \
@@ -18,7 +17,7 @@ HEADERS += \
     $$PWD/QmlVlcVideo.h \
     $$PWD/QmlVlcVideoFrame.h \
     $$PWD/QmlVlcVideoOutput.h \
-    $$PWD/QmlVlcGenericVideoSurface.h \
+    $$PWD/QmlVlcVideoSource.h \
     $$PWD/QmlVlcVideoSurface.h \
     $$PWD/SGVlcVideoNode.h
 
@@ -32,7 +31,6 @@ SOURCES += \
     $$PWD/QmlVlcMarquee.cpp \
     $$PWD/QmlVlcMedia.cpp \
     $$PWD/QmlVlcPlayerProxy.cpp \
-    $$PWD/QmlVlcSurfacePlayerProxy.cpp \
     $$PWD/QmlVlcPlayer.cpp \
     $$PWD/QmlVlcPlaylist.cpp \
     $$PWD/QmlVlcPositions.cpp \
@@ -40,20 +38,22 @@ SOURCES += \
     $$PWD/QmlVlcVideo.cpp \
     $$PWD/QmlVlcVideoFrame.cpp \
     $$PWD/QmlVlcVideoOutput.cpp \
-    $$PWD/QmlVlcGenericVideoSurface.cpp \
+    $$PWD/QmlVlcVideoSource.cpp \
     $$PWD/QmlVlcVideoSurface.cpp \
     $$PWD/SGVlcVideoNode.cpp
 
-contains( QT, multimedia ) {
-    DEFINES += QMLVLC_QTMULTIMEDIA_ENABLE
-
+!android {
     HEADERS += \
-        $$PWD/QmlVlcMmVideoOutput.h \
-        $$PWD/QmlVlcMmPlayer.h
+        $$PWD/QmlVlcMediaListPlayerProxy.h \
+        $$PWD/QmlVlcMediaListPlayer.h
 
     SOURCES += \
-        $$PWD/QmlVlcMmVideoOutput.cpp \
-        $$PWD/QmlVlcMmPlayer.cpp
+       $$PWD/QmlVlcMediaListPlayerProxy.cpp \
+       $$PWD/QmlVlcMediaListPlayer.cpp
+}
+
+contains( QT, multimedia ) {
+    DEFINES += QMLVLC_QTMULTIMEDIA_ENABLE
 }
 
 INCLUDEPATH += $$PWD

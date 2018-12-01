@@ -34,9 +34,10 @@
 QmlVlcPlaylist::QmlVlcPlaylist( QmlVlcPlayerProxy* owner )
     : m_owner( owner )
 {
+    set_mode( Normal );
 }
 
-vlc::player& QmlVlcPlaylist::player()
+vlc::playlist_player_core& QmlVlcPlaylist::player()
 {
     return m_owner->player();
 }
@@ -68,7 +69,7 @@ QmlVlcPlaylist::Mode QmlVlcPlaylist::get_mode()
 
 void QmlVlcPlaylist::set_mode( QmlVlcPlaylist::Mode mode )
 {
-    if( mode > Single )
+    if( mode > vlc::mode_last )
         return;
 
     return player().set_playback_mode( (vlc::playback_mode_e) mode );
@@ -109,6 +110,11 @@ int QmlVlcPlaylist::add( const QString& mrl )
     return player().add_media( mrl.toUtf8().data() );
 }
 
+int QmlVlcPlaylist::add(const QUrl &mrl)
+{
+    return player().add_media( mrl.toString().toUtf8().data() );
+}
+
 int QmlVlcPlaylist::add( QmlVlcMedia* media )
 {
     if( !media )
@@ -124,7 +130,6 @@ int QmlVlcPlaylist::addWithOptions( const QString& mrl, const QStringList& optio
     std::vector<const char*> untrusted_opts;
 
     for( int i = 0; i < options.size(); ++i ) {
-        qDebug()<<"Add with options"<<options[i].toUtf8();
         QByteArray& buf = *bufStorage.insert( bufStorage.end(), options[i].toUtf8() );
         if( QmlVlcConfig::instance().isOptionTrusted( options[i] ) )
             trusted_opts.push_back( buf.data() );
@@ -137,7 +142,6 @@ int QmlVlcPlaylist::addWithOptions( const QString& mrl, const QStringList& optio
     return player().add_media( mrl.toUtf8().data(),
                                untrusted_opts.size(), untrusted_optv,
                                trusted_opts.size(), trusted_optv );
-
 }
 
 void QmlVlcPlaylist::play()

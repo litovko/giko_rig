@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright © 2014-2015, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2015, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -25,50 +25,30 @@
 
 #pragma once
 
-#include <QObject>
+#include <libvlc_wrapper/vlc_media_list_player.h>
 
-#include <vlc/vlc.h>
+#include "QmlVlcPlayerProxy.h"
 
-//this class is not thread safe
-class QmlVlcConfig
-    : public QObject
+class QmlVlcMediaListPlayerProxy
+    : public QmlVlcPlayerProxy
 {
     Q_OBJECT
-public:
-    static QmlVlcConfig& instance();
 
-    void setNetworkCacheTime( int time );
-    void enableAdjustFilter( bool enable );
-    void enableMarqueeFilter( bool enable );
-    void enableLogoFilter( bool enable );
-    void enableDebug( bool enable );
-    void enableNoVideoTitleShow( bool enable );
-    void enableHardwareAcceleration( bool enable );
+Q_SIGNALS:
+    /* async events from libvlc */
+    void mediaListItemAdded( int index );
+    void mediaListWillAddItem( int index );
+    void mediaListItemDeleted( int index );
+    void mediaListWillDeleteItem( int index );
 
-    void setTrustedEnvironment( bool trusted );
-    bool trustedEnvironment() const;
+    void mediaListPlayerPlayed();
+    void mediaListPlayerNextItemSet();
+    void mediaListPlayerStopped();
 
-    bool isOptionTrusted( const QString& ) const;
+protected:
+    void handleLibvlcEvent( const LibvlcEvent& event ) override;
 
-    libvlc_instance_t* createLibvlcInstance();
-    void releaseLibvlcInstance( libvlc_instance_t* );
-
-private:
-    QmlVlcConfig();
-    ~QmlVlcConfig();
-
-    QmlVlcConfig( QmlVlcConfig& ) = delete;
-    QmlVlcConfig& operator= ( QmlVlcConfig& ) = delete;
-
-private:
-    int _networkCacheTime;
-    bool _adjustFilter;
-    bool _marqueeFilter;
-    bool _logoFilter;
-    bool _debug;
-    bool _noVideoTitleShow;
-    bool _hardwareAcceleration;
-    bool _trustedEnvironment;
-    unsigned _libvlcCounter;
-    libvlc_instance_t* _libvlc;
+protected:
+    explicit QmlVlcMediaListPlayerProxy( const std::shared_ptr<vlc::media_list_player>& player, QObject* parent = 0 );
+    ~QmlVlcMediaListPlayerProxy();
 };

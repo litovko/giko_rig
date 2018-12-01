@@ -29,6 +29,11 @@
 
 using namespace vlc;
 
+video::video( vlc::basic_player& player )
+    : _player( player )
+{
+}
+
 bool video::has_vout()
 {
     if( !_player.is_open() )
@@ -50,6 +55,22 @@ void video::set_ajust_filter_var( libvlc_video_adjust_option_t option, float val
 {
     if( _player.is_open() ) {
         libvlc_video_set_adjust_float( _player.get_mp(), option, val );
+    }
+}
+
+int video::get_ajust_filter_var( libvlc_video_adjust_option_t option,
+                                 int def_v )
+{
+    if( _player.is_open() ) {
+        return libvlc_video_get_adjust_int( _player.get_mp(), option );
+    }
+    else return def_v;
+}
+
+void video::set_ajust_filter_var( libvlc_video_adjust_option_t option, int val )
+{
+    if( _player.is_open() ) {
+        libvlc_video_set_adjust_int( _player.get_mp(), option, val );
     }
 }
 

@@ -7,6 +7,8 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QFile>
+#include <QTextStream>
 
 #define USERNAME "user"  //"admin"
 #define USERPASS "9999" //"scam"
@@ -64,8 +66,8 @@ class cCamera : public QObject
     
 
 public:
-    explicit cCamera(QObject *parent = 0);
-    virtual ~cCamera() {saveSettings(); timer_check.stop(); if(m_WebCtrl) delete m_WebCtrl;}
+    explicit cCamera(QObject *parent = nullptr);
+    virtual ~cCamera() {saveSettings(); timer_check.stop(); if(m_WebCtrl) delete m_WebCtrl; m_subtitles_file.close();}
 
     void setTitle(const QString  &title);
     QString title() const;
@@ -201,6 +203,8 @@ public slots:
     Q_INVOKABLE void get_parametrs(); // запросить параметры от камеры.
     Q_INVOKABLE void send_reset();
     Q_INVOKABLE int get_filesize();
+
+    Q_INVOKABLE void write_subtitles(qint64 time, QString str);
     void loadINI(QNetworkReply *pReply); //получить параметры от камеры после ответа.   
     void loadResponce(QNetworkReply *pReply);
     void stoptimeout();
@@ -256,6 +260,10 @@ private:
     QTimer timer_timeout;
     bool m_timeout=false;
     QString m_recordfile="";
+    QFile m_subtitles_file;
+    QTextStream _out;
+
+
 
 
 

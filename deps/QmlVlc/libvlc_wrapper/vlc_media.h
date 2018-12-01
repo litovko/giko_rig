@@ -33,6 +33,12 @@ namespace vlc
     class media
     {
     public:
+        static media create_media( libvlc_instance_t* inst,
+                                   const char* mrl_or_path,
+                                   unsigned optc, const char** optv,
+                                   unsigned trusted_optc, const char** trusted_optv,
+                                   bool is_path );
+
         media();
         explicit media( ::libvlc_media_t*, bool needs_retain );
         media( const media& other );
@@ -67,4 +73,4 @@ namespace vlc
     private:
         ::libvlc_media_t* m_media;
     };
-};
+}

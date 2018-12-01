@@ -42,9 +42,9 @@ public:
     typedef QQmlListProperty<QmlVlcMedia> ItemsProperty_t;
 
     enum Mode {
+        Single = vlc::mode_single,
         Normal = vlc::mode_normal,
         Loop   = vlc::mode_loop,
-        Single = vlc::mode_single,
     };
     Q_ENUMS( Mode )
 
@@ -68,6 +68,7 @@ public:
     ItemsProperty_t get_items();
 
     Q_INVOKABLE int add( const QString& mrl );
+    Q_INVOKABLE int add( const QUrl& mrl );
     Q_INVOKABLE int add( QmlVlcMedia* media );
     Q_INVOKABLE int addWithOptions( const QString& mrl, const QStringList& options );
 
@@ -91,7 +92,7 @@ private:
     static QmlVlcMedia* getItem( ItemsProperty_t*, int index );
     static void itemsClear( ItemsProperty_t* );
 
-    inline vlc::player& player();
+    inline vlc::playlist_player_core& player();
 
 private:
     QmlVlcPlayerProxy *const m_owner;

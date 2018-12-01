@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright © 2014-2015, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2015, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -25,45 +25,17 @@
 
 #pragma once
 
-#include <QQuickItem>
-#include <QSharedPointer>
+#include "QmlVlcMediaListPlayerProxy.h"
 
-struct QmlVlcI420Frame;//#include "QmlVlcVideoFrame.h"
-
-class QmlVlcGenericVideoSurface
-    : public QQuickItem
+class QmlVlcMediaListPlayer
+    : public QmlVlcMediaListPlayerProxy
 {
     Q_OBJECT
 
-    Q_PROPERTY( FillMode fillMode READ fillMode WRITE setFillMode NOTIFY fillModeChanged )
-
 public:
-    QmlVlcGenericVideoSurface();
-    ~QmlVlcGenericVideoSurface();
-
-    enum FillMode {
-        Stretch            = Qt::IgnoreAspectRatio,
-        PreserveAspectFit  = Qt::KeepAspectRatio,
-        PreserveAspectCrop = Qt::KeepAspectRatioByExpanding
-    };
-    Q_ENUMS( FillMode )
-
-    FillMode fillMode() const
-        { return m_fillMode; }
-    void setFillMode( FillMode mode );
-
-    virtual QSGNode* updatePaintNode( QSGNode*, UpdatePaintNodeData* );
-
-public Q_SLOTS:
-    void presentFrame( const QSharedPointer<const QmlVlcI420Frame>& frame );
-
-Q_SIGNALS:
-    void sourceChanged();
-    void fillModeChanged( FillMode mode );
+    explicit QmlVlcMediaListPlayer( QObject* parent = 0 );
+    ~QmlVlcMediaListPlayer();
 
 private:
-    FillMode m_fillMode;
-
-    bool m_frameUpdated;
-    QSharedPointer<const QmlVlcI420Frame> m_frame;
+    libvlc_instance_t* m_libvlc;
 };

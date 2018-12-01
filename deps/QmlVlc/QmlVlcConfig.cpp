@@ -40,8 +40,8 @@ QmlVlcConfig::QmlVlcConfig()
       _hardwareAcceleration( false ), _trustedEnvironment( false ),
       _libvlcCounter( 0 ), _libvlc( nullptr )
 {
-
 }
+
 QmlVlcConfig::~QmlVlcConfig()
 {
     Q_ASSERT( 0 == _libvlcCounter );
@@ -70,11 +70,6 @@ void QmlVlcConfig::enableLogoFilter( bool enable )
 void QmlVlcConfig::enableDebug( bool enable )
 {
     _debug = enable;
-}
-
-void QmlVlcConfig::enableRecord( bool enable )
-{
-    _record = enable;
 }
 
 void QmlVlcConfig::enableNoVideoTitleShow( bool enable )
@@ -108,11 +103,6 @@ static const TrustedOption trustedOptions[] = {
     { ":avformat-format", "mxg" },
     { ":demux", "h264" },
     { ":h264-fps", 0 },
-    { ":sout", 0 },
-    { ":no-audio", 0 },
-    { ":noaudio", 0 },
-    { ":video-title-timeout", 0 },
-    { ":video-title-show", 0 },
 };
 
 bool QmlVlcConfig::isOptionTrusted( const QString& opt ) const
@@ -180,10 +170,9 @@ libvlc_instance_t* QmlVlcConfig::createLibvlcInstance()
 
     if( _debug )
         opts.push_back( "-vvv" );
-    if( _record )
-        opts.push_back( "--sout=#standard{access=file,mux=ps,dst=file---.mpg" );
+
     if( _noVideoTitleShow )
-        opts.push_back( "--video-title-show" );
+        opts.push_back( "--no-video-title-show" );
 
     if( _hardwareAcceleration ) {
         opts.push_back( "--ffmpeg-hw" );

@@ -32,8 +32,7 @@ namespace vlc
     class video
     {
     public:
-        video( vlc::basic_player& player )
-            : _player( player ) {};
+        video( vlc::basic_player& player );
 
         unsigned track_count();
 
@@ -53,9 +52,9 @@ namespace vlc
         void set_brightness( float val )
             { set_ajust_filter_var( libvlc_adjust_Brightness, val ); }
 
-        float get_hue()
-            { return get_ajust_filter_var( libvlc_adjust_Hue, .0f ); }
-        void set_hue( float val )
+        int get_hue()
+            { return get_ajust_filter_var( libvlc_adjust_Hue, 0 ); }
+        void set_hue( int val )
             { set_ajust_filter_var( libvlc_adjust_Hue, val ); }
 
         float get_saturation()
@@ -72,7 +71,10 @@ namespace vlc
         float get_ajust_filter_var( libvlc_video_adjust_option_t option, float def_v );
         void set_ajust_filter_var( libvlc_video_adjust_option_t option, float val );
 
+        int get_ajust_filter_var( libvlc_video_adjust_option_t option, int def_v );
+        void set_ajust_filter_var( libvlc_video_adjust_option_t option, int val );
+
     private:
         vlc::basic_player& _player;
     };
-};
+}

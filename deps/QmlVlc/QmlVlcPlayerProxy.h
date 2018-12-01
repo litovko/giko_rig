@@ -27,9 +27,10 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QEvent>
 #include <QQmlParserStatus>
 
-#include "QmlVlcVideoOutput.h"
+#include "QmlVlcVideoSource.h"
 #include "QmlVlcAudio.h"
 #include "QmlVlcInput.h"
 #include "QmlVlcPlaylist.h"
@@ -37,26 +38,19 @@
 #include "QmlVlcVideo.h"
 #include "QmlVlcMedia.h"
 
-struct LibvlcEvent;
-
 class QmlVlcPlayerProxy
-    : public QObject,
-      public QQmlParserStatus,
-      private vlc::media_player_events_callback
+    : public QmlVlcVideoSource,
+      protected vlc::media_player_events_callback
 {
     Q_OBJECT
-    Q_INTERFACES(QQmlParserStatus)
 
 protected:
     virtual void classBegin() override;
     virtual void componentComplete() override;
     void classEnd();
 
-private:
-    void media_player_event( const libvlc_event_t* e ) override;
-
 public:
-    explicit QmlVlcPlayerProxy( const std::shared_ptr<vlc::player>& player,
+    explicit QmlVlcPlayerProxy( const std::shared_ptr<vlc::playlist_player_core>& player,
                                 QObject* parent = 0 );
     ~QmlVlcPlayerProxy();
 
@@ -125,10 +119,10 @@ public:
 
     State get_state();
 
-    vlc::player& player()
+    vlc::playlist_player_core& player()
         { assert( m_player ); return *m_player; }
 
-    const std::shared_ptr<vlc::player>& player_ptr()
+    const std::shared_ptr<vlc::playlist_player_core>& player_ptr()
         { return m_player; }
 
 Q_SIGNALS:
@@ -155,11 +149,15 @@ Q_SIGNALS:
     void volumeChanged();
 
 protected:
+    void media_player_event( const libvlc_event_t* e ) override;
+
     bool event( QEvent* ) override;
+
+    struct LibvlcEvent;
+    virtual void handleLibvlcEvent( const LibvlcEvent& );
 
 private Q_SLOTS:
     void currentItemEndReached();
-    void handleLibvlcEvent( const LibvlcEvent& );
 
 public:
     QmlVlcAudio*     get_audio()     { return &m_audio; }
@@ -170,7 +168,7 @@ public:
     QmlVlcMedia*     get_mediaDesc() { return &m_currentMediaDesc; }
 
 private:
-    std::shared_ptr<vlc::player> m_player;
+    std::shared_ptr<vlc::playlist_player_core> m_player;
 
     QmlVlcAudio        m_audio;
     QmlVlcInput        m_input;
@@ -180,4 +178,15 @@ private:
     QmlVlcCurrentMedia m_currentMediaDesc;
 
     QTimer m_errorTimer;
+};
+
+struct QmlVlcPlayerProxy::LibvlcEvent : public QEvent
+{
+    enum {
+        LibvlcEventId = QEvent::User,
+    };
+
+    LibvlcEvent( const libvlc_event_t& );
+
+    libvlc_event_t _libvlcEvent;
 };

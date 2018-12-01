@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright © 2014-2015, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2014-2016, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@ class QmlVlcInput : public QObject
 {
     Q_OBJECT
 public:
-    QmlVlcInput( vlc::player& player )
+    QmlVlcInput( vlc::player_core& player )
         : m_player( player ) { }
 
     Q_PROPERTY( double length READ get_length )
@@ -59,6 +59,27 @@ public:
     double get_rate();
     void set_rate( double );
 
+
+    Q_PROPERTY( unsigned titleCount READ get_titleCount )
+    Q_PROPERTY( int title READ get_title WRITE set_title )
+
+    unsigned get_titleCount();
+
+    int get_title();
+    void set_title( unsigned );
+
+
+    Q_PROPERTY( unsigned chapterCount READ get_chapterCount )
+    Q_PROPERTY( int chapter READ get_chapter WRITE set_chapter )
+
+    unsigned get_chapterCount();
+
+    int get_chapter();
+    void set_chapter( unsigned );
+
+    Q_INVOKABLE void prevChapter();
+    Q_INVOKABLE void nextChapter();
+
 private:
-    vlc::player& m_player;
+    vlc::player_core& m_player;
 };

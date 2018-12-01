@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright © 2014, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2014, 2016 Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -27,12 +27,12 @@
 
 double QmlVlcInput::get_length()
 {
-    return static_cast<double>( m_player.get_length() );
+    return static_cast<double>( m_player.playback().get_length() );
 }
 
 double QmlVlcInput::get_fps()
 {
-    return m_player.get_fps();
+    return m_player.playback().get_fps();
 }
 
 bool QmlVlcInput::get_hasVout()
@@ -47,30 +47,104 @@ unsigned int QmlVlcInput::get_state()
 
 double QmlVlcInput::get_position()
 {
-    return m_player.get_position();
+    return m_player.playback().get_position();
 }
 
 void QmlVlcInput::set_position( double pos )
 {
-    m_player.set_position( static_cast<float>( pos ) );
+    m_player.playback().set_position( static_cast<float>( pos ) );
 }
 
 double QmlVlcInput::get_time()
 {
-    return static_cast<double>( m_player.get_time() );
+    return static_cast<double>( m_player.playback().get_time() );
 }
 
 void QmlVlcInput::set_time( double t )
 {
-    return m_player.set_time( static_cast<libvlc_time_t>( t ) );
+    return m_player.playback().set_time( static_cast<libvlc_time_t>( t ) );
 }
 
 double QmlVlcInput::get_rate()
 {
-    return m_player.get_rate();
+    return m_player.playback().get_rate();
 }
 
 void QmlVlcInput::set_rate( double r )
 {
-    m_player.set_rate( static_cast<float>( r ) );
+    m_player.playback().set_rate( static_cast<float>( r ) );
+}
+
+unsigned QmlVlcInput::get_titleCount()
+{
+    if( !m_player.is_open() )
+        return 0;
+
+    const int count =
+        libvlc_media_player_get_title_count( m_player.get_mp() );
+    if( count < 0 )
+        return 0;
+
+    return static_cast<unsigned>( count );
+}
+
+int QmlVlcInput::get_title()
+{
+    if( !m_player.is_open() )
+        return -1;
+
+    return libvlc_media_player_get_title( m_player.get_mp() );
+}
+
+void QmlVlcInput::set_title( unsigned idx )
+{
+    if( !m_player.is_open() )
+        return;
+
+    libvlc_media_player_set_title( m_player.get_mp(), idx );
+}
+
+unsigned QmlVlcInput::get_chapterCount()
+{
+    if( !m_player.is_open() )
+        return 0;
+
+    const int count =
+        libvlc_media_player_get_chapter_count( m_player.get_mp() );
+    if( count < 0 )
+        return 0;
+
+    return static_cast<unsigned>( count );
+}
+
+int QmlVlcInput::get_chapter()
+{
+    if( !m_player.is_open() )
+        return -1;
+
+    return libvlc_media_player_get_chapter( m_player.get_mp() );
+}
+
+void QmlVlcInput::set_chapter( unsigned idx )
+{
+    if( !m_player.is_open() )
+        return;
+
+    libvlc_media_player_set_chapter( m_player.get_mp(), idx );
+}
+
+void QmlVlcInput::prevChapter()
+{
+    if( !m_player.is_open() )
+        return;
+
+    libvlc_media_player_previous_chapter( m_player.get_mp() );
+}
+
+void QmlVlcInput::nextChapter()
+{
+    if( !m_player.is_open() )
+        return;
+
+    libvlc_media_player_next_chapter( m_player.get_mp() );
 }

@@ -30,8 +30,8 @@
 #include "QmlVlcVideoSurface.h"
 #include "QmlVlcPlayer.h"
 
-#ifdef QMLVLC_QTMULTIMEDIA_ENABLE
-#include "QmlVlcMmPlayer.h"
+#ifndef Q_OS_ANDROID
+    #include "QmlVlcMediaListPlayer.h"
 #endif
 
 const char* qmlVlcUri = "QmlVlc";
@@ -41,6 +41,11 @@ const int QmlVlcVersionMinor = 1;
 void RegisterQmlVlcPlayer()
 {
     // @uri QmlVlc
+    qmlRegisterUncreatableType<QmlVlcVideoSource>(
+        qmlVlcUri, QmlVlcVersionMajor, QmlVlcVersionMinor,
+        "QmlVlcVideoSource",
+        QStringLiteral("QmlVlcVideoSource cannot be instantiated directly") );
+
     qmlRegisterUncreatableType<QmlVlcInput>(
         qmlVlcUri, QmlVlcVersionMajor, QmlVlcVersionMinor,
         "VlcInput",
@@ -78,34 +83,21 @@ void RegisterQmlVlcPlayer()
         "VlcMediaDesc",
         QStringLiteral("VlcMediaDesc cannot be instantiated directly") );
 
-    qmlRegisterUncreatableType<QmlVlcSurfacePlayerProxy>(
-        qmlVlcUri, QmlVlcVersionMajor, QmlVlcVersionMinor,
-        "VlcSurfacePlayerProxy",
-        QStringLiteral("VlcSurfacePlayerProxy cannot be instantiated directly") );
-
     qmlRegisterType<QmlVlcVideoSurface>(
         qmlVlcUri, QmlVlcVersionMajor, QmlVlcVersionMinor,
         "VlcVideoSurface" );
     qmlRegisterType<QmlVlcPlayer>(
         qmlVlcUri, QmlVlcVersionMajor, QmlVlcVersionMinor,
         "VlcPlayer" );
-}
 
-#ifdef QMLVLC_QTMULTIMEDIA_ENABLE
-void RegisterQmlVlcMmPlayer()
-{
-    // @uri QmlVlc
-    qmlRegisterType<QmlVlcMmPlayer>(
+#ifndef Q_OS_ANDROID
+    qmlRegisterType<QmlVlcMediaListPlayer>(
         qmlVlcUri, QmlVlcVersionMajor, QmlVlcVersionMinor,
-        "VlcMmPlayer" );
-}
+        "VlcMediaListPlayer" );
 #endif
+}
 
 void RegisterQmlVlc()
 {
     RegisterQmlVlcPlayer();
-
-#ifdef QMLVLC_QTMULTIMEDIA_ENABLE
-    RegisterQmlVlcMmPlayer();
-#endif
 }

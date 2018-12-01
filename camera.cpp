@@ -5,6 +5,7 @@
 #include <QDateTime>
 #include <QFileInfo>
 #include <QThreadPool>
+#include <QDataStream>
 
 
 #define TIMER_CHECK 30000
@@ -488,8 +489,39 @@ QString cCamera::title() const
     int cCamera::get_filesize()
     {
         QFileInfo info(m_recordfile);
-        return info.size();
+        return static_cast<int>(info.size());
     }
+
+    void cCamera::write_subtitles(qint64 time, QString str)
+    {
+
+        if (m_recordfile=="") return;
+        QString fn=m_recordfile.replace(".mpg",".sub");
+        if (m_subtitles_file.isOpen() and (m_subtitles_file.fileName()!=fn) ) m_subtitles_file.close();
+        if(!m_subtitles_file.isOpen()){
+
+            m_subtitles_file.setFileName(fn);
+            m_subtitles_file.open(QIODevice::WriteOnly);
+            _out.setDevice(&m_subtitles_file);
+         }
+
+
+        QString s="{"+QString::number(time)+"}"+"{"+QString::number(time+1000)+"}"+str+"|вторые субтитры"+"\r\n";
+        qDebug()<<s;
+        _out << s;
+        _out.flush();
+    }
+
+//    void cCamera::start()
+//    {
+//        m_starttime=QTime::currentTime();
+
+//    }
+
+//    void cCamera::write_subtitles()
+//    {
+//        qDebug()<<"subt:"<<m_starttime<<"=="<<m_starttime.msecsTo(QTime::currentTime());
+//    }
     void cCamera::loadResponce(QNetworkReply *pReply)
     {
         qDebug()<<"Cam"<<QString::number(m_index)<<" responce:"<<pReply->readAll();

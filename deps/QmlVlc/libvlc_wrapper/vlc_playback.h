@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright © 2014-2015, Sergey Radionov <rsatom_gmail.com>
+* Copyright © 2015, Sergey Radionov <rsatom_gmail.com>
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -25,50 +25,29 @@
 
 #pragma once
 
-#include <QObject>
+#include "vlc_basic_player.h"
 
-#include <vlc/vlc.h>
-
-//this class is not thread safe
-class QmlVlcConfig
-    : public QObject
+namespace vlc
 {
-    Q_OBJECT
-public:
-    static QmlVlcConfig& instance();
+    class playback
+    {
+    public:
+        playback( vlc::basic_player& player );
 
-    void setNetworkCacheTime( int time );
-    void enableAdjustFilter( bool enable );
-    void enableMarqueeFilter( bool enable );
-    void enableLogoFilter( bool enable );
-    void enableDebug( bool enable );
-    void enableNoVideoTitleShow( bool enable );
-    void enableHardwareAcceleration( bool enable );
+        float get_rate();
+        void set_rate( float );
 
-    void setTrustedEnvironment( bool trusted );
-    bool trustedEnvironment() const;
+        float get_position();
+        void set_position( float );
 
-    bool isOptionTrusted( const QString& ) const;
+        libvlc_time_t get_time();
+        void set_time( libvlc_time_t );
 
-    libvlc_instance_t* createLibvlcInstance();
-    void releaseLibvlcInstance( libvlc_instance_t* );
+        libvlc_time_t get_length();
 
-private:
-    QmlVlcConfig();
-    ~QmlVlcConfig();
+        float get_fps();
 
-    QmlVlcConfig( QmlVlcConfig& ) = delete;
-    QmlVlcConfig& operator= ( QmlVlcConfig& ) = delete;
-
-private:
-    int _networkCacheTime;
-    bool _adjustFilter;
-    bool _marqueeFilter;
-    bool _logoFilter;
-    bool _debug;
-    bool _noVideoTitleShow;
-    bool _hardwareAcceleration;
-    bool _trustedEnvironment;
-    unsigned _libvlcCounter;
-    libvlc_instance_t* _libvlc;
-};
+    private:
+        vlc::basic_player& _player;
+    };
+}
