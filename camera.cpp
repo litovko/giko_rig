@@ -494,20 +494,26 @@ QString cCamera::title() const
 
     void cCamera::write_subtitles(qint64 time, QString str)
     {
-
+// если файл не открыт - открываем. Предыдущий закрываем.
         if (m_recordfile=="") return;
-        QString fn=m_recordfile.replace(".mpg",".sub");
+        QString fn=m_recordfile.replace(".mpg",".srt");
         if (m_subtitles_file.isOpen() and (m_subtitles_file.fileName()!=fn) ) m_subtitles_file.close();
         if(!m_subtitles_file.isOpen()){
 
             m_subtitles_file.setFileName(fn);
             m_subtitles_file.open(QIODevice::WriteOnly);
             _out.setDevice(&m_subtitles_file);
+            _count=0;
+            _time.start();
          }
+        _count+=1;
 
-
-        QString s="{"+QString::number(time)+"}"+"{"+QString::number(time+1000)+"}"+str+"|вторые субтитры"+"\r\n";
-        qDebug()<<s;
+        QString s=QString::number(_count)+"\r\n";
+        QTime _t=QTime(0,0).addMSecs(_time.elapsed());
+        s=s+_t.toString("HH:mm:ss,zzz")+" --> " +_t.addMSecs(970).toString("HH:mm:ss,zzz")+"\r\n";
+        s=s+QString::number(_count)+":"+str;
+        s=s+"\r\n\r\n";
+        //qDebug()<<s;
         _out << s;
         _out.flush();
     }
@@ -672,7 +678,7 @@ QString cCamera::title() const
             qDebug()<<pReply->errorString();
         }
         setOnrequest(false);
-        qDebug()<<"loadINI: Cam"<<QString::number(m_index)<<":"<<pReply->property("RequestType");
+        //qDebug()<<"loadINI: Cam"<<QString::number(m_index)<<":"<<pReply->property("RequestType");
         if (pReply->error()!=QNetworkReply::NoError ) {
             qWarning()<<"Cam"<<QString::number(m_index)<<":"<<"Camera unavailable:"<<pReply->errorString();
 //            qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"!!8";

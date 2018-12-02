@@ -262,6 +262,8 @@ private:
     QString m_recordfile="";
     QFile m_subtitles_file;
     QTextStream _out;
+    qulonglong _count=0;
+    QTime  _time;
 
 
 

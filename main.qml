@@ -88,6 +88,7 @@ Window {
         property alias filesize: win.filesize
         property alias camera_umg: win.camera_umg
         property alias streaming: win.streaming
+        property alias subtitles: subtitle.interval
     }
     function player_play(player_number){
         if (cams[0].timeout||cams[1].timeout||cams[2].timeout||cams[3].timeout) return;
@@ -96,9 +97,8 @@ Window {
         players[player_number].playlist.addWithOptions(cams[player_number].url1,getrecordoption(player_number));
         players[player_number].play();
         curfilesize[player_number]=-1;
-        cams[player_number].star();
         onrecord=true;
-        subtitle.count=0;
+
     }
 
     function statename(camstate) {
@@ -179,17 +179,19 @@ Window {
     }
     Timer {
         id: subtitle
-        interval:1000
+        interval:100
         repeat: true
         onTriggered: write_subtitle()
         running: recording
-        property int count: 0
+
     }
     function write_subtitle(){
         if(vlcPlayer1.state!=3) return;
-        subtitle.count+=1;
-        console.log( "CAM1 POSITION: "+vlcPlayer1.time+ " = " + vlcPlayer1.input.length + " = " + vlcPlayer1.input.time)
-        cam1.write_subtitles(vlcPlayer1.time,subtitle.count);
+        //console.log( "CAM1 POSITION: "+vlcPlayer1.time+ " = " + vlcPlayer1.input.length + " = " + vlcPlayer1.input.time)
+        var s="A="+rig.ampere+":"+rig.ampere2+":"+rig.ampere3+" V="+rig.voltage+":"+rig.voltage2+":"+rig.voltage3+"\r\n";
+        s=s+" P="+rig.pressure+":"+rig.pressure2+" t="+rig.temperature+":"+rig.temperature2+" h="+rig.altitude+" k="+rig.kren+" T="+rig.tangag+" R="+rig.turns;
+        s=s+" J=" + rig.joystick_x1 + ":" + rig.joystick_x2 + ":" + rig.joystick_y1 + ":" + rig.joystick_y2
+        cam1.write_subtitles(vlcPlayer1.time,s);
     }
 
     RigModel {
@@ -257,8 +259,8 @@ Window {
               menu.visible=false;
               camsettings.visible=false
               settings.visible=false;
-              //joysetup.visible=false
               help.visible=false
+
               break;
           case "JOYSTICK SETTINGS":
               joysetup.visible=!joysetup.visible;
