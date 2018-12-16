@@ -11,15 +11,15 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     using namespace std::placeholders;
     _fmap["spxy"]  = std::bind(&cRigmodel::setPosition, this, _1);
     _fmap["toil"]  = std::bind(&cRigmodel::setTemperature, this, _1);
-    _fmap["toi2"] = std::bind(&cRigmodel::setTemperature2, this, _1);
+    _fmap["toi2"]  = std::bind(&cRigmodel::setTemperature2, this, _1);
     _fmap["poil"]  = std::bind(&cRigmodel::setPressure, this, _1);
-    _fmap["poi2"] = std::bind(&cRigmodel::setPressure2, this, _1);
+    _fmap["poi2"]  = std::bind(&cRigmodel::setPressure2, this, _1);
     _fmap["pwrv"]  = std::bind(&cRigmodel::setVoltage, this, _1);
-    _fmap["pwv2"] = std::bind(&cRigmodel::setVoltage2, this, _1);
-    _fmap["pwv3"] = std::bind(&cRigmodel::setVoltage3, this, _1);
+    _fmap["pwv2"]  = std::bind(&cRigmodel::setVoltage2, this, _1);
+    _fmap["pwv3"]  = std::bind(&cRigmodel::setVoltage3, this, _1);
     _fmap["pwra"]  = std::bind(&cRigmodel::setAmpere, this, _1);
-    _fmap["pwa2"] = std::bind(&cRigmodel::setAmpere2, this, _1);
-    _fmap["pwa3"] = std::bind(&cRigmodel::setAmpere3, this, _1);
+    _fmap["pwa2"]  = std::bind(&cRigmodel::setAmpere2, this, _1);
+    _fmap["pwa3"]  = std::bind(&cRigmodel::setAmpere3, this, _1);
     _fmap["altm"]  = std::bind(&cRigmodel::setAltitude, this, _1);
     _fmap["drpm"]  = std::bind(&cRigmodel::setTurns, this, _1);
     _fmap["dc1v"]  = std::bind(&cRigmodel::setVoltage24, this, _1);
@@ -548,7 +548,7 @@ void cRigmodel::readData()
         Data=Data.mid(1,m-1);
         //qDebug()<<"truncated :"<<Data;
         split=Data.split(';');
-        //qDebug()<<"split:"<<split;
+        qDebug()<<"split:"<<split;
         QListIterator<QByteArray> i(split);
         QByteArray s, val;
         while (i.hasNext()){
