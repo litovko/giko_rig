@@ -22,7 +22,7 @@ Item {
         if (xvalue&8) r1.state="ON"; else r1.state="OFF"
         if (xvalue&16) r2.state="ON"; else r2.state="OFF"
         if (xvalue&32) r3.state="ON"; else r3.state="OFF"
-        if (xvalue&64) c.state="ON"; else c.state="OFF"
+        if (xvalue&128) c.x_on=true; else c.x_on=false
     }
     function yval() {
         if (yvalue&1) y1.state="ON"; else y1.state="OFF"
@@ -32,12 +32,13 @@ Item {
         if (yvalue&16) y5.state="ON"; else y5.state="OFF"
         if (yvalue&32) y6.state="ON"; else y6.state="OFF"
         if (yvalue&64) y7.state="ON"; else y7.state="OFF"
+        if (yvalue&128) c.y_on=true; else c.y_on=false
 //        console.log("Y:"+yvalue+" "+y1.state)
 //        console.log("P:"+position)
     }
     onPositionChanged: {
 
-        xvalue=position&127
+        xvalue=position&255
         yvalue=position>>8
         xval()
         yval()
@@ -81,11 +82,20 @@ Item {
                 height: 10
 
             }
-            Tik {
+            CenterTik {
                 id: c
-                text:"0"
                 width: 20
-                height: 12
+                height:20
+
+//                Text {
+//                    color: "yellow"
+//                    text: "0"
+//                    font.pointSize: 12
+//                    anchors.right: parent.left
+//                    anchors.verticalCenter: parent.verticalCenter
+//                    anchors.margins: 5
+//                }
+
                 Row {
                     anchors.right: c.left
                     anchors.top:  c.top
@@ -127,7 +137,7 @@ Item {
                     spacing: 15
                     Tik {
                         id: r1
-                        text:"1"
+                        text:"4"
                         width: 20
                         height: 10
                         transform: Rotation {  angle: -90}
@@ -136,7 +146,7 @@ Item {
                     }
                     Tik {
                         id: r2
-                        text:"2"
+                        text:"5"
                         width: 20
                         height: 10
                         transform: Rotation {  angle: -90}
@@ -145,7 +155,7 @@ Item {
                     }
                     Tik {
                         id: r3
-                        text:"3"
+                        text:"6"
                         width: 20
                         height: 10
                         transform: Rotation {  angle: -90}
@@ -155,6 +165,7 @@ Item {
 
                 }
             }
+
             Tik {
                 id: y2
                 text:"50"
