@@ -1,7 +1,7 @@
 TEMPLATE = app
 # обязательно требуется мультимедия от QT иначе не регистрируется плагин.
 QT += qml quick multimedia network
-CONFIG += c++11  console
+CONFIG += c++11  console qtquickcompiler
 CONFIG+=debug
 QMAKE_CXXFLAGS_DEBUG += "-gstabs+"
 QMAKE_CFLAGS_DEBUG += "-gstabs+"
@@ -51,4 +51,4 @@ message(LIBS $$LIBS)
 
 INCLUDEPATH += $$PWD/SDL/include
 DEPENDPATH += $$PWD/SDL/include
-DESTDIR = D:\dest.rig.5.9
+DESTDIR = D:\dest.rig.5.11
