@@ -347,7 +347,6 @@ Window {
               break;
           case "ENGINE2":
               rig.engine2=rig.engine2?false:true;
-
               break;
           case "RECONNECT":
               rig.reconnect();
@@ -550,6 +549,8 @@ Window {
             if (event.key === Qt.Key_F2||event.key ===  Qt.Key_2)  rig.lamp=rig.lamp?false:true;
             if (event.key === Qt.Key_F3||event.key ===  Qt.Key_3)  win.fcommand("CAMERA ON")
             if (event.key === Qt.Key_F4||event.key ===  Qt.Key_4)  win.fcommand("ENGINE1")
+            if (event.key === Qt.Key_F7||event.key ===  Qt.Key_7)  win.fcommand("ENGINE2")
+            if (event.key === Qt.Key_G||event.key ===  1055     )  win.fcommand("PUMP")
             if (event.key === Qt.Key_F8||event.key ===  Qt.Key_8)     win.fcommand("CHANGE RIG TYPE")
             if (event.key === Qt.Key_F9||event.key ===  Qt.Key_9)     win.fcommand("JOYSTICK SETTINGS")
             if (event.key === Qt.Key_F10||event.key === Qt.Key_0)     win.fcommand("CAMERA SETTINGS")

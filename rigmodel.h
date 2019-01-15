@@ -33,10 +33,13 @@ class cRigmodel : public QObject
     Q_PROPERTY(int temperature READ temperature WRITE setTemperature NOTIFY temperatureChanged)
     Q_PROPERTY(QString rigtype READ rigtype WRITE setRigtype NOTIFY rigtypeChanged)
     Q_PROPERTY(QString gmod READ gmod WRITE setGmod NOTIFY gmodChanged)
+    Q_PROPERTY(bool delay_engine1 READ delay_engine1 NOTIFY delay_engine1Changed)  //включена разгрузка мотора1
+    Q_PROPERTY(bool delay_engine2 READ delay_engine2 NOTIFY delay_engine2Changed)  //включена разгрузка мотора2
     //############ переменные - данные для отправки
     Q_PROPERTY(bool lamp READ lamp WRITE setLamp NOTIFY lampChanged)
     Q_PROPERTY(bool engine READ engine WRITE setEngine NOTIFY engineChanged)  //включение выключение мотора 1
     Q_PROPERTY(bool engine2 READ engine2 WRITE setEngine2 NOTIFY engine2Changed)  //включение выключение мотора 2
+
     Q_PROPERTY(bool pump READ pump WRITE setPump NOTIFY pumpChanged)  //включение выключение мотора промывки
 //    Q_PROPERTY(int joystick READ joystick WRITE setJoystick NOTIFY joystickChanged)
 
@@ -62,6 +65,8 @@ class cRigmodel : public QObject
     Q_PROPERTY(int timer_connect_interval READ timer_connect_interval WRITE setTimer_connect_interval NOTIFY timer_connect_intervalChanged)
     Q_PROPERTY(int freerun READ freerun WRITE setFreerun NOTIFY freerunChanged) // Valve free run  - свободный ход клапанов в процентах
     Q_PROPERTY(int check_type READ check_type WRITE setCheck_type NOTIFY check_typeChanged) // Есть возможность отключить определение типа устройства если контроллер установлен не в то устройство
+    Q_PROPERTY(int timer_delay_enging1 READ timer_delay_enging1 WRITE setTimer_delay_enging1 NOTIFY timer_delay_enging1Changed)// время включения разгрузки мотора 1
+    Q_PROPERTY(int timer_delay_enging2 READ timer_delay_enging2 WRITE setTimer_delay_enging2 NOTIFY timer_delay_enging2Changed)// время включения разгрузки мотора 2
     //############ свойства - статусы tcp соединения
 
     Q_PROPERTY(bool client_connected READ client_connected NOTIFY client_connectedChanged)
@@ -210,6 +215,31 @@ public:
     int leak_voltage() const;
     void setLeak_voltage(int leak_voltage);
 
+    bool delay_engine1() const
+    {
+        return m_delay_engine1;
+    }
+
+    int timer_delay_enging1() const
+    {
+        return m_timer_delay_enging1;
+    }
+
+    bool delay_engine2() const
+    {
+        return m_delay_engine2;
+    }
+
+    int timer_delay_enging2() const
+    {
+        return m_timer_delay_enging2;
+    }
+    void setTimer_delay_enging1(int timer_delay_enging1);
+    void setTimer_delay_enging2(int timer_delay_enging2);
+    void setDelay_engine1(bool delay_engine1);
+
+    void setDelay_engine2(bool delay_engine2);
+
 signals:
     void positionChanged();
     void pressureChanged();
@@ -260,6 +290,18 @@ signals:
     void check_typeChanged();
 
 
+    void delay_engine1Changed(bool delay_engine1);
+
+
+
+    void delay_engine2Changed(bool delay_engine2);
+
+
+
+    void timer_delay_enging1Changed(int timer_delay_enging1);
+
+    void timer_delay_enging2Changed(int timer_delay_enging2);
+
 public slots:
 
     void start_client();
@@ -276,6 +318,8 @@ public slots:
     void sendKoeff();
     void reset();
     Q_INVOKABLE void reconnect();
+
+
 private:
     int scaling(const int &value);
     int m_pressure=50;
@@ -347,6 +391,9 @@ private:
     QTimer timer_send;
     int m_timer_send_interval;
     int m_timer_connect_interval;
+
+    int m_timer_delay_enging1=2000; //время разгрузки мотора 1 - миллисекунд
+    int m_timer_delay_enging2=2000; //время разгрузки мотора 2 - миллисекунд
     //QSettings m_rigsettings:m_rigsettings("HYCO", "Rig Console");
 
 
@@ -354,6 +401,8 @@ private:
     int bytesToWrite=0;
     int bytesWritten=0;
     int bytesReceived=0;
+    bool m_delay_engine1=false;
+    bool m_delay_engine2=false;
 };
 
 #endif // RIGMODEL_H
