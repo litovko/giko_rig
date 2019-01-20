@@ -49,6 +49,8 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(light4Changed()),this, SLOT(sendData()));
     connect(this, SIGNAL(engineChanged()),this, SLOT(sendData()));
     connect(this, SIGNAL(engine2Changed()),this, SLOT(sendData()));
+    connect(this, SIGNAL(free_engine1Changed(bool)),this, SLOT(sendData()));
+    connect(this, SIGNAL(free_engine2Changed(bool)),this, SLOT(sendData()));
     connect(this, SIGNAL(pumpChanged()),this, SLOT(sendData()));
     //connect(this, SIGNAL(joystickChanged()),this, SLOT(sendData()));
     connect(this, SIGNAL(cameraChanged()),this, SLOT(sendData()));
@@ -255,11 +257,11 @@ bool cRigmodel::camera() const
 void cRigmodel::setEngine(const bool &engine)
 {
     if (m_engine == engine ) return;
-    if (m_delay_engine2 && engine) return;
+    if (m_free_engine2 && engine) return;
     m_engine = engine;
-    setDelay_engine1(engine);
+    setfree_engine1(engine);
     if (m_engine)
-        QTimer::singleShot(m_timer_delay_enging1, [this](){setDelay_engine1(false);});
+        QTimer::singleShot(m_timer_delay_enging1, [this](){setfree_engine1(false);});
 
     emit engineChanged();
 }
@@ -267,12 +269,12 @@ void cRigmodel::setEngine(const bool &engine)
 void cRigmodel::setEngine2(bool engine2)
 {
     if (m_engine2 == engine2) return;
-    if (m_delay_engine1 && engine2) return;
+    if (m_free_engine1 && engine2) return;
 
     m_engine2 = engine2;
-    setDelay_engine2(engine2);
+    setfree_engine2(engine2);
     if (m_engine2)
-        QTimer::singleShot(m_timer_delay_enging2, [this](){setDelay_engine2(false);});
+        QTimer::singleShot(m_timer_delay_enging2, [this](){setfree_engine2(false);});
     emit engine2Changed();
 }
 
@@ -456,7 +458,7 @@ void cRigmodel::sendData()
             + m_camera4*128*m_camera
             ;
     QString Data; // Строка отправки данных.
-
+    qDebug()<<"Rig - send data: "<<m_free_engine1;
     if (!m_client_connected) return;
 //    Data="{ana1:"+::QString().number(int(m_joystick_y1*127/100),10)
 //        +";ana2:"+::QString().number(int(m_joystick_y2*127/100),10)
@@ -497,16 +499,17 @@ bool cRigmodel::handle_tag(const QString &tag, const QString &val)
     return ok;
 }
 
-void cRigmodel::setDelay_engine2(bool delay_engine2)
+void cRigmodel::setfree_engine2(bool free_engine2)
 {
-    m_delay_engine2 = delay_engine2;
-    emit delay_engine2Changed(m_delay_engine2);
+    m_free_engine2 = free_engine2;
+    emit free_engine2Changed(m_free_engine2);
 }
 
-void cRigmodel::setDelay_engine1(bool delay_engine1)
+void cRigmodel::setfree_engine1(bool free_engine1)
 {
-    m_delay_engine1 = delay_engine1;
-    emit delay_engine1Changed(m_delay_engine1);
+    m_free_engine1 = free_engine1;
+    emit free_engine1Changed(m_free_engine1);
+    //qDebug()<<"free_engine:"<<m_free_engine1;
 }
 
 bool cRigmodel::camera4() const

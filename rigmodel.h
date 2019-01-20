@@ -33,8 +33,8 @@ class cRigmodel : public QObject
     Q_PROPERTY(int temperature READ temperature WRITE setTemperature NOTIFY temperatureChanged)
     Q_PROPERTY(QString rigtype READ rigtype WRITE setRigtype NOTIFY rigtypeChanged)
     Q_PROPERTY(QString gmod READ gmod WRITE setGmod NOTIFY gmodChanged)
-    Q_PROPERTY(bool delay_engine1 READ delay_engine1 NOTIFY delay_engine1Changed)  //включена разгрузка мотора1
-    Q_PROPERTY(bool delay_engine2 READ delay_engine2 NOTIFY delay_engine2Changed)  //включена разгрузка мотора2
+    Q_PROPERTY(bool free_engine1 READ free_engine1 NOTIFY free_engine1Changed)  //включена разгрузка мотора1
+    Q_PROPERTY(bool free_engine2 READ free_engine2 NOTIFY free_engine2Changed)  //включена разгрузка мотора2
     //############ переменные - данные для отправки
     Q_PROPERTY(bool lamp READ lamp WRITE setLamp NOTIFY lampChanged)
     Q_PROPERTY(bool engine READ engine WRITE setEngine NOTIFY engineChanged)  //включение выключение мотора 1
@@ -215,9 +215,9 @@ public:
     int leak_voltage() const;
     void setLeak_voltage(int leak_voltage);
 
-    bool delay_engine1() const
+    bool free_engine1() const
     {
-        return m_delay_engine1;
+        return m_free_engine1;
     }
 
     int timer_delay_enging1() const
@@ -225,9 +225,9 @@ public:
         return m_timer_delay_enging1;
     }
 
-    bool delay_engine2() const
+    bool free_engine2() const
     {
-        return m_delay_engine2;
+        return m_free_engine2;
     }
 
     int timer_delay_enging2() const
@@ -236,9 +236,9 @@ public:
     }
     void setTimer_delay_enging1(int timer_delay_enging1);
     void setTimer_delay_enging2(int timer_delay_enging2);
-    void setDelay_engine1(bool delay_engine1);
+    void setfree_engine1(bool free_engine1);
 
-    void setDelay_engine2(bool delay_engine2);
+    void setfree_engine2(bool free_engine2);
 
 signals:
     void positionChanged();
@@ -290,11 +290,11 @@ signals:
     void check_typeChanged();
 
 
-    void delay_engine1Changed(bool delay_engine1);
+    void free_engine1Changed(bool free_engine1);
 
 
 
-    void delay_engine2Changed(bool delay_engine2);
+    void free_engine2Changed(bool free_engine2);
 
 
 
@@ -401,14 +401,10 @@ private:
     int bytesToWrite=0;
     int bytesWritten=0;
     int bytesReceived=0;
-    bool m_delay_engine1=false;
-    bool m_delay_engine2=false;
+    bool m_free_engine1=false; //включена разгрузка двигателя 1
+    bool m_free_engine2=false; //включена разгрузка двигателя 2
 };
 
 #endif // RIGMODEL_H
 
-//voltage24_2
-//light - 4 m_light1
-//temperature2
-//pressure2
-//position - unsigned int
+

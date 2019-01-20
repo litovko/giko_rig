@@ -80,7 +80,7 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:"НАСОС1[F4]"
-                    error: source.delay_engine1
+                    error: source.free_engine1
                     active:source.engine
                     command: "ENGINE1"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
@@ -91,7 +91,7 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:"НАСОС2[F7]"
-                    error: source.delay_engine2
+                    error: source.free_engine2
                     active:source.engine2
                     command: "ENGINE2"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
