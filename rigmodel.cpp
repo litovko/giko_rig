@@ -98,6 +98,8 @@ void cRigmodel::saveSettings()
     settings.setValue("Rig_LIMA",m_lima);
     settings.setValue("Rig_LIMV",m_limv);
     settings.setValue("Rig_LIMZ",m_limz);
+    settings.setValue("Rig_ENG_DT1",m_timer_delay_enging1);
+    settings.setValue("Rig_ENG_DT2",m_timer_delay_enging2);
 
 
 }
@@ -120,6 +122,8 @@ void cRigmodel::readSettings()
     m_lima=settings.value("Rig_LIMA","false").toInt();
     m_limv=settings.value("Rig_LIMV","false").toInt();
     m_limz=settings.value("Rig_LIMZ","false").toInt();
+    setTimer_delay_enging1(settings.value("Rig_ENG_DT1","2000").toInt());
+    setTimer_delay_enging2(settings.value("Rig_ENG_DT2","2000").toInt());
 }
 
 void cRigmodel::updateSendTimer()
@@ -250,8 +254,26 @@ bool cRigmodel::camera() const
 
 void cRigmodel::setEngine(const bool &engine)
 {
+    if (m_engine == engine ) return;
+    if (m_delay_engine2 && engine) return;
     m_engine = engine;
+    setDelay_engine1(engine);
+    if (m_engine)
+        QTimer::singleShot(m_timer_delay_enging1, [this](){setDelay_engine1(false);});
+
     emit engineChanged();
+}
+
+void cRigmodel::setEngine2(bool engine2)
+{
+    if (m_engine2 == engine2) return;
+    if (m_delay_engine1 && engine2) return;
+
+    m_engine2 = engine2;
+    setDelay_engine2(engine2);
+    if (m_engine2)
+        QTimer::singleShot(m_timer_delay_enging2, [this](){setDelay_engine2(false);});
+    emit engine2Changed();
 }
 
 bool cRigmodel::engine() const
@@ -434,7 +456,7 @@ void cRigmodel::sendData()
             + m_camera4*128*m_camera
             ;
     QString Data; // Строка отправки данных.
-// проверяем, есть ли подключение клиента. Если подключения нет, то ничего не отправляем.
+
     if (!m_client_connected) return;
 //    Data="{ana1:"+::QString().number(int(m_joystick_y1*127/100),10)
 //        +";ana2:"+::QString().number(int(m_joystick_y2*127/100),10)
@@ -473,6 +495,18 @@ bool cRigmodel::handle_tag(const QString &tag, const QString &val)
     else  qWarning()<<"Data! For tag <"<<tag<<"> handle not found!";
 
     return ok;
+}
+
+void cRigmodel::setDelay_engine2(bool delay_engine2)
+{
+    m_delay_engine2 = delay_engine2;
+    emit delay_engine2Changed(m_delay_engine2);
+}
+
+void cRigmodel::setDelay_engine1(bool delay_engine1)
+{
+    m_delay_engine1 = delay_engine1;
+    emit delay_engine1Changed(m_delay_engine1);
 }
 
 bool cRigmodel::camera4() const
@@ -524,11 +558,7 @@ bool cRigmodel::engine2() const
     return m_engine2;
 }
 
-void cRigmodel::setEngine2(bool engine2)
-{
-    m_engine2 = engine2;
-    emit engine2Changed();
-}
+
 
 void cRigmodel::readData()
 {
@@ -834,4 +864,22 @@ void cRigmodel::setGmod(const QString &gmod)
     m_gmod = gmod;
     //qDebug()<<"gmod:"+m_gmod;
     emit gmodChanged();
+}
+
+void cRigmodel::setTimer_delay_enging2(int timer_delay_enging2)
+{
+    if (m_timer_delay_enging2 == timer_delay_enging2)
+        return;
+
+    m_timer_delay_enging2 = timer_delay_enging2;
+    emit timer_delay_enging2Changed(m_timer_delay_enging2);
+}
+
+void cRigmodel::setTimer_delay_enging1(int timer_delay_enging1)
+{
+    if (m_timer_delay_enging1 == timer_delay_enging1)
+        return;
+
+    m_timer_delay_enging1 = timer_delay_enging1;
+    emit timer_delay_enging1Changed(m_timer_delay_enging1);
 }

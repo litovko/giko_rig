@@ -80,16 +80,18 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:"НАСОС1[F4]"
+                    error: source.delay_engine1
                     active:source.engine
                     command: "ENGINE1"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
-                MyLamp{
-                    visible: false
+               MyLamp{
+                    //visible: false
                     id: engine2
                     height: lampSize
                     width: lampSize
-                    bottomText:"НАСОС2"
+                    bottomText:"НАСОС2[F7]"
+                    error: source.delay_engine2
                     active:source.engine2
                     command: "ENGINE2"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
@@ -98,7 +100,7 @@ Item {
                     id: engine3
                     height: lampSize
                     width: lampSize
-                    bottomText:"ПРОМЫВКА"
+                    bottomText:"ПРОМЫВКА[П]"
                     active:source.pump
                     command: "PUMP"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
