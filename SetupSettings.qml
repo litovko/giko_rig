@@ -18,20 +18,7 @@ Item {
     Rectangle {
         id: rectangle1
         width: 500
-        height: 455
-        gradient: Gradient {
-            GradientStop {
-                position: 1
-                color: "#ffffff"
-            }
-            
-            GradientStop {
-                position: 0
-                color: "#101010"
-            }
-
-
-        }
+        height: 480
         anchors.left: parent.left
         anchors.leftMargin: 0
         anchors.top: parent.top
@@ -39,11 +26,22 @@ Item {
         opacity: 0.8
         border.width: 3
         radius: 10
+        gradient: Gradient {
+            GradientStop {
+                position: 0
+                color: "#000000"
+            }
+
+            GradientStop {
+                position: 1
+                color: "#aaaaaa"
+            }
+        }
         z: 0
         border.color: "yellow"
-        
-        
-        
+
+
+
         Label {
             id: lra
             x: 155
@@ -53,7 +51,7 @@ Item {
             color: "white"
             text: qsTr("Адрес аппарата")
             font.pointSize: 9
-            
+
             TextField {
                 id: rig_address
                 x: 104
@@ -66,8 +64,8 @@ Item {
                 placeholderText: qsTr("IP-адрес телегрейфера")
             }
         }
-        
-        
+
+
         Button {
             id: ok
             x: 394
@@ -94,12 +92,14 @@ Item {
                 rig.timer_connect_interval=parseInt(rig_msec2.text);
                 rig.freerun=parseInt(rig_msec3.text);
                 rig.check_type=cb_check_type.checked;
+                rig.timer_delay_engine1=free_msec1.text;
+                rig.timer_delay_engine2=free_msec2.text;
                 network_caching=parseInt(netcache.text);
                 filesize=cbfilesize.currentText
                 j.ispresent=cbj.checked
             }
         }
-        
+
         Button {
             id: close
             x: 394
@@ -113,7 +113,7 @@ Item {
                 console.log("Setup Settings - Close clicked");
             }
         }
-        
+
 
         Label {
             id: lrp
@@ -181,7 +181,7 @@ Item {
                 readOnly: false
             }
         }
-        
+
         Label {
             id: lca2
             x: 88
@@ -247,7 +247,7 @@ Item {
                 placeholderText: qsTr("интервал отправки данных в миллисекундах")
             }
         }
-        
+
         Label {
             id: lris2
             x: 8
@@ -506,6 +506,63 @@ Item {
             visible: true
         }
 
+        Label {
+            id: lris4
+            x: 8
+            y: 444
+            width: 113
+            height: 13
+            color: "#ffffff"
+            text: qsTr("Разгр. двиг-ля1, мс")
+            TextField {
+                id: free_msec1
+                x: 109
+                y: -2
+                width: 96
+                height: 20
+                text: rig.timer_delay_engine1
+                validator: IntValidator {
+                    bottom: 0
+                    top: 100000
+                }
+                placeholderText: qsTr("время разгрузки первого двиг-ля в миллисекундах")
+                opacity: 0.8
+            }
+            font.pointSize: 9
+        }
+
+        Label {
+            id: lris5
+            x: 235
+            y: 444
+            width: 108
+            height: 13
+            color: "#ffffff"
+            text: qsTr("Разгр. двиг-ля2, мс")
+            TextField {
+                id: free_msec2
+                x: 109
+                y: -2
+                width: 96
+                height: 20
+                text: rig.timer_delay_engine2
+                validator: IntValidator {
+                    bottom: 0
+                    top: 100000
+                }
+                placeholderText: qsTr("время разгрузки второго двиг-ля в миллисекундах")
+                opacity: 0.8
+            }
+            font.pointSize: 9
+        }
+
     }
-    
+
 }
+
+
+
+/*##^## Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+ ##^##*/

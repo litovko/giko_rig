@@ -100,8 +100,8 @@ void cRigmodel::saveSettings()
     settings.setValue("Rig_LIMA",m_lima);
     settings.setValue("Rig_LIMV",m_limv);
     settings.setValue("Rig_LIMZ",m_limz);
-    settings.setValue("Rig_ENG_DT1",m_timer_delay_enging1);
-    settings.setValue("Rig_ENG_DT2",m_timer_delay_enging2);
+    settings.setValue("Rig_ENG_DT1",m_timer_delay_engine1);
+    settings.setValue("Rig_ENG_DT2",m_timer_delay_engine2);
 
 
 }
@@ -124,8 +124,8 @@ void cRigmodel::readSettings()
     m_lima=settings.value("Rig_LIMA","false").toInt();
     m_limv=settings.value("Rig_LIMV","false").toInt();
     m_limz=settings.value("Rig_LIMZ","false").toInt();
-    setTimer_delay_enging1(settings.value("Rig_ENG_DT1","2000").toInt());
-    setTimer_delay_enging2(settings.value("Rig_ENG_DT2","2000").toInt());
+    setTimer_delay_engine1(settings.value("Rig_ENG_DT1","2000").toInt());
+    setTimer_delay_engine2(settings.value("Rig_ENG_DT2","2000").toInt());
 }
 
 void cRigmodel::updateSendTimer()
@@ -259,9 +259,9 @@ void cRigmodel::setEngine(const bool &engine)
     if (m_engine == engine ) return;
     if (m_free_engine2 && engine) return;
     m_engine = engine;
-    setfree_engine1(engine);
+    setfree_engine1(engine&&rigtype()=="mgbu");
     if (m_engine)
-        QTimer::singleShot(m_timer_delay_enging1, [this](){setfree_engine1(false);});
+        QTimer::singleShot(m_timer_delay_engine1, [this](){setfree_engine1(false);});
 
     emit engineChanged();
 }
@@ -272,9 +272,9 @@ void cRigmodel::setEngine2(bool engine2)
     if (m_free_engine1 && engine2) return;
 
     m_engine2 = engine2;
-    setfree_engine2(engine2);
+    setfree_engine2(engine2&&rigtype()=="mgbu");
     if (m_engine2)
-        QTimer::singleShot(m_timer_delay_enging2, [this](){setfree_engine2(false);});
+        QTimer::singleShot(m_timer_delay_engine2, [this](){setfree_engine2(false);});
     emit engine2Changed();
 }
 
@@ -458,7 +458,7 @@ void cRigmodel::sendData()
             + m_camera4*128*m_camera
             ;
     QString Data; // Строка отправки данных.
-    qDebug()<<"Rig - send data: "<<m_free_engine1;
+
     if (!m_client_connected) return;
 //    Data="{ana1:"+::QString().number(int(m_joystick_y1*127/100),10)
 //        +";ana2:"+::QString().number(int(m_joystick_y2*127/100),10)
@@ -467,11 +467,14 @@ void cRigmodel::sendData()
     if (m_rigtype=="gkgbu"||m_rigtype=="grab6"||m_rigtype=="mgbu") Data=Data +";ana2:"+::QString().number(scaling(m_joystick_y2),10);
     if (m_rigtype=="gkgbu"||m_rigtype=="mgbu") Data=Data+";ana3:"+::QString().number(scaling(m_joystick_x1),10)+";gmod:"+gmod_decode(m_gmod);
     //яркости прожекторов
-    if (m_rigtype=="mgbu") Data=Data+";svet:"+::QString().number(m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16));
+    QString svet=";svet:"+::QString().number(m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16));
+    if (m_rigtype=="mgbu") Data=Data+svet;
 
+    if (free_engine1()) {Data="{ana3:127;gmod:grup1"+svet;}
+    if (free_engine2()) {Data="{ana2:127;gmod:grup3"+svet;}
     Data=Data+";dig1:"+::QString().number(data[0],10)+"}CONSDATA";
-    //qDebug()<<"Rig - send data: "<<Data;
 
+    qDebug()<<"Rig - send data: "<<Data;
     bytesToWrite = static_cast<int>(tcpClient.write(::QByteArray(Data.toLatin1()).data()));
     if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
     if (bytesToWrite>=0)qDebug()<<"Rig:sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
@@ -869,20 +872,20 @@ void cRigmodel::setGmod(const QString &gmod)
     emit gmodChanged();
 }
 
-void cRigmodel::setTimer_delay_enging2(int timer_delay_enging2)
+void cRigmodel::setTimer_delay_engine2(int timer_delay_engine2)
 {
-    if (m_timer_delay_enging2 == timer_delay_enging2)
+    if (m_timer_delay_engine2 == timer_delay_engine2)
         return;
 
-    m_timer_delay_enging2 = timer_delay_enging2;
-    emit timer_delay_enging2Changed(m_timer_delay_enging2);
+    m_timer_delay_engine2 = timer_delay_engine2;
+    emit timer_delay_engine2Changed(m_timer_delay_engine2);
 }
 
-void cRigmodel::setTimer_delay_enging1(int timer_delay_enging1)
+void cRigmodel::setTimer_delay_engine1(int timer_delay_engine1)
 {
-    if (m_timer_delay_enging1 == timer_delay_enging1)
+    if (m_timer_delay_engine1 == timer_delay_engine1)
         return;
 
-    m_timer_delay_enging1 = timer_delay_enging1;
-    emit timer_delay_enging1Changed(m_timer_delay_enging1);
+    m_timer_delay_engine1 = timer_delay_engine1;
+    emit timer_delay_engine1Changed(m_timer_delay_engine1);
 }

@@ -65,8 +65,8 @@ class cRigmodel : public QObject
     Q_PROPERTY(int timer_connect_interval READ timer_connect_interval WRITE setTimer_connect_interval NOTIFY timer_connect_intervalChanged)
     Q_PROPERTY(int freerun READ freerun WRITE setFreerun NOTIFY freerunChanged) // Valve free run  - свободный ход клапанов в процентах
     Q_PROPERTY(int check_type READ check_type WRITE setCheck_type NOTIFY check_typeChanged) // Есть возможность отключить определение типа устройства если контроллер установлен не в то устройство
-    Q_PROPERTY(int timer_delay_enging1 READ timer_delay_enging1 WRITE setTimer_delay_enging1 NOTIFY timer_delay_enging1Changed)// время включения разгрузки мотора 1
-    Q_PROPERTY(int timer_delay_enging2 READ timer_delay_enging2 WRITE setTimer_delay_enging2 NOTIFY timer_delay_enging2Changed)// время включения разгрузки мотора 2
+    Q_PROPERTY(int timer_delay_engine1 READ timer_delay_engine1 WRITE setTimer_delay_engine1 NOTIFY timer_delay_engine1Changed)// время включения разгрузки мотора 1
+    Q_PROPERTY(int timer_delay_engine2 READ timer_delay_engine2 WRITE setTimer_delay_engine2 NOTIFY timer_delay_engine2Changed)// время включения разгрузки мотора 2
     //############ свойства - статусы tcp соединения
 
     Q_PROPERTY(bool client_connected READ client_connected NOTIFY client_connectedChanged)
@@ -220,9 +220,9 @@ public:
         return m_free_engine1;
     }
 
-    int timer_delay_enging1() const
+    int timer_delay_engine1() const
     {
-        return m_timer_delay_enging1;
+        return m_timer_delay_engine1;
     }
 
     bool free_engine2() const
@@ -230,12 +230,12 @@ public:
         return m_free_engine2;
     }
 
-    int timer_delay_enging2() const
+    int timer_delay_engine2() const
     {
-        return m_timer_delay_enging2;
+        return m_timer_delay_engine2;
     }
-    void setTimer_delay_enging1(int timer_delay_enging1);
-    void setTimer_delay_enging2(int timer_delay_enging2);
+    void setTimer_delay_engine1(int timer_delay_engine1);
+    void setTimer_delay_engine2(int timer_delay_engine2);
     void setfree_engine1(bool free_engine1);
 
     void setfree_engine2(bool free_engine2);
@@ -298,9 +298,9 @@ signals:
 
 
 
-    void timer_delay_enging1Changed(int timer_delay_enging1);
+    void timer_delay_engine1Changed(int timer_delay_engine1);
 
-    void timer_delay_enging2Changed(int timer_delay_enging2);
+    void timer_delay_engine2Changed(int timer_delay_engine2);
 
 public slots:
 
@@ -392,8 +392,8 @@ private:
     int m_timer_send_interval;
     int m_timer_connect_interval;
 
-    int m_timer_delay_enging1=2000; //время разгрузки мотора 1 - миллисекунд
-    int m_timer_delay_enging2=2000; //время разгрузки мотора 2 - миллисекунд
+    int m_timer_delay_engine1=2000; //время разгрузки мотора 1 - миллисекунд
+    int m_timer_delay_engine2=2000; //время разгрузки мотора 2 - миллисекунд
     //QSettings m_rigsettings:m_rigsettings("HYCO", "Rig Console");
 
 
