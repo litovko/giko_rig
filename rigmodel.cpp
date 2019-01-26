@@ -467,11 +467,11 @@ void cRigmodel::sendData()
     if (m_rigtype=="gkgbu"||m_rigtype=="grab6"||m_rigtype=="mgbu") Data=Data +";ana2:"+::QString().number(scaling(m_joystick_y2),10);
     if (m_rigtype=="gkgbu"||m_rigtype=="mgbu") Data=Data+";ana3:"+::QString().number(scaling(m_joystick_x1),10)+";gmod:"+gmod_decode(m_gmod);
     //яркости прожекторов
-    QString svet=";svet:"+::QString().number(m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16));
+    QString svet=";svet:"+::QString().number(lamp()*(m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16)));
     if (m_rigtype=="mgbu") Data=Data+svet;
 
-    if (free_engine1()) {Data="{ana3:127;gmod:grup1"+svet;}
-    if (free_engine2()) {Data="{ana2:127;gmod:grup3"+svet;}
+    if (free_engine1()) {Data="{ana3:-127;gmod:grup1"+svet;}
+    if (free_engine2()) {Data="{ana2:-127;gmod:grup3"+svet;}
     Data=Data+";dig1:"+::QString().number(data[0],10)+"}CONSDATA";
 
     qDebug()<<"Rig - send data: "<<Data;
