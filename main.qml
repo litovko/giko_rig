@@ -179,14 +179,15 @@ Window {
     }
     Timer {
         id: subtitle
-        interval:100
-        repeat: true
+        interval:subtitle.interval
+        repeat: subtitle.interval
         onTriggered: write_subtitle()
         running: recording
 
     }
     function write_subtitle(){
-        if(vlcPlayer1.state!=3) return;
+        if(vlcPlayer1.state!==3) return;
+        if(subtitle.interval===0) return;
         //console.log( "CAM1 POSITION: "+vlcPlayer1.time+ " = " + vlcPlayer1.input.length + " = " + vlcPlayer1.input.time)
         var s="A="+rig.ampere+":"+rig.ampere2+":"+rig.ampere3+" V="+rig.voltage+":"+rig.voltage2+":"+rig.voltage3+"\r\n";
         s=s+" P="+rig.pressure+":"+rig.pressure2+" t="+rig.temperature+":"+rig.temperature2+" h="+rig.altitude+" k="+rig.kren+" T="+rig.tangag+" R="+rig.turns;
