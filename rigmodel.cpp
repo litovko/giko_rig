@@ -448,8 +448,8 @@ void cRigmodel::sendData()
 {
     int data[9]={31,32,33,34,35,36,37,38,39};
     data[0] = m_engine*1
-            +   m_pump*2
-            +   m_lamp*4
+            +   m_pump*4
+            +   m_lamp*2
             //+ m_camera*8
             + m_engine2*8
             + m_camera1*16*m_camera

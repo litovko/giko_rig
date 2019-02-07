@@ -1,7 +1,7 @@
 TEMPLATE = app
 # обязательно требуется мультимедия от QT иначе не регистрируется плагин.
 QT += qml quick multimedia network
-CONFIG += c++11  console qtquickcompiler
+CONFIG += c++11  console
 CONFIG+=debug
 QMAKE_CXXFLAGS_DEBUG += "-gstabs+"
 QMAKE_CFLAGS_DEBUG += "-gstabs+"
