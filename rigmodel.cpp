@@ -1,6 +1,6 @@
 #include "rigmodel.h"
 #include <QDebug>
-
+#include <QString>
 #include <functional>
 
 cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
@@ -114,6 +114,7 @@ void cRigmodel::readSettings()
     m_port=static_cast<quint16>(settings.value("RigPort","1212").toUInt());
     setFreerun(settings.value("RigFreerun","0").toInt());
     m_timer_send_interval=settings.value("RigSendInterval","2000").toInt();
+    if (m_timer_send_interval<50)m_timer_send_interval=50;
     m_timer_connect_interval=settings.value("RigConnectInterval","30000").toInt();
     m_check_type=settings.value("RigCheckType","false").toBool();
 
@@ -367,6 +368,7 @@ int cRigmodel::timer_send_interval() const
 void cRigmodel::setTimer_send_interval(const int  &timer_send_interval)
 {
     m_timer_send_interval = timer_send_interval;
+    if (m_timer_send_interval<50)m_timer_send_interval=50;
     emit timer_send_intervalChanged();
 }
 
@@ -410,6 +412,7 @@ void cRigmodel::clientConnected()
     qDebug()<<"Rig Client connected to address >>>"+this->address()+" port:"+ ::QString().number(m_port);
     //qDebug()<<"Rig Network state >>> "<<tcpClient.errorString();
     setClient_connected(true);
+    _no_resp=false;
     //sendData();
 }
 void cRigmodel::clientDisconnected()
@@ -428,7 +431,7 @@ void cRigmodel::updateClientProgress(qint64 numBytes)
 {
     // callen when the TCP client has written some bytes
     bytesWritten += static_cast<quint16>(numBytes);
-    qDebug()<<"Rig Update client progress >>>"+::QString().number(bytesWritten);
+    //qDebug()<<"Rig Update client progress >>>"+::QString().number(bytesWritten);
 }
 
 void cRigmodel::displayError(QAbstractSocket::SocketError socketError)
@@ -460,9 +463,7 @@ void cRigmodel::sendData()
     QString Data; // Строка отправки данных.
 
     if (!m_client_connected) return;
-//    Data="{ana1:"+::QString().number(int(m_joystick_y1*127/100),10)
-//        +";ana2:"+::QString().number(int(m_joystick_y2*127/100),10)
-//        +";dig1:"+::QString().number(data[0],10)+"}FEDCA987";
+    if(_no_resp) setGood_data(false);
     Data="{ana1:"+::QString().number(scaling(m_joystick_y1),10);
     if (m_rigtype=="gkgbu"||m_rigtype=="grab6"||m_rigtype=="mgbu") Data=Data +";ana2:"+::QString().number(scaling(m_joystick_y2),10);
     if (m_rigtype=="gkgbu"||m_rigtype=="mgbu") Data=Data+";ana3:"+::QString().number(scaling(m_joystick_x1),10)+";gmod:"+gmod_decode(m_gmod);
@@ -474,10 +475,11 @@ void cRigmodel::sendData()
     if (free_engine2()) {Data="{ana2:-127;gmod:grup3"+svet;}
     Data=Data+";dig1:"+::QString().number(data[0],10)+"}CONSDATA";
 
-    qDebug()<<"Rig - send data: "<<Data;
+    //qDebug()<<"Rig - send data: "<<Data;
     bytesToWrite = static_cast<int>(tcpClient.write(::QByteArray(Data.toLatin1()).data()));
     if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
     if (bytesToWrite>=0)qDebug()<<"Rig:sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
+    _no_resp=true;
 }
 bool cRigmodel::handle_tag(const QString &tag, const QString &val)
 {
@@ -573,6 +575,7 @@ void cRigmodel::readData()
     QString CRC ="";
     QList<QByteArray> split;
     int m;
+    _no_resp=false;
     Data = tcpClient.readAll();
     qDebug()<<"Rig read :"<<Data;
     // {toil=29;poil=70;drpm=15;pwrv=33;pwra=3}FAFBFCFD

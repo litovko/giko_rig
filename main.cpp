@@ -87,7 +87,7 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
         out<<"FATAL:"<<QTime::currentTime().toString("hh:mm:ss:zzz ").toLocal8Bit().data()<<" "<<localMsg.constData()<<"("<<context.file<<":"<<context.line<<", "<<context.function<<")\n";
         abort();
     }
-    if(logfile.isOpen()) logfile.flush();
+    if(logfile.isOpen()) out.flush();
 }
 
 
@@ -95,6 +95,7 @@ int main(int argc, char *argv[])
 {
     qInstallMessageHandler(myMessageOutput);
     toggle_log(true);
+
     setlocale(LC_ALL, ""); // избавляемся от кракозябров в консоли
     qDebug()<<QTime::currentTime().toString("hh:mm:ss:zzz ")<<"Start"<<giko_name<<"  "<<giko_program;
     RegisterQmlVlc();

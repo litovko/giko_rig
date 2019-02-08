@@ -41,7 +41,7 @@ Item {
             MouseArea {
                         id: ma
                         anchors.fill: parent
-                        hoverEnabled: true
+                        hoverEnabled: false
                     }
             Rectangle {
                id: runner

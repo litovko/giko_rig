@@ -401,6 +401,7 @@ private:
     int bytesToWrite=0;
     int bytesWritten=0;
     int bytesReceived=0;
+    bool _no_resp=false;
     bool m_free_engine1=false; //включена разгрузка двигателя 1
     bool m_free_engine2=false; //включена разгрузка двигателя 2
 };

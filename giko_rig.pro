@@ -52,3 +52,5 @@ message(LIBS $$LIBS)
 INCLUDEPATH += $$PWD/SDL/include
 DEPENDPATH += $$PWD/SDL/include
 DESTDIR = D:\dest.rig.5.11
+
+
