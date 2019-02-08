@@ -3,6 +3,7 @@ import QtQuick 2.5
 Item {
     id:axis
     property real value : 0
+    property real schale_value : 1
     property real minimunValue: -127
     property real maximumValue: 127
     property string text: "ТЕСТ"
@@ -20,6 +21,7 @@ Item {
             height: axis.height-ty.height
             anchors.horizontalCenter: parent.horizontalCenter
             color: "transparent"
+
             gradient: Gradient {
                 GradientStop {
                     position: 0.00;
@@ -34,8 +36,13 @@ Item {
                     color: "#111111";
                 }
             }
-            border.color: "#3f3f40"
+            border.color: ma.containsMouse?"yellow":"#3f3f40"
             radius: 6
+            MouseArea {
+                        id: ma
+                        anchors.fill: parent
+                        hoverEnabled: true
+                    }
             Rectangle {
                id: runner
                anchors.horizontalCenter: scale.horizontalCenter
@@ -46,29 +53,7 @@ Item {
                border.color: "light blue"
                radius: 5
                y: (scale.height/2-runner.height/2)-axis.value*(scale.height-runner.height)/(axis.maximumValue-axis.minimunValue)
-//               MouseArea {
-//                   id: ma
-//                   anchors.fill: parent
-//                   hoverEnabled: true
-//                   drag.target: parent
-//                   drag.axis: Drag.YAxis
-//                   drag.minimumY: 0
-//                   drag.maximumY: scale.height-runner.height
-//                   //drag.minimumX: 0
-//                   //drag.maximumX: container.width - rect.width
-//               }
-//               onYChanged: {
-//                   //надо бы доделать
 
-//               }
-
-               //    axis.value/(axis.maximumValue-axis.minimumValue)
-               //y: axis.value
-//               onYChanged: {
-
-//                   console.log(y+",,,"+axis.value)
-//                   console.log((scale.height/2-runner.height/2)-scale.value*(scale.height-runner.height)/(axis.maximumValue-axis.minimunValue))
-//               }
             }
         }
         Text {

@@ -2,12 +2,20 @@ import QtQuick 2.0
 import QtQuick.Controls 1.4
 //import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
+import Qt.labs.settings 1.0
 Item {
     id: camSettings
     property alias cam1: checkBox1.checked
     property alias cam2: checkBox2.checked
     property alias cam3: checkBox3.checked
     property alias cam4: checkBox4.checked
+    Settings{
+        category: "CAM_settings"
+        property alias cam1: checkBox1.checked
+        property alias cam2: checkBox2.checked
+        property alias cam3: checkBox3.checked
+        property alias cam4: checkBox4.checked
+    }
     Rectangle {
         id: rec
         anchors.fill: parent
