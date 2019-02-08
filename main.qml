@@ -128,7 +128,7 @@ Window {
         //var dt=new Date();
         var i;
         var vlc=vlc_options.split(',')
-        console.log("registry vlc options - cam"+camindex+": ("+win.vlc_options+")");
+        console.log("registry vlc options - cam"+(camindex+1)+": ("+win.vlc_options+")");
         if (camindex===undefined) console.assert("getrecordoption camindex undefined!!!")
         var sopt=[":network-caching="+network_caching.toString()];//, ":sout-all", ":sout-keep" ];
         console.log("getrecordoption:("+sopt+")");
