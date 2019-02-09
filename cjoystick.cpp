@@ -7,7 +7,7 @@
 
 cJoystick::cJoystick(QObject *parent) : QObject(parent)
 {
-    qDebug()<<"cJoystick constructor";
+    //qDebug()<<"cJoystick constructor";
     readSettings();
     timer_joystick = new QTimer(this);
     timer_checkjoystick = new QTimer(this);
@@ -272,7 +272,7 @@ void cJoystick::change_numbers()
 
 void cJoystick::saveSettings()
 {
-        qDebug()<<"Save settings Joystick"<<name();
+        //qDebug()<<"Save settings Joystick"<<name();
         QSettings settings("HYCO", "Rig Console");
         settings.setValue("Joystick",name());
         settings.setValue("Joystick-axes",m_axes_number);
@@ -291,7 +291,7 @@ void cJoystick::saveSettings()
 
 void cJoystick::readSettings()
 {
-    qDebug()<<"Read settings Joystick";
+    //qDebug()<<"Read settings Joystick";
     QSettings settings("HYCO", "Rig Console");
 //    m_axes_number=settings.value("Joystick-axes",0).toInt();
 //    m_buttons_number=settings.value("Joystick-buttons",0).toInt();
