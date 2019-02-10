@@ -54,6 +54,7 @@ extern void toggle_log(bool recordlog) {
         if(logfile.isOpen()) {
             logfile.write("Close\n");
             logfile.flush();
+            out.flush();
             logfile.close();
         }
         recordinglog=false;
@@ -131,9 +132,8 @@ int main(int argc, char *argv[])
 
     int ex=app.exec();
     settings.setValue("vlc_debug", vlc_debug);
-
-    toggle_log(false);
     qDebug()<<"Good bye"<<giko_name<<"  "<<giko_program;
+    toggle_log(false);
     return ex;
 }
 

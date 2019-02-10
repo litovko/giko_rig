@@ -24,7 +24,7 @@ cCamera::cCamera(QObject *parent) : QObject(parent)
 }
 void cCamera::saveSettings()
 {
-    qDebug()<<"Save settings Cam"<<QString::number(m_index)<<":"<<"Cam"<<QString::number(m_index)<<":"<<"saveSettings addres:"<<m_address<<"Enabled:"<<m_cameraenabled;
+    //qDebug()<<"Save settings Cam"<<QString::number(m_index)<<":"<<"Cam"<<QString::number(m_index)<<":"<<"saveSettings addres:"<<m_address<<"Enabled:"<<m_cameraenabled;
     QSettings settings("HYCO", "Rig Console");
     settings.setValue("Cam"+QString::number(m_index)+"Address",m_address);
     settings.setValue("Cam"+QString::number(m_index)+"Comby",m_comby);
@@ -44,7 +44,7 @@ void cCamera::readSettings()
     emit url1Changed();
     setOverlaytext(settings.value("Cam"+QString::number(m_index)+"OverlayText","Cam"+QString::number(m_index)).toString());
     setHistogram(settings.value("Cam"+QString::number(m_index)+"Histogram",0).toInt());
-    qDebug()<<"Read settings Cam"<<QString::number(m_index)<<":"<<"Cam"<<QString::number(m_index)<<":"<<"readSettings addres:"<<m_address;
+    //qDebug()<<"Read settings Cam"<<QString::number(m_index)<<":"<<"Cam"<<QString::number(m_index)<<":"<<"readSettings addres:"<<m_address;
 }
 void cCamera::setTitle(const QString  &title)
 {
@@ -342,7 +342,7 @@ QString cCamera::title() const
         p->setProperty("RequestType","change_videopage");
         m_url1=url1();
         emit url1Changed();  //при изменении настроке видеопотоков меняется  url для видео.
-        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"Cam"<<QString::number(m_index)<<":"<<"Поменяли настройки в соответствии с комбо-режимом: "<<s;
+        //qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"Cam"<<QString::number(m_index)<<":"<<"Поменяли настройки в соответствии с комбо-режимом: "<<s;
         //change_videopagesettings();
     }
     void cCamera::change_videopagesettings()
@@ -358,7 +358,7 @@ QString cCamera::title() const
                 + "&encryptvideo=0&localdisplay=2&overlaytext1=" + m_overlaytext
                 + "&detailinfo1=0 HTTP/1.1";
 
-        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"urlchange_videopagesettings:"<<s;
+        //qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"urlchange_videopagesettings:"<<s;
         QUrl iniUrl(s);
         iniUrl.setPassword(USERPASS);
         iniUrl.setUserName(USERNAME);
@@ -377,7 +377,7 @@ QString cCamera::title() const
         QString s;
         s="http://" + m_address
                 + "/vb.htm?timefrequency=-1&daylight=0&timezone=15&dateformat=2&tstampformat=1&dateposition=0&timeposition=0 HTTP/1.1";
-        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"setTimesettings():"<<s;
+        //qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"setTimesettings():"<<s;
         QUrl iniUrl(s);
         iniUrl.setPassword(USERPASS);
         iniUrl.setUserName(USERNAME);
@@ -399,7 +399,7 @@ QString cCamera::title() const
                 + "&newtime="+t.currentDateTime().toString("HH:mm:ss")
                 + "&dateformat=2&tstampformat=1&dateposition=0&timeposition=0"
                 + " HTTP/1.1";
-        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"setDateTimesettings():"<<s;
+        //qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"setDateTimesettings():"<<s;
         QUrl iniUrl(s);
         iniUrl.setPassword(USERPASS);
         iniUrl.setUserName(USERNAME);
@@ -425,7 +425,7 @@ QString cCamera::title() const
                 +"&histogram=0"
                 +"&img2atype="+::QString().number(m_img2atype,10)
                 +"&priority=0 HTTP/1.1";
-        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"urlchange_videosettings:"<<s;
+        //qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"urlchange_videosettings:"<<s;
         QUrl iniUrl(s);
         iniUrl.setPassword(USERPASS);
         iniUrl.setUserName(USERNAME);
@@ -442,7 +442,7 @@ QString cCamera::title() const
         // http://192.168.1.168/vb.htm?paratest=reloadflag HTTP/1.1
         s="http://"+m_address+"/vb.htm?paratest=reloadflag HTTP/1.1";
 
-        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"commit:"<<s;
+        //qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"commit:"<<s;
         QUrl iniUrl(s);
         iniUrl.setPassword(USERPASS);
         iniUrl.setUserName(USERNAME);
@@ -459,7 +459,7 @@ QString cCamera::title() const
      //    http://192.168.1.168/vb.htm?paratest=multicast HTTP/1.1
         s="http://"+m_address+"/vb.htm?paratest=multicast HTTP/1.1";
 
-        qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"commit multicast:"<<s;
+        //qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"commit multicast:"<<s;
         QUrl iniUrl(s);
         iniUrl.setPassword(USERPASS);
         iniUrl.setUserName(USERNAME);
@@ -496,7 +496,7 @@ QString cCamera::title() const
     {
 // если файл не открыт - открываем. Предыдущий закрываем.
         if (m_recordfile=="") return;
-        QString fn=m_recordfile.replace(".mpg",".srt");
+        QString fn=m_recordfile+".srt";
         if (m_subtitles_file.isOpen() and (m_subtitles_file.fileName()!=fn) ) m_subtitles_file.close();
         if(!m_subtitles_file.isOpen()){
 
@@ -592,7 +592,7 @@ QString cCamera::title() const
         m_type = type;
         emit typeChanged();
         emit url1Changed();
-        qDebug()<<"Camera type changed"<<" ind:"<<index()<< type<<" url: "<< url1();
+        //qDebug()<<"Camera type changed"<<" ind:"<<index()<< type<<" url: "<< url1();
     }
 
 
@@ -622,7 +622,7 @@ QString cCamera::title() const
        }
        qDebug()<<"Cam"<<QString::number(m_index)<<" get_parametrs by URL:" << iniUrl;
        QNetworkRequest request(iniUrl);
-       qDebug()<<"HTTP Request:"<<request.url();
+       //qDebug()<<"HTTP Request:"<<request.url();
        QNetworkReply *p= m_WebCtrl->get(request);  // в этом месте создается объект QNetworkReply!!!
        setOnrequest(true);
        p->setProperty("RequestType","ini");
@@ -675,7 +675,7 @@ QString cCamera::title() const
     {
         if (m_type==2) {
 
-            qDebug()<<pReply->errorString();
+            //qDebug()<<pReply->errorString();
         }
         setOnrequest(false);
         //qDebug()<<"loadINI: Cam"<<QString::number(m_index)<<":"<<pReply->property("RequestType");

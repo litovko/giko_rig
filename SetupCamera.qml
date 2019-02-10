@@ -125,7 +125,7 @@ Item {
                     var  i = s.indexOf(",");
                     var  strlen=s.length;
                     listStreams.clear();
-                    console.log("Setup Camera cam"<<currentcam<<".combylist:"+cam[currentcam].combylist)
+                    //console.log("Setup Camera cam"<<currentcam<<".combylist:"+cam[currentcam].combylist)
                     while(i>0){
 
                         c=s.substring(0,i);
@@ -138,7 +138,7 @@ Item {
                     }
                     listStreams.append({text: s}) // добавляем последний элемент
                     spinBox_videomode.currentIndex=cam[currentcam].comby;
-                    console.log("Setup Camera  Filllistmodel() cam.comby:"+cam[currentcam].comby+"curindex:"+spinBox_videomode.currentIndex);
+                    //console.log("Setup Camera  Filllistmodel() cam.comby:"+cam[currentcam].comby+"curindex:"+spinBox_videomode.currentIndex);
                     return;
                 }
             }
@@ -154,10 +154,10 @@ Item {
             tooltip: "Применение указанных настроек камеры"
             onClicked: {
                 //               console.log("Кликнули");
-                console.log("Setup Camera  Comby button clicked");
+                //console.log("Setup Camera  Comby button clicked");
                 players[currentcam].stop();
                 cam[currentcam].comby=spinBox_videomode.currentIndex;
-                console.log("Setup Camera  Button Apply clicked, comby:"+cam[currentcam].comby);
+                //console.log("Setup Camera  Button Apply clicked, comby:"+cam[currentcam].comby);
                 cam[currentcam].videopage=true;
             }
         }
@@ -418,7 +418,7 @@ Item {
                     else radioDay.checked=true;
                     cam[currentcam].colorkiller=checked?0:1
 
-                    console.log("Setup Camera  NIGHT=1/DAY=0"+ cam[currentcam].colorkiller);
+                    //console.log("Setup Camera  NIGHT=1/DAY=0"+ cam[currentcam].colorkiller);
                 }
                 style: RadioButtonStyle {
                     indicator: Rectangle {
@@ -448,7 +448,7 @@ Item {
                     if (checked) radioNight.checked=false
                     else radioNight.checked=true;
                     cam[currentcam].colorkiller=checked?1:0
-                    console.log("Setup Camera onCheckedChanged NIGHT=1/DAY=0"+ cam[currentcam].colorkiller);
+                    //console.log("Setup Camera onCheckedChanged NIGHT=1/DAY=0"+ cam[currentcam].colorkiller);
                 }
                 Component.onCompleted:  checked=cam[currentcam].colorkiller==0?true:false
 
@@ -586,7 +586,7 @@ Item {
             opacity: 0.8
             tooltip: "Установка текущего времени"
             onClicked: {
-                console.log("Setup Camera SetTime Clicked");
+                //console.log("Setup Camera SetTime Clicked");
                 players[currentcam].stop();
                 cam[currentcam].setDateTimesettings();
             }

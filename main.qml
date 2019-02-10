@@ -698,7 +698,7 @@ Window {
             onKey_3Changed: if (key_3) fcommand("LAYOUT")
             onKey_2Changed: if (key_2) fcommand("PLAY")
             onKey_1Changed: if (key_1) fcommand("JKEY1")
-            onKey_0Changed: if (key_0) fcommand("JKEY0")
+            onKey_0Changed: if (key_0&&j.ispresent) fcommand("JKEY0")
             devider: 1+key_5
         }
         MyDashboard {
