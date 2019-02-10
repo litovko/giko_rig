@@ -133,7 +133,8 @@ int main(int argc, char *argv[])
     int ex=app.exec();
     settings.setValue("vlc_debug", vlc_debug);
     qDebug()<<"Good bye"<<giko_name<<"  "<<giko_program;
-    toggle_log(false);
+    //toggle_log(false);
+    out.flush();
     return ex;
 }
 
