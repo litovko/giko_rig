@@ -673,14 +673,14 @@ QString cCamera::title() const
 
     void cCamera::loadINI(QNetworkReply* pReply)
     {
-        if (m_type==2) {
+//        if (m_type==2) {
 
-            //qDebug()<<pReply->errorString();
-        }
+//            qDebug()<<pReply->errorString();
+//        }
         setOnrequest(false);
         //qDebug()<<"loadINI: Cam"<<QString::number(m_index)<<":"<<pReply->property("RequestType");
         if (pReply->error()!=QNetworkReply::NoError ) {
-            qWarning()<<"Cam"<<QString::number(m_index)<<":"<<"Camera unavailable:"<<pReply->errorString();
+            qWarning()<<"Cam"<<QString::number(m_index)<<":"<<"Camera unavailable:"<<pReply->errorString()<<"<<"<<pReply->error()<<">>";
 //            qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"!!8";
             setCamerapresent(false);
         }

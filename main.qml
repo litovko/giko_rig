@@ -157,6 +157,7 @@ Window {
     }
     function check_file_size(){
         if (recording===0) return;
+        var flag=false;
         for (var i=0; i<4; i++) {
             if(players[i].state===3) {
                 console.log ("file_name"+i+":"+cams[i].recordfile + "size:"+ cams[i].get_filesize())
@@ -165,14 +166,17 @@ Window {
                     onrecord=false;
                 }
                 curfilesize[i]=cams[i].get_filesize();
-                if (cams[i].get_filesize()>=filesize*1024*1024) player_play(i);
+                if ((cams[i].get_filesize()>=filesize*1024*1024)&&!flag) {
+                    flag=true;
+                    player_play(i);
+                }
             }
         } //for
     }
 
     Timer {
         id: t_filesize
-        interval: 10000
+        interval: 30000
         repeat: true
         onTriggered: check_file_size()
         running: true
