@@ -341,7 +341,7 @@ private:
     int m_kren=10;
     int m_turns=0;
     QString gmod_decode(QString gmod) const;
-    unsigned int m_position=60842;
+    unsigned int m_position=0;
     QString m_rigtype="mgbu"; //grab2,grab6,gkgbu,mgbu
 
 

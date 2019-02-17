@@ -107,6 +107,7 @@ Item {
         border.width: 1
         MyBubble2 {
             z: 1
+            visible: false
             anchors.margins: 5
             anchors.fill: parent
 
