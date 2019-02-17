@@ -3,7 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Extras 1.4
 Item {
     id: lamp
-    property bool active: false
+    property alias active: i.active
     property string bottomText: "ЛАМПЫ[F2]"
     property int fontSize: 12
     property bool error: false
@@ -26,7 +26,7 @@ Item {
             anchors.centerIn: parent
             StatusIndicator {
                 id: i
-                active: lamp.active
+
                 width: lamp.height/3
                 height: lamp.height/3
                 color: !error?"yellow":"lightgray"

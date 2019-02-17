@@ -5,6 +5,7 @@ Item {
     property int yvalue: 0
     property int position: 0
     property alias backgroundopacity: r.opacity
+
     Rectangle {
         id: r
         anchors.fill: parent
@@ -24,17 +25,32 @@ Item {
         if (xvalue&32) r3.state="ON"; else r3.state="OFF"
         if (xvalue&128) c.x_on=true; else c.x_on=false
     }
+    function change_y(y,v) {
+        console.log("T:"+state+" "+v)
+        if (v&&y.state==="ON") return;
+        if (v) { y.state="ON"; return;}
+        if (y.state==="ON") {y.state="OFF-GREEN"; return;}
+        if (y.state==="OFF-GREEN") {y.state="OFF"; return;}
+    }
+//    function yval() {
+//        if (yvalue&1) change_y(y1,value&1)
+//        if (yvalue&2) change_y(y2,value&2)
+//        if (yvalue&4) change_y(y3,value&4)
+//        if (yvalue&8) change_y(y4,value&8)
+//        if (yvalue&16) change_y(y5,value&16)
+//        if (yvalue&32) change_y(y6,value&32)
+//        if (yvalue&64) change_y(y7,value&64)
+//        if (yvalue&128) c.y_on=true; else c.y_on=false
+//    }
     function yval() {
-        if (yvalue&1) y1.state="ON"; else y1.state="OFF"
-        if (yvalue&2) y2.state="ON"; else y2.state="OFF"
-        if (yvalue&4) y3.state="ON"; else y3.state="OFF"
-        if (yvalue&8) y4.state="ON"; else y4.state="OFF"
-        if (yvalue&16) y5.state="ON"; else y5.state="OFF"
-        if (yvalue&32) y6.state="ON"; else y6.state="OFF"
-        if (yvalue&64) y7.state="ON"; else y7.state="OFF"
+        if (yvalue&1) y1.state="ON"; else y1.state="OFF-GREEM"
+        if (yvalue&2) y2.state="ON"; else y2.state="OFF-GREEM"
+        if (yvalue&4) y3.state="ON"; else y3.state="OFF-GREEM"
+        if (yvalue&8) y4.state="ON"; else y4.state="OFF-GREEM"
+        if (yvalue&16) y5.state="ON"; else y5.state="OFF-GREEM"
+        if (yvalue&32) y6.state="ON"; else y6.state="OFF-GREEM"
+        if (yvalue&64) y7.state="ON"; else y7.state="OFF-GREEM"
         if (yvalue&128) c.y_on=true; else c.y_on=false
-//        console.log("Y:"+yvalue+" "+y1.state)
-//        console.log("P:"+position)
     }
     onPositionChanged: {
 
@@ -62,8 +78,6 @@ Item {
 //        y5.state="OFF"
 //        y6.state="OFF"
 //        y7.state="OFF"
-//        c.state="OFF"
-
     }
 
 

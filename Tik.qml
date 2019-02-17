@@ -6,10 +6,12 @@ Item {
     property int textrotate: 0
     property string color_on: "yellow"
     property string color_off: "gray"
+    property string color_off_green: "green"
     //property alias transform: t.transform
-    state: "ON"
+    //onStateChanged: console.log("Tik:"+state)
+    state: "OFF"
     states: [
-           State { name: "ON";
+        State { name: "ON";
              PropertyChanges { target:m; color: color_on; }
              PropertyChanges { target:t; color: color_on; }
              AnchorChanges {
@@ -18,7 +20,7 @@ Item {
                    anchors.left: undefined  //remove the left anchor
                }
            },
-           State { name: "OFF";
+        State { name: "OFF";
              PropertyChanges { target:m; color: color_off; }
              PropertyChanges { target:t; color: color_off; }
              AnchorChanges {
@@ -26,6 +28,15 @@ Item {
                    anchors.left: parent.left
                    anchors.right: undefined  //remove the left anchor
                }
+           },
+        State { name: "OFF-GREEN";
+          PropertyChanges { target:m; color: color_off_green; }
+          PropertyChanges { target:t; color: color_off_green; }
+          AnchorChanges {
+                target: m
+                anchors.left: parent.left
+                anchors.right: undefined  //remove the left anchor
+            }
         }
        ]
     transitions: Transition {

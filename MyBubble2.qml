@@ -12,8 +12,8 @@ Item {
 //                pitch=pitch+0.5; if (pitch>90) pitch=-90
 //            }
 //    }
-    onRollChanged: canvas.requestPaint()
-    onPitchChanged: canvas.requestPaint()
+    onRollChanged: if (visible) canvas.requestPaint()
+    onPitchChanged:if (visible) canvas.requestPaint()
     function rollline(c, angle)
     {
         var r=10

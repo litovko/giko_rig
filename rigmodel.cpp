@@ -67,7 +67,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     connect(&timer_send, SIGNAL(timeout()), this, SLOT(sendData()));
     timer_send.start(m_timer_send_interval);
     emit rigtypeChanged();
-    emit positionChanged();
+    //emit positionChanged();
 }
 void cRigmodel::reset()
 {
@@ -137,6 +137,7 @@ void cRigmodel::updateSendTimer()
 
 void cRigmodel::setPressure(const int &pressure)
 {
+    if (m_pressure == pressure) return;
     m_pressure = pressure;
     emit pressureChanged();
 }
@@ -148,6 +149,7 @@ int cRigmodel::pressure() const
 
 void cRigmodel::setTemperature2(const int &temperature2)
 {
+    if (m_temperature2 == temperature2) return;
     m_temperature2 = temperature2;
     emit temperature2Changed();
 }
@@ -160,6 +162,7 @@ int cRigmodel::temperature2() const
 
 void cRigmodel::setVoltage(const int &voltage)
 {
+    if (m_voltage == voltage) return;
     m_voltage = voltage;
     emit voltageChanged();
 }
@@ -171,6 +174,7 @@ int cRigmodel::voltage() const
 
 void cRigmodel::setVoltage24(const int &voltage)
 {
+    if (m_voltage24 == voltage) return;
     m_voltage24 = voltage;
     emit voltage24Changed();
 }
@@ -182,6 +186,7 @@ int cRigmodel::voltage24() const
 
 void cRigmodel::setAmpere(const int &ampere)
 {
+    if (m_ampere == ampere) return;
     m_ampere = ampere;
     emit ampereChanged();
 }
@@ -193,6 +198,7 @@ int cRigmodel::ampere() const
 
 void cRigmodel::setTurns(const int &turns)
 {
+    if (m_turns == turns) return;
     m_turns = turns;
     emit turnsChanged();
 }
@@ -204,6 +210,7 @@ int cRigmodel::turns() const
 
 void cRigmodel::setTemperature(const int &temperature)
 {
+    if (m_temperature == temperature) return;
     m_temperature = temperature;
     emit temperatureChanged();
 }
@@ -286,6 +293,7 @@ bool cRigmodel::engine() const
 
 void cRigmodel::setPump(const bool &pump)
 {
+    if (m_pump == pump) return;
     m_pump = pump;
     emit pumpChanged();
 }
@@ -297,6 +305,7 @@ bool cRigmodel::pump() const
 
 void cRigmodel::setJoystick_x1(const int &joystick)
 {
+    if (m_joystick_x1 == joystick) return;
     m_joystick_x1 = joystick;
     emit joystick_x1Changed();
 }
@@ -308,6 +317,7 @@ int cRigmodel::joystick_x1() const
 //-------------------------------
 void cRigmodel::setJoystick_y1(const int &joystick)
 {
+    if (m_joystick_y1 == joystick) return;
     m_joystick_y1 = joystick;
     emit joystick_y1Changed();
 }
@@ -319,6 +329,7 @@ int cRigmodel::joystick_y1() const
 //----------------------------------
 void cRigmodel::setJoystick_x2(const int &joystick)
 {
+    if (m_joystick_x2 == joystick) return;
     m_joystick_x2 = joystick;
     emit joystick_x2Changed();
 }
@@ -329,6 +340,7 @@ int cRigmodel::joystick_x2() const
 }
 void cRigmodel::setJoystick_y2(const int &joystick)
 {
+    if (m_joystick_y2 == joystick) return;
     m_joystick_y2 = joystick;
     emit joystick_y2Changed();
 }
@@ -506,12 +518,14 @@ bool cRigmodel::handle_tag(const QString &tag, const QString &val)
 
 void cRigmodel::setfree_engine2(bool free_engine2)
 {
+    if (m_free_engine2 == free_engine2) return;
     m_free_engine2 = free_engine2;
     emit free_engine2Changed(m_free_engine2);
 }
 
 void cRigmodel::setfree_engine1(bool free_engine1)
 {
+    if (m_free_engine1 == free_engine1) return;
     m_free_engine1 = free_engine1;
     emit free_engine1Changed(m_free_engine1);
     //qDebug()<<"free_engine:"<<m_free_engine1;
@@ -644,6 +658,7 @@ int cRigmodel::leak_voltage() const
 
 void cRigmodel::setLeak_voltage(int leak_voltage)
 {
+    if (m_leak_voltage == leak_voltage) return;
     m_leak_voltage = leak_voltage;
     emit leak_voltageChanged();
 }
@@ -665,6 +680,7 @@ int cRigmodel::leak() const
 
 void cRigmodel::setLeak(int leak)
 {
+    if (m_leak == leak)return;
     m_leak = leak;
     emit leakChanged();
 }
@@ -676,6 +692,7 @@ int cRigmodel::kren() const
 
 void cRigmodel::setKren(int kren)
 {
+    if(m_kren == kren) return;
     m_kren = kren;
     emit krenChanged();
 }
@@ -687,6 +704,7 @@ int cRigmodel::tangag() const
 
 void cRigmodel::setTangag(int tangag)
 {
+    if (m_tangag == tangag) return;
     m_tangag = tangag;
     emit tangagChanged();
 }
@@ -713,6 +731,7 @@ unsigned int cRigmodel::position() const
 
 void cRigmodel::setPosition(unsigned int position)
 {
+    if (m_position == position) return;
     m_position = position;
     emit positionChanged();
 }
@@ -724,6 +743,7 @@ int cRigmodel::pressure2() const
 
 void cRigmodel::setPressure2(int pressure2)
 {
+    if (m_pressure2 == pressure2) return;
     m_pressure2 = pressure2;
     emit pressure2Changed();
 }
@@ -735,6 +755,7 @@ int cRigmodel::light4() const
 
 void cRigmodel::setLight4(int light4)
 {
+    if(m_light4 == light4) return;
     m_light4 = light4;
     emit light4Changed();
 }
@@ -746,6 +767,7 @@ int cRigmodel::light3() const
 
 void cRigmodel::setLight3(int light3)
 {
+    if(m_light3 == light3) return;
     m_light3 = light3;
     emit light3Changed();
 }
@@ -757,6 +779,7 @@ int cRigmodel::light2() const
 
 void cRigmodel::setLight2(int light2)
 {
+    if(m_light2 == light2) return;
     m_light2 = light2;
     emit light2Changed();
 }
@@ -768,6 +791,7 @@ int cRigmodel::light1() const
 
 void cRigmodel::setLight1(int light1)
 {
+    if(m_light1 == light1) return;
     m_light1 = light1;
     emit light1Changed();
 }
@@ -779,6 +803,7 @@ int cRigmodel::voltage24_2() const
 
 void cRigmodel::setVoltage24_2(int voltage24_1)
 {
+    if(m_voltage24_2 == voltage24_1)return;
     m_voltage24_2 = voltage24_1;
     emit voltage24_2Changed();
 }
@@ -790,6 +815,7 @@ int cRigmodel::altitude() const
 
 void cRigmodel::setAltitude(int altitude)
 {
+    if( m_altitude == altitude)return;
     m_altitude = altitude;
     emit altitudeChanged();
 }
@@ -801,6 +827,7 @@ int cRigmodel::ampere3() const
 
 void cRigmodel::setAmpere3(int ampere3)
 {
+    if (m_ampere3 == ampere3) return;
     m_ampere3 = ampere3;
     emit ampere3Changed();
 }
@@ -812,6 +839,7 @@ int cRigmodel::ampere2() const
 
 void cRigmodel::setAmpere2(int ampere2)
 {
+    if (m_ampere2 == ampere2) return;
     m_ampere2 = ampere2;
     emit ampere2Changed();
 }
@@ -823,6 +851,7 @@ int cRigmodel::voltage3() const
 
 void cRigmodel::setVoltage3(int voltage3)
 {
+    if (m_voltage3 == voltage3) return;
     m_voltage3 = voltage3;
     emit voltage3Changed();
 }
@@ -834,7 +863,8 @@ int cRigmodel::voltage2() const
 
 void cRigmodel::setVoltage2(int voltage2)
 {
-    m_voltage2 = voltage2;\
+    if (m_voltage2 == voltage2) return;
+    m_voltage2 = voltage2;
     emit voltage2Changed();
 }
 
@@ -870,6 +900,7 @@ QString cRigmodel::gmod() const
 
 void cRigmodel::setGmod(const QString &gmod)
 {
+    if (m_gmod == gmod) return;
     m_gmod = gmod;
     //qDebug()<<"gmod:"+m_gmod;
     emit gmodChanged();
