@@ -214,7 +214,7 @@ public slots:
 
 private:
     //переменные для загрузки INI-файла из камеры.
-    QNetworkAccessManager *m_WebCtrl=0;
+    QNetworkAccessManager *m_WebCtrl=nullptr;
     QByteArray m_DownloadedData;
     QStringList m_parametr; //храним все настройки, полученный из камеры в этой структуре.
     QUrl iniUrl; //URL запроса настроек камеры

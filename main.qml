@@ -361,17 +361,18 @@ Window {
               break;
           case "DEMO":
               mainRect.state = "3-KAM-bol1" // "3-KAM-mal"
-              vlcPlayer1.mrl = "file:///"+win.filepath+"/01.3gp"
+              vlcPlayer1.mrl = "file:///"+win.filepath+"/demo/01.mpg"
               vlcPlayer1.play()
-              vlcPlayer2.mrl = "file:///"+win.filepath+"/02.3gp"
-              vlcPlayer1.play()
-              vlcPlayer3.mrl = "file:///"+win.filepath+"/03.3gp"
-              vlcPlayer1.play()
+              vlcPlayer2.mrl = "file:///"+win.filepath+"/demo/02.mpg"
+              vlcPlayer2.play()
+              vlcPlayer3.mrl = "file:///"+win.filepath+"/demo/03.mpg"
+              vlcPlayer3.play()
+              vlcPlayer4.mrl = "file:///"+win.filepath+"/demo/04.mpg"
+              vlcPlayer4.play()
               rig.engine=true;
               rig.lamp=true;
               rig.camera=true;
-              rig.good_data=true;
-              rig.client_connected=true;
+
               break;
         }
     }
@@ -405,6 +406,13 @@ Window {
                             }
                         }
                 Behavior on y {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                Behavior on x {
 
                             NumberAnimation {
                                 duration: 600
@@ -451,6 +459,13 @@ Window {
                                 easing.type: Easing.InOutQuad
                             }
                         }
+                Behavior on x {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
                 Behavior on width{
 
                             NumberAnimation {
@@ -491,6 +506,13 @@ Window {
                                 easing.type: Easing.InOutQuad
                             }
                         }
+                Behavior on x {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
                 Behavior on width{
 
                             NumberAnimation {
@@ -525,6 +547,13 @@ Window {
                             }
                         }
                 Behavior on y {
+
+                            NumberAnimation {
+                                duration: 600
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                Behavior on x {
 
                             NumberAnimation {
                                 duration: 600
@@ -706,6 +735,7 @@ Window {
             devider: 1+key_5
         }
         MyDashboard {
+            visible: true
             height: 600
             id: dashboard
             width: 180

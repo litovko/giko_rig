@@ -107,7 +107,7 @@ Item {
         border.width: 1
         MyBubble2 {
             z: 1
-            visible: false
+            visible: true
             anchors.margins: 5
             anchors.fill: parent
 
@@ -132,6 +132,7 @@ Item {
             anchors.margins: 0
             anchors.fill: parent
             position:  rigmodel.position
+            y_axes: j.y2axis*(mgbu.state==="drill")*(!joystick.lock)*joystick.key_0
 
         }
     }

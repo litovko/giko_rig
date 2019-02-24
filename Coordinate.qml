@@ -1,10 +1,13 @@
 import QtQuick 2.0
 
 Item {
+    id: coord
     property int xvalue: 0
     property int yvalue: 0
+    property int y_axes: 0
     property int position: 0
     property alias backgroundopacity: r.opacity
+    property var prev: []
 
     Rectangle {
         id: r
@@ -15,6 +18,13 @@ Item {
     }
     onXvalueChanged: xval()
     onYvalueChanged: yval()
+    onY_axesChanged: yax();
+    function  yax() {
+        if (y_axes>0 ) state="UP"
+        if (y_axes<0 ) state="DOWN"
+        //console.log(state)
+    }
+
     function xval() {
         //console.log(xvalue)
         if (xvalue&1) l1.state="ON"; else l1.state="OFF"
@@ -23,70 +33,96 @@ Item {
         if (xvalue&8) r1.state="ON"; else r1.state="OFF"
         if (xvalue&16) r2.state="ON"; else r2.state="OFF"
         if (xvalue&32) r3.state="ON"; else r3.state="OFF"
-        if (xvalue&128) c.x_on=true; else c.x_on=false
+        if (xvalue&128) cx.x_on=true; else cx.x_on=false
     }
+    function _pr() {
+        var s="|"
+        for (var i = 0; i < prev.length; i++)
+        {
+            s=s+prev[i].text+"|"
+        }
+        console.log(s);
+    }
+
     function change_y(y,v) {
-        console.log("T:"+state+" "+v)
+        //console.log("0:");
+        //_pr();
+        //console.log("T:"+y.text+" st:"+y.state+" val:"+v)
         if (v&&y.state==="ON") return;
-        if (v) { y.state="ON"; return;}
-        if (y.state==="ON") {y.state="OFF-GREEN"; return;}
-        if (y.state==="OFF-GREEN") {y.state="OFF"; return;}
+        if (v) { y.state="ON";
+            for (var i = 0; i < prev.length; i++)
+                if (prev[i]===y) prev.splice(i,1);
+            //console.log("1:"); _pr();
+            return;}
+        if (y.state==="ON") {
+            y.state="OFF-GREEN";
+            prev.push(y,y,y);
+            //console.log("2:"); _pr();
+            return;
+        }
+        if (y.state==="OFF-GREEN") {
+            if (prev.indexOf(y)>=0) {
+                prev.splice(prev.indexOf(y),1);
+                //console.log("3:");
+                //_pr()
+            }
+            else  y.state="OFF"; return;
+        }
     }
-//    function yval() {
-//        if (yvalue&1) change_y(y1,value&1)
-//        if (yvalue&2) change_y(y2,value&2)
-//        if (yvalue&4) change_y(y3,value&4)
-//        if (yvalue&8) change_y(y4,value&8)
-//        if (yvalue&16) change_y(y5,value&16)
-//        if (yvalue&32) change_y(y6,value&32)
-//        if (yvalue&64) change_y(y7,value&64)
-//        if (yvalue&128) c.y_on=true; else c.y_on=false
-//    }
     function yval() {
-        if (yvalue&1) y1.state="ON"; else y1.state="OFF-GREEM"
-        if (yvalue&2) y2.state="ON"; else y2.state="OFF-GREEM"
-        if (yvalue&4) y3.state="ON"; else y3.state="OFF-GREEM"
-        if (yvalue&8) y4.state="ON"; else y4.state="OFF-GREEM"
-        if (yvalue&16) y5.state="ON"; else y5.state="OFF-GREEM"
-        if (yvalue&32) y6.state="ON"; else y6.state="OFF-GREEM"
-        if (yvalue&64) y7.state="ON"; else y7.state="OFF-GREEM"
-        if (yvalue&128) c.y_on=true; else c.y_on=false
+        change_y(y1,yvalue&1)
+        change_y(y2,yvalue&2)
+        change_y(y3,yvalue&4)
+        change_y(y4,yvalue&8)
+        change_y(y5,yvalue&16)
+        change_y(y6,yvalue&32)
+        change_y(y7,yvalue&64)
+        change_y(c,yvalue&128)
+        //_pr()
     }
+
     onPositionChanged: {
-
-        xvalue=position&255
-        yvalue=position>>8
-        xval()
-        yval()
-//        console.log("X:"+xvalue+" "+l1.state)
-//        console.log("Y:"+yvalue+" "+y1.state)
-//        console.log("P:"+position)
+        if (xvalue!=position&255) { xvalue=position&255; xval()}
+        if (yvalue!=position>>8)  { yvalue=position>>8; yval()}
 
     }
-
-    Component.onCompleted: {
-//        l1.state="OFF"
-//        l2.state="OFF"
-//        l3.state="OFF"
-//        r1.state="OFF"
-//        r2.state="OFF"
-//        r3.state="OFF"
-//        y1.state="OFF"
-//        y2.state="OFF"
-//        y3.state="OFF"
-//        y4.state="OFF"
-//        y5.state="OFF"
-//        y6.state="OFF"
-//        y7.state="OFF"
+    Arrow {
+        anchors.fill: parent
+        state: coord.state
     }
 
+    states: [
+        State {
+            name: "UP"
+            PropertyChanges {
+                target: direction
+                text: "ВВЕРХ"
+            }
+        },
+        State {
+            name: "DOWN"
+            PropertyChanges {
+                target: direction
+                text: "ВНИЗ"
+            }
+        }
+    ]
 
     Rectangle {
         color: "transparent"
         border.color: "transparent"
 
         anchors.fill: parent
+        Text {
+            id: direction
+            text: qsTr("<>")
+            color: "yellow"
+            anchors.margins: 10
+            anchors.top: parent.verticalCenter
+            anchors.right: parent.right
+        }
         Column { //x axis
+            id: col
             anchors.centerIn: parent
             spacing: 25
             Tik {
@@ -96,19 +132,15 @@ Item {
                 height: 10
 
             }
-            CenterTik {
+            CenterTik_Y {
                 id: c
                 width: 20
                 height:20
+                CenterTick {
+                    id:cx
+                    anchors.fill: parent
+                }
 
-//                Text {
-//                    color: "yellow"
-//                    text: "0"
-//                    font.pointSize: 12
-//                    anchors.right: parent.left
-//                    anchors.verticalCenter: parent.verticalCenter
-//                    anchors.margins: 5
-//                }
 
                 Row {
                     anchors.right: c.left

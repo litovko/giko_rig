@@ -3,8 +3,8 @@ TEMPLATE = app
 QT += qml quick multimedia network
 CONFIG += c++11  console
 CONFIG+=debug
-QMAKE_CXXFLAGS_DEBUG += "-gstabs+"
-QMAKE_CFLAGS_DEBUG += "-gstabs+"
+mingw:QMAKE_CXXFLAGS_DEBUG += "-gstabs+"
+mingw:QMAKE_CFLAGS_DEBUG += "-gstabs+"
 # This line is from QmlVlcDemo.pro
 INCLUDEPATH += deps
 SOURCES += main.cpp \
@@ -14,7 +14,7 @@ SOURCES += main.cpp \
     qJoyStick.cpp
 
 RESOURCES += qml.qrc
-QMAKE_LFLAGS +=-static-libgcc -static-libstdc++
+mingw: QMAKE_LFLAGS +=-static-libgcc -static-libstdc++
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
@@ -46,11 +46,11 @@ LIBS += -lSDL
 #win32 {
 #    DEFINES += SDL_WIN
 #}
-win32: LIBS += -L$$PWD/SDL/lib/ -lSDLmain
+LIBS += -L$$PWD/SDL/lib/ -lSDLmain
 message(LIBS $$LIBS)
 
 INCLUDEPATH += $$PWD/SDL/include
 DEPENDPATH += $$PWD/SDL/include
-DESTDIR = D:\dest.rig.5.11
-
+mingw:DESTDIR = D:\dest.rig.5.11.mingw
+msvc:DESTDIR = D:\dest.rig.5.11.msvc
 

@@ -25,8 +25,8 @@ cJoystick::~cJoystick(){
     if (timer_checkjoystick) delete timer_checkjoystick;
     int n=joystick.length();
     qDebug()<<"Joystick.length:"<<n << "joysavail:" << joysavail;
-    for(int i=0; i<joysavail;i++) {delete joystick.at(i);}
     saveSettings();
+    for(int i=0; i<joysavail;i++) {delete joystick.at(i);}
 }
 
 void cJoystick::checkJoystick()
@@ -462,7 +462,7 @@ void cJoystick::setX1axis_ind(int x1axis_ind)
 void cJoystick::pollJoystick()
 {
     joy->getdata();
-    for(unsigned int i=0;i<joystick.at(current())->number_axes;i++)
+    for(uint i=0;i<joystick.at(current())->number_axes;i++)
     {
         joystick.at(current())->axis[i]=joy->axis[i];
 //        qDebug()<<"J"<<current()<<"axis"<<i<<"val:"<<joystick.at(current())->axis[i];

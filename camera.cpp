@@ -497,7 +497,7 @@ QString cCamera::title() const
 // если файл не открыт - открываем. Предыдущий закрываем.
         if (m_recordfile=="") return;
         QString fn=m_recordfile+".srt";
-        if (m_subtitles_file.isOpen() and (m_subtitles_file.fileName()!=fn) ) m_subtitles_file.close();
+        if ( m_subtitles_file.isOpen() && (m_subtitles_file.fileName()!=fn) )  m_subtitles_file.close();
         if(!m_subtitles_file.isOpen()){
 
             m_subtitles_file.setFileName(fn);

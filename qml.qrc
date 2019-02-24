@@ -32,6 +32,8 @@
         <file>Pribor3.qml</file>
         <file>Digital.qml</file>
         <file>Dinagraph.qml</file>
-        <file>CenterTik.qml</file>
+        <file>Arrow.qml</file>
+        <file>CenterTik_Y.qml</file>
+        <file>CenterTick.qml</file>
     </qresource>
 </RCC>

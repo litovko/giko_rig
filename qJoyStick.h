@@ -30,7 +30,7 @@ public slots:
 signals:
 
 private:
-    SDL_Joystick* m_joystick=0;
+    SDL_Joystick* m_joystick=nullptr;
 };
 
 #endif // QJOYSTICK_H
