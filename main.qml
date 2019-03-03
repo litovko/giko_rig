@@ -27,10 +27,9 @@ Window {
     property bool onrecord: true; //true если меняется размер записываемого файла.
     property bool camera_umg: false //false - камеры ПМГРЭ true - камеры ЮМГ
     property string streaming: ":sout=#duplicate{dst=display,dst=std{access=file,mux=mp4,dst=" //параметры стриминга vlc при записи - дубликация потоков
-    //":sout=#duplicate{dst=display,dst=std{access=file,mux=mp4,dst="
-    // regedit
-    //:sout=#duplicate{dst=display, dst=std{access=file,mux=mpeg1,dst=
-    //-nothing,--never ,:none=NAN,--sout-mux-caching=5000, --file-caching=5000,--no-audio
+    // Поле в реестре vlc_options
+    //:high-priority,:spu,:ods,:clock-synchro=0,:clock-jitter=10000  Убрана синхронизация времени и
+    //                                джиттер задран как советует VLC для тяжелых условий сетевого доступа
 
     property list<VlcPlayer> players:[
         VlcPlayer {
