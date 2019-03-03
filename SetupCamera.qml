@@ -1,6 +1,6 @@
-import QtQuick 2.5
+import QtQuick 2.11
 import QtQuick.Controls 1.4
-import QtQuick.Window 2.0
+//import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
 import QmlVlc 0.1
 import Gyco 1.0
@@ -13,7 +13,7 @@ Item {
     property list<VlcPlayer> players
     property int currentcam: 0
 //    property int currentplayer: 0
-    antialiasing: false
+    //antialiasing: false
     onVisibleChanged: spinBox_videomode.currentIndex=cam[currentcam].comby;
 
 
@@ -68,10 +68,10 @@ Item {
             ComboBox {
                 id: cb_cam
                 x: 72
-                y: -3
+                y: 0
                 width: 176
                 height: 20
-                z: 5
+                z: 20
                 Component.onCompleted: {
 
                     listCams.append({text: cam[0].title+" ["+cam[0].address+"]"})

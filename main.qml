@@ -168,6 +168,7 @@ Window {
                 curfilesize[i]=cams[i].get_filesize();
                 if ((cams[i].get_filesize()>=filesize*1024*1024)&&!flag) {
                     flag=true;
+                    console.warn("Reset recording file for CAM"+i);
                     player_play(i);
                 }
             }
@@ -771,8 +772,10 @@ Window {
 
         MouseArea {
             anchors.fill: parent
-            acceptedButtons: Qt.RightButton
-            onClicked: win.fcommand("MENU")
+            acceptedButtons: Qt.RightButton|Qt.LeftButton
+            onClicked: if (mouse.button===Qt.RightButton) win.fcommand("MENU")
+            onDoubleClicked: win.changestate()
+
 
         }
 

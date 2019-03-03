@@ -1,6 +1,6 @@
-import QtQuick 2.5
-import QtQuick.Controls 1.4
-import QtQuick.Window 2.0
+import QtQuick 2.11
+import QtQuick.Controls 1.6
+//import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
 import QmlVlc 0.1
@@ -72,7 +72,7 @@ Item {
             y: 56
             opacity: 0.8
             text: qsTr("Применить")
-            tooltip: "Применение указанных настроек программы"
+            //tooltip: "Применение указанных настроек программы"
             onClicked: {
                 rig.address=rig_address.text
                 rig.port=rig_port.text
@@ -95,7 +95,7 @@ Item {
                 rig.timer_delay_engine1=free_msec1.text;
                 rig.timer_delay_engine2=free_msec2.text;
                 network_caching=parseInt(netcache.text);
-                filesize=cbfilesize.currentText
+                win.filesize=cbfilesize.currentText
                 j.ispresent=cbj.checked
             }
         }
@@ -105,7 +105,7 @@ Item {
             x: 394
             y: 27
             text: qsTr("Закрыть")
-            isDefault: true
+            //isDefault: true
             opacity: 0.8
             onClicked: {
                 settingsDialog.visible=false;
@@ -325,7 +325,7 @@ Item {
                 height: 23
                 text: qsTr("Выбор")
                 opacity: 0.8
-                tooltip: "Выбор папки для сохранения видео"
+                //tooltip: "Выбор папки для сохранения видео"
                 onClicked: {
                     fileDialog.visible=true
                 }
@@ -456,14 +456,16 @@ Item {
                 y: -3
                 width: 69
                 height: 20
-                model: [500, 700, 1000, 1200]
+                model: [50, 500, 700, 1000, 1200, 4000]
                 Component.onCompleted: {
                     currentIndex=0
                     switch (win.filesize){
-                    case 500: currentIndex=0; break;
-                    case 700: currentIndex=1; break;
-                    case 1000: currentIndex=2; break;
-                    case 1200: currentIndex=3; break;
+                    case 50: currentIndex=0; break;
+                    case 500: currentIndex=1; break;
+                    case 700: currentIndex=2; break;
+                    case 1000: currentIndex=3; break;
+                    case 1200: currentIndex=4; break;
+                    case 4000: currentIndex=5; break;
                     default: currentIndex=0;
                     }
                 }

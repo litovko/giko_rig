@@ -274,7 +274,7 @@ QString cCamera::title() const
 
     void cCamera::dispatcher(QNetworkReply *pReply)
     {
-        qDebug()<<"Cam"<<QString::number(m_index)<<" Dispatcher:"<<pReply->property("RequestType");
+        //qDebug()<<"Cam"<<QString::number(m_index)<<" Dispatcher:"<<pReply->property("RequestType");
         if (pReply->property("RequestType")=="ini") loadINI(pReply);
         else loadResponce(pReply);
         pReply->deleteLater();
@@ -571,8 +571,12 @@ QString cCamera::title() const
     }
     void cCamera::onError(QNetworkReply::NetworkError networkError)
     {
+        if (networkError==QNetworkReply::NetworkError::ConnectionRefusedError) {
+            setCamerapresent(true);
+            return;
+        }
+        qWarning()<<"Cam"<<QString::number(m_index)<<" NETWORK ERROR:"<<networkError;
 
-            qWarning()<<"Cam"<<QString::number(m_index)<<" NETWORK ERROR:"<<networkError;
         setCamerapresent(false);
     }
 
@@ -679,7 +683,12 @@ QString cCamera::title() const
 //        }
         setOnrequest(false);
         //qDebug()<<"loadINI: Cam"<<QString::number(m_index)<<":"<<pReply->property("RequestType");
-        if (pReply->error()!=QNetworkReply::NoError ) {
+        if (pReply->error()==QNetworkReply::ConnectionRefusedError) {
+            setCamerapresent(true);
+            return;
+        }
+        if (pReply->error()!=QNetworkReply::NoError || pReply->error()!=QNetworkReply::ConnectionRefusedError)
+        {
             qWarning()<<"Cam"<<QString::number(m_index)<<":"<<"Camera unavailable:"<<pReply->errorString()<<"<<"<<pReply->error()<<">>";
 //            qDebug()<<"Cam"<<QString::number(m_index)<<":"<<"!!8";
             setCamerapresent(false);
