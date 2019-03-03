@@ -24,10 +24,10 @@
 *******************************************************************************/
 
 #include <QtGui/QGuiApplication>
-#include <QQuickView>
+//#include <QQuickView>
 
 #include <QmlVlc.h>
-#include <QmlVlc/QmlVlcConfig.h>
+//#include <QmlVlc/QmlVlcConfig.h>
 
 
 #include "rigmodel.h"
@@ -96,25 +96,28 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setAttribute(Qt::AA_DisableShaderDiskCache);
+    //QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
     qInstallMessageHandler(myMessageOutput);
     toggle_log(true);
 
     setlocale(LC_ALL, ""); // избавляемся от кракозябров в консоли
-    qDebug()<<QTime::currentTime().toString("hh:mm:ss:zzz ")<<"Start"<<giko_name<<"  "<<giko_program;
+
     RegisterQmlVlc();
     QSettings settings(giko_name, giko_program);
-    int cache=settings.value("network_caching",150).toInt();
+    int cache=settings.value("network_caching",250).toInt();
     int vlc_debug=settings.value("vlc_debug",2).toInt();
     QmlVlcConfig& config = QmlVlcConfig::instance();
     config.enableAdjustFilter( false );
-    config.enableMarqueeFilter( true ); //litovko
-    //config.enableLogoFilter( false );
+    config.enableMarqueeFilter( false ); //litovko
+    config.enableLogoFilter( false );
     config.setTrustedEnvironment(true); // не будет воприниматься :sout иначе.
     config.setNetworkCacheTime(cache);
     config.enableNoVideoTitleShow(true);
     //config.enableRecord( true );
     config.enableDebug( vlc_debug );
-
+    qDebug()<<QTime::currentTime().toString("hh:mm:ss:zzz ")<<"Start"<<giko_name<<"  "<<giko_program<<" vlc_debug:"<<vlc_debug;
 
 
     qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");

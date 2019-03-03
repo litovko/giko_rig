@@ -1,12 +1,12 @@
-import QtQuick 2.5
-import QtQuick.Window 2.2
-import QtQuick.Controls 2.0
+import QtQuick 2.11
+import QtQuick.Window 2.11
+//import QtQuick.Controls 2.5
 import Gyco 1.0
 import QmlVlc 0.1
-import QtMultimedia 5.5
+//import QtMultimedia 5.5
 import Qt.labs.settings 1.0
 import QtQuick.Extras 1.4
-import QtQml 2.2
+//import QtQml 2.2
 
 Window {
     id: win
@@ -20,10 +20,10 @@ Window {
     property int recording: 0
     property int play_on_start: 0
     property int network_caching: 250
-    property string vlc_options: ",--nothing, --never ,:none=NAN"
+    property string vlc_options: "--no-audio"
     property string filepath: ""
     property int filesize: 700 //Mbyte
-    property variant curfilesize:[-1,-1,-1]
+    property variant curfilesize:[-1,-1,-1,-1]
     property bool onrecord: true; //true если меняется размер записываемого файла.
     property bool camera_umg: false //false - камеры ПМГРЭ true - камеры ЮМГ
     property string streaming: ":sout=#duplicate{dst=display,dst=std{access=file,mux=mp4,dst=" //параметры стриминга vlc при записи - дубликация потоков
@@ -110,7 +110,7 @@ Window {
         if (camstate===5) return "Остановлено";
         if (camstate===6) return "Завершено";
         if (camstate===7) return "Ошибка";
-        return "";
+        return "UNKNOWN";
     }
     function file_name(camindexx) {
         var dt=new Date();
@@ -267,6 +267,62 @@ Window {
               help.visible=false
 
               break;
+          case "PLAY1":
+              if(cams[0].cameraenabled) player_play(0);
+              menu.visible=false;
+              camsettings.visible=false
+              settings.visible=false;
+              help.visible=false
+              break;
+          case "PLAY2":
+              if(cams[1].cameraenabled) player_play(1);
+              menu.visible=false;
+              camsettings.visible=false
+              settings.visible=false;
+              help.visible=false
+              break;
+          case "PLAY3":
+              if(cams[2].cameraenabled) player_play(2);
+              menu.visible=false;
+              camsettings.visible=false
+              settings.visible=false;
+              help.visible=false
+              break;
+          case "PLAY4":
+              if(cams[3].cameraenabled) player_play(3);
+              menu.visible=false;
+              camsettings.visible=false
+              settings.visible=false;
+              help.visible=false
+              break;
+          case "STOP1":
+              players[0].stop();
+              menu.visible=false;
+              camsettings.visible=false
+              settings.visible=false;
+              help.visible=false
+              break;
+          case "STOP2":
+              players[1].stop();
+              menu.visible=false;
+              camsettings.visible=false
+              settings.visible=false;
+              help.visible=false
+              break;
+          case "STOP3":
+              players[2].stop();
+              menu.visible=false;
+              camsettings.visible=false
+              settings.visible=false;
+              help.visible=false
+              break;
+          case "STOP4":
+              players[3].stop();
+              menu.visible=false;
+              camsettings.visible=false
+              settings.visible=false;
+              help.visible=false
+              break;
           case "JOYSTICK SETTINGS":
               joysetup.visible=!joysetup.visible;
               settings.visible=false;
@@ -360,18 +416,19 @@ Window {
               rig.pump=rig.pump?false:true;
               break;
           case "DEMO":
-              mainRect.state = "3-KAM-bol1" // "3-KAM-mal"
-              vlcPlayer1.mrl = "file:///"+win.filepath+"/demo/01.mpg"
-              vlcPlayer1.play()
-              vlcPlayer2.mrl = "file:///"+win.filepath+"/demo/02.mpg"
-              vlcPlayer2.play()
-              vlcPlayer3.mrl = "file:///"+win.filepath+"/demo/03.mpg"
-              vlcPlayer3.play()
+              recording=0
+              //mainRect.state = "3-KAM-bol1" // "3-KAM-mal"
               vlcPlayer4.mrl = "file:///"+win.filepath+"/demo/04.mpg"
-              vlcPlayer4.play()
-              rig.engine=true;
-              rig.lamp=true;
-              rig.camera=true;
+              //vlcPlayer1.play()
+              vlcPlayer3.mrl = "file:///"+win.filepath+"/demo/02.mpg"
+              //vlcPlayer2.play()
+              vlcPlayer2.mrl = "file:///"+win.filepath+"/demo/03.mpg"
+              //vlcPlayer3.play()
+              //vlcPlayer1.mrl = "file:///"+win.filepath+"/demo/01.mpg"
+              //vlcPlayer4.play()
+//              rig.engine=true;
+//              rig.lamp=true;
+//              rig.camera=true;
 
               break;
         }
@@ -382,7 +439,7 @@ Window {
         color: 'black';
         anchors.fill: parent
         border.color: "yellow"
-        radius:20
+        //radius:20
         border.width: 3
         focus:true
         state: "1-KAM-bol"
@@ -594,7 +651,11 @@ Window {
             if (event.key === Qt.Key_F12||event.key === Qt.Key_Equal) win.fcommand("FULLSCREEN")
             if ((event.modifiers & Qt.ControlModifier)&&(event.key === Qt.Key_P)) win.fcommand("PICTURE")
             if ((event.modifiers & Qt.ControlModifier)&&(event.key === Qt.Key_D)) win.fcommand("DEMO")
-            //if ((event.key === Qt.Key_D)) win.fcommand("DEMO")
+            if ((event.modifiers & Qt.ControlModifier)&&(event.key === Qt.Key_Z)) vlcPlayer1.mrl = "file:///"+win.filepath+"/demo/01.mpg"
+            if ((event.modifiers & Qt.ControlModifier)&&(event.key === Qt.Key_X)) vlcPlayer2.mrl = "file:///"+win.filepath+"/demo/02.mpg"
+            if ((event.modifiers & Qt.ControlModifier)&&(event.key === Qt.Key_C)) vlcPlayer3.mrl = "file:///"+win.filepath+"/demo/03.mpg"
+            if ((event.modifiers & Qt.ControlModifier)&&(event.key === Qt.Key_V)) vlcPlayer4.mrl = "file:///"+win.filepath+"/demo/04.mpg"
+            //if ((event.key === Qt.Key_D)) win.fcommand("DEMO") vlcPlayer1.mrl = "file:///"+win.filepath+"/demo/01.mpg"
             if (event.key === Qt.Key_Down) {
                 j.ispresent=false
                 console.log("JFire:"+j.key_0)
@@ -675,6 +736,7 @@ Window {
                     id: t1
                     color: "yellow"
                     font.pointSize: 12
+                    visible: cams[0].cameraenabled
                     //anchors.centerIn: parent
                     text: "Статус видео 1: "+statename(vlcPlayer1.state)
                 }
@@ -806,10 +868,10 @@ Window {
             },
             State { // четыре камеры по центру
                 name: "4-KAM-all"
-                PropertyChanges { target: surface1; z: 1; opacity: 0.6; visible: cams[0].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: mainRect.top}
-                PropertyChanges { target: surface2; z: 1; opacity: 0.6; visible: cams[1].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: surface1.right; anchors.top: mainRect.top}
-                PropertyChanges { target: surface3; z: 1; opacity: 0.6; visible: cams[2].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface1.bottom}
-                PropertyChanges { target: surface4; z: 1; opacity: 0.6; visible: cams[3].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: surface1.right; anchors.top: surface2.bottom}
+                PropertyChanges { target: surface1; z: 0; opacity: 1; visible: cams[0].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: mainRect.top}
+                PropertyChanges { target: surface2; z: 0; opacity: 1; visible: cams[1].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: surface1.right; anchors.top: mainRect.top}
+                PropertyChanges { target: surface3; z: 0; opacity: 1; visible: cams[2].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: mainRect.left; anchors.top: surface1.bottom}
+                PropertyChanges { target: surface4; z: 0; opacity: 1; visible: cams[3].cameraenabled; height:mainRect.height/4; width: mainRect.width / 4; anchors.left: surface1.right; anchors.top: surface2.bottom}
 
 
             },

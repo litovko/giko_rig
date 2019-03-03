@@ -1,12 +1,12 @@
-TEMPLATE = app
+#TEMPLATE = app
 # обязательно требуется мультимедия от QT иначе не регистрируется плагин.
-QT += qml quick multimedia network
+QT += quick network
 CONFIG += c++11  console
-CONFIG+=debug
-mingw:QMAKE_CXXFLAGS_DEBUG += "-gstabs+"
-mingw:QMAKE_CFLAGS_DEBUG += "-gstabs+"
-# This line is from QmlVlcDemo.pro
-INCLUDEPATH += deps
+#CONFIG+=debug
+#mingw:QMAKE_CXXFLAGS_DEBUG += "-gstabs+"
+#mingw:QMAKE_CFLAGS_DEBUG += "-gstabs+"
+
+#INCLUDEPATH += deps
 SOURCES += main.cpp \
     rigmodel.cpp \
     camera.cpp \
@@ -14,14 +14,15 @@ SOURCES += main.cpp \
     qJoyStick.cpp
 
 RESOURCES += qml.qrc
-mingw: QMAKE_LFLAGS +=-static-libgcc -static-libstdc++
+#mingw: QMAKE_LFLAGS +=-static-libgcc -static-libstdc++
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
 # Default rules for deployment.
-include(deployment.pri)
+#include(deployment.pri)
 # This line is from QmlVlcDemo.pro
-include(deps/QmlVlc/QmlVlc.pri)
+#include(deps/QmlVlc/QmlVlc.pri)
+include(../QmlVlc\QmlVlc.pri)
 
 #OTHER_FILES += \
 #    skin/basic_2.qml \
@@ -42,15 +43,32 @@ DISTFILES += \
 
 RC_ICONS = skin/hycoicon.ico
 
-LIBS += -lSDL
+#LIBS += -lSDL
 #win32 {
 #    DEFINES += SDL_WIN
 #}
-LIBS += -L$$PWD/SDL/lib/ -lSDLmain
+msvc:LIBS += -L$$PWD/SDL/lib/x64 -lSDL
+#mingw:LIBS += -L$$PWD/SDL/lib/x86 -lSDL
+mingw:DESTDIR = D:\dest.rig.5.11.mingw
+msvc:DESTDIR = D:\dest.rig.5.11.msvc
+Kit=$$[QT_INSTALL_PREFIX]
+equals(Kit,"C:/Qt/5.12.1/mingw73_64"){
+    message("Kit for 64 bit mingw73")
+    LIBS += -L$$PWD/SDL/lib/x64 -lSDLmain
+}
+equals(Kit,"C:/Qt/5.11.3/mingw53_32"){
+    message("Kit for 32 bit mingw53_32")
+    LIBS += -L$$PWD/SDL/lib/x86 -lSDL
+}
+equals(Kit,"C:/Qt/5.12.1/msvc2017_64"){
+    message("Kit for 64 bit MSVC")
+    LIBS += -L$$PWD/SDL/lib/x64 -lSDL
+    DESTDIR = D:\dest.rig.5.12.msvc
+}
 message(LIBS $$LIBS)
+message(KIT $$Kit)
 
 INCLUDEPATH += $$PWD/SDL/include
 DEPENDPATH += $$PWD/SDL/include
-mingw:DESTDIR = D:\dest.rig.5.11.mingw
-msvc:DESTDIR = D:\dest.rig.5.11.msvc
+
 

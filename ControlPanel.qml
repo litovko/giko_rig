@@ -137,6 +137,8 @@ Item {
                     error: cam[0].onrequest
                     visible: cam[0].cameraenabled
                     command: "LAYOUT_CAM1"
+                    command2: "PLAY1"
+                    command3: "STOP1"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
@@ -148,6 +150,8 @@ Item {
                     active:cam[1].camerapresent
                     error: cam[1].onrequest
                     command: "LAYOUT_CAM2"
+                    command2: "PLAY2"
+                    command3: "STOP2"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
@@ -159,6 +163,8 @@ Item {
                     visible: cam[2].cameraenabled
                     error: cam[2].onrequest
                     command: "LAYOUT_CAM3"
+                    command2: "PLAY3"
+                    command3: "STOP3"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
@@ -166,10 +172,12 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:cam[3].title
-                    active:cam[2].camerapresent
+                    active:cam[3].camerapresent
                     visible: cam[3].cameraenabled
                     error: cam[3].onrequest
                     command: "LAYOUT_CAM4"
+                    command2: "PLAY4"
+                    command3: "STOP4"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
 

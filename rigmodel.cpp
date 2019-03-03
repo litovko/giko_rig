@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QString>
 #include <functional>
+#include <cmath>
 
 cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 {

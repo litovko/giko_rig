@@ -1,4 +1,4 @@
-import QtQuick 2.5
+import QtQuick 2.12
 import QtQuick.Controls 1.4
 import QtQuick.Extras 1.4
 Item {
@@ -8,11 +8,20 @@ Item {
     property int fontSize: 12
     property bool error: false
     property string command: "Command"
+    property string command2: "PlayCommand"
+    property string command3: "StopCommand"
     signal lampClicked(string lamp_command)
     MouseArea {
         id: ma
         anchors.fill: parent
-        onClicked:  lampClicked(command)
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked:  {
+            if (mouse.button===Qt.LeftButton) {
+                                lampClicked(command)
+            }
+            else lampClicked(command3)
+        }
+        onDoubleClicked: lampClicked(command2)
         hoverEnabled: true
     }
 
