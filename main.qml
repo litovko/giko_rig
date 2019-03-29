@@ -1011,6 +1011,10 @@ Window {
         height: 0
         visible: false
         anchors { margins: 10; leftMargin: 160; bottom: controlPanel.top; left: controlPanel.left}
+        onCam1Changed: players[0].stop();
+        onCam2Changed: players[1].stop();
+        onCam3Changed: players[2].stop();
+        onCam4Changed: players[3].stop();
     }
     SetupCamera {
         id: camsettings

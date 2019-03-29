@@ -683,7 +683,7 @@ QString cCamera::title() const
 //        }
         setOnrequest(false);
         //qDebug()<<"loadINI: Cam"<<QString::number(m_index)<<":"<<pReply->property("RequestType");
-        if (pReply->error()==QNetworkReply::ConnectionRefusedError) {
+        if (pReply->error()==QNetworkReply::ConnectionRefusedError||pReply->error()==QNetworkReply::ContentNotFoundError) {
             setCamerapresent(true);
             return;
         }
