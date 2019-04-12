@@ -7,20 +7,20 @@
 QJoystick::QJoystick()
 {
 
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
+    SDL_Init( SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER);
     //SDL_Init( SDL_INIT_JOYSTICK);
 }
 
-int QJoystick::currentJoystick()
-{
-    return SDL_JoystickIndex(m_joystick);
-}
+//int QJoystick::currentJoystick()
+//{
+//    return SDL_JoystickIndex(m_joystick);
+//}
 
 QString QJoystick::joystickName(int js)
 {
     Q_ASSERT(js < availableJoysticks());
     Q_ASSERT(js >= 0);
-    return QString(SDL_JoystickName(js));
+    return QString(SDL_JoystickNameForIndex(js));
 }
 
 int QJoystick::joystickNumAxes(int js)

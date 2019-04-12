@@ -43,11 +43,10 @@ DISTFILES += \
 
 RC_ICONS = skin/hycoicon.ico
 
-#LIBS += -lSDL
-#win32 {
-#    DEFINES += SDL_WIN
-#}
-msvc:LIBS += -L$$PWD/SDL/lib/x64 -lSDL
+
+INCLUDEPATH += $$PWD/SDL2/include
+
+#msvc:LIBS += -L$$PWD/SDL/lib/x64 -lSDL
 #mingw:LIBS += -L$$PWD/SDL/lib/x86 -lSDL
 mingw:DESTDIR = D:\dest.rig.5.11.mingw
 msvc:DESTDIR = D:\dest.rig.5.11.msvc
@@ -62,13 +61,12 @@ equals(Kit,"C:/Qt/5.11.3/mingw53_32"){
 }
 equals(Kit,"C:/Qt/5.12.1/msvc2017_64"){
     message("Kit for 64 bit MSVC")
-    LIBS += -L$$PWD/SDL/lib/x64 -lSDL
+    #LIBS += -L$$PWD/SDL/lib/x64 -lSDL
+    LIBS += -L$$PWD/SDL2/lib/x64  -lSDL2 -lSDL2main
     DESTDIR = D:\dest.rig.5.12.msvc
 }
 message(LIBS $$LIBS)
 message(KIT $$Kit)
 
-INCLUDEPATH += $$PWD/SDL/include
-DEPENDPATH += $$PWD/SDL/include
 
 
