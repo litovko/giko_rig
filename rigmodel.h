@@ -47,6 +47,11 @@ class cRigmodel : public QObject
     Q_PROPERTY(int joystick_y1 READ joystick_y1 WRITE setJoystick_y1 NOTIFY joystick_y1Changed)
     Q_PROPERTY(int joystick_x2 READ joystick_x2 WRITE setJoystick_x2 NOTIFY joystick_x2Changed)
     Q_PROPERTY(int joystick_y2 READ joystick_y2 WRITE setJoystick_y2 NOTIFY joystick_y2Changed)
+// NPA значения ana после пересчета по данным джойстика для NPA
+    Q_PROPERTY(int ana1 READ ana1 NOTIFY ana1Changed)
+    Q_PROPERTY(int ana2 READ ana2 NOTIFY ana2Changed)
+    Q_PROPERTY(int ana3 READ ana3 NOTIFY ana3Changed)
+    Q_PROPERTY(int ana4 READ ana4 NOTIFY ana4Changed)
 
     Q_PROPERTY(bool camera READ camera WRITE setCamera NOTIFY cameraChanged)
     Q_PROPERTY(bool camera1 READ camera1 WRITE setCamera1 NOTIFY camera1Changed)
@@ -240,6 +245,18 @@ public:
 
     void setfree_engine2(bool free_engine2);
 
+    int ana1() const;
+
+
+    int ana2() const;
+
+
+    int ana3() const;
+
+
+    int ana4() const;
+
+
 signals:
     void positionChanged();
     void pressureChanged();
@@ -302,6 +319,14 @@ signals:
 
     void timer_delay_engine2Changed(int timer_delay_engine2);
 
+    void ana1Changed();
+
+    void ana2Changed();
+
+    void ana3Changed();
+
+    void ana4Changed();
+
 public slots:
 
     void start_client();
@@ -318,6 +343,7 @@ public slots:
     void sendKoeff();
     void reset();
     Q_INVOKABLE void reconnect();
+    void setana();
 
 
 private:
@@ -342,7 +368,7 @@ private:
     int m_turns=0;
     QString gmod_decode(QString gmod) const;
     unsigned int m_position=0;
-    QString m_rigtype="mgbu"; //grab2,grab6,gkgbu,mgbu
+    QString m_rigtype="NPA"; //grab2,grab6,gkgbu,mgbu, NPA
 
 
     QString m_address="localhost";
@@ -404,6 +430,10 @@ private:
     bool _no_resp=false;
     bool m_free_engine1=false; //включена разгрузка двигателя 1
     bool m_free_engine2=false; //включена разгрузка двигателя 2
+    int m_ana1=0;
+    int m_ana2=0;
+    int m_ana3=0;
+    int m_ana4=0;
 };
 
 #endif // RIGMODEL_H

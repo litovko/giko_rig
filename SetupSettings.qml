@@ -421,22 +421,24 @@ Item {
                 Component.onCompleted:  currentIndex = curindex()
                 function curindex() {
                     //console.debug("Setup Settings  curindex:"+rig.rigtype+" Текст:"+currentText)
-                    if (rig.rigtype==="grab2") return 0;
-                    if (rig.rigtype==="grab6") return 1;
-                    if (rig.rigtype==="gkgbu") return 2;
-                    if (rig.rigtype=== "mgbu") return 3;
-                    return 3;
+                    return rig.rig_types.indexOf(rig.rigtype)
+//                    if (rig.rigtype==="grab2") return 0;
+//                    if (rig.rigtype==="grab6") return 1;
+//                    if (rig.rigtype==="gkgbu") return 2;
+//                    if (rig.rigtype=== "mgbu") return 3;
+//                    return 4;
                 }
                 function curtype(){
                     //console.log("Setup Settings Settings curtype"+currentText+" rig.rigtype="+rig.rigtype+" "+" curindex="+currentIndex)
-                    if (currentIndex==1) return "grab6";
-                    if (currentIndex==2) return "gkgbu";
-                    if (currentIndex==3) return "mgbu";
-                    if (currentIndex==0) return "grab2";
-                    return "unknown rig type!";
+                    return rig.rig_types[currentIndex]
+//                    if (currentIndex==1) return "grab6";
+//                    if (currentIndex==2) return "gkgbu";
+//                    if (currentIndex==3) return "mgbu";
+//                    if (currentIndex==0) return "grab2";
+//                    return "unknown rig type!";
                 }
                 onCurrentIndexChanged: rig.rigtype=curtype()
-                model: ["Двухлепестковый - grab2", "Шестилепестковый - grab6", "ГКГБУ - gkgbu", "МГБУ - mgbu" ]
+                model: ["Двухлепестковый - grab2", "Шестилепестковый - grab6", "ГКГБУ - gkgbu", "МГБУ - mgbu", "НПА - NPA" ]
 
             }
         }

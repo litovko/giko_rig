@@ -60,6 +60,10 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(camera3Changed()),this, SLOT(sendData()));
     connect(this, SIGNAL(camera4Changed()),this, SLOT(sendData()));
     connect(this, SIGNAL(gmodChanged()),this, SLOT(sendData()));
+    connect(this, SIGNAL(joystick_x1Changed()), this, SLOT(setana()));
+    connect(this, SIGNAL(joystick_x2Changed()), this, SLOT(setana()));
+    connect(this, SIGNAL(joystick_y1Changed()), this, SLOT(setana()));
+    connect(this, SIGNAL(joystick_y2Changed()), this, SLOT(setana()));
 
     connect(&timer_connect, SIGNAL(timeout()), this, SLOT(start_client()));
     //start_client();
@@ -83,6 +87,27 @@ void cRigmodel::reconnect()
     setClient_connected(false);
     QTimer::singleShot(2000, this, SLOT(start_client())); //конектимся через 3 секунды после выполнения конструктора
 
+}
+
+void cRigmodel::setana()
+{
+    int ana1=0, ana2=0, ana3=0, ana4=0;
+    if (m_rigtype!="NPA") return;
+    if (gmod()=="move") {
+      ana1=m_joystick_x2;
+      ana2=m_joystick_y1-m_joystick_x2;
+      ana3=m_joystick_y1+m_joystick_x2;
+    } else {
+        ana1=m_joystick_x1;
+        ana2=m_joystick_y1;
+        ana3=m_joystick_x2;
+        ana4=m_joystick_y2;
+    }
+    //qDebug()<<"setana y1:"<<m_joystick_y1<<" x2:"<<m_joystick_x2<<" ana1:"<<m_ana1<<" ana2:"<<m_ana2<<" ana3:"<<m_ana3;
+    if (m_ana1!=ana1) {m_ana1=ana1; emit ana1Changed();}
+    if (m_ana2!=ana2) {m_ana2=ana2; emit ana2Changed();}
+    if (m_ana3!=ana3) {m_ana3=ana3; emit ana3Changed();}
+    if (m_ana4!=ana4) {m_ana4=ana4; emit ana4Changed();}
 }
 
 void cRigmodel::saveSettings()
@@ -515,6 +540,26 @@ bool cRigmodel::handle_tag(const QString &tag, const QString &val)
     else  qWarning()<<"Data! For tag <"<<tag<<"> handle not found!";
 
     return ok;
+}
+
+int cRigmodel::ana2() const
+{
+    return m_ana2;
+}
+
+int cRigmodel::ana3() const
+{
+    return m_ana3;
+}
+
+int cRigmodel::ana4() const
+{
+    return m_ana4;
+}
+
+int cRigmodel::ana1() const
+{
+    return m_ana1;
 }
 
 void cRigmodel::setfree_engine2(bool free_engine2)

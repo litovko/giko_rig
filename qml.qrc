@@ -35,5 +35,11 @@
         <file>Arrow.qml</file>
         <file>CenterTik_Y.qml</file>
         <file>CenterTick.qml</file>
+        <file>NPA.qml</file>
+        <file>NPA_move.qml</file>
+        <file>GArrow.qml</file>
+        <file>figure.js</file>
+        <file>logic_control.js</file>
+        <file>NPA_hand.qml</file>
     </qresource>
 </RCC>

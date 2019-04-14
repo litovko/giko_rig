@@ -57,6 +57,7 @@ Item {
     ]
     onBtn0Changed: if(visible) changestate();
     onStateChanged: {
+        if(rigmodel.rigtype!="mgbu") return
         //console.log("mapgmod(state)="+mapgmod(state)+" state="+state)
         rigmodel.gmod=mapgmod(state);
         joystick.lock=false;
@@ -69,7 +70,8 @@ Item {
         return "drill"
     }
 
-    Component.onCompleted: rigmodel.gmod=mapgmod(state);
+    Component.onCompleted: {if(rigmodel.rigtype!="mgbu") return
+        else rigmodel.gmod=mapgmod(state);}
     onBtn_lockChanged: {
         if (!joystick.lock&&btn_lock) {
             joystick.lock=true

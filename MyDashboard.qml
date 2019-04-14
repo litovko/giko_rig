@@ -16,6 +16,7 @@ Item {
             PropertyChanges {target: turns;   visible: false}
             PropertyChanges {target: gkgbu_pult;   visible: false}
             PropertyChanges {target: mgbu_pult;   visible: false}
+            PropertyChanges {target: npa_pult;   visible: false}
             PropertyChanges {target: row_left;   visible: true}
             PropertyChanges {target: row_right;   visible: true}
             PropertyChanges {target: voltage_mgbu;   visible: false}
@@ -38,8 +39,9 @@ Item {
             PropertyChanges {target: turns;   visible: false}
             PropertyChanges {target: gkgbu_pult;   visible: false}
             PropertyChanges {target: mgbu_pult;   visible: false}
-            PropertyChanges {target: row_left;   visible: true}
-            PropertyChanges {target: row_right;   visible: true}
+            PropertyChanges {target: npa_pult;   visible: false}
+//            PropertyChanges {target: row_left;   visible: true}
+//            PropertyChanges {target: row_right;   visible: true}
             PropertyChanges {target: voltage_mgbu;   visible: false}
             PropertyChanges {target: voltage;   visible: true}
             PropertyChanges {target: current_mgbu;   visible: false}
@@ -57,11 +59,12 @@ Item {
             name: "gkgbu"
             PropertyChanges {target: gkgbu_pult;   visible: true}
             PropertyChanges {target: mgbu_pult;   visible: false}
+            PropertyChanges {target: npa_pult;   visible: false}
             PropertyChanges {target: power2;   visible: false}
             PropertyChanges {target: power;   visible: false}
             PropertyChanges {target: turns;   visible: true}
-            PropertyChanges {target: row_left;   visible: false}
-            PropertyChanges {target: row_right;   visible: false}
+//            PropertyChanges {target: row_left;   visible: false}
+//            PropertyChanges {target: row_right;   visible: false}
             PropertyChanges {target: voltage_mgbu;   visible: false}
             PropertyChanges {target: voltage;   visible: true}
             PropertyChanges {target: current_mgbu;   visible: false}
@@ -79,16 +82,40 @@ Item {
             name: "mgbu"
             PropertyChanges {target: gkgbu_pult;   visible: false}
             PropertyChanges {target: mgbu_pult;   visible: true}
+            PropertyChanges {target: npa_pult;   visible: false}
             PropertyChanges {target: power2;   visible: true}
             PropertyChanges {target: power;   visible: true}
             PropertyChanges {target: turns;   visible: true}
-            PropertyChanges {target: row_left;   visible: true}
-            PropertyChanges {target: row_right;   visible: true}
+//            PropertyChanges {target: row_left;   visible: true}
+//            PropertyChanges {target: row_right;   visible: true}
             PropertyChanges {target: voltage_mgbu;   visible: true}
             PropertyChanges {target: voltage;   visible: false}
             PropertyChanges {target: current_mgbu;   visible: true}
             PropertyChanges {target: current_a;   visible: false}
             PropertyChanges {target: altimetr_mgbu;   visible: true}
+            PropertyChanges {target: temperature;   visible: false}
+            PropertyChanges {target: temperature_mgbu;   visible: true}
+            PropertyChanges {target: pressure;   visible: false}
+            PropertyChanges {target: pressure_mgbu;   visible: true}
+            PropertyChanges {target: v24dc;   visible: false}
+            PropertyChanges {target: v24dc_mgbu;   visible: true}
+            PropertyChanges {target: leak;   visible: true}
+        },
+        State {
+            name: "NPA"
+            PropertyChanges {target: gkgbu_pult;   visible: false}
+            PropertyChanges {target: mgbu_pult;   visible: false}
+            PropertyChanges {target: npa_pult;   visible: true}
+            PropertyChanges {target: power2;   visible: false}
+            PropertyChanges {target: power;   visible: false}
+            PropertyChanges {target: turns;   visible: false}
+//            PropertyChanges {target: row_left;   visible: true}
+//            PropertyChanges {target: row_right;   visible: true}
+            PropertyChanges {target: voltage_mgbu;   visible: true}
+            PropertyChanges {target: voltage;   visible: false}
+            PropertyChanges {target: current_mgbu;   visible: true}
+            PropertyChanges {target: current_a;   visible: false}
+            PropertyChanges {target: altimetr_mgbu;   visible: false}
             PropertyChanges {target: temperature;   visible: false}
             PropertyChanges {target: temperature_mgbu;   visible: true}
             PropertyChanges {target: pressure;   visible: false}
@@ -105,6 +132,7 @@ Item {
         // ВРЕТ ФУНКЦИЯ СТРАШНО
         //var num_gauge=flowrow.visibleChildren.length
         var num_gauge=6
+
         if (state=="mgbu") num_gauge=10 //прописал железно
         if (state=="grab6") num_gauge=7
         var numrows=Math.floor((containerheight-20)/(gaugesize+20))
@@ -147,43 +175,20 @@ Item {
         btn_lock: j.key_4 // locker key
         z:4
     }
-    MyGauge {
-            id: row_left
-            val:(j.key_0||j.lock)*j.y1axis
-            //anchors.fill: parent
-            anchors.bottom: dbr.bottom
-            anchors.left: dbr.left
-            anchors.bottomMargin: 10
-            anchors.leftMargin: 2
-            width:6
-            height: dashBoard.height-20-width
-            color: val>0?"yellow":"lightblue"
-            z:3
-            //onValChanged: { console.log("MyGauge key0:"+j.key_0); }
-        }
-    MyGauge {
-        id: row_right
-            val: gauge_value()
-            function gauge_value(){
-                //if (!j.ispresent) return 0
-                if (dashboard.state==="grab2") return (j.key_0||j.lock)*j.y1axis
-                if (dashboard.state==="grab6"||dashboard.state==="mgbu"||dashboard.state==="gkgbu") return (j.key_0||j.lock)*j.y2axis
-            }
-            function gauge_color(){
-                //if (!j.ispresent) return "transparent"
-                if (dashboard.state==="grab2") return j.y1axis>0?"yellow":"lightblue"
-                if (dashboard.state==="grab6"||dashboard.state==="mgbu"||dashboard.state==="gkgbu") return j.y2axis>0?"yellow":"lightblue"
-            }
-            //anchors.fill: parent
-            anchors.bottom: dbr.bottom
-            anchors.right: dbr.right
-            anchors.bottomMargin: 10
-            anchors.rightMargin: 2
-            width:6
-            height: dashBoard.height-20-width
-            color: gauge_color()
-            z:3
-        }
+    NPA {
+        id: npa_pult
+        //anchors.centerIn: parent
+        height: 450
+        width: 450
+        joystick: j
+        rigmodel: source
+        btn0: j.key_1
+        btn_lock: j.key_4 // locker key
+        z:4
+        state: source.gmod //move, hand
+    }
+
+
     Rectangle{
         id: dbr
         height: dashBoard.height
@@ -241,19 +246,6 @@ Item {
               spacing: 20
               anchors.fill: parent
 
-
-//              add: Transition {
-//                      NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
-//                      NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 400 }
-//                  }
-//              populate: Transition {
-//                      NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
-//                      NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 400 }
-//                  }
-//              move: Transition {
-//                      NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
-//                      NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 400 }
-//                  }
 
               Rectangle {
                   id: voltage_mgbu

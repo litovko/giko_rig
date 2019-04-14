@@ -39,7 +39,9 @@ HEADERS += \
     qJoyStick.h
 
 DISTFILES += \
-    skin/hycoicon.ico
+    skin/hycoicon.ico \
+    NPA_hand.qml \
+    NPA_hand.qml
 
 RC_ICONS = skin/hycoicon.ico
 

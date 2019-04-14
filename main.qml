@@ -6,6 +6,7 @@ import QmlVlc 0.1
 //import QtMultimedia 5.5
 import Qt.labs.settings 1.0
 import QtQuick.Extras 1.4
+
 //import QtQml 2.2
 
 Window {
@@ -204,6 +205,7 @@ Window {
         joystick_y1: j.y1axis*(j.key_0||j.lock)
         joystick_y2: j.y2axis*(j.key_0||j.lock)
         joystick_x1: j.x1axis*(j.key_0||j.lock)
+        joystick_x2: j.x2axis*(j.key_0||j.lock)
         light1: lampsSettings.lamp1
         light2: lampsSettings.lamp2
         light3: lampsSettings.lamp3
@@ -212,6 +214,7 @@ Window {
         camera2: camSettings.cam2
         camera3: camSettings.cam3
         camera4: camSettings.cam4
+        property var rig_types: ["grab6", "grab2", "gkgbu", "mgbu", "NPA"]
     }
     function changestate(){
 
@@ -357,10 +360,9 @@ Window {
               settings.visible=false;
               joysetup.visible=false
               help.visible=false
-              if (dashboard.state==="grab2") dashboard.state="grab6"
-              else if (dashboard.state==="grab6") dashboard.state="gkgbu"
-                   else if (dashboard.state==="gkgbu") dashboard.state="mgbu"
-                   else  dashboard.state="grab2"
+              var i=rig.rig_types.indexOf(dashboard.state)
+              if (i===rig.rig_types.length-1) dashboard.state=rig.rig_types[0]
+              else dashboard.state=rig.rig_types[i+1]
               rig.rigtype=dashboard.state
               break;
           case "MENU":
@@ -977,15 +979,7 @@ Window {
                 }
             }
         ]
-//        Image {
-//            id: picture
-//            visible: false
-//            fillMode: Image.PreserveAspectCrop
-//            source: "file:///c:/Users/1/Documents/qt/giko_rig/skin/q.png"
-//            anchors.fill: parent
-//            anchors.margins: 20
-//        }
-        //###################################################################################################
+
     }
     ControlPanel {
         id: controlPanel
