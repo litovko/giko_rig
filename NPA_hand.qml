@@ -3,11 +3,11 @@ import "./figure.js" as Fig
 
 Item {
     id: hand
-    property real a1: 0
-    property real a2: 0
-    property real a3: 0
-    property real a4: 0
-    property real a5: 0
+    property real a1: 20
+    property real a2: -80
+    property real a3: 120
+    property real a4: -60
+    property real a5: 20
     property real l1: 50
     property real l2: 80
     property real l3: 80
@@ -26,6 +26,21 @@ Item {
     readonly property real r: 5; //радиус точек
     readonly property real d: 3; //зазоры
     property int select: 14
+    property alias a6up: a6up.value
+    property alias a6down: a6down.value
+    property alias a2up: a2up.value
+    property alias a2down: a2down.value
+    property alias a5left: a5left.value
+    property alias a5right: a5right.value
+    property alias a3left: a3left.value
+    property alias a3right: a3right.value
+    property alias a7left: a7left.value
+    property alias a7right: a7right.value
+    property alias a4left: a4left.value
+    property alias a4right: a4right.value
+    property alias a1left: a1left.value
+    property alias a1right: a1right.value
+
     onA1Changed:   canvas.requestPaint()
     onA2Changed:   canvas.requestPaint()
     onA3Changed:   canvas.requestPaint()
@@ -252,12 +267,15 @@ Item {
     {
         var  s9=len
         var s10=0
-        //console.log("index="+index+" angle0="+angle0+" angle="+angle)
+        var s=select&index?1:0
+        //console.log("index="+index+" angle0="+angle0+" angle="+angle+ "res:"+select&index)
         c.save();
         c.strokeStyle = select&index?c4:c3
         c.lineWidth = 2
         c.beginPath()
         c.translate(p.x, p.y)
+        angle=angle+tim.i*s*(angle>0?1:-1)
+        //console.log("ind:"+index+" select:"+select+ "res:"+s)
         c.rotate(angle*Math.PI/180);
         c.moveTo(r/2,0);
         c.arc(0,0, r/2, 0, Math.PI*2)
@@ -272,12 +290,16 @@ Item {
         var yy=p.y-len*Math.sin((-angle)*Math.PI/180)
         return xx.toString()+","+yy.toString();
     }
+    Timer {
+        id: tim
+        property int i:0
+        interval: 100
+        running:false
+        repeat: true
+        onTriggered: {i+=1; i=i>2?-2:i; canvas.requestPaint()}
+    }
 
 
-//    function rotate(x, y, angle)
-//    {
-//        x=sin(angle);
-//    }
     GArrow {
         id: a6up
         anchors.margins: 30
@@ -286,6 +308,7 @@ Item {
         height: hand.height*7/90
         width: hand.height*7/90
         y: p0.y-height-3
+        positive: true
     }
     GArrow {
         id: a6down
@@ -295,6 +318,7 @@ Item {
         height: hand.height*7/90
         width: hand.height*7/90
         y: p0.y+3
+        positive: false
     }
     GArrow {
         id: a7left
@@ -303,6 +327,7 @@ Item {
         width: hand.height*7/90
         y: p0.y+2*height
         x: p0.x-width-3
+        positive: false
     }
     GArrow {
         id: a7right
@@ -311,6 +336,7 @@ Item {
         width: hand.height*7/90
         y: p0.y+2*height
         x: p0.x+3
+        positive: true
     }
     GArrow {
         id: a5left
@@ -319,6 +345,7 @@ Item {
         width: hand.height*7/90
         y: p1.y-4*height
         x: p1.x-width-3
+        positive: false
     }
     GArrow {
         id: a5right
@@ -327,6 +354,7 @@ Item {
         width: hand.height*7/90
         y: p1.y-4*height
         x: p1.x+3
+        positive: true
     }
     GArrow {
         id: a4left
@@ -335,6 +363,7 @@ Item {
         width: hand.height*7/90
         y: p2.y+3*height
         x: p2.x-width-3
+        positive: false
     }
     GArrow {
         id: a4right
@@ -343,6 +372,7 @@ Item {
         width: hand.height*7/90
         y: p2.y+3*height
         x: p2.x+3
+        positive: true
     }
     GArrow {
         id: a3right
@@ -351,6 +381,7 @@ Item {
         width: hand.height*7/90
         y: p3.y-4*height
         x: p3.x+3
+        positive: true
     }
     GArrow {
         id: a3left
@@ -359,6 +390,7 @@ Item {
         width: hand.height*7/90
         y: p3.y-4*height
         x: p3.x-width-3
+        positive: false
     }
     GArrow {
         id: a2up
@@ -367,6 +399,7 @@ Item {
         width: hand.height*7/90
         y: p4.y-height-3
         x: p4.x+width*2
+        positive: true
     }
     GArrow {
         id: a2down
@@ -375,6 +408,7 @@ Item {
         width: hand.height*7/90
         y: p4.y+3
         x: p4.x+width*2
+        positive: false
     }
     GArrow {
         id: a1right
@@ -383,6 +417,7 @@ Item {
         width: hand.height*7/90
         y: p4.y-l4*0.4-height
         x: p4.x-width/2
+        positive: true
     }
     GArrow {
         id: a1left
@@ -391,7 +426,9 @@ Item {
         width: hand.height*7/90
         y: p4.y+l4*0.4
         x: p4.x-width/2
+        positive: false
     }
+
     Canvas {
         id: canvas
 

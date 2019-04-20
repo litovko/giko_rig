@@ -97,12 +97,26 @@ void cRigmodel::setana()
       ana1=m_joystick_x2;
       ana2=m_joystick_y1-m_joystick_x2;
       ana3=m_joystick_y1+m_joystick_x2;
-    } else {
-        ana1=m_joystick_x1;
-        ana2=m_joystick_y1;
-        ana3=m_joystick_x2;
-        ana4=m_joystick_y2;
     }
+    if (gmod()=="hand"){
+      ana1=m_joystick_x1;
+      ana2=m_joystick_y1;
+      ana3=m_joystick_y1;
+      ana4=m_joystick_y2;
+    }
+    if (gmod()=="hand1"){
+      ana1=m_joystick_x2;
+      ana2=m_joystick_x1;
+      ana3=0;
+      ana4=0;
+    }
+    if (gmod()=="hand2"){
+      ana1=m_joystick_y2;
+      ana2=m_joystick_y1;
+      ana3=0;
+      ana4=0;
+    }
+
     //qDebug()<<"setana y1:"<<m_joystick_y1<<" x2:"<<m_joystick_x2<<" ana1:"<<m_ana1<<" ana2:"<<m_ana2<<" ana3:"<<m_ana3;
     if (m_ana1!=ana1) {m_ana1=ana1; emit ana1Changed();}
     if (m_ana2!=ana2) {m_ana2=ana2; emit ana2Changed();}
@@ -441,7 +455,7 @@ void cRigmodel::start_client()
     if (m_client_connected) return;
     bytesWritten = 0;
     qDebug()<<"Rig Start client >>>"<<m_address<<"poprt"<<::QString().number(m_port);
-    
+
     tcpClient.connectToHost(m_address, m_port);
 
 }
