@@ -46,7 +46,7 @@ Item {
         }
     ]
     onBtn0Changed: if(visible) changestate()
-    onStateChanged: rigmodel.gmod=state
+    onStateChanged:   if (rigmodel.rigtype==="GKGBU") rigmodel.gmod=state
     onBtn_lockChanged: {
         if (!lock&&j.key_0) lock=true
         if (lock&&j.key_0) lock=false

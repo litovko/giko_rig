@@ -27,8 +27,7 @@ function circle(c, x, y, r, s)
 {
     c.save();
     c.fillStyle=s
-    c.beginPath() //circle left right
-    //ctx.moveTo(width/2, y0*1.1+h1/2)
+    c.beginPath()
     c.arc(x, y, r, 0 ,Math.PI*2)
     c.closePath()
     c.fill()
@@ -83,3 +82,29 @@ function draw1(c, p, len, angle)
     c.restore();
 
 }
+function arrow(c, x, y, len, angle, fillstyle)
+{
+
+
+    var s8=len/8 // выступ угла скобы
+    var s9=(len)/2   // смещение центра отверстия по Х -  угол наклона оси 30 градусов
+    var s10=len*Math.sqrt(3)/2   // смещение центра отверстия по Y
+    c.save()
+    c.beginPath()
+    c.fillStyle = fillstyle
+    c.lineWidth = 1
+    c.translate(x, y)
+    c.rotate(angle*Math.PI/180);
+    var lx=Math.sin(Math.PI/3)*len
+    var ly=Math.cos(Math.PI/3)*len
+    c.moveTo(0,-len)
+    c.lineTo(lx,ly);
+    c.lineTo(-lx,ly)
+    c.lineTo(0,-len);
+    c.closePath()
+    c.fill()
+    c.stroke();
+    c.restore();
+
+}
+

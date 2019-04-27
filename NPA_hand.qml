@@ -26,6 +26,8 @@ Item {
     readonly property real r: 5; //радиус точек
     readonly property real d: 3; //зазоры
     property int select: 14
+    property bool pos_rask: true
+    property bool pos_home: false
     property alias a6up: a6up.value
     property alias a6down: a6down.value
     property alias a2up: a2up.value
@@ -299,6 +301,26 @@ Item {
         onTriggered: {i+=1; i=i>2?-2:i; canvas.requestPaint()}
     }
 
+    Rectangle {
+        id: rask
+        height: 20
+        width: 30
+        border.color: "white"
+        border.width: 2
+        radius: 10
+        color: pos_rask?"green":"transparent"
+        x: 20
+        y: parent.height/2-80
+        Text {
+            anchors.left: parent.right
+            anchors.leftMargin: 5
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "Раск."
+            font.pointSize: 12
+            color: "white"
+        }
+
+    }
 
     GArrow {
         id: a6up
@@ -329,6 +351,27 @@ Item {
         x: p0.x-width-3
         positive: false
     }
+    Rectangle {
+        id: home
+        height: 20
+        width: 30
+        border.color: "white"
+        border.width: 2
+        radius: 10
+        color: pos_home?"green":"transparent"
+        x: 20
+        y: parent.height/2+40
+        Text {
+            anchors.left: parent.right
+            anchors.leftMargin: 5
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "Фикс."
+            font.pointSize: 12
+            color: "white"
+        }
+
+    }
+
     GArrow {
         id: a7right
         angle: -90

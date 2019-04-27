@@ -37,7 +37,6 @@ Item {
     }
     GArrow {
         id: a1right
-        state:"GREEN"
         anchors.margins: npa.height*0.5/9
         anchors.left: parent.horizontalCenter
         angle: -90
@@ -105,6 +104,7 @@ Item {
         width: npa.height*8/90
         x: npa.height*80/90
         positive: true
+        value: ax4
     }
     GArrow {
         id: a2down
@@ -116,6 +116,7 @@ Item {
         width: npa.height*8/90
         x: npa.height*80/90
         positive: false
+        value: ax4
     }
     GArrow {
         id: a3up
@@ -127,6 +128,7 @@ Item {
         width: npa.height*8/90
         x: npa.height*80/90
         positive: true
+        value: ax5
     }
     GArrow {
         id: a3down
@@ -138,6 +140,7 @@ Item {
         width: npa.height*8/90
         x: npa.height*80/90
         positive: false
+        value: ax5
     }
     Canvas {
         id: canvas
@@ -186,7 +189,7 @@ Item {
             ctx.lineTo(width*85/90,hl2)
             ctx.stroke()
             var hl3=height*55/90
-            Fig.circle(ctx, width/2,hl3,r,fillstyle_red)
+            Fig.circle(ctx, width/2,hl3,r,func(ax5))
             ctx.moveTo(width/2+r,hl3)
             ctx.lineTo(width*85/90,hl3)
             ctx.stroke()

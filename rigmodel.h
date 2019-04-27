@@ -404,7 +404,7 @@ private:
     int m_lima=100000; //порог по току
     int m_limv=100000; //порог по напряжению
     int m_limz=100000; //порог по току утечки
-    QString m_gmod="platf"; //platf,tower,bench,drill
+    QString m_gmod="move"; //
 
     bool m_good_data=false;
     bool m_check_type=false;

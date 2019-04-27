@@ -94,9 +94,15 @@ void cRigmodel::setana()
     int ana1=0, ana2=0, ana3=0, ana4=0;
     if (m_rigtype!="NPA") return;
     if (gmod()=="move") {
-      ana1=m_joystick_x2;
-      ana2=m_joystick_y1-m_joystick_x2;
-      ana3=m_joystick_y1+m_joystick_x2;
+      ana1=m_joystick_x1;
+      ana2=m_joystick_y1-m_joystick_x1;
+      ana3=m_joystick_y1+m_joystick_x1;
+    }
+    if (gmod()=="move1") {
+      ana1=0;
+      ana2=0;
+      ana3=m_joystick_y1;
+      ana4=m_joystick_y2;
     }
     if (gmod()=="hand"){
       ana1=m_joystick_x1;
@@ -115,6 +121,12 @@ void cRigmodel::setana()
       ana2=m_joystick_y1;
       ana3=0;
       ana4=0;
+    }
+    if (gmod()=="group"){
+      ana1=m_joystick_y2;
+      ana2=m_joystick_y1;
+      ana3=m_joystick_x2;
+      ana4=m_joystick_x1;
     }
 
     //qDebug()<<"setana y1:"<<m_joystick_y1<<" x2:"<<m_joystick_x2<<" ana1:"<<m_ana1<<" ana2:"<<m_ana2<<" ana3:"<<m_ana3;
