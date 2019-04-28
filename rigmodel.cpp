@@ -91,8 +91,8 @@ void cRigmodel::reconnect()
 
 void cRigmodel::setana()
 {
-    int ana1=0, ana2=0, ana3=0, ana4=0;
     if (m_rigtype!="NPA") return;
+    int ana1=0, ana2=0, ana3=0, ana4=0;
     if (gmod()=="move") {
       ana1=m_joystick_x1;
       ana2=m_joystick_y1-m_joystick_x1;
@@ -128,7 +128,10 @@ void cRigmodel::setana()
       ana3=m_joystick_x2;
       ana4=m_joystick_x1;
     }
-
+//    m_ana1=scaling(m_ana1);
+//    m_ana2=scaling(m_ana2);
+//    m_ana3=scaling(m_ana3);
+//    m_ana4=scaling(m_ana4);
     //qDebug()<<"setana y1:"<<m_joystick_y1<<" x2:"<<m_joystick_x2<<" ana1:"<<m_ana1<<" ana2:"<<m_ana2<<" ana3:"<<m_ana3;
     if (m_ana1!=ana1) {m_ana1=ana1; emit ana1Changed();}
     if (m_ana2!=ana2) {m_ana2=ana2; emit ana2Changed();}
@@ -294,7 +297,6 @@ void cRigmodel::setLamp(const bool &lamp)
 {
     m_lamp = lamp;
     emit lampChanged();
-    //qDebug()<<"RIG: Lamp swithced";
 }
 
 bool cRigmodel::lamp() const
@@ -466,6 +468,7 @@ void cRigmodel::start_client()
 {
     if (m_client_connected) return;
     bytesWritten = 0;
+    if (tcpClient.state()) {qDebug()<<"tcpstate:"<<tcpClient.state();return;}
     qDebug()<<"Rig Start client >>>"<<m_address<<"poprt"<<::QString().number(m_port);
 
     tcpClient.connectToHost(m_address, m_port);
@@ -513,6 +516,8 @@ void cRigmodel::displayError(QAbstractSocket::SocketError socketError)
 
 void cRigmodel::sendData()
 {
+    if (!m_client_connected) return;
+    if(_no_resp) setGood_data(false);
     int data[9]={31,32,33,34,35,36,37,38,39};
     data[0] = m_engine*1
             +   m_pump*4
@@ -526,24 +531,47 @@ void cRigmodel::sendData()
             ;
     QString Data; // Строка отправки данных.
 
-    if (!m_client_connected) return;
-    if(_no_resp) setGood_data(false);
-    Data="{ana1:"+::QString().number(scaling(m_joystick_y1),10);
-    if (m_rigtype=="gkgbu"||m_rigtype=="grab6"||m_rigtype=="mgbu") Data=Data +";ana2:"+::QString().number(scaling(m_joystick_y2),10);
-    if (m_rigtype=="gkgbu"||m_rigtype=="mgbu") Data=Data+";ana3:"+::QString().number(scaling(m_joystick_x1),10)+";gmod:"+gmod_decode(m_gmod);
-    //яркости прожекторов
-    QString svet=";svet:"+::QString().number(lamp()*(m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16)));
-    if (m_rigtype=="mgbu") Data=Data+svet;
+    if (m_rigtype=="NPA"){
+        Data=NPA_data();
+    } else {
+        Data="{ana1:"+::QString().number(scaling(m_joystick_y1),10);
+        if (m_rigtype=="gkgbu"||m_rigtype=="grab6"||m_rigtype=="mgbu") Data=Data +";ana2:"+::QString().number(scaling(m_joystick_y2),10);
+        if (m_rigtype=="gkgbu"||m_rigtype=="mgbu") Data=Data+";ana3:"+::QString().number(scaling(m_joystick_x1),10)+";gmod:"+gmod_decode(m_gmod);
+        //яркости прожекторов
+        QString svet=";svet:"+::QString().number(lamp()*(m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16)));
+        if (m_rigtype=="mgbu") Data=Data+svet;
 
-    if (free_engine1()) {Data="{ana3:-127;gmod:grup1"+svet;}
-    if (free_engine2()) {Data="{ana2:-127;gmod:grup3"+svet;}
-    Data=Data+";dig1:"+::QString().number(data[0],10)+"}CONSDATA";
+        if (free_engine1()) {Data="{ana3:-127;gmod:grup1"+svet;}
+        if (free_engine2()) {Data="{ana2:-127;gmod:grup3"+svet;}
+        Data=Data+";dig1:"+::QString().number(data[0],10)+"}CONSDATA";
+    }
 
     //qDebug()<<"Rig - send data: "<<Data;
     bytesToWrite = static_cast<int>(tcpClient.write(::QByteArray(Data.toLatin1()).data()));
     if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
-    if (bytesToWrite>=0)qDebug()<<"Rig:sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
+    if (bytesToWrite>=0)qDebug()<<"sent:"<<Data<<":"<<::QString().number(bytesToWrite);
     _no_resp=true;
+}
+QString cRigmodel::NPA_data()
+{
+    int dig= m_engine*1
+            +   m_pump*4
+            +   m_lamp*2
+            //+ m_camera*8
+            + m_engine2*8
+            + m_camera1*16*m_camera
+            + m_camera2*32*m_camera
+            + m_camera3*64*m_camera
+            + m_camera4*128*m_camera
+            ;
+    QString Data="{ana1:"+::QString().number(ana1(),10)\
+                +";ana2:"+::QString().number(ana2(),10)\
+                +";ana3:"+::QString().number(ana3(),10)\
+                +";ana4:"+::QString().number(ana4(),10);
+    Data=Data+";gmod:"+gmod_decode(m_gmod)\
+             +";svet:"+::QString().number((m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16)))\
+             +";dig1:"+::QString().number(dig,10)+"}CONSDATA";
+    return Data;
 }
 bool cRigmodel::handle_tag(const QString &tag, const QString &val)
 {
@@ -663,7 +691,7 @@ void cRigmodel::readData()
     int m;
     _no_resp=false;
     Data = tcpClient.readAll();
-    qDebug()<<"Rig read :"<<Data;
+    qDebug()<<"read:"<<Data;
     // {toil=29;poil=70;drpm=15;pwrv=33;pwra=3}FAFBFCFD
 
     if (Data.startsWith("{")&&(m=Data.indexOf("}"))>0) {
@@ -673,7 +701,7 @@ void cRigmodel::readData()
         Data=Data.mid(1,m-1);
         //qDebug()<<"truncated :"<<Data;
         split=Data.split(';');
-        qDebug()<<"split:"<<split;
+        //qDebug()<<"split:"<<split;
         QListIterator<QByteArray> i(split);
         QByteArray s, val;
         while (i.hasNext()){
@@ -716,11 +744,12 @@ int cRigmodel::scaling(const int &value)
 {
    if (value==0) return 0;
    double df=127.0*m_freerun/100.0;
-   //qDebug()<<"Rig - scale df: "<<df<<"f:"<<-df + value*(100-m_freerun)/100.0 <<" v:"<<value;
+   //qDebug()<<"Rig - scale df: "<<df<<"f:"<<(ceil(df + value*(100-m_freerun)/100.0)) <<" v:"<<value;
    if  (value>0)
-     return ceil(df + value*(100-m_freerun)/100.0);
+     return static_cast<int>(ceil(df + value*(100-m_freerun)/100.0));
    else
-       return -ceil(df - value*(100-m_freerun)/100.0);
+       return static_cast<int>(-ceil(df - value*(100-m_freerun)/100.0));
+
 }
 
 int cRigmodel::leak_voltage() const
@@ -737,6 +766,13 @@ void cRigmodel::setLeak_voltage(int leak_voltage)
 
 QString cRigmodel::gmod_decode(QString gmod) const
 {
+    if (rigtype()=="NPA") {
+        if (gmod=="move") return "grup1";
+        if (gmod=="hand") return "grup2";
+        if (gmod=="hand1") return "grup3";
+        if (gmod=="hand2") return "grup2";
+        if (gmod=="group") return "grup4";
+    }
     if (rigtype()!="mgbu") return gmod;
     if (gmod=="drill") return "grup1";
     if (gmod=="bench") return "grup2";
@@ -744,6 +780,8 @@ QString cRigmodel::gmod_decode(QString gmod) const
     if (gmod=="platf") return "grup4";
     return gmod;
 }
+
+
 
 int cRigmodel::leak() const
 {
@@ -961,7 +999,7 @@ void cRigmodel::setFreerun(int freerun)
     if (m_freerun==freerun)  return;
     if (freerun<0) m_freerun=0;
     if (freerun>100) m_freerun=100;
-    if (freerun>=0||freerun<=100)  m_freerun = freerun;
+    m_freerun = freerun;
     emit freerunChanged();
 }
 

@@ -62,7 +62,7 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:"СВЕТ[F2]"
-                    active: source.lamp
+                    active: source.lamp_tag
                     command: "LAMPS"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
@@ -86,7 +86,7 @@ Item {
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                MyLamp{
-                    //visible: false
+                    visible: source.rigtype==="mgbu"
                     id: engine2
                     height: lampSize
                     width: lampSize
@@ -96,13 +96,35 @@ Item {
                     command: "ENGINE2"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
+               MyLamp{
+                   visible: source.rigtype==="NPA"
+                   id: cooling
+                   height: lampSize
+                   width: lampSize
+                   bottomText:"ОХЛАЖД[F7]"
+                   error: source.free_engine2
+                   active:source.engine2
+                   command: "COOLING"
+                   onLampClicked: controlPanel.lampClicked(lamp_command)
+               }
                 MyLamp{
                     id: engine3
+                    visible: source.rigtype==="mgbu"
                     height: lampSize
                     width: lampSize
                     bottomText:"ПРОМЫВКА[П]"
                     active:source.pump
                     command: "PUMP"
+                    onLampClicked: controlPanel.lampClicked(lamp_command)
+                }
+                MyLamp{
+                    id: manip
+                    visible: source.rigtype==="NPA"
+                    height: lampSize
+                    width: lampSize
+                    bottomText:"МАНИП[П]"
+                    active:source.pump
+                    command: "MANIP"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{

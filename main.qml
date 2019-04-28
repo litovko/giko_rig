@@ -89,6 +89,7 @@ Window {
         property alias camera_umg: win.camera_umg
         property alias streaming: win.streaming
         property alias subtitles: subtitle.interval
+        property alias joy_devider: j.devider
     }
     function player_play(player_number){
         if (cams[0].timeout||cams[1].timeout||cams[2].timeout||cams[3].timeout) return;
@@ -206,15 +207,17 @@ Window {
         joystick_y2: j.y2axis*(j.key_0||j.lock)
         joystick_x1: j.x1axis*(j.key_0||j.lock)
         joystick_x2: j.x2axis*(j.key_0||j.lock)
-        light1: lampsSettings.lamp1
-        light2: lampsSettings.lamp2
-        light3: lampsSettings.lamp3
-        light4: lampsSettings.lamp4
+        light1: lampsSettings.lamp1*lamp_tag
+        light2: lampsSettings.lamp2*lamp_tag
+        light3: lampsSettings.lamp3*lamp_tag
+        light4: lampsSettings.lamp4*lamp_tag
         camera1: camSettings.cam1
         camera2: camSettings.cam2
         camera3: camSettings.cam3
         camera4: camSettings.cam4
+        property bool lamp_tag: false
         property var rig_types: ["grab6", "grab2", "gkgbu", "mgbu", "NPA"]
+        Component.objectName: {lamp=true}
     }
     function changestate(){
 
@@ -405,17 +408,28 @@ Window {
               camSettings.visible=!camSettings.visible
               camSettings.height=camSettings.visible?160:0
               break;
+          case "COOLSET": //окно управления охлаждением
+              coolSettings.visible=!coolSettings.visible
+              coolSettings.height=coolSettings.visible?160:0
+              break;
           case "ENGINE1":
               rig.engine=rig.engine?false:true;
               break;
           case "ENGINE2":
               rig.engine2=rig.engine2?false:true;
               break;
+          case "COOLING":
+              rig.engine2=!rig.engine2;
+              break;
           case "RECONNECT":
               rig.reconnect();
               break;
           case "PUMP":
               rig.pump=rig.pump?false:true;
+              break;
+          case "MANIP":
+              rig.pump=!rig.pump;
+              rig.lamp=!rig.pump
               break;
           case "DEMO":
               recording=0
@@ -639,7 +653,7 @@ Window {
         Keys.onPressed: {
             console.log("KeY:"+event.key)
             if (event.key === Qt.Key_F1 || event.key === Qt.Key_1) win.fcommand("HELP")
-            if (event.key === Qt.Key_F2||event.key ===  Qt.Key_2)  rig.lamp=rig.lamp?false:true;
+            if (event.key === Qt.Key_F2||event.key ===  Qt.Key_2)  rig.lamp_tag=!rig.lamp_tag;
             if (event.key === Qt.Key_F3||event.key ===  Qt.Key_3)  win.fcommand("CAMERA ON")
             if (event.key === Qt.Key_F4||event.key ===  Qt.Key_4)  win.fcommand("ENGINE1")
             if (event.key === Qt.Key_F7||event.key ===  Qt.Key_7)  win.fcommand("ENGINE2")
@@ -1001,6 +1015,17 @@ Window {
     }
     CAMSettings {
         id: camSettings
+        width: 150
+        height: 0
+        visible: false
+        anchors { margins: 10; leftMargin: 160; bottom: controlPanel.top; left: controlPanel.left}
+        onCam1Changed: players[0].stop();
+        onCam2Changed: players[1].stop();
+        onCam3Changed: players[2].stop();
+        onCam4Changed: players[3].stop();
+    }
+    COOLSettings {
+        id: coolSettings
         width: 150
         height: 0
         visible: false

@@ -367,6 +367,7 @@ private:
     int m_kren=10;
     int m_turns=0;
     QString gmod_decode(QString gmod) const;
+    QString NPA_data();
     unsigned int m_position=0;
     QString m_rigtype="NPA"; //grab2,grab6,gkgbu,mgbu, NPA
 

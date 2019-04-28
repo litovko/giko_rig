@@ -42,5 +42,6 @@
         <file>logic_control.js</file>
         <file>NPA_hand.qml</file>
         <file>NPA_group.qml</file>
+        <file>COOLSettings.qml</file>
     </qresource>
 </RCC>

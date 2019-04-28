@@ -26,7 +26,8 @@ Item {
     readonly property real r: 5; //радиус точек
     readonly property real d: 3; //зазоры
     property int select: 14
-    property bool pos_rask: true
+    property int position:0
+    property bool pos_rask: false
     property bool pos_home: false
     property alias a6up: a6up.value
     property alias a6down: a6down.value
@@ -54,6 +55,10 @@ Item {
     onL4Changed:   canvas.requestPaint()
     onL5Changed:   canvas.requestPaint()
     onSelectChanged: canvas.requestPaint()
+    onPositionChanged: {
+        pos_rask=position&1
+        pos_home=position&2
+    }
 
     function draw1(c, p, len, angle)
     {

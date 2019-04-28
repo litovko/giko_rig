@@ -185,7 +185,7 @@ Item {
         btn0: j.key_1
         btn_lock: j.key_4 // locker key
         z:4
-        state: source.gmod //move, hand
+        //state: source.gmod //move, hand
     }
 
 

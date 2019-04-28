@@ -65,7 +65,7 @@ Item {
     onBtn0Changed: if(visible) changestate();
     onStateChanged: {
         console.log(" state="+state)
-//        rigmodel.gmod=state;
+        rigmodel.gmod=state;
         joystick.lock=false;
 //        console.log("rigmodel="+rigmodel.gmod+" state="+state)
     }
@@ -129,7 +129,7 @@ Item {
             id:npa_hand
             anchors.fill: parent
             select: sel()
-
+            position: rigmodel.position
             // запястье - поворот
             a1left:rigmodel.ana2*(rigmodel.gmod==="hand1")
             a1right:rigmodel.ana2*(rigmodel.gmod==="hand1")

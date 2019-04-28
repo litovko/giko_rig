@@ -12,13 +12,13 @@ Item {
     property int cx3:0 // лебедка
     property int cx4:0 // поворот камеры вокруг своей оси Y2
     property int ca: 0 //индикатор угола поворота камеры -135...135 от нуля наверху
-    property bool cool: true
+    property bool cool: false
 
     onCx1Changed: canvas.requestPaint()
-    onCx2Changed: {canvas.requestPaint(); }
+    onCx2Changed: canvas.requestPaint()
     onCx3Changed: canvas.requestPaint()
     onCx4Changed: canvas.requestPaint()
-    onCaChanged: canvas.requestPaint()
+    onCaChanged:  canvas.requestPaint()
 
     function func(val){
         if (val>delta) return fillstyle_green
@@ -103,7 +103,7 @@ Item {
         width: npa.height*8/90
         x: npa.height*65.3/90
         positive: true
-        value: cool?127:0
+        state: cool?"RED":"NOP"
     }
 
     Canvas {
@@ -162,6 +162,7 @@ Item {
             Fig.circle(ctx,hc+cax, vc+cay, r0/5, fillstyle_yellow)
             Fig.text_m(ctx,hc+2*r0/3,x1+r0/2,th,"1", "left", "top", linestyle2)
             Fig.text_m(ctx,hc+3*r0/3,vc,th,"2", "left", "top", linestyle2)
+
             //лебедка
             ctx.beginPath()
             ctx.lineWidth = 4
@@ -185,7 +186,7 @@ Item {
             Fig.circle(ctx,xl1+wl+wl/4, yl1-hl/2, wl/2, Qt.rgba(0.6, 0.6, 1.0, 0.0))
             Fig.arrow(ctx,xl1+wl+wl/4,yl1-hl*4/6,wl/4, 0,  Qt.rgba(0.6, 0.6, 1.0, 0.8))
             Fig.arrow(ctx,xl1+wl+wl/4,yl1-hl*2/6,wl/4, 180, Qt.rgba(0.6, 0.6, 1.0, 0.8))
-
+            Fig.text_m(ctx,xl1+wl,yl1,th,"3", "left", "top", linestyle2)
             xl1=width*4/6
 
             Fig.circle(ctx,xl1+wl+wl/4, yl1-hl/2, wl/2, Qt.rgba(0.6, 0.6, 1.0, 0.0))
