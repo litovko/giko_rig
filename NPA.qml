@@ -155,8 +155,6 @@ Item {
         }
         NPA_group {
             id: npa_group
-//            width: 600
-//            height: 600
             anchors.fill: parent
             position: rigmodel.position
             cx1: 0
