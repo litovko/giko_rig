@@ -2,6 +2,7 @@
 # обязательно требуется мультимедия от QT иначе не регистрируется плагин.
 QT += quick network
 CONFIG += c++11  console
+TARGET = NPA
 #CONFIG+=debug
 #mingw:QMAKE_CXXFLAGS_DEBUG += "-gstabs+"
 #mingw:QMAKE_CFLAGS_DEBUG += "-gstabs+"

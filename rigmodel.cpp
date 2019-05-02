@@ -555,13 +555,14 @@ void cRigmodel::sendData()
 QString cRigmodel::NPA_data()
 {
     int dig= m_engine*1
-            +   m_pump*4
-            +   m_lamp*2
+            +   m_pump*4  //замок манипулятора открывание
+            +   !m_pump*2 //замок манипулятора закрывание
+            +   m_lamp*64
             //+ m_camera*8
             + m_engine2*8
             + m_camera1*16*m_camera
             + m_camera2*32*m_camera
-            + m_camera3*64*m_camera
+            //+ m_camera3*64*m_camera
             + m_camera4*128*m_camera
             ;
     QString Data="{ana1:"+::QString().number(ana1(),10)\
@@ -569,7 +570,7 @@ QString cRigmodel::NPA_data()
                 +";ana3:"+::QString().number(ana3(),10)\
                 +";ana4:"+::QString().number(ana4(),10);
     Data=Data+";gmod:"+gmod_decode(m_gmod)\
-             +";svet:"+::QString().number((m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16)))\
+             //+";svet:"+::QString().number((m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16)))
              +";dig1:"+::QString().number(dig,10)+"}CONSDATA";
     return Data;
 }
@@ -767,8 +768,9 @@ void cRigmodel::setLeak_voltage(int leak_voltage)
 QString cRigmodel::gmod_decode(QString gmod) const
 {
     if (rigtype()=="NPA") {
-        if (gmod=="move") return "grup1";
-        if (gmod=="hand") return "grup2";
+        if (gmod=="move")  return "grup1";
+        if (gmod=="move1") return "grup3";
+        if (gmod=="hand")  return "grup2";
         if (gmod=="hand1") return "grup3";
         if (gmod=="hand2") return "grup2";
         if (gmod=="group") return "grup4";

@@ -62,8 +62,8 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:"СВЕТ[F2]"
-                    active: source.lamp_tag
-                    command: "LAMPS"
+                    active: source.lamp
+                    command: "LAMP"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
@@ -72,7 +72,8 @@ Item {
                     width: lampSize
                     bottomText:"КАМЕРЫ[F3]"
                     active:source.camera
-                    command: "CAMSET"
+                    command: "CAMERA ON"
+                    command3: "CAMSET"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
@@ -105,6 +106,7 @@ Item {
                    error: source.free_engine2
                    active:source.engine2
                    command: "COOLING"
+                   command3: "COOLSET"
                    onLampClicked: controlPanel.lampClicked(lamp_command)
                }
                 MyLamp{

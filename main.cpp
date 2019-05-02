@@ -37,7 +37,7 @@
 #include <QSettings>
 
 #define giko_name "HYCO"
-#define giko_program "Rig Console"
+#define giko_program "NPA Console"
 #include <stdio.h>
 #include <stdlib.h>
 #include <QFile>

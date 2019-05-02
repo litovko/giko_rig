@@ -60,6 +60,7 @@ Item {
         pos_home=position&2
     }
 
+
     function draw1(c, p, len, angle)
     {
         angle=angle-60;

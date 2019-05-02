@@ -7,6 +7,7 @@ Item {
     property color fillstyle_red: Qt.rgba(1.0, 0.0, 0.0, 0.5)
     property color fillstyle_green: Qt.rgba(0.0, 1.0, 0.0, 0.5)
     property color fillstyle_yellow: Qt.rgba(1.0, 1.0, 0.0, 0.7)
+    property int position:0
     property int cx1:0 // не используется
     property int cx2:0 // поворот камеры в горизонтальной плоскости
     property int cx3:0 // лебедка
@@ -19,6 +20,7 @@ Item {
     onCx3Changed: canvas.requestPaint()
     onCx4Changed: canvas.requestPaint()
     onCaChanged:  canvas.requestPaint()
+    onPositionChanged: canvas.requestPaint()
 
     function func(val){
         if (val>delta) return fillstyle_green
@@ -186,7 +188,9 @@ Item {
             Fig.circle(ctx,xl1+wl+wl/4, yl1-hl/2, wl/2, Qt.rgba(0.6, 0.6, 1.0, 0.0))
             Fig.arrow(ctx,xl1+wl+wl/4,yl1-hl*4/6,wl/4, 0,  Qt.rgba(0.6, 0.6, 1.0, 0.8))
             Fig.arrow(ctx,xl1+wl+wl/4,yl1-hl*2/6,wl/4, 180, Qt.rgba(0.6, 0.6, 1.0, 0.8))
-            Fig.text_m(ctx,xl1+wl,yl1,th,"3", "left", "top", linestyle2)
+            Fig.text_m(ctx,xl1+2*wl,yl1,th,"3", "left", "top", linestyle2)
+            Fig.circle(ctx,xl1+wl+wl/4, yl1-hl*3/2, wl/4, position&4?fillstyle_red:Qt.rgba(1.0, 1.0, 1.0, 0.1))
+            Fig.circle(ctx,xl1+wl+wl/4, yl1+hl/2, wl/4, position&8?fillstyle_red:Qt.rgba(1.0, 1.0, 1.0, 0.1))
             xl1=width*4/6
 
             Fig.circle(ctx,xl1+wl+wl/4, yl1-hl/2, wl/2, Qt.rgba(0.6, 0.6, 1.0, 0.0))

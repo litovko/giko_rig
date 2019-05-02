@@ -1,8 +1,8 @@
-import QtQuick 2.5
-import QtQuick.Controls 1.4
-import QtQuick.Window 2.0
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.2
+import QtQuick 2.12
+import QtQuick.Controls 2.4
+//import QtQuick.Window 2.0
+//import QtQuick.Controls.Styles 1.4
+//import QtQuick.Dialogs 1.2
 import QmlVlc 0.1
 import Gyco 1.0
 Item {
@@ -14,6 +14,110 @@ Item {
             name: "Dialog"
             PropertyChanges { target: rectangle1;  visible: true;}
             PropertyChanges { target: message;  visible: false;}
+
+//            PropertyChanges {
+//                target: radioButton1
+//                width: 15
+//                height: 15
+//                padding: 0
+//                focusPolicy: Qt.NoFocus
+//                autoExclusive: true
+//                display: AbstractButton.IconOnly
+//
+//
+//            }
+
+            PropertyChanges {
+                target: comboBox1
+                rightPadding: 0
+            }
+
+            PropertyChanges {
+                target: comboBox2
+                width: 55
+                height: 25
+                rightPadding: 0
+            }
+
+            PropertyChanges {
+                target: comboBox3
+                width: 55
+                height: 25
+                rightPadding: 0
+            }
+
+            PropertyChanges {
+                target: comboBox4
+                width: 55
+                height: 25
+                rightPadding: 0
+            }
+
+            PropertyChanges {
+                target: comboBox5
+                x: 185
+                y: 207
+                width: 55
+                height: 25
+                rightPadding: 0
+            }
+
+            PropertyChanges {
+                target: comboBox6
+                x: 185
+                y: 238
+                width: 55
+                height: 25
+                rightPadding: 0
+            }
+
+            PropertyChanges {
+                target: comboBox7
+                x: 185
+                y: 271
+                width: 55
+                height: 25
+                rightPadding: 0
+            }
+
+            PropertyChanges {
+                target: comboBox8
+                x: 177
+                y: 267
+                width: 55
+                height: 25
+                rightPadding: 0
+            }
+
+            PropertyChanges {
+                target: comboBox9
+                x: 185
+                y: 338
+                width: 55
+                height: 25
+                rightPadding: 0
+            }
+
+            PropertyChanges {
+                target: comboBox10
+                x: 185
+                y: 371
+                width: 55
+                height: 25
+                rightPadding: 0
+            }
+
+            PropertyChanges {
+                target: groupBox1
+                width: 464
+                height: 416
+            }
+
+            PropertyChanges {
+                target: label11
+                x: 38
+                y: 434
+            }
 
         },
         State {
@@ -43,7 +147,7 @@ Item {
                 position: 1
                 color: "#a6a6a6"
             }
-            
+
             GradientStop {
                 position: 0
                 color: "#000000"
@@ -64,6 +168,8 @@ Item {
             id: b_apply
             x: 363
             y: 15
+            width: 100
+            height: 28
             text: qsTr("Применить")
             onClicked: {
                 joystickDialog.visible=false;
@@ -74,10 +180,10 @@ Item {
         GroupBox {
             id: groupBox1
             x: 18
-            y: 97
+            y: 80
             width: 464
             height: 399
-            checked: true
+            //checked: true
             opacity: 1
 
             Label {
@@ -237,11 +343,15 @@ Item {
                     id: radioButton4
                     x: 250
                     y: 270
+                    width: 15
+                    height: 15
                     text: qsTr("")
                     visible: true
                     checked: joystick.key_3
-                    scale: 1.7
+                    scale: 1
                     clip: false
+//
+//
                 }
 
 
@@ -256,17 +366,18 @@ Item {
                 y: 69
                 width: 200
                 height: 22
-                minimumValue: -127
+                from: -127
                 value: joystick.y1axis
-                maximumValue: 127
+                to: 127
             }
 
             ComboBox {
                 id: comboBox1
                 x: 185
                 y: 70
-                width: 51
-                height: 20
+                width: 55
+                height: 25
+                currentIndex: 0
                 model: ListModel {
                     id: mcomboBox1
                 }
@@ -298,8 +409,8 @@ Item {
                 width: 200
                 height: 22
                 value: joystick.y2axis
-                minimumValue: -127
-                maximumValue: 127
+                from: -127
+                to: 127
             }
 
             ComboBox {
@@ -323,9 +434,9 @@ Item {
                 y: 139
                 width: 200
                 height: 22
-                minimumValue: -127
+                from: -127
                 value: joystick.x1axis
-                maximumValue: 127
+                to: 127
             }
 
             ComboBox {
@@ -349,9 +460,9 @@ Item {
                 y: 173
                 width: 200
                 height: 22
-                minimumValue: -127
+                from: -127
                 value: joystick.x2axis
-                maximumValue: 127
+                to: 127
             }
 
             ComboBox {
@@ -380,10 +491,14 @@ Item {
                 id: radioButton1
                 x: 258
                 y: 211
+                width: 15
+                height: 15
                 text: qsTr("")
-                scale: 1.7
+                scale: 1
                 clip: false
                 checked: joystick.key_0
+
+
             }
 
             ComboBox {
@@ -413,10 +528,14 @@ Item {
                 id: radioButton2
                 x: 258
                 y: 242
+                width: 15
+                height: 15
                 text: qsTr("")
                 clip: false
-                scale: 1.7
+                scale: 1
                 checked: joystick.key_1
+
+
             }
 
             ComboBox {
@@ -445,10 +564,14 @@ Item {
                 id: radioButton3
                 x: 258
                 y: 275
+                width: 15
+                height: 15
                 text: qsTr("")
                 checked: joystick.key_2
-                scale: 1.7
+                scale: 1
                 clip: false
+
+
             }
             ComboBox {
                 id: comboBox9
@@ -476,11 +599,15 @@ Item {
                 id: radioButton5
                 x: 258
                 y: 341
+                width: 15
+                height: 15
                 text: qsTr("")
                 visible: true
                 checked: joystick.key_4
-                scale: 1.7
+                scale: 1
                 clip: false
+
+
             }
 
             ComboBox {
@@ -509,11 +636,15 @@ Item {
                 id: radioButton6
                 x: 258
                 y: 374
+                width: 15
+                height: 15
                 text: qsTr("")
                 checked: joystick.key_5
                 visible: true
                 clip: false
-                scale: 1.7
+                scale: 1
+
+
             }
 
             Label {
@@ -531,8 +662,8 @@ Item {
 
         Label {
             id: label0
-            x: 23
-            y: 72
+            x: 24
+            y: 55
             width: 231
             height: 19
             color: "#ffffff"
@@ -573,6 +704,8 @@ Item {
             id: b_apply1
             x: 363
             y: 49
+            width: 100
+            height: 28
             text: qsTr("Закрыть")
             onClicked: {
                 joystickDialog.visible=false;
@@ -591,7 +724,7 @@ Item {
             visible: true
             font.pointSize: 10
         }
-        
+
     }
 
     Rectangle {
@@ -630,5 +763,20 @@ Item {
         }
 
     }
-    
+
 }
+
+
+
+
+
+
+
+
+
+
+
+/*##^## Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+ ##^##*/

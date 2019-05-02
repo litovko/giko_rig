@@ -158,12 +158,13 @@ Item {
 //            width: 600
 //            height: 600
             anchors.fill: parent
-
+            position: rigmodel.position
             cx1: 0
             cx2: rigmodel.ana1
             cx3: rigmodel.ana2
             cx4: rigmodel.ana3
             ca:  rigmodel.ana4
+            cool: rigmodel.engine2
         }
 
         MouseArea {

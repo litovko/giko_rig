@@ -12,7 +12,7 @@ import QtQuick.Extras 1.4
 Window {
     id: win
     //    visibility: Window.FullScreen
-    title: "HYCO RIG CONSOLE ПУЛЬТ УПРАВЛЕНИЯ ПОДВОДНЫМ АППАРАТОМ"
+    title: "HYCO ПУЛЬТ УПРАВЛЕНИЯ НЕОБИТАЕМЫМ ПОДВОДНЫМ АППАРАТОМ"
     visible: true
 
     height: 720
@@ -191,6 +191,18 @@ Window {
         running: recording
 
     }
+    Timer {
+        id: cooling
+        interval: 10000
+        repeat: true
+        running: coolSettings.auto
+        onTriggered: {
+            if (rig.temperature>coolSettings.text_on*1) rig.engine2=true
+            if (rig.temperature<coolSettings.text_off*1) rig.engine2=false
+
+        }
+    }
+
     function write_subtitle(){
         if(vlcPlayer1.state!==3) return;
         if(subtitle.interval===0) return;
@@ -217,7 +229,7 @@ Window {
         camera4: camSettings.cam4
         property bool lamp_tag: false
         property var rig_types: ["grab6", "grab2", "gkgbu", "mgbu", "NPA"]
-        Component.objectName: {lamp=true}
+
     }
     function changestate(){
 
@@ -396,10 +408,12 @@ Window {
           case "LAYOUT_CAM4":
               mainRect.state=cmd;
               break;
+          case "LAMP":
+              rig.lamp=!rig.lamp
+              break;
           case "LAMPS":
               lampsSettings.visible=!lampsSettings.visible
               lampsSettings.height=lampsSettings.visible?160:0
-
               break;
           case "CAMERA ON":
               rig.camera=rig.camera?false:true;
@@ -429,7 +443,6 @@ Window {
               break;
           case "MANIP":
               rig.pump=!rig.pump;
-              rig.lamp=!rig.pump
               break;
           case "DEMO":
               recording=0
@@ -653,11 +666,11 @@ Window {
         Keys.onPressed: {
             console.log("KeY:"+event.key)
             if (event.key === Qt.Key_F1 || event.key === Qt.Key_1) win.fcommand("HELP")
-            if (event.key === Qt.Key_F2||event.key ===  Qt.Key_2)  rig.lamp_tag=!rig.lamp_tag;
+            if (event.key === Qt.Key_F2||event.key ===  Qt.Key_2)  win.fcommand("LAMP");
             if (event.key === Qt.Key_F3||event.key ===  Qt.Key_3)  win.fcommand("CAMERA ON")
             if (event.key === Qt.Key_F4||event.key ===  Qt.Key_4)  win.fcommand("ENGINE1")
-            if (event.key === Qt.Key_F7||event.key ===  Qt.Key_7)  win.fcommand("ENGINE2")
-            if (event.key === Qt.Key_G||event.key ===  1055     )  win.fcommand("PUMP")
+            if (event.key === Qt.Key_F7||event.key ===  Qt.Key_7)  win.fcommand("COOLING")
+            if (event.key === Qt.Key_G||event.key ===  1055     )  win.fcommand("MANIP")
             if (event.key === Qt.Key_F8||event.key ===  Qt.Key_8)     win.fcommand("CHANGE RIG TYPE")
             if (event.key === Qt.Key_F9||event.key ===  Qt.Key_9)     win.fcommand("JOYSTICK SETTINGS")
             if (event.key === Qt.Key_F10||event.key === Qt.Key_0)     win.fcommand("CAMERA SETTINGS")
@@ -1018,6 +1031,7 @@ Window {
         width: 150
         height: 0
         visible: false
+        cam: win.cams
         anchors { margins: 10; leftMargin: 160; bottom: controlPanel.top; left: controlPanel.left}
         onCam1Changed: players[0].stop();
         onCam2Changed: players[1].stop();
@@ -1029,11 +1043,8 @@ Window {
         width: 150
         height: 0
         visible: false
-        anchors { margins: 10; leftMargin: 160; bottom: controlPanel.top; left: controlPanel.left}
-        onCam1Changed: players[0].stop();
-        onCam2Changed: players[1].stop();
-        onCam3Changed: players[2].stop();
-        onCam4Changed: players[3].stop();
+        anchors { margins: 10; leftMargin: 300; bottom: controlPanel.top; left: controlPanel.left}
+
     }
     SetupCamera {
         id: camsettings

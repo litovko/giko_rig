@@ -3,12 +3,14 @@ import QtQuick.Controls 1.4
 //import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
 import Qt.labs.settings 1.0
+import Gyco 1.0
 Item {
     id: camSettings
     property alias cam1: checkBox1.checked
     property alias cam2: checkBox2.checked
     property alias cam3: checkBox3.checked
     property alias cam4: checkBox4.checked
+    property list<RigCamera> cam
     Settings{
         category: "CAM_settings"
         property alias cam1: checkBox1.checked
@@ -64,6 +66,7 @@ Item {
                 text: qsTr("Камера 1")
                 font.pointSize: 10
                 anchors.left: parent.left
+                visible: cam[0].cameraenabled
                 CheckBox {
                     id: checkBox1
                     anchors {left: parent.right; bottom: parent.bottom}
@@ -77,6 +80,7 @@ Item {
                 text: qsTr("Камера 2")
                 font.pointSize: 10
                 anchors.left: parent.left
+                visible: cam[1].cameraenabled
                 CheckBox {
                     id: checkBox2
                     anchors {left: parent.right; bottom: parent.bottom}
@@ -90,6 +94,7 @@ Item {
                 text: qsTr("Камера 3")
                 font.pointSize: 10
                 anchors.left: parent.left
+                visible: cam[2].cameraenabled
                 CheckBox {
                     id: checkBox3
                     anchors {left: parent.right; bottom: parent.bottom}
@@ -103,6 +108,7 @@ Item {
                 text: qsTr("Камера 4")
                 font.pointSize: 10
                 anchors.left: parent.left
+                visible: cam[3].cameraenabled
                 CheckBox {
                     id: checkBox4
                     anchors {left: parent.right; bottom: parent.bottom}

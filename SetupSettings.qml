@@ -1,7 +1,6 @@
 import QtQuick 2.11
-import QtQuick.Controls 1.6
-//import QtQuick.Window 2.0
-import QtQuick.Controls.Styles 1.4
+import QtQuick.Controls 2.4
+//import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
 import QmlVlc 0.1
 import Gyco 1.0
@@ -56,9 +55,11 @@ Item {
                 id: rig_address
                 x: 104
                 y: -3
-                width: 96
+                width: 111
                 height: 20
                 text: rig.address
+                padding: 0
+                font.pointSize: 9
                 validator: adr_validator
                 opacity: 0.8
                 placeholderText: qsTr("IP-адрес телегрейфера")
@@ -69,7 +70,7 @@ Item {
         Button {
             id: ok
             x: 394
-            y: 56
+            y: 86
             opacity: 0.8
             text: qsTr("Применить")
             //tooltip: "Применение указанных настроек программы"
@@ -105,6 +106,8 @@ Item {
             x: 394
             y: 27
             text: qsTr("Закрыть")
+            flat: false
+            highlighted: false
             //isDefault: true
             opacity: 0.8
             onClicked: {
@@ -130,6 +133,8 @@ Item {
                 width: 96
                 height: 20
                 text: rig.port
+                padding: 0
+                font.pointSize: 9
                 validator: IntValidator{bottom: 1; top: 65535}
                 placeholderText: qsTr("IP-адрес телегрейфера")
                 opacity: 0.8
@@ -151,6 +156,8 @@ Item {
                 width: 96
                 height: 20
                 text: cam[0].address
+                padding: 0
+                font.pointSize: 9
                 readOnly: false
                 validator: adr_validator
                 placeholderText: qsTr("IP-адрес видеокамеры")
@@ -175,6 +182,8 @@ Item {
                 width: 96
                 height: 20
                 text: cam[1].address
+                padding: 0
+                font.pointSize: 9
                 validator: adr_validator
                 opacity: 0.8
                 placeholderText: qsTr("IP-адрес видеокамеры")
@@ -198,6 +207,8 @@ Item {
                 width: 96
                 height: 20
                 text: cam[2].address
+                padding: 0
+                font.pointSize: 9
                 validator: adr_validator
                 opacity: 0.8
                 placeholderText: qsTr("IP-адрес видеокамеры")
@@ -220,6 +231,8 @@ Item {
                 width: 96
                 height: 20
                 text: cam[3].address
+                padding: 0
+                font.pointSize: 9
                 validator: adr_validator
                 opacity: 0.8
                 placeholderText: qsTr("IP-адрес видеокамеры")
@@ -242,6 +255,8 @@ Item {
                 width: 96
                 height: 20
                 text: rig.timer_send_interval.toString();
+                padding: 0
+                font.pointSize: 9
                 validator: IntValidator{bottom: 15; top: 10000}
                 opacity: 0.8
                 placeholderText: qsTr("интервал отправки данных в миллисекундах")
@@ -264,6 +279,8 @@ Item {
                 width: 96
                 height: 20
                 text: rig.timer_connect_interval.toString()
+                padding: 0
+                font.pointSize: 9
                 validator: IntValidator{bottom: 30000; top: 600000}
                 opacity: 0.8
                 placeholderText: qsTr("Интервал попыток подключения в миллисекундах")
@@ -285,6 +302,8 @@ Item {
                 width: 96
                 height: 20
                 text: network_caching.toString()
+                padding: 0
+                font.pointSize: 9
                 opacity: 0.8
                 placeholderText: qsTr("network-cache")
                 validator: IntValidator {
@@ -299,29 +318,26 @@ Item {
         GroupBox {
             id: groupBox1
             x: 13
-            y: 397
+            y: 392
             width: 479
-            height: 33
+            height: 38
             title: qsTr("Путь к видеозаписям")
-
             Text {
                 id: tfilepath
                 x: 0
-                y: -5
-                width: 421
-                height: 14
+                y: -10
+                width: 347
+                height: 23
                 text: win.filepath
-                textFormat: Text.AutoText
-                horizontalAlignment: Text.AlignHCenter
-                enabled: false
-                font.pixelSize: 12
+                z: 1
+                font.pixelSize: 10
             }
 
             Button {
                 id: filepath_dialog
-                x: 427
-                y: -10
-                width: 44
+                x: 363
+                y: -16
+                width: 104
                 height: 23
                 text: qsTr("Выбор")
                 opacity: 0.8
@@ -336,6 +352,7 @@ Item {
                     folder: "file:///"+win.filepath
                     selectFolder: true
                     sidebarVisible : true
+                    visible: false
                     onAccepted: {
                         console.log(" Setup Settings You chose: " + Qt.resolvedUrl(fileDialog.fileUrl))
 
@@ -347,7 +364,7 @@ Item {
                         console.log("Setup Settings Canceled")
                         fileDialog.visible=false
                     }
-                    Component.onCompleted: visible = false
+                    //Component.onCompleted: visible = false
                 }
             }
 
@@ -355,8 +372,8 @@ Item {
 
         CheckBox {
             id: cb_cam1
-            x: 333
-            y: 221
+            x: 336
+            y: 210
             text: cam[0].title
             clip: false
             scale: 1
@@ -367,8 +384,8 @@ Item {
 
         CheckBox {
             id: cb_cam2
-            x: 333
-            y: 250
+            x: 336
+            y: 240
             text: cam[1].title
             scale: 1
             checked: cam[1].cameraenabled
@@ -377,8 +394,8 @@ Item {
 
         CheckBox {
             id: cb_cam3
-            x: 333
-            y: 280
+            x: 336
+            y: 270
             text: cam[2].title
             scale: 1
             checked: cam[2].cameraenabled
@@ -386,8 +403,10 @@ Item {
         }
         CheckBox {
             id: cb_cam4
-            x: 333
-            y: 310
+            x: 336
+            y: 299
+            width: 119
+            height: 40
             text: cam[3].title
             scale: 1
             checked: cam[3].cameraenabled
@@ -395,8 +414,8 @@ Item {
 
         CheckBox {
             id: cbj
-            x: 387
-            y: 374
+            x: 377
+            y: 360
             checked: j.ispresent
             text: qsTr("Джойстик")
         }
@@ -413,31 +432,22 @@ Item {
 
             ComboBox {
                 id: cbtype
-                x: 89
-                y: -4
-                width: 180
-                height: 20
-                currentIndex: curindex()
-                Component.onCompleted:  currentIndex = curindex()
-                function curindex() {
-                    //console.debug("Setup Settings  curindex:"+rig.rigtype+" Текст:"+currentText)
-                    return rig.rig_types.indexOf(rig.rigtype)
-//                    if (rig.rigtype==="grab2") return 0;
-//                    if (rig.rigtype==="grab6") return 1;
-//                    if (rig.rigtype==="gkgbu") return 2;
-//                    if (rig.rigtype=== "mgbu") return 3;
-//                    return 4;
-                }
-                function curtype(){
-                    //console.log("Setup Settings Settings curtype"+currentText+" rig.rigtype="+rig.rigtype+" "+" curindex="+currentIndex)
-                    return rig.rig_types[currentIndex]
-//                    if (currentIndex==1) return "grab6";
-//                    if (currentIndex==2) return "gkgbu";
-//                    if (currentIndex==3) return "mgbu";
-//                    if (currentIndex==0) return "grab2";
-//                    return "unknown rig type!";
-                }
-                onCurrentIndexChanged: rig.rigtype=curtype()
+                x: 93
+                y: -8
+                width: 221
+                height: 29
+                font.pointSize: 9
+                currentIndex: rig.rig_types.indexOf(rig.rigtype)
+                Component.onCompleted:  rig.rig_types.indexOf(rig.rigtype)
+//                function curindex() {
+//                    //console.debug("Setup Settings  curindex:"+rig.rigtype+" Текст:"+currentText)
+//                    return rig.rig_types.indexOf(rig.rigtype)
+//                }
+//                function curtype(){
+//                    //console.log("Setup Settings Settings curtype"+currentText+" rig.rigtype="+rig.rigtype+" "+" curindex="+currentIndex)
+//                    return
+//                }
+                onCurrentIndexChanged: rig.rigtype=rig.rig_types[currentIndex]
                 model: ["Двухлепестковый - grab2", "Шестилепестковый - grab6", "ГКГБУ - gkgbu", "МГБУ - mgbu", "НПА - NPA" ]
 
             }
@@ -456,8 +466,9 @@ Item {
                 id: cbfilesize
                 x: 201
                 y: -3
-                width: 69
-                height: 20
+                width: 75
+                height: 24
+                font.pointSize: 9
                 model: [50, 500, 700, 1000, 1200, 4000]
                 Component.onCompleted: {
                     currentIndex=0
@@ -491,6 +502,8 @@ Item {
                 width: 96
                 height: 20
                 text: rig.freerun
+                padding: 0
+                font.pointSize: 9
                 validator: IntValidator {
                     top: 100
                     bottom: 0
@@ -503,8 +516,8 @@ Item {
 
         CheckBox {
             id: cb_check_type
-            x: 310
-            y: 179
+            x: 345
+            y: 168
             text: qsTr("Автоопределение")
             checked: rig.check_type
             visible: true
@@ -525,6 +538,8 @@ Item {
                 width: 96
                 height: 20
                 text: rig.timer_delay_engine1
+                padding: 0
+                font.pointSize: 9
                 validator: IntValidator {
                     bottom: 0
                     top: 100000
@@ -550,6 +565,8 @@ Item {
                 width: 96
                 height: 20
                 text: rig.timer_delay_engine2
+                padding: 0
+                font.pointSize: 9
                 validator: IntValidator {
                     bottom: 0
                     top: 100000
@@ -559,9 +576,38 @@ Item {
             }
             font.pointSize: 9
         }
+//        ComboBox {
+//            id: test
+//            x: 0
+//            y: 0
+//            width: 69
+//            height: 20
+//            model: [50, 500, 700, 1000, 1200, 4000]
+//        }
 
     }
 
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*##^## Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+ ##^##*/
