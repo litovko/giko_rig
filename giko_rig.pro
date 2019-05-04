@@ -43,7 +43,8 @@ DISTFILES += \
     skin/hycoicon.ico \
     NPA_hand.qml \
     NPA_hand.qml \
-    skin/npa.ico
+    skin/npa.ico \
+    skin/favicon.ico
 
 RC_ICONS = skin/npa.ico
 
