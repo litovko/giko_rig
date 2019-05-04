@@ -118,7 +118,8 @@ Item {
             id:npa_move
             anchors.fill: parent
             //visible: true
-            ax1: rigmodel.ana1 //влево вправо подрулька
+            //ax1: rigmodel.ana1 //влево вправо подрулька
+            ax1: rigmodel.ana4*(rigmodel.gmod==="move")+rigmodel.ana1*(rigmodel.gmod!="move") //наворочено из-за пробитого транзистора - перенос с ана1 на ана4
             ax2: rigmodel.ana2 //левый задний движок
             ax3: rigmodel.ana3*(rigmodel.gmod==="move")///правый задний движок
             ax4: rigmodel.ana3*(rigmodel.gmod==="move1")

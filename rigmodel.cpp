@@ -94,7 +94,7 @@ void cRigmodel::setana()
     if (m_rigtype!="NPA") return;
     int ana1=0, ana2=0, ana3=0, ana4=0;
     if (gmod()=="move") {
-      ana1=m_joystick_x1;
+      ana4=m_joystick_x1; // поменяно из-за пробитого транзистора
       ana2=m_joystick_y1-m_joystick_x1;
       ana3=m_joystick_y1+m_joystick_x1;
     }

@@ -42,9 +42,10 @@ HEADERS += \
 DISTFILES += \
     skin/hycoicon.ico \
     NPA_hand.qml \
-    NPA_hand.qml
+    NPA_hand.qml \
+    skin/npa.ico
 
-RC_ICONS = skin/hycoicon.ico
+RC_ICONS = skin/npa.ico
 
 
 INCLUDEPATH += $$PWD/SDL2/include
