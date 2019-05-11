@@ -28,6 +28,7 @@ Window {
     property bool onrecord: true; //true если меняется размер записываемого файла.
     property bool camera_umg: false //false - камеры ПМГРЭ true - камеры ЮМГ
     property string streaming: ":sout=#duplicate{dst=display,dst=std{access=file,mux=mp4,dst=" //параметры стриминга vlc при записи - дубликация потоков
+    property bool  pause: false // если истина то показываются часики...
     // Поле в реестре vlc_options
     //:high-priority,:spu,:ods,:clock-synchro=0,:clock-jitter=10000  Убрана синхронизация времени и
     //                                джиттер задран как советует VLC для тяжелых условий сетевого доступа
@@ -444,6 +445,16 @@ Window {
           case "MANIP":
               rig.pump=!rig.pump;
               break;
+          case "SCREENSHOT":
+              var dt=new Date();
+              var s=filepath+"NPA-screenshot"
+                      + dt.toLocaleString(Qt.locale(),"dd-MM-yyyy_HH-mm-ss")
+                      +".png"
+              win.contentItem.grabToImage(function(result) {
+                  result.saveToFile(s);
+              })
+
+              break;
           case "DEMO":
               recording=0
               //mainRect.state = "3-KAM-bol1" // "3-KAM-mal"
@@ -680,6 +691,7 @@ Window {
             if (event.key === Qt.Key_F12||event.key === Qt.Key_Equal) win.fcommand("FULLSCREEN")
             if ((event.modifiers & Qt.ControlModifier)&&(event.key === Qt.Key_P)) win.fcommand("PICTURE")
             if ((event.modifiers & Qt.ControlModifier)&&(event.key === Qt.Key_D)) win.fcommand("DEMO")
+            if ((event.modifiers & Qt.ControlModifier)&&(event.key === Qt.Key_S)) win.fcommand("SCREENSHOT")
             if ((event.modifiers & Qt.ControlModifier)&&(event.key === Qt.Key_Z)) vlcPlayer1.mrl = "file:///"+win.filepath+"/demo/01.mpg"
             if ((event.modifiers & Qt.ControlModifier)&&(event.key === Qt.Key_X)) vlcPlayer2.mrl = "file:///"+win.filepath+"/demo/02.mpg"
             if ((event.modifiers & Qt.ControlModifier)&&(event.key === Qt.Key_C)) vlcPlayer3.mrl = "file:///"+win.filepath+"/demo/03.mpg"
@@ -1086,7 +1098,7 @@ Window {
         y: 300
         z:10
         anchors.centerIn: parent
-        visible: cam1.timeout|cam2.timeout|cam3.timeout|cam4.timeout
+        visible: cam1.timeout|cam2.timeout|cam3.timeout|cam4.timeout|win.pause
     }
 
 
