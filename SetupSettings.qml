@@ -1,17 +1,20 @@
 import QtQuick 2.11
-import QtQuick.Controls 1.6
+import QtQuick.Controls 2.4
 //import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
 import QmlVlc 0.1
 import Gyco 1.0
+
 Item {
     id: settingsDialog
     visible: true
     property list<RigCamera> cam
-    property RigModel rig:null
-    onVisibleChanged: { cbj.checked=j.ispresent}
-    RegExpValidator{
+    property RigModel rig: null
+    onVisibleChanged: {
+        cbj.checked = j.ispresent
+    }
+    RegExpValidator {
         id: adr_validator
         regExp: /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
     }
@@ -40,8 +43,6 @@ Item {
         z: 0
         border.color: "yellow"
 
-
-
         Label {
             id: lra
             x: 155
@@ -59,12 +60,16 @@ Item {
                 width: 96
                 height: 20
                 text: rig.address
+                rightPadding: 0
+                leftPadding: 5
+                bottomPadding: 0
+                topPadding: 0
+                font.pointSize: 9
                 validator: adr_validator
                 opacity: 0.8
                 placeholderText: qsTr("IP-адрес телегрейфера")
             }
         }
-
 
         Button {
             id: ok
@@ -74,46 +79,44 @@ Item {
             text: qsTr("Применить")
             //tooltip: "Применение указанных настроек программы"
             onClicked: {
-                rig.address=rig_address.text
-                rig.port=rig_port.text
+                rig.address = rig_address.text
+                rig.port = rig_port.text
 
+                cam[0].address = cam1_address.text
+                cam[1].address = cam2_address.text
+                cam[2].address = cam3_address.text
+                cam[3].address = cam4_address.text
+                cam[0].cameraenabled = cb_cam1.checked
+                cam[1].cameraenabled = cb_cam2.checked
+                cam[2].cameraenabled = cb_cam3.checked
+                cam[3].cameraenabled = cb_cam4.checked
 
-                cam[0].address=cam1_address.text
-                cam[1].address=cam2_address.text
-                cam[2].address=cam3_address.text
-                cam[3].address=cam4_address.text
-                cam[0].cameraenabled=cb_cam1.checked
-                cam[1].cameraenabled=cb_cam2.checked
-                cam[2].cameraenabled=cb_cam3.checked
-                cam[3].cameraenabled=cb_cam4.checked
-
-                console.log("Setup Settings cb"+cb_cam2.checked+" "+cb_cam3.checked)
-                rig.timer_send_interval=parseInt(rig_msec1.text);
-                rig.timer_connect_interval=parseInt(rig_msec2.text);
-                rig.freerun=parseInt(rig_msec3.text);
-                rig.check_type=cb_check_type.checked;
-                rig.timer_delay_engine1=free_msec1.text;
-                rig.timer_delay_engine2=free_msec2.text;
-                network_caching=parseInt(netcache.text);
-                win.filesize=cbfilesize.currentText
-                j.ispresent=cbj.checked
+                console.log("Setup Settings cb" + cb_cam2.checked + " " + cb_cam3.checked)
+                rig.timer_send_interval = parseInt(rig_msec1.text)
+                rig.timer_connect_interval = parseInt(rig_msec2.text)
+                rig.freerun = parseInt(rig_msec3.text)
+                rig.check_type = cb_check_type.checked
+                rig.timer_delay_engine1 = free_msec1.text
+                rig.timer_delay_engine2 = free_msec2.text
+                network_caching = parseInt(netcache.text)
+                win.filesize = cbfilesize.currentText
+                j.ispresent = cbj.checked
             }
         }
 
         Button {
             id: close
             x: 394
-            y: 27
+            y: 14
             text: qsTr("Закрыть")
             //isDefault: true
             opacity: 0.8
             onClicked: {
-                settingsDialog.visible=false;
-                mainRect.focus=true;
-                console.log("Setup Settings - Close clicked");
+                settingsDialog.visible = false
+                mainRect.focus = true
+                console.log("Setup Settings - Close clicked")
             }
         }
-
 
         Label {
             id: lrp
@@ -130,8 +133,16 @@ Item {
                 width: 96
                 height: 20
                 text: rig.port
-                validator: IntValidator{bottom: 1; top: 65535}
-                placeholderText: qsTr("IP-адрес телегрейфера")
+                font.pointSize: 8
+                rightPadding: 0
+                leftPadding: 10
+                bottomPadding: 0
+                topPadding: 0
+                validator: IntValidator {
+                    bottom: 1
+                    top: 65535
+                }
+                placeholderText: qsTr("Порт аппарата")
                 opacity: 0.8
             }
             font.pointSize: 9
@@ -151,6 +162,8 @@ Item {
                 width: 96
                 height: 20
                 text: cam[0].address
+                topPadding: 0
+                font.pointSize: 8
                 readOnly: false
                 validator: adr_validator
                 placeholderText: qsTr("IP-адрес видеокамеры")
@@ -175,6 +188,8 @@ Item {
                 width: 96
                 height: 20
                 text: cam[1].address
+                topPadding: 0
+                font.pointSize: 8
                 validator: adr_validator
                 opacity: 0.8
                 placeholderText: qsTr("IP-адрес видеокамеры")
@@ -198,6 +213,8 @@ Item {
                 width: 96
                 height: 20
                 text: cam[2].address
+                topPadding: 0
+                font.pointSize: 8
                 validator: adr_validator
                 opacity: 0.8
                 placeholderText: qsTr("IP-адрес видеокамеры")
@@ -220,6 +237,8 @@ Item {
                 width: 96
                 height: 20
                 text: cam[3].address
+                topPadding: 0
+                font.pointSize: 8
                 validator: adr_validator
                 opacity: 0.8
                 placeholderText: qsTr("IP-адрес видеокамеры")
@@ -241,10 +260,17 @@ Item {
                 y: -3
                 width: 96
                 height: 20
-                text: rig.timer_send_interval.toString();
-                validator: IntValidator{bottom: 15; top: 10000}
+                text: rig.timer_send_interval.toString()
+                font.pointSize: 8
+                bottomPadding: 0
+                topPadding: 0
+                validator: IntValidator {
+                    bottom: 15
+                    top: 10000
+                }
                 opacity: 0.8
-                placeholderText: qsTr("интервал отправки данных в миллисекундах")
+                placeholderText: qsTr(
+                                     "интервал отправки данных в миллисекундах")
             }
         }
 
@@ -264,7 +290,12 @@ Item {
                 width: 96
                 height: 20
                 text: rig.timer_connect_interval.toString()
-                validator: IntValidator{bottom: 30000; top: 600000}
+                topPadding: 0
+                font.pointSize: 8
+                validator: IntValidator {
+                    bottom: 30000
+                    top: 600000
+                }
                 opacity: 0.8
                 placeholderText: qsTr("Интервал попыток подключения в миллисекундах")
             }
@@ -285,6 +316,8 @@ Item {
                 width: 96
                 height: 20
                 text: network_caching.toString()
+                topPadding: 0
+                font.pointSize: 8
                 opacity: 0.8
                 placeholderText: qsTr("network-cache")
                 validator: IntValidator {
@@ -294,7 +327,6 @@ Item {
             }
             font.pointSize: 9
         }
-
 
         GroupBox {
             id: groupBox1
@@ -307,7 +339,7 @@ Item {
             Text {
                 id: tfilepath
                 x: 0
-                y: -5
+                y: -15
                 width: 421
                 height: 14
                 text: win.filepath
@@ -319,56 +351,56 @@ Item {
 
             Button {
                 id: filepath_dialog
-                x: 427
+                x: 384
                 y: -10
-                width: 44
+                width: 80
                 height: 23
                 text: qsTr("Выбор")
                 opacity: 0.8
                 //tooltip: "Выбор папки для сохранения видео"
                 onClicked: {
-                    fileDialog.visible=true
+                    fileDialog.visible = true
                 }
 
                 FileDialog {
                     id: fileDialog
                     title: "Выберите каталог для видеозаписей"
-                    folder: "file:///"+win.filepath
+                    folder: "file:///" + win.filepath
                     selectFolder: true
-                    sidebarVisible : true
+                    sidebarVisible: true
                     onAccepted: {
-                        console.log(" Setup Settings You chose: " + Qt.resolvedUrl(fileDialog.fileUrl))
+                        console.log(" Setup Settings You chose: " + Qt.resolvedUrl(
+                                        fileDialog.fileUrl))
 
-                        win.filepath=fileDialog.fileUrl.toString().substring(8,fileDialog.fileUrl.length)+"/"
+                        win.filepath = fileDialog.fileUrl.toString().substring(
+                                    8, fileDialog.fileUrl.length) + "/"
                         console.log(" Setup SettingsYou chose: " + win.filepath)
-                        fileDialog.visible=false
+                        fileDialog.visible = false
                     }
                     onRejected: {
                         console.log("Setup Settings Canceled")
-                        fileDialog.visible=false
+                        fileDialog.visible = false
                     }
                     Component.onCompleted: visible = false
                 }
             }
-
         }
 
         CheckBox {
             id: cb_cam1
             x: 333
-            y: 221
+            y: 211
             text: cam[0].title
             clip: false
             scale: 1
             checked: cam[0].cameraenabled
             //onCheckedChanged: cam[0].cameraenabled=checked
-
         }
 
         CheckBox {
             id: cb_cam2
             x: 333
-            y: 250
+            y: 241
             text: cam[1].title
             scale: 1
             checked: cam[1].cameraenabled
@@ -378,7 +410,7 @@ Item {
         CheckBox {
             id: cb_cam3
             x: 333
-            y: 280
+            y: 271
             text: cam[2].title
             scale: 1
             checked: cam[2].cameraenabled
@@ -387,7 +419,7 @@ Item {
         CheckBox {
             id: cb_cam4
             x: 333
-            y: 310
+            y: 301
             text: cam[3].title
             scale: 1
             checked: cam[3].cameraenabled
@@ -396,7 +428,7 @@ Item {
         CheckBox {
             id: cbj
             x: 387
-            y: 374
+            y: 361
             checked: j.ispresent
             text: qsTr("Джойстик")
         }
@@ -417,27 +449,35 @@ Item {
                 y: -4
                 width: 180
                 height: 20
+                font.pointSize: 8
                 currentIndex: curindex()
-                Component.onCompleted:  currentIndex = curindex()
+                Component.onCompleted: currentIndex = curindex()
                 function curindex() {
                     //console.debug("Setup Settings  curindex:"+rig.rigtype+" Текст:"+currentText)
-                    if (rig.rigtype==="grab2") return 0;
-                    if (rig.rigtype==="grab6") return 1;
-                    if (rig.rigtype==="gkgbu") return 2;
-                    if (rig.rigtype=== "mgbu") return 3;
-                    return 3;
+                    if (rig.rigtype === "grab2")
+                        return 0
+                    if (rig.rigtype === "grab6")
+                        return 1
+                    if (rig.rigtype === "gkgbu")
+                        return 2
+                    if (rig.rigtype === "mgbu")
+                        return 3
+                    return 3
                 }
-                function curtype(){
+                function curtype() {
                     //console.log("Setup Settings Settings curtype"+currentText+" rig.rigtype="+rig.rigtype+" "+" curindex="+currentIndex)
-                    if (currentIndex==1) return "grab6";
-                    if (currentIndex==2) return "gkgbu";
-                    if (currentIndex==3) return "mgbu";
-                    if (currentIndex==0) return "grab2";
-                    return "unknown rig type!";
+                    if (currentIndex == 1)
+                        return "grab6"
+                    if (currentIndex == 2)
+                        return "gkgbu"
+                    if (currentIndex == 3)
+                        return "mgbu"
+                    if (currentIndex == 0)
+                        return "grab2"
+                    return "unknown rig type!"
                 }
-                onCurrentIndexChanged: rig.rigtype=curtype()
-                model: ["Двухлепестковый - grab2", "Шестилепестковый - grab6", "ГКГБУ - gkgbu", "МГБУ - mgbu" ]
-
+                onCurrentIndexChanged: rig.rigtype = curtype()
+                model: ["Двухлепестковый - grab2", "Шестилепестковый - grab6", "ГКГБУ - gkgbu", "МГБУ - mgbu"]
             }
         }
 
@@ -456,20 +496,33 @@ Item {
                 y: -3
                 width: 69
                 height: 20
+                font.pointSize: 8
                 model: [50, 500, 700, 1000, 1200, 4000]
                 Component.onCompleted: {
-                    currentIndex=0
-                    switch (win.filesize){
-                    case 50: currentIndex=0; break;
-                    case 500: currentIndex=1; break;
-                    case 700: currentIndex=2; break;
-                    case 1000: currentIndex=3; break;
-                    case 1200: currentIndex=4; break;
-                    case 4000: currentIndex=5; break;
-                    default: currentIndex=0;
+                    currentIndex = 0
+                    switch (win.filesize) {
+                    case 50:
+                        currentIndex = 0
+                        break
+                    case 500:
+                        currentIndex = 1
+                        break
+                    case 700:
+                        currentIndex = 2
+                        break
+                    case 1000:
+                        currentIndex = 3
+                        break
+                    case 1200:
+                        currentIndex = 4
+                        break
+                    case 4000:
+                        currentIndex = 5
+                        break
+                    default:
+                        currentIndex = 0
                     }
                 }
-
             }
         }
 
@@ -489,6 +542,8 @@ Item {
                 width: 96
                 height: 20
                 text: rig.freerun
+                font.pointSize: 8
+                topPadding: 0
                 validator: IntValidator {
                     top: 100
                     bottom: 0
@@ -523,6 +578,8 @@ Item {
                 width: 96
                 height: 20
                 text: rig.timer_delay_engine1
+                topPadding: 0
+                font.pointSize: 8
                 validator: IntValidator {
                     bottom: 0
                     top: 100000
@@ -548,6 +605,8 @@ Item {
                 width: 96
                 height: 20
                 text: rig.timer_delay_engine2
+                topPadding: 0
+                font.pointSize: 8
                 validator: IntValidator {
                     bottom: 0
                     top: 100000
@@ -557,9 +616,11 @@ Item {
             }
             font.pointSize: 9
         }
-
     }
-
 }
 
+/*##^## Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+ ##^##*/
 

@@ -137,8 +137,8 @@ private:
     bool m_ispresent=false;
     bool m_lock=false;
     int  m_devider=1;
-    QTimer *timer_joystick=0;
-    QTimer *timer_checkjoystick=0;
+    QTimer *timer_joystick=nullptr;
+    QTimer *timer_checkjoystick=nullptr;
     int m_x1axis=0;
     int m_y1axis=0;    
     int m_x2axis=0;
