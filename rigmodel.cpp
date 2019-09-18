@@ -67,7 +67,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 
     connect(&timer_connect, SIGNAL(timeout()), this, SLOT(start_client()));
     //start_client();
-    QTimer::singleShot(1000, this, SLOT(start_client())); //конектимся через 3 секунды после выполнения конструктора
+    QTimer::singleShot(1000, this, SLOT(start_client())); //конектимся через 1 секунду после выполнения конструктора
     timer_connect.start(m_timer_connect_interval);
     connect(&timer_send, SIGNAL(timeout()), this, SLOT(sendData()));
     timer_send.start(m_timer_send_interval);
@@ -468,7 +468,10 @@ void cRigmodel::start_client()
 {
     if (m_client_connected) return;
     bytesWritten = 0;
-    if (tcpClient.state()) {qDebug()<<"tcpstate:"<<tcpClient.state();return;}
+    if (tcpClient.state()) {
+        qDebug()<<"tcpstate:"<<tcpClient.state();
+        return;
+    }
     qDebug()<<"Rig Start client >>>"<<m_address<<"poprt"<<::QString().number(m_port);
 
     tcpClient.connectToHost(m_address, m_port);
