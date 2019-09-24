@@ -197,7 +197,7 @@ Item {
             var th=r*2/3
             Fig.circle(ctx, width/2-d,hc+y0+r*1.5,r,func(ax2))
             Fig.circle(ctx, width/2+d,hc+y0+r*1.5,r,func(ax3))
-            Fig.text_m(ctx,width/2,0,th,"НОС", "left", "top", linestyle2)  //text_f(ctx,width/2,height-30,30,Math.round(pitch),"center", "middle",Qt.rgba(0.0, 1.0, 0.0, 0.8))
+            Fig.text_m(ctx,width/2,5,th,"НОС", "left", "top", linestyle2)  //text_f(ctx,width/2,height-30,30,Math.round(pitch),"center", "middle",Qt.rgba(0.0, 1.0, 0.0, 0.8))
             Fig.text_m(ctx,width/2,height*80/90,th,"КОРМА", "left", "top", linestyle2)
             Fig.text_m(ctx,height*5/90,height*20/90,th,"ЛЕВЫЙ БОРТ", "left", "top", linestyle2)
             Fig.text_m(ctx,height*85/90,height*20/90,th,"ПРАВЫЙ БОРТ", "right", "top", linestyle2)

@@ -164,7 +164,7 @@ Window {
             if(players[i].state===3) {
                 console.log ("file_name"+i+":"+cams[i].recordfile + "size:"+ cams[i].get_filesize())
                 if (curfilesize[i]>=cams[i].get_filesize()) {
-                    console.warn("NO RECORDINGS!!!");
+                    console.warn("NO RECORDINGS!!!"+"CAM:"+i);
                     onrecord=false;
                 }
                 curfilesize[i]=cams[i].get_filesize();

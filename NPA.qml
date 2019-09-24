@@ -88,16 +88,35 @@ Item {
         if (state==="group") {state=rigmodel.gmod="move"; return }
         else state=rigmodel.gmod="move"
     }
-    function sel(){
+    function sel(){ //подсветка движущихся частей
         if (state==="hand") return 1+2+4+16
         if (state==="hand1") return 1+8
         if (state==="hand2") return 1+2
         return 0
     }
+    Rectangle {
+        id: rectangle_background
+        anchors.fill: parent
+        color: "black"
+        opacity: 0.8
+        border.color: "transparent"
+        radius:10
+//        gradient: Gradient {
+//            GradientStop {
+//                position: 0.00;
+//                color: "#000000";
+//            }
+//            GradientStop {
+//                position: 1.00;
+//                color: "transparent";
+//            }
+//        }
+    }
 
     Rectangle{
         anchors.fill: parent
-        color:"transparent"
+        color: "transparent"
+        //opacity: 0.5
         border.color: "yellow"
         radius:10
         border.width: ma.containsMouse?3:1;
@@ -114,7 +133,7 @@ Item {
 
         }
 
-        NPA_move {
+        NPA_move { //трастеры - движители
             id:npa_move
             anchors.fill: parent
             //visible: true
@@ -126,7 +145,7 @@ Item {
             ax5: rigmodel.ana4*(rigmodel.gmod==="move1")
         }
 
-        NPA_hand{
+        NPA_hand{ //манипулятор
             id:npa_hand
             anchors.fill: parent
             select: sel()
@@ -154,7 +173,7 @@ Item {
             a7right:rigmodel.ana1*((rigmodel.gmod==="hand")||(rigmodel.gmod==="hand2"))
 
         }
-        NPA_group {
+        NPA_group { //группа поворота камеры лебедки и проч
             id: npa_group
             anchors.fill: parent
             position: rigmodel.position
