@@ -763,7 +763,7 @@ Window {
                     visible: !onrecord
                 }
                 Text {
-                    text: "Тип аппарата:" + rig.rigtype+"."+rig.gmod
+                    text: "Тип аппарата:" + rig.rigtype+"."+rig.gmod+" v8"
                     color: "lightblue"
                     font.pointSize: 12
                 }

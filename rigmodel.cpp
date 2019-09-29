@@ -94,15 +94,17 @@ void cRigmodel::setana()
     if (m_rigtype!="NPA") return;
     int ana1=0, ana2=0, ana3=0, ana4=0;
     if (gmod()=="move") {
-      ana4=m_joystick_x1; // поменяно из-за пробитого транзистора
-      ana2=m_joystick_y1-m_joystick_x1;
-      ana3=m_joystick_y1+m_joystick_x1;
+      ana4=-m_joystick_x1; // поменяно из-за пробитого транзистора
+      ana2=m_joystick_y2; // исп
+      ana3=m_joystick_y1; // исп
+      //ana2=m_joystick_y1-m_joystick_x1;
+      //ana3=m_joystick_y1+m_joystick_x1;
     }
     if (gmod()=="move1") {
       ana1=0;
       ana2=0;
-      ana3=m_joystick_y1;
-      ana4=m_joystick_y2;
+      ana3=-m_joystick_y1; //исп инвертировал
+      ana4=-m_joystick_y2; //исп инвертировал
     }
     if (gmod()=="hand"){
       ana1=m_joystick_x1;
@@ -558,8 +560,8 @@ void cRigmodel::sendData()
 QString cRigmodel::NPA_data()
 {
     int dig= m_engine*1
-            +   m_pump*4  //замок манипулятора открывание
-            +   !m_pump*2 //замок манипулятора закрывание
+            +   !m_pump*4  //замок манипулятора открывание
+            +   m_pump*2 //замок манипулятора закрывание
             +   m_lamp*64
             //+ m_camera*8
             + m_engine2*8
