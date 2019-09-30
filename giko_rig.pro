@@ -6,7 +6,7 @@ TARGET = NPA
 #CONFIG+=debug
 #mingw:QMAKE_CXXFLAGS_DEBUG += "-gstabs+"
 #mingw:QMAKE_CFLAGS_DEBUG += "-gstabs+"
-
+VERSION = 5.10.0.1
 #INCLUDEPATH += deps
 SOURCES += main.cpp \
     rigmodel.cpp \

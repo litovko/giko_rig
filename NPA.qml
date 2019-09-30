@@ -98,16 +98,16 @@ Item {
         id: rectangle_background
         anchors.fill: parent
         color: "black"
-        opacity: 0.8
+        opacity: 0.6
         border.color: "transparent"
         radius:10
 //        gradient: Gradient {
 //            GradientStop {
-//                position: 0.00;
+//                position: 0.2;
 //                color: "#000000";
 //            }
 //            GradientStop {
-//                position: 1.00;
+//                position: 0.6;
 //                color: "transparent";
 //            }
 //        }

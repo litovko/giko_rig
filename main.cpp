@@ -124,6 +124,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
     qmlRegisterType<cJoystick>("Gyco", 1, 0, "RigJoystick");
     QCoreApplication::setAttribute(Qt::AA_DisableShaderDiskCache);
+
     QGuiApplication app(argc, argv);
     app.setOrganizationName(giko_name);
     app.setOrganizationDomain("hyco.ru");

@@ -44,5 +44,6 @@
         <file>NPA_group.qml</file>
         <file>COOLSettings.qml</file>
         <file>NPA_bubble.qml</file>
+        <file>StatePannel.qml</file>
     </qresource>
 </RCC>
