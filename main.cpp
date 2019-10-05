@@ -41,13 +41,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <QFile>
-#include <QTextStream>
+#include <iostream>
+
 
 static QFile logfile;
 static QTextStream out(&logfile);
 static bool recordinglog=false;
-static QTextCodec *codec = QTextCodec::codecForName("KOI8-R");
-
+//static QTextCodec *codec = QTextCodec::codecForName("IBM866");
 //Включение и отключение записи логов
 extern void toggle_log(bool recordlog) {
     if (!recordlog) {
@@ -101,7 +101,33 @@ int main(int argc, char *argv[])
     //QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
     qInstallMessageHandler(myMessageOutput);
     toggle_log(true);
+    QSystemSemaphore semaphore("hyco npa", 1);  // create semaphore
+    semaphore.acquire(); // Raise the semaphore, barring other instances to work with shared memory
 
+#ifndef Q_OS_WIN32
+    // in linux / unix shared memory is not freed when the application terminates abnormally,
+    // so you need to get rid of the garbage
+    QSharedMemory nix_fix_shared_memory("<uniq id 2>");
+    if(nix_fix_shared_memory.attach()){
+        nix_fix_shared_memory.detach();
+    }
+#endif
+
+    QSharedMemory sharedMemory("hyco npa smem");  // Create a copy of the shared memory
+    bool is_running;
+    if (sharedMemory.attach()){ //trying to attach to the existant shared memory
+        is_running = true;
+    }else{
+        sharedMemory.create(1);
+        is_running = false;
+    }
+    semaphore.release();
+    if(is_running){
+       qWarning()<<"The program is already running!";
+       std::string str;
+       std::getline(std::cin, str);
+       return 1;
+    }
     setlocale(LC_ALL, ""); // избавляемся от кракозябров в консоли
 
     RegisterQmlVlc();
@@ -115,7 +141,6 @@ int main(int argc, char *argv[])
     config.setTrustedEnvironment(true); // не будет воприниматься :sout иначе.
     config.setNetworkCacheTime(cache);
     config.enableNoVideoTitleShow(true);
-    //config.enableRecord( true );
     config.enableDebug( vlc_debug );
     qDebug()<<QTime::currentTime().toString("hh:mm:ss:zzz ")<<"Start"<<giko_name<<"  "<<giko_program<<" vlc_debug:"<<vlc_debug;
 
