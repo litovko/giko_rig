@@ -272,6 +272,7 @@ Window {
               menu.visible=false;
               camsettings.visible=false
               joysetup.visible=false;
+              joysetup2.visible=false;
               settings.visible=false;
               help.visible=false
               break;
@@ -344,6 +345,7 @@ Window {
               break;
           case "JOYSTICK SETTINGS":
               joysetup.visible=!joysetup.visible;
+              joysetup2.visible=!joysetup2.visible;
               settings.visible=false;
               menu.visible=false;
               camsettings.visible=false
@@ -354,6 +356,7 @@ Window {
               menu.visible=false;
               camsettings.visible=false
               joysetup.visible=false;
+              joysetup2.visible=false;
               help.visible=false
               break;
           case "CAMERA SETTINGS":
@@ -361,6 +364,7 @@ Window {
               menu.visible=false
               settings.visible=false;
               joysetup.visible=false;
+              joysetup2.visible=false;
               help.visible=false
               break;
           case "HELP":
@@ -375,6 +379,7 @@ Window {
               camsettings.visible=false
               settings.visible=false;
               joysetup.visible=false
+              joysetup2.visible=false;
               help.visible=false
               var i=rig.rig_types.indexOf(dashboard.state)
               if (i===rig.rig_types.length-1) dashboard.state=rig.rig_types[0]
@@ -386,6 +391,7 @@ Window {
               camsettings.visible=false
               settings.visible=false;
               joysetup.visible=false
+              joysetup2.visible=false;
               help.visible=false
               break;
           case "FULLSCREEN":
@@ -753,6 +759,12 @@ Window {
             onKey_1Changed: if (key_1) fcommand("JKEY1")
             onKey_0Changed: if (key_0&&j.ispresent) fcommand("JKEY0")
             devider: 1+key_5
+            //onX1axisChanged: console.log(j.x1axis)
+        }
+        RigJoystick {
+            id: j2
+            current: 1
+            //onX1axisChanged: console.log(j2.x1axis)
         }
         MyDashboard {
             visible: true
@@ -994,10 +1006,26 @@ Window {
     }
     SetupJoystick{
         id: joysetup
+        text: "Джойстик 1"
         width: 600
         height: 500
-        anchors.centerIn: parent
+        //anchors.centerIn: parent
+        anchors.right: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.rightMargin: 20
         joystick: j
+        visible: false
+    }
+    SetupJoystick{
+        id: joysetup2
+        text: "Джойстик 2"
+        width: 600
+        height: 500
+        //anchors.centerIn: parent
+        anchors.left: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.leftMargin: 50
+        joystick: j2
         visible: false
     }
     Help {

@@ -36,7 +36,7 @@ class cJoystick : public QObject
     Q_PROPERTY(int buttons_number READ buttons_number NOTIFY buttons_numberChanged)
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
 public:
-    explicit cJoystick(QObject *parent = 0);
+    explicit cJoystick(QObject *parent = nullptr);
     ~cJoystick();
     int x1axis();
     int y1axis();
@@ -97,6 +97,10 @@ public:
     int devider() const;
     void setDevider(int devider);
 
+    void setAxes_number(int axes_number);
+
+    void setButtons_number(int buttons_number);
+
 signals:
     void x1axisChanged();
     void y1axisChanged();
@@ -133,17 +137,17 @@ public slots:
     void saveSettings();
     void readSettings();
 private:
-    QJoystick *joy=0;
+    QJoystick *joy=nullptr;
     bool m_ispresent=false;
     bool m_lock=false;
     int  m_devider=1;
-    QTimer *timer_joystick=0;
-    QTimer *timer_checkjoystick=0;
+    QTimer *timer_joystick=nullptr;
+    QTimer *timer_checkjoystick=nullptr;
     int m_x1axis=0;
     int m_y1axis=0;    
     int m_x2axis=0;
     int m_y2axis=0;
-    int m_current=0;
+    int m_current=-1;
     bool m_key_0=false;
     bool m_key_1=false;
     bool m_key_2=false;
@@ -163,19 +167,19 @@ private:
     int m_axes_number=0;
     int m_buttons_number=0;
     struct joydata{
-        unsigned int number_axes;
-        unsigned int number_btn;
+        int number_axes;
+        int number_btn;
         QList<int> axis;
         QList<bool> button;
         QString name;
     };
-    // Available joystick count. Only set at initialization
-    int joysavail=0;
-
-    // List of joystick data
-    QList<joydata*> joystick;
+    // Available number of joysticks.
+    int m_joysticks_avail=0;
+    joydata* _joystick_data=nullptr;
     void pollJoystick();
-    void init_joysticks();
+    void init_joystick();
+    void clear_joystick();
+    //QMap<int,QString> joy_map;
 };
 
 #endif // CJOYSTICK_H

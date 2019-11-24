@@ -1,14 +1,24 @@
 #include "qjoystick.h"
 
 #include <QDebug>
+#include <QByteArray>
 
-#define POLL_INTERVAL 40
 
 QJoystick::QJoystick()
 {
 
     SDL_Init( SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER);
-    //SDL_Init( SDL_INIT_JOYSTICK);
+//    auto n=SDL_NumJoysticks();
+//    for (auto i=0; i<n;i++) {
+//        joy_map[i]=QByteArray(reinterpret_cast<const char *>(SDL_JoystickGetDeviceGUID(i).data),16);
+//        qDebug()<<joy_map[i].toHex()<<"n:"
+//                <<SDL_JoystickNameForIndex(i)
+//                <<"usb:"<<SDL_JoystickGetDeviceVendor(i)
+//                <<"prod:"<<SDL_JoystickGetDeviceProduct(i)
+//               <<"type:"<<SDL_JoystickGetDeviceType(i)
+//              <<"inst:"<<SDL_JoystickGetDeviceInstanceID(i)
+//             <<"paly:"<<SDL_JoystickGetDevicePlayerIndex(i);
+//    }
 }
 
 //int QJoystick::currentJoystick()
@@ -42,12 +52,12 @@ void QJoystick::setJoystick(int js)
 {
     Q_ASSERT(js < availableJoysticks());
     Q_ASSERT(js >= 0);
-qDebug()<<"setJoystick:"<<m_joystick;
+//qDebug()<<"setJoystick:"<<m_joystick;
     if (m_joystick)SDL_JoystickClose(m_joystick);
-qDebug()<<"closedJoystick availbl:"<<SDL_NumJoysticks();
+//qDebug()<<"closedJoystick availbl:"<<SDL_NumJoysticks();
     m_joystick = SDL_JoystickOpen(js);
 
-qDebug()<<"setJoystick new m_joystick:"<<m_joystick;
+//qDebug()<<"setJoystick new m_joystick:"<<m_joystick;
 
 }
 

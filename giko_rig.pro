@@ -1,7 +1,7 @@
 #TEMPLATE = app
 # обязательно требуется мультимедия от QT иначе не регистрируется плагин.
 QT += quick network
-CONFIG += c++11  console
+CONFIG += c++17  console
 TARGET = NPA
 #CONFIG+=debug
 #mingw:QMAKE_CXXFLAGS_DEBUG += "-gstabs+"

@@ -1,5 +1,5 @@
 import QtQuick 2.12
-import QtQuick.Controls 2.4
+import QtQuick.Controls 2.12
 //import QtQuick.Window 2.0
 //import QtQuick.Controls.Styles 1.4
 //import QtQuick.Dialogs 1.2
@@ -9,6 +9,7 @@ Item {
     id: joystickDialog
     visible: true
     property RigJoystick joystick:null
+    property alias text: j_text.text
     states: [
         State {
             name: "Dialog"
@@ -123,7 +124,7 @@ Item {
         State {
             name: "Message"
             PropertyChanges { target: rectangle1;  visible: false;}
-            PropertyChanges { target: message; width: 560; height: 62; radius: 10; anchors.verticalCenterOffset: 0; anchors.horizontalCenterOffset: 0;  visible: true;}
+            PropertyChanges { target: message; width: 560; height: 82; radius: 10; anchors.verticalCenterOffset: 0; anchors.horizontalCenterOffset: 0;  visible: true;}
 
             PropertyChanges {
                 target: gradientStop1
@@ -137,6 +138,7 @@ Item {
         }
     ]
     Component.onCompleted: state= "Dialog"
+
     Rectangle {
         id: rectangle1
         width: 500
@@ -163,7 +165,16 @@ Item {
         visible: true
         z: 0
         border.color: "yellow"
-
+        Text {
+            id: j_text
+            text: qsTr("text")
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.margins: 10
+            color: "white"
+            font.bold: true
+            font.pointSize: 20
+        }
         Button {
             id: b_apply
             x: 363
@@ -172,7 +183,8 @@ Item {
             height: 28
             text: qsTr("Применить")
             onClicked: {
-                joystickDialog.visible=false;
+                //joystickDialog.visible=false;
+                fcommand("JOYSTICK SETTINGS")
                 mainRect.focus=true;
             }
         }
@@ -708,7 +720,8 @@ Item {
             height: 28
             text: qsTr("Закрыть")
             onClicked: {
-                joystickDialog.visible=false;
+                //joystickDialog.visible=false;
+                fcommand("JOYSTICK SETTINGS")
                 mainRect.focus=true;
             }
         }
@@ -729,7 +742,7 @@ Item {
 
     Rectangle {
         id: message
-        height: 50
+        height: 70
         width: 550
         color: "#090808"
         border.width: 2
@@ -755,8 +768,9 @@ Item {
                 color: "#b4aaf5"
                 text: "Этот номер уже назначен, выберите другое значение"
                 font.bold: true
-                font.pointSize: 14
+                font.pointSize: 12
                 anchors.bottom: parent.top
+                anchors.margins: 7
                 anchors.horizontalCenter: parent.horizontalCenter
             }
             onClicked: joystickDialog.state="Dialog"
@@ -776,7 +790,4 @@ Item {
 
 
 
-/*##^## Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
- ##^##*/
+
