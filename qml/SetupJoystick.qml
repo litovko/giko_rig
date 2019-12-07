@@ -10,6 +10,9 @@ Item {
     visible: true
     property RigJoystick joystick:null
     property alias text: j_text.text
+    property alias btn_apply: b_apply
+    property alias btn_close: b_apply1
+    property alias rect: rectangle1
     states: [
         State {
             name: "Dialog"
@@ -141,8 +144,8 @@ Item {
 
     Rectangle {
         id: rectangle1
-        width: 500
-        height: 504
+//        width: 500
+//        height: 504
         gradient: Gradient {
             GradientStop {
                 id: gradientStop1
@@ -155,12 +158,13 @@ Item {
                 color: "#000000"
             }
         }
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.top: parent.top
-        anchors.topMargin: 0
+//        anchors.left: parent.left
+//        anchors.leftMargin: 0
+//        anchors.top: parent.top
+//        anchors.topMargin: 0
+        anchors.fill: parent
         opacity: 0.8
-        border.width: 3
+        border.width: 1
         radius: 10
         visible: true
         z: 0

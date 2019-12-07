@@ -1,49 +1,50 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
-        <file>Pribor.qml</file>
-        <file>MyDashboard.qml</file>
-        <file>MyGauge.qml</file>
-        <file>MyLamp.qml</file>
+        <file>qml/main.qml</file>
+        <file>qml/Pribor.qml</file>
+        <file>qml/MyDashboard.qml</file>
+        <file>qml/MyGauge.qml</file>
+        <file>qml/MyLamp.qml</file>
         <file>skin/pause.png</file>
         <file>skin/play.png</file>
         <file>skin/needle.png</file>
         <file>skin/needle_shadow.png</file>
-        <file>ControlPanel.qml</file>
+        <file>qml/ControlPanel.qml</file>
         <file>skin/settings.png</file>
-        <file>MyBotton.qml</file>
-        <file>SetupCamera.qml</file>
-        <file>SetupSettings.qml</file>
-        <file>SetupJoystick.qml</file>
-        <file>Help.qml</file>
-        <file>Axis.qml</file>
-        <file>AxisVertical.qml</file>
-        <file>AxisHorizontal.qml</file>
-        <file>GKGBU.qml</file>
-        <file>MyHourglass.qml</file>
-        <file>MyMenu.qml</file>
-        <file>MyMenuItem.qml</file>
-        <file>MGBU.qml</file>
-        <file>LampsSettings.qml</file>
-        <file>Tik.qml</file>
-        <file>CAMSettings.qml</file>
-        <file>MyBubble2.qml</file>
-        <file>Coordinate.qml</file>
-        <file>Pribor3.qml</file>
-        <file>Digital.qml</file>
-        <file>Dinagraph.qml</file>
-        <file>Arrow.qml</file>
-        <file>CenterTik_Y.qml</file>
-        <file>CenterTick.qml</file>
-        <file>NPA.qml</file>
-        <file>NPA_move.qml</file>
-        <file>GArrow.qml</file>
-        <file>figure.js</file>
-        <file>logic_control.js</file>
-        <file>NPA_hand.qml</file>
-        <file>NPA_group.qml</file>
-        <file>COOLSettings.qml</file>
-        <file>NPA_bubble.qml</file>
-        <file>StatePannel.qml</file>
+        <file>qml/MyBotton.qml</file>
+        <file>qml/SetupCamera.qml</file>
+        <file>qml/SetupSettings.qml</file>
+        <file>qml/SetupJoystick.qml</file>
+        <file>qml/Help.qml</file>
+        <file>qml/Axis.qml</file>
+        <file>qml/AxisVertical.qml</file>
+        <file>qml/AxisHorizontal.qml</file>
+        <file>qml/GKGBU.qml</file>
+        <file>qml/MyHourglass.qml</file>
+        <file>qml/MyMenu.qml</file>
+        <file>qml/MyMenuItem.qml</file>
+        <file>qml/MGBU.qml</file>
+        <file>qml/LampsSettings.qml</file>
+        <file>qml/Tik.qml</file>
+        <file>qml/CAMSettings.qml</file>
+        <file>qml/MyBubble2.qml</file>
+        <file>qml/Coordinate.qml</file>
+        <file>qml/Pribor3.qml</file>
+        <file>qml/Digital.qml</file>
+        <file>qml/Dinagraph.qml</file>
+        <file>qml/Arrow.qml</file>
+        <file>qml/CenterTik_Y.qml</file>
+        <file>qml/CenterTick.qml</file>
+        <file>qml/NPA.qml</file>
+        <file>qml/NPA_move.qml</file>
+        <file>qml/GArrow.qml</file>
+        <file>qml/figure.js</file>
+        <file>qml/logic_control.js</file>
+        <file>qml/NPA_hand.qml</file>
+        <file>qml/NPA_group.qml</file>
+        <file>qml/COOLSettings.qml</file>
+        <file>qml/NPA_bubble.qml</file>
+        <file>qml/StatePannel.qml</file>
+        <file>qml/Joystick_setup.qml</file>
     </qresource>
 </RCC>
