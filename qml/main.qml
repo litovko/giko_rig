@@ -228,6 +228,7 @@ Window {
 
     RigModel {
         id: rig
+        name: "board_0"
         joystick_y1: j.y1axis * (j.key_0 || j.lock)
         joystick_y2: j.y2axis * (j.key_0 || j.lock)
         joystick_x1: j.x1axis * (j.key_0 || j.lock)
@@ -242,7 +243,26 @@ Window {
         camera4: camSettings.cam4
         property bool lamp_tag: false
         property var rig_types: ["grab6", "grab2", "gkgbu", "mgbu", "NPA"]
+        Component.onCompleted: networker.reg(rig)
+
     }
+    RigModel {
+        id: rig1
+        name: "board_1"
+        joystick_y1: 1
+        joystick_y2: 2
+        joystick_x1: 3
+        joystick_x2: 4
+        light1: 0
+        light2: 0
+        light3: 0
+        light4: 0
+        Component.onCompleted: networker.reg(rig1)
+    }
+    Networker {
+        id: networker
+    }
+
     function changestate() {
 
         console.log("STATE: " + mainRect.state + " ind:" + cams[0].index

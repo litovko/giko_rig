@@ -6,6 +6,7 @@
 #include <QFileInfo>
 #include <QThreadPool>
 #include <QDataStream>
+#include <QCoreApplication>
 
 
 #define TIMER_CHECK 30000
@@ -25,7 +26,8 @@ cCamera::cCamera(QObject *parent) : QObject(parent)
 void cCamera::saveSettings()
 {
     //qDebug()<<"Save settings Cam"<<QString::number(m_index)<<":"<<"Cam"<<QString::number(m_index)<<":"<<"saveSettings addres:"<<m_address<<"Enabled:"<<m_cameraenabled;
-    QSettings settings("HYCO", "Rig Console");
+    QSettings settings("HYCO", QCoreApplication::applicationName());
+    settings.beginGroup("camera");
     settings.setValue("Cam"+QString::number(m_index)+"Address",m_address);
     settings.setValue("Cam"+QString::number(m_index)+"Comby",m_comby);
     settings.setValue("Cam"+QString::number(m_index)+"OverlayText",m_overlaytext);
@@ -35,7 +37,8 @@ void cCamera::saveSettings()
 }
 void cCamera::readSettings()
 {
-    QSettings settings("HYCO", "Rig Console");
+    QSettings settings("HYCO", QCoreApplication::applicationName());
+    settings.beginGroup("camera");
     setAddress(settings.value("Cam"+QString::number(m_index)+"Address","192.168.1.168").toString());
     setTitle(settings.value("Cam"+QString::number(m_index)+"Title","Cam"+QString::number(m_index)).toString());
     setComby(settings.value("Cam"+QString::number(m_index)+"Comby",0).toInt());

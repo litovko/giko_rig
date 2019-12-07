@@ -1,7 +1,7 @@
 #TEMPLATE = app
 # обязательно требуется мультимедия от QT иначе не регистрируется плагин.
 QT += quick network
-CONFIG += c++17  console
+CONFIG += c++11  console
 TARGET = NPA
 #CONFIG+=debug
 #mingw:QMAKE_CXXFLAGS_DEBUG += "-gstabs+"
@@ -9,6 +9,7 @@ TARGET = NPA
 VERSION = 5.10.0.1
 #INCLUDEPATH += deps
 SOURCES += main.cpp \
+    networker.cpp \
     rigmodel.cpp \
     camera.cpp \
     cjoystick.cpp \
@@ -34,6 +35,7 @@ include(../QmlVlc\QmlVlc.pri)
 
 #
 HEADERS += \
+    networker.h \
     rigmodel.h \
     camera.h \
     cjoystick.h \
@@ -51,8 +53,6 @@ RC_ICONS = skin/npa.ico
 
 INCLUDEPATH += $$PWD/SDL2/include
 
-#msvc:LIBS += -L$$PWD/SDL/lib/x64 -lSDL
-#mingw:LIBS += -L$$PWD/SDL/lib/x86 -lSDL
 mingw:DESTDIR = D:\dest.rig.5.11.mingw
 msvc:DESTDIR = D:\dest.rig.5.11.msvc
 Kit=$$[QT_INSTALL_PREFIX]

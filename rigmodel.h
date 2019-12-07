@@ -32,6 +32,7 @@ class cRigmodel : public QObject
     Q_PROPERTY(int turns READ turns WRITE setTurns NOTIFY turnsChanged)
     Q_PROPERTY(int temperature READ temperature WRITE setTemperature NOTIFY temperatureChanged)
     Q_PROPERTY(QString rigtype READ rigtype WRITE setRigtype NOTIFY rigtypeChanged)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString gmod READ gmod WRITE setGmod NOTIFY gmodChanged)
     Q_PROPERTY(bool free_engine1 READ free_engine1 NOTIFY free_engine1Changed)  //включена разгрузка мотора1
     Q_PROPERTY(bool free_engine2 READ free_engine2 NOTIFY free_engine2Changed)  //включена разгрузка мотора2
@@ -257,6 +258,9 @@ public:
     int ana4() const;
 
 
+    QString name() const;
+    void setName(const QString &name);
+
 signals:
     void positionChanged();
     void pressureChanged();
@@ -305,6 +309,7 @@ signals:
     void client_connectedChanged();
     void good_dataChanged();
     void check_typeChanged();
+    void nameChanged();
 
 
     void free_engine1Changed(bool free_engine1);
@@ -348,6 +353,7 @@ public slots:
 
 private:
     int scaling(const int &value);
+    QString m_name="noname";
     int m_pressure=50;
     int m_pressure2=60;
     int m_temperature=10;
@@ -421,7 +427,6 @@ private:
 
     int m_timer_delay_engine1=2000; //время разгрузки мотора 1 - миллисекунд
     int m_timer_delay_engine2=2000; //время разгрузки мотора 2 - миллисекунд
-    //QSettings m_rigsettings:m_rigsettings("HYCO", "Rig Console");
 
 
 

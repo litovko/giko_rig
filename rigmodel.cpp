@@ -3,6 +3,7 @@
 #include <QString>
 #include <functional>
 #include <cmath>
+#include <QCoreApplication>
 
 cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 {
@@ -94,46 +95,46 @@ void cRigmodel::setana()
     if (m_rigtype!="NPA") return;
     int ana1=0, ana2=0, ana3=0, ana4=0;
     if (gmod()=="move") {
-      ana4=-m_joystick_x1; // поменяно из-за пробитого транзистора
-      ana2=m_joystick_y2; // исп
-      ana3=m_joystick_y1; // исп
-      //ana2=m_joystick_y1-m_joystick_x1;
-      //ana3=m_joystick_y1+m_joystick_x1;
+        ana4=-m_joystick_x1; // поменяно из-за пробитого транзистора
+        ana2=m_joystick_y2; // исп
+        ana3=m_joystick_y1; // исп
+        //ana2=m_joystick_y1-m_joystick_x1;
+        //ana3=m_joystick_y1+m_joystick_x1;
     }
     if (gmod()=="move1") {
-      ana1=0;
-      ana2=0;
-      ana3=-m_joystick_y1; //исп инвертировал
-      ana4=-m_joystick_y2; //исп инвертировал
+        ana1=0;
+        ana2=0;
+        ana3=-m_joystick_y1; //исп инвертировал
+        ana4=-m_joystick_y2; //исп инвертировал
     }
     if (gmod()=="hand"){
-      ana1=m_joystick_x1;
-      ana2=m_joystick_y1;
-      ana3=m_joystick_y1;
-      ana4=m_joystick_y2;
+        ana1=m_joystick_x1;
+        ana2=m_joystick_y1;
+        ana3=m_joystick_y1;
+        ana4=m_joystick_y2;
     }
     if (gmod()=="hand1"){
-      ana1=m_joystick_x2;
-      ana2=m_joystick_x1;
-      ana3=0;
-      ana4=0;
+        ana1=m_joystick_x2;
+        ana2=m_joystick_x1;
+        ana3=0;
+        ana4=0;
     }
     if (gmod()=="hand2"){
-      ana1=m_joystick_y2;
-      ana2=m_joystick_y1;
-      ana3=0;
-      ana4=0;
+        ana1=m_joystick_y2;
+        ana2=m_joystick_y1;
+        ana3=0;
+        ana4=0;
     }
     if (gmod()=="group"){
-      ana1=m_joystick_y2;
-      ana2=m_joystick_y1;
-      ana3=m_joystick_x2;
-      ana4=m_joystick_x1;
+        ana1=m_joystick_y2;
+        ana2=m_joystick_y1;
+        ana3=m_joystick_x2;
+        ana4=m_joystick_x1;
     }
-//    m_ana1=scaling(m_ana1);
-//    m_ana2=scaling(m_ana2);
-//    m_ana3=scaling(m_ana3);
-//    m_ana4=scaling(m_ana4);
+    //    m_ana1=scaling(m_ana1);
+    //    m_ana2=scaling(m_ana2);
+    //    m_ana3=scaling(m_ana3);
+    //    m_ana4=scaling(m_ana4);
     //qDebug()<<"setana y1:"<<m_joystick_y1<<" x2:"<<m_joystick_x2<<" ana1:"<<m_ana1<<" ana2:"<<m_ana2<<" ana3:"<<m_ana3;
     if (m_ana1!=ana1) {m_ana1=ana1; emit ana1Changed();}
     if (m_ana2!=ana2) {m_ana2=ana2; emit ana2Changed();}
@@ -143,8 +144,9 @@ void cRigmodel::setana()
 
 void cRigmodel::saveSettings()
 {
-    //qDebug()<<"Rig saveSettings addres:"<<m_address<<"port:"<<m_port;
-    QSettings settings("HYCO", "Rig Console");
+    QSettings settings("HYCO", QCoreApplication::applicationName());
+    settings.beginGroup(m_name);
+    qDebug()<<"save settings : "<<settings.organizationName()<<" "<<settings.applicationName()<<" "<<settings.group();
     settings.setValue("RigAddress",m_address);
     settings.setValue("RigPort",m_port);
     settings.setValue("RigFreerun",m_freerun);
@@ -159,6 +161,7 @@ void cRigmodel::saveSettings()
     settings.setValue("Rig_LIMZ",m_limz);
     settings.setValue("Rig_ENG_DT1",m_timer_delay_engine1);
     settings.setValue("Rig_ENG_DT2",m_timer_delay_engine2);
+    settings.endGroup();
 
 
 }
@@ -166,7 +169,8 @@ void cRigmodel::saveSettings()
 void cRigmodel::readSettings()
 {
 
-    QSettings settings("HYCO", "Rig Console");
+    QSettings settings("HYCO", QCoreApplication::applicationName());
+    settings.beginGroup(m_name);
     m_address=settings.value("RigAddress","localhost").toString();
     m_port=static_cast<quint16>(settings.value("RigPort","1212").toUInt());
     setFreerun(settings.value("RigFreerun","0").toInt());
@@ -571,12 +575,12 @@ QString cRigmodel::NPA_data()
             + m_camera4*128*m_camera
             ;
     QString Data="{ana1:"+::QString().number(ana1(),10)\
-                +";ana2:"+::QString().number(ana2(),10)\
-                +";ana3:"+::QString().number(ana3(),10)\
-                +";ana4:"+::QString().number(ana4(),10);
+            +";ana2:"+::QString().number(ana2(),10)\
+            +";ana3:"+::QString().number(ana3(),10)\
+            +";ana4:"+::QString().number(ana4(),10);
     Data=Data+";gmod:"+gmod_decode(m_gmod)\
-             //+";svet:"+::QString().number((m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16)))
-             +";dig1:"+::QString().number(dig,10)+"}CONSDATA";
+            //+";svet:"+::QString().number((m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16)))
+            +";dig1:"+::QString().number(dig,10)+"}CONSDATA";
     return Data;
 }
 bool cRigmodel::handle_tag(const QString &tag, const QString &val)
@@ -587,14 +591,14 @@ bool cRigmodel::handle_tag(const QString &tag, const QString &val)
         if (val=="type") {
             setRigtype(val);
             if (rigtype()=="mgbu_") setRigtype("mgbu")
-            ;
+                    ;
             if(!(ok=(m_rigtype=="grab2"||m_rigtype=="grab6"||m_rigtype=="gkgbu"||m_rigtype=="mgbu")))
                 qWarning()<<"Data! Wrong rig type <"<<val<<">";
 
         }
         else {
-          auto v=val.toInt(&ok,10);
-          if (ok) it->second(v);
+            auto v=val.toInt(&ok,10);
+            if (ok) it->second(v);
         }
     }
     else  qWarning()<<"Data! For tag <"<<tag<<"> handle not found!";
@@ -711,11 +715,11 @@ void cRigmodel::readData()
         QListIterator<QByteArray> i(split);
         QByteArray s, val;
         while (i.hasNext()){
-             s=i.next();
-             m=s.indexOf(":");
-             val=s.mid(m+1); //данные после ":"
-             s=s.left(m); // название тэга
-             setGood_data( handle_tag(s,val) );
+            s=i.next();
+            m=s.indexOf(":");
+            val=s.mid(m+1); //данные после ":"
+            s=s.left(m); // название тэга
+            setGood_data( handle_tag(s,val) );
         }
     }
     else {
@@ -728,7 +732,7 @@ void cRigmodel::sendKoeff()
 {
     if(m_rigtype!="mgbu") return;
     QString Data; // Строка отправки данных.
-// проверяем, есть ли подключение клиента. Если подключения нет, то ничего не отправляем.
+    // проверяем, есть ли подключение клиента. Если подключения нет, то ничего не отправляем.
     if (!m_client_connected) return;
 
     Data="{knpa:"+::QString().number(m_knpa,10);
@@ -748,14 +752,24 @@ void cRigmodel::sendKoeff()
 
 int cRigmodel::scaling(const int &value)
 {
-   if (value==0) return 0;
-   double df=127.0*m_freerun/100.0;
-   //qDebug()<<"Rig - scale df: "<<df<<"f:"<<(ceil(df + value*(100-m_freerun)/100.0)) <<" v:"<<value;
-   if  (value>0)
-     return static_cast<int>(ceil(df + value*(100-m_freerun)/100.0));
-   else
-       return static_cast<int>(-ceil(df - value*(100-m_freerun)/100.0));
+    if (value==0) return 0;
+    double df=127.0*m_freerun/100.0;
+    //qDebug()<<"Rig - scale df: "<<df<<"f:"<<(ceil(df + value*(100-m_freerun)/100.0)) <<" v:"<<value;
+    if  (value>0)
+        return static_cast<int>(ceil(df + value*(100-m_freerun)/100.0));
+    else
+        return static_cast<int>(-ceil(df - value*(100-m_freerun)/100.0));
 
+}
+
+QString cRigmodel::name() const
+{
+    return m_name;
+}
+
+void cRigmodel::setName(const QString &name)
+{
+    m_name = name;
 }
 
 int cRigmodel::leak_voltage() const
