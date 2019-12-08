@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <QSettings>
 #include <QtGlobal>
+#include <QJsonObject>
 class cRigmodel : public QObject
 {
 
@@ -32,7 +33,7 @@ class cRigmodel : public QObject
     Q_PROPERTY(int turns READ turns WRITE setTurns NOTIFY turnsChanged)
     Q_PROPERTY(int temperature READ temperature WRITE setTemperature NOTIFY temperatureChanged)
     Q_PROPERTY(QString rigtype READ rigtype WRITE setRigtype NOTIFY rigtypeChanged)
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(int board READ board WRITE setBoard NOTIFY boardChanged)
     Q_PROPERTY(QString gmod READ gmod WRITE setGmod NOTIFY gmodChanged)
     Q_PROPERTY(bool free_engine1 READ free_engine1 NOTIFY free_engine1Changed)  //включена разгрузка мотора1
     Q_PROPERTY(bool free_engine2 READ free_engine2 NOTIFY free_engine2Changed)  //включена разгрузка мотора2
@@ -65,8 +66,8 @@ class cRigmodel : public QObject
     Q_PROPERTY(int light3 READ light3 WRITE setLight3 NOTIFY light3Changed)
     Q_PROPERTY(int light4 READ light4 WRITE setLight4 NOTIFY light4Changed)
     //############ адрес и порт и другие параметры
-    Q_PROPERTY(QString address READ address WRITE setAddress NOTIFY addressChanged)
-    Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
+//    Q_PROPERTY(QString address READ address WRITE setAddress NOTIFY addressChanged)
+//    Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
     Q_PROPERTY(int timer_send_interval READ timer_send_interval WRITE setTimer_send_interval NOTIFY timer_send_intervalChanged)
     Q_PROPERTY(int timer_connect_interval READ timer_connect_interval WRITE setTimer_connect_interval NOTIFY timer_connect_intervalChanged)
     Q_PROPERTY(int freerun READ freerun WRITE setFreerun NOTIFY freerunChanged) // Valve free run  - свободный ход клапанов в процентах
@@ -107,11 +108,11 @@ public:
     QString rigtype() const;
     void setRigtypeInt(const int &rigtype);
 
-    void setAddress(const QString  &address);
-    QString address() const;
+//    void setAddress(const QString  &address);
+//    QString address() const;
 
-    void setPort(const quint16 &port);
-    quint16  port() const;
+//    void setPort(const quint16 &port);
+//    quint16  port() const;
 
     void setTimer_send_interval(const int &timer_send_interval);
     int  timer_send_interval() const;
@@ -258,8 +259,8 @@ public:
     int ana4() const;
 
 
-    QString name() const;
-    void setName(const QString &name);
+    int board() const;
+    void setBoard(int board);
 
 signals:
     void positionChanged();
@@ -301,16 +302,16 @@ signals:
     void camera2Changed();
     void camera3Changed();
     void camera4Changed();
-    void addressChanged();
-    void portChanged();
+//    void addressChanged();
+//    void portChanged();
     void timer_send_intervalChanged();
     void timer_connect_intervalChanged();
     void freerunChanged();
     void client_connectedChanged();
     void good_dataChanged();
     void check_typeChanged();
-    void nameChanged();
-
+    void boardChanged();
+    void dataChanged();
 
     void free_engine1Changed(bool free_engine1);
 
@@ -334,15 +335,16 @@ signals:
 
 public slots:
 
-    void start_client();
+//    void start_client();
 
-    void clientConnected();  // слот для обработки события присоединения клиента к серверу.
-    void clientDisconnected();
-    void updateSendTimer();
+//    void clientConnected();  // слот для обработки события присоединения клиента к серверу.
+//    void clientDisconnected();
+    //void updateSendTimer();
     void saveSettings();
     void readSettings();
-    void updateClientProgress(qint64 numBytes);
-    void displayError(QAbstractSocket::SocketError socketError);
+    //void updateClientProgress(qint64 numBytes);
+    QJsonObject getData();
+//    void displayError(QAbstractSocket::SocketError socketError);
     void sendData(); //слот должен вызываться любым событием, которое меняет данные, предназначенные для отправки.
     void readData(); //расклаываем полученные от сервера данные по параметрам
     void sendKoeff();
@@ -353,7 +355,7 @@ public slots:
 
 private:
     int scaling(const int &value);
-    QString m_name="noname";
+    int m_board=0;
     int m_pressure=50;
     int m_pressure2=60;
     int m_temperature=10;
@@ -378,8 +380,8 @@ private:
     QString m_rigtype="NPA"; //grab2,grab6,gkgbu,mgbu, NPA
 
 
-    QString m_address="localhost";
-    quint16 m_port=1212;
+    //QString m_address="localhost";
+    //quint16 m_port=1212;
     int m_freerun;
     bool m_client_connected = false;
 

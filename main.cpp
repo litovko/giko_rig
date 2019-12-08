@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
 
 
     qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
-    qmlRegisterType<networker>("Gyco", 1, 0, "Networker");
+    qmlRegisterType<cNetworker>("Gyco", 1, 0, "Networker");
     qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
     qmlRegisterType<cJoystick>("Gyco", 1, 0, "RigJoystick");
     QCoreApplication::setAttribute(Qt::AA_DisableShaderDiskCache);

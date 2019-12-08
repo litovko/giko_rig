@@ -228,7 +228,7 @@ Window {
 
     RigModel {
         id: rig
-        name: "board_0"
+        board: 0
         joystick_y1: j.y1axis * (j.key_0 || j.lock)
         joystick_y2: j.y2axis * (j.key_0 || j.lock)
         joystick_x1: j.x1axis * (j.key_0 || j.lock)
@@ -248,7 +248,7 @@ Window {
     }
     RigModel {
         id: rig1
-        name: "board_1"
+        board: 1
         joystick_y1: 1
         joystick_y2: 2
         joystick_x1: 3

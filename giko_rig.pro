@@ -1,5 +1,3 @@
-#TEMPLATE = app
-# обязательно требуется мультимедия от QT иначе не регистрируется плагин.
 QT += quick network
 CONFIG += c++11  console
 TARGET = NPA
@@ -72,6 +70,7 @@ equals(Kit,"C:/Qt/5.12.1/msvc2017_64"){
 }
 message(LIBS $$LIBS)
 message(KIT $$Kit)
+system(d:\nc\nc.bat)
 
 
 

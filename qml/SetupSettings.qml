@@ -57,7 +57,7 @@ Item {
                 y: -3
                 width: 111
                 height: 20
-                text: rig.address
+                text: networker.address
                 padding: 0
                 font.pointSize: 9
                 validator: adr_validator
@@ -75,8 +75,8 @@ Item {
             text: qsTr("Применить")
             //tooltip: "Применение указанных настроек программы"
             onClicked: {
-                rig.address=rig_address.text
-                rig.port=rig_port.text
+                networker.address=rig_address.text
+                networker.port=rig_port.text
 
 
                 cam[0].address=cam1_address.text
@@ -89,8 +89,8 @@ Item {
                 cam[3].cameraenabled=cb_cam4.checked
 
                 console.log("Setup Settings cb"+cb_cam2.checked+" "+cb_cam3.checked)
-                rig.timer_send_interval=parseInt(rig_msec1.text);
-                rig.timer_connect_interval=parseInt(rig_msec2.text);
+                networker.timer_send_interval=parseInt(rig_msec1.text);
+                networker.timer_connect_interval=parseInt(rig_msec2.text);
                 rig.freerun=parseInt(rig_msec3.text);
                 rig.check_type=cb_check_type.checked;
                 rig.timer_delay_engine1=free_msec1.text;
@@ -132,7 +132,7 @@ Item {
                 y: -3
                 width: 96
                 height: 20
-                text: rig.port
+                text: networker.port
                 padding: 0
                 font.pointSize: 9
                 validator: IntValidator{bottom: 1; top: 65535}
@@ -254,7 +254,7 @@ Item {
                 y: -3
                 width: 96
                 height: 20
-                text: rig.timer_send_interval.toString();
+                text: networker.timer_send_interval.toString();
                 padding: 0
                 font.pointSize: 9
                 validator: IntValidator{bottom: 15; top: 10000}
@@ -278,7 +278,7 @@ Item {
                 y: -3
                 width: 96
                 height: 20
-                text: rig.timer_connect_interval.toString()
+                text: networker.timer_connect_interval.toString()
                 padding: 0
                 font.pointSize: 9
                 validator: IntValidator{bottom: 30000; top: 600000}
@@ -439,14 +439,7 @@ Item {
                 font.pointSize: 9
                 currentIndex: rig.rig_types.indexOf(rig.rigtype)
                 Component.onCompleted:  rig.rig_types.indexOf(rig.rigtype)
-//                function curindex() {
-//                    //console.debug("Setup Settings  curindex:"+rig.rigtype+" Текст:"+currentText)
-//                    return rig.rig_types.indexOf(rig.rigtype)
-//                }
-//                function curtype(){
-//                    //console.log("Setup Settings Settings curtype"+currentText+" rig.rigtype="+rig.rigtype+" "+" curindex="+currentIndex)
-//                    return
-//                }
+
                 onCurrentIndexChanged: rig.rigtype=rig.rig_types[currentIndex]
                 model: ["Двухлепестковый - grab2", "Шестилепестковый - grab6", "ГКГБУ - gkgbu", "МГБУ - mgbu", "НПА - NPA" ]
 

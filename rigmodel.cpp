@@ -4,7 +4,7 @@
 #include <functional>
 #include <cmath>
 #include <QCoreApplication>
-
+#include <QJsonObject>
 cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 {
     readSettings();
@@ -33,14 +33,14 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     _fmap["type"]  = std::bind(&cRigmodel::setRigtypeInt, this, _1);
     reset();
     //=======
-    connect(this, SIGNAL(addressChanged()), this, SLOT(saveSettings()));
-    connect(this, SIGNAL(timer_send_intervalChanged()), this, SLOT(updateSendTimer()));
+    //connect(this, SIGNAL(addressChanged()), this, SLOT(saveSettings()));
+    //connect(this, SIGNAL(timer_send_intervalChanged()), this, SLOT(updateSendTimer()));
     //connect(this, SIGNAL(portChanged()), this, SLOT(saveSettings()));
-    connect(&tcpClient, SIGNAL(connected()),this, SLOT(clientConnected())); // Клиент приконнектилася к указанному адресу по указанному порту.
-    connect(&tcpClient, SIGNAL(disconnected()),this, SLOT(clientDisconnected())); // Клиент отвалился
-    connect(&tcpClient, SIGNAL(bytesWritten(qint64)),this, SLOT(updateClientProgress(qint64)));
-    connect(&tcpClient, SIGNAL(readyRead()),this, SLOT(readData()));
-    connect(&tcpClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(displayError(QAbstractSocket::SocketError)));
+//    connect(&tcpClient, SIGNAL(connected()),this, SLOT(clientConnected())); // Клиент приконнектилася к указанному адресу по указанному порту.
+//    connect(&tcpClient, SIGNAL(disconnected()),this, SLOT(clientDisconnected())); // Клиент отвалился
+//    connect(&tcpClient, SIGNAL(bytesWritten(qint64)),this, SLOT(updateClientProgress(qint64)));
+//    connect(&tcpClient, SIGNAL(readyRead()),this, SLOT(readData()));
+//    connect(&tcpClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(displayError(QAbstractSocket::SocketError)));
 
     connect(&tcpClient, SIGNAL(connected()),this, SLOT(sendKoeff()));  //первая посылка данных - коэффициенты
     //при изменении пользователем любого параметра сразу передаем данные
@@ -54,7 +54,6 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(free_engine1Changed(bool)),this, SLOT(sendData()));
     connect(this, SIGNAL(free_engine2Changed(bool)),this, SLOT(sendData()));
     connect(this, SIGNAL(pumpChanged()),this, SLOT(sendData()));
-    //connect(this, SIGNAL(joystickChanged()),this, SLOT(sendData()));
     connect(this, SIGNAL(cameraChanged()),this, SLOT(sendData()));
     connect(this, SIGNAL(camera1Changed()),this, SLOT(sendData()));
     connect(this, SIGNAL(camera2Changed()),this, SLOT(sendData()));
@@ -66,13 +65,13 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(joystick_y1Changed()), this, SLOT(setana()));
     connect(this, SIGNAL(joystick_y2Changed()), this, SLOT(setana()));
 
-    connect(&timer_connect, SIGNAL(timeout()), this, SLOT(start_client()));
+    //connect(&timer_connect, SIGNAL(timeout()), this, SLOT(start_client()));
     //start_client();
-    QTimer::singleShot(1000, this, SLOT(start_client())); //конектимся через 1 секунду после выполнения конструктора
-    timer_connect.start(m_timer_connect_interval);
-    connect(&timer_send, SIGNAL(timeout()), this, SLOT(sendData()));
-    timer_send.start(m_timer_send_interval);
-    emit rigtypeChanged();
+    //QTimer::singleShot(1000, this, SLOT(start_client())); //конектимся через 1 секунду после выполнения конструктора
+    //timer_connect.start(m_timer_connect_interval);
+    //connect(&timer_send, SIGNAL(timeout()), this, SLOT(sendData()));
+    //timer_send.start(m_timer_send_interval);
+    //emit rigtypeChanged();
     //emit positionChanged();
 }
 void cRigmodel::reset()
@@ -145,10 +144,10 @@ void cRigmodel::setana()
 void cRigmodel::saveSettings()
 {
     QSettings settings("HYCO", QCoreApplication::applicationName());
-    settings.beginGroup(m_name);
+    settings.beginGroup("board_"+QString::number(m_board,10));
     qDebug()<<"save settings : "<<settings.organizationName()<<" "<<settings.applicationName()<<" "<<settings.group();
-    settings.setValue("RigAddress",m_address);
-    settings.setValue("RigPort",m_port);
+    //settings.setValue("RigAddress",m_address);
+    //settings.setValue("RigPort",m_port);
     settings.setValue("RigFreerun",m_freerun);
     settings.setValue("RigSendInterval",m_timer_send_interval);
     settings.setValue("RigConnectInterval",m_timer_connect_interval);
@@ -170,9 +169,9 @@ void cRigmodel::readSettings()
 {
 
     QSettings settings("HYCO", QCoreApplication::applicationName());
-    settings.beginGroup(m_name);
-    m_address=settings.value("RigAddress","localhost").toString();
-    m_port=static_cast<quint16>(settings.value("RigPort","1212").toUInt());
+    settings.beginGroup("board_"+QString::number(m_board,10));
+//    m_address=settings.value("RigAddress","localhost").toString();
+//    m_port=static_cast<quint16>(settings.value("RigPort","1212").toUInt());
     setFreerun(settings.value("RigFreerun","0").toInt());
     m_timer_send_interval=settings.value("RigSendInterval","2000").toInt();
     if (m_timer_send_interval<50)m_timer_send_interval=50;
@@ -190,11 +189,11 @@ void cRigmodel::readSettings()
     setTimer_delay_engine2(settings.value("Rig_ENG_DT2","2000").toInt());
 }
 
-void cRigmodel::updateSendTimer()
-{
-    timer_send.stop();
-    timer_send.start(m_timer_send_interval);
-}
+//void cRigmodel::updateSendTimer()
+//{
+//    timer_send.stop();
+//    timer_send.start(m_timer_send_interval);
+//}
 
 void cRigmodel::setPressure(const int &pressure)
 {
@@ -410,27 +409,27 @@ int cRigmodel::joystick_y2() const
     return m_joystick_y2;
 }
 
-void cRigmodel::setAddress(const QString  &address)
-{
-    m_address = address;
-    emit addressChanged();
-}
+//void cRigmodel::setAddress(const QString  &address)
+//{
+//    m_address = address;
+//    emit addressChanged();
+//}
 
-QString cRigmodel::address() const
-{
-    return m_address;
-}
+//QString cRigmodel::address() const
+//{
+//    return m_address;
+//}
 
-quint16 cRigmodel::port() const
-{
-    return m_port;
-}
+//quint16 cRigmodel::port() const
+//{
+//    return m_port;
+//}
 
-void cRigmodel::setPort(const quint16  &port)
-{
-    m_port = port;
-    emit portChanged();
-}
+//void cRigmodel::setPort(const quint16  &port)
+//{
+//    m_port = port;
+//    emit portChanged();
+//}
 
 int cRigmodel::timer_send_interval() const
 {
@@ -470,96 +469,86 @@ bool cRigmodel::good_data() const
 
 
 
-void cRigmodel::start_client()
+//void cRigmodel::start_client()
+//{
+//    if (m_client_connected) return;
+//    bytesWritten = 0;
+//    if (tcpClient.state()) {
+//        qDebug()<<"tcpstate:"<<tcpClient.state();
+//        return;
+//    }
+//    qDebug()<<"Rig Start client >>>"<<m_address<<"poprt"<<::QString().number(m_port);
+
+//    tcpClient.connectToHost(m_address, m_port);
+
+//}
+//void cRigmodel::clientConnected()
+//{
+//    qDebug()<<"Rig Client connected to address >>>"+this->address()+" port:"+ ::QString().number(m_port);
+//    //qDebug()<<"Rig Network state >>> "<<tcpClient.errorString();
+//    setClient_connected(true);
+//    _no_resp=false;
+//    //sendData();
+//}
+//void cRigmodel::clientDisconnected()
+//{
+//    qDebug()<<"Rig Client disconnected form address >>>"+this->address()+" port:"+ QString::number(port());
+//    setClient_connected(false);
+//    setGood_data(false);
+//    reset();
+//}
+
+
+
+
+
+//void cRigmodel::updateClientProgress(qint64 numBytes)
+//{
+//    // callen when the TCP client has written some bytes
+//    bytesWritten += static_cast<quint16>(numBytes);
+//    //qDebug()<<"Rig Update client progress >>>"+::QString().number(bytesWritten);
+//}
+
+QJsonObject cRigmodel::getData()
 {
-    if (m_client_connected) return;
-    bytesWritten = 0;
-    if (tcpClient.state()) {
-        qDebug()<<"tcpstate:"<<tcpClient.state();
-        return;
-    }
-    qDebug()<<"Rig Start client >>>"<<m_address<<"poprt"<<::QString().number(m_port);
-
-    tcpClient.connectToHost(m_address, m_port);
-
-}
-void cRigmodel::clientConnected()
-{
-    qDebug()<<"Rig Client connected to address >>>"+this->address()+" port:"+ ::QString().number(m_port);
-    //qDebug()<<"Rig Network state >>> "<<tcpClient.errorString();
-    setClient_connected(true);
-    _no_resp=false;
-    //sendData();
-}
-void cRigmodel::clientDisconnected()
-{
-    qDebug()<<"Rig Client disconnected form address >>>"+this->address()+" port:"+ QString::number(port());
-    setClient_connected(false);
-    setGood_data(false);
-    reset();
+    QJsonObject json;
+    json["dev1"]=board();
+    json["ana1"]=ana1();
+    json["ana2"]=ana2();
+    json["ana3"]=ana3();
+    json["svet"]=(m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16));
+    json["dig1"]= m_engine*1
+            +   !m_pump*4  //замок манипулятора открывание
+            +   m_pump*2 //замок манипулятора закрывание
+            +   m_lamp*64
+            //+ m_camera*8
+            + m_engine2*8
+            + m_camera1*16*m_camera
+            + m_camera2*32*m_camera
+            //+ m_camera3*64*m_camera
+            + m_camera4*128*m_camera
+            ;
+    qDebug()<<sizeof (json);
+    return json;
 }
 
+//void cRigmodel::displayError(QAbstractSocket::SocketError socketError)
+//{
+//    qDebug()<<"Rig Network error >>> "<<tcpClient.errorString()<<"socketError ->"<<socketError;
+//    tcpClient.close();
+//    setClient_connected(false);
+//    setGood_data(false);
+//    reset();
 
-
-
-
-void cRigmodel::updateClientProgress(qint64 numBytes)
-{
-    // callen when the TCP client has written some bytes
-    bytesWritten += static_cast<quint16>(numBytes);
-    //qDebug()<<"Rig Update client progress >>>"+::QString().number(bytesWritten);
-}
-
-void cRigmodel::displayError(QAbstractSocket::SocketError socketError)
-{
-    qDebug()<<"Rig Network error >>> "<<tcpClient.errorString()<<"socketError ->"<<socketError;
-    tcpClient.close();
-    setClient_connected(false);
-    setGood_data(false);
-    reset();
-
-}
+//}
 
 
 //##################### функция отправки данных
 
 void cRigmodel::sendData()
 {
-    if (!m_client_connected) return;
-    if(_no_resp) setGood_data(false);
-    int data[9]={31,32,33,34,35,36,37,38,39};
-    data[0] = m_engine*1
-            +   m_pump*4
-            +   m_lamp*2
-            //+ m_camera*8
-            + m_engine2*8
-            + m_camera1*16*m_camera
-            + m_camera2*32*m_camera
-            + m_camera3*64*m_camera
-            + m_camera4*128*m_camera
-            ;
-    QString Data; // Строка отправки данных.
-
-    if (m_rigtype=="NPA"){
-        Data=NPA_data();
-    } else {
-        Data="{ana1:"+::QString().number(scaling(m_joystick_y1),10);
-        if (m_rigtype=="gkgbu"||m_rigtype=="grab6"||m_rigtype=="mgbu") Data=Data +";ana2:"+::QString().number(scaling(m_joystick_y2),10);
-        if (m_rigtype=="gkgbu"||m_rigtype=="mgbu") Data=Data+";ana3:"+::QString().number(scaling(m_joystick_x1),10)+";gmod:"+gmod_decode(m_gmod);
-        //яркости прожекторов
-        QString svet=";svet:"+::QString().number(lamp()*(m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16)));
-        if (m_rigtype=="mgbu") Data=Data+svet;
-
-        if (free_engine1()) {Data="{ana3:-127;gmod:grup1"+svet;}
-        if (free_engine2()) {Data="{ana2:-127;gmod:grup3"+svet;}
-        Data=Data+";dig1:"+::QString().number(data[0],10)+"}CONSDATA";
-    }
-
-    //qDebug()<<"Rig - send data: "<<Data;
-    bytesToWrite = static_cast<int>(tcpClient.write(::QByteArray(Data.toLatin1()).data()));
-    if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
-    if (bytesToWrite>=0)qDebug()<<"sent:"<<Data<<":"<<::QString().number(bytesToWrite);
-    _no_resp=true;
+    emit dataChanged();
+    qDebug()<<"data changed";
 }
 QString cRigmodel::NPA_data()
 {
@@ -762,15 +751,17 @@ int cRigmodel::scaling(const int &value)
 
 }
 
-QString cRigmodel::name() const
+int cRigmodel::board() const
 {
-    return m_name;
+    return m_board;
 }
 
-void cRigmodel::setName(const QString &name)
+void cRigmodel::setBoard(int board)
 {
-    m_name = name;
+    m_board = board;
 }
+
+
 
 int cRigmodel::leak_voltage() const
 {
