@@ -20,9 +20,12 @@ public:
     QString joystickName(int id);
     int joystickNumAxes(int id);
     int joystickNumButtons(int id);
+    int joystickNumHats(int id);
     QList<int> axis;
     QList<bool> buttons;
-    QMap<int,QByteArray> joy_map;
+    QList<int> hats;
+
+    //QMap<int,QByteArray> joy_map;
     void getdata();
 
 public slots:

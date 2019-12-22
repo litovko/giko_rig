@@ -1,4 +1,4 @@
-QT += quick network
+QT += quick network core
 CONFIG += c++11  console
 TARGET = NPA
 #CONFIG+=debug
@@ -16,7 +16,7 @@ SOURCES += main.cpp \
 RESOURCES += qml.qrc
 #mingw: QMAKE_LFLAGS +=-static-libgcc -static-libstdc++
 # Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
+QML_IMPORT_PATH = C:\Qt\5.12.1\msvc2017_64\qml\QtQuick
 
 # Default rules for deployment.
 #include(deployment.pri)

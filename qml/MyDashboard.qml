@@ -3,108 +3,17 @@ import Gyco 1.0
 
 Item {
     id: dashBoard
-    property RigModel source
+
     property int gaugesize: 180-20 // 20 - поля: два по 10
     property int containerheight: 1080
+    property RigModel rig: null
 
     state: rig.rigtype
     states: [
         State {
-            name: "grab2"
-            PropertyChanges {target: power2;   visible: false}
-            PropertyChanges {target: power;   visible: true}
-            PropertyChanges {target: turns;   visible: false}
-            PropertyChanges {target: gkgbu_pult;   visible: false}
-            PropertyChanges {target: mgbu_pult;   visible: false}
-            PropertyChanges {target: npa_pult;   visible: false}
-            PropertyChanges {target: row_left;   visible: true}
-            PropertyChanges {target: row_right;   visible: true}
-            PropertyChanges {target: voltage_mgbu;   visible: false}
-            PropertyChanges {target: voltage;   visible: true}
-            PropertyChanges {target: current_mgbu;   visible: false}
-            PropertyChanges {target: current_a;   visible: true}
-            PropertyChanges {target: altimetr_mgbu;   visible: false}
-            PropertyChanges {target: temperature;   visible: true}
-            PropertyChanges {target: temperature_mgbu;   visible: false}
-            PropertyChanges {target: pressure;   visible: true}
-            PropertyChanges {target: pressure_mgbu;   visible: false}
-            PropertyChanges {target: v24dc;   visible: true}
-            PropertyChanges {target: v24dc_mgbu;   visible: false}
-            PropertyChanges {target: leak;   visible: false}
-        },
-        State {
-            name: "grab6"
-            PropertyChanges {target: power2;   visible: true}
-            PropertyChanges {target: power;   visible: true}
-            PropertyChanges {target: turns;   visible: false}
-            PropertyChanges {target: gkgbu_pult;   visible: false}
-            PropertyChanges {target: mgbu_pult;   visible: false}
-            PropertyChanges {target: npa_pult;   visible: false}
-//            PropertyChanges {target: row_left;   visible: true}
-//            PropertyChanges {target: row_right;   visible: true}
-            PropertyChanges {target: voltage_mgbu;   visible: false}
-            PropertyChanges {target: voltage;   visible: true}
-            PropertyChanges {target: current_mgbu;   visible: false}
-            PropertyChanges {target: current_a;   visible: true}
-            PropertyChanges {target: altimetr_mgbu;   visible: false}
-            PropertyChanges {target: temperature;   visible: true}
-            PropertyChanges {target: temperature_mgbu;   visible: false}
-            PropertyChanges {target: pressure;   visible: true}
-            PropertyChanges {target: pressure_mgbu;   visible: false}
-            PropertyChanges {target: v24dc;   visible: true}
-            PropertyChanges {target: v24dc_mgbu;   visible: false}
-            PropertyChanges {target: leak;   visible: false}
-        },
-        State {
-            name: "gkgbu"
-            PropertyChanges {target: gkgbu_pult;   visible: true}
-            PropertyChanges {target: mgbu_pult;   visible: false}
-            PropertyChanges {target: npa_pult;   visible: false}
-            PropertyChanges {target: power2;   visible: false}
-            PropertyChanges {target: power;   visible: false}
-            PropertyChanges {target: turns;   visible: true}
-//            PropertyChanges {target: row_left;   visible: false}
-//            PropertyChanges {target: row_right;   visible: false}
-            PropertyChanges {target: voltage_mgbu;   visible: false}
-            PropertyChanges {target: voltage;   visible: true}
-            PropertyChanges {target: current_mgbu;   visible: false}
-            PropertyChanges {target: current_a;   visible: true}
-            PropertyChanges {target: altimetr_mgbu;   visible: false}
-            PropertyChanges {target: temperature;   visible: true}
-            PropertyChanges {target: temperature_mgbu;   visible: false}
-            PropertyChanges {target: pressure;   visible: true}
-            PropertyChanges {target: pressure_mgbu;   visible: false}
-            PropertyChanges {target: v24dc;   visible: true}
-            PropertyChanges {target: v24dc_mgbu;   visible: false}
-            PropertyChanges {target: leak;   visible: false}
-        },
-        State {
-            name: "mgbu"
-            PropertyChanges {target: gkgbu_pult;   visible: false}
-            PropertyChanges {target: mgbu_pult;   visible: true}
-            PropertyChanges {target: npa_pult;   visible: false}
-            PropertyChanges {target: power2;   visible: true}
-            PropertyChanges {target: power;   visible: true}
-            PropertyChanges {target: turns;   visible: true}
-//            PropertyChanges {target: row_left;   visible: true}
-//            PropertyChanges {target: row_right;   visible: true}
-            PropertyChanges {target: voltage_mgbu;   visible: true}
-            PropertyChanges {target: voltage;   visible: false}
-            PropertyChanges {target: current_mgbu;   visible: true}
-            PropertyChanges {target: current_a;   visible: false}
-            PropertyChanges {target: altimetr_mgbu;   visible: true}
-            PropertyChanges {target: temperature;   visible: false}
-            PropertyChanges {target: temperature_mgbu;   visible: true}
-            PropertyChanges {target: pressure;   visible: false}
-            PropertyChanges {target: pressure_mgbu;   visible: true}
-            PropertyChanges {target: v24dc;   visible: false}
-            PropertyChanges {target: v24dc_mgbu;   visible: true}
-            PropertyChanges {target: leak;   visible: true}
-        },
-        State {
             name: "NPA"
-            PropertyChanges {target: gkgbu_pult;   visible: false}
-            PropertyChanges {target: mgbu_pult;   visible: false}
+//            PropertyChanges {target: gkgbu_pult;   visible: false}
+//            PropertyChanges {target: mgbu_pult;   visible: false}
             PropertyChanges {target: npa_pult;   visible: true}
             PropertyChanges {target: power2;   visible: false}
             PropertyChanges {target: power;   visible: false}
@@ -154,39 +63,39 @@ Item {
 
     }
     onContainerheightChanged: calculatesize()
-    GKGBU {
-        id: gkgbu_pult
-        //anchors.centerIn: parent
-        height: dashboard.gaugesize+20
-        width: dashboard.gaugesize
-        joystick: j
-        rigmodel: source
-        btn0: j.key_1
-        btn_lock: j.key_4
-        z:4
-    }
-    MGBU {
-        id: mgbu_pult
-        //anchors.centerIn: parent
-        height: dashboard.gaugesize+48
-        width: dashboard.gaugesize+48
-        joystick: j
-        rigmodel: source
-        btn0: j.key_1
-        btn_lock: j.key_4 // locker key
-        z:4
-    }
+//    GKGBU {
+//        id: gkgbu_pult
+//        //anchors.centerIn: parent
+//        height: dashboard.gaugesize+20
+//        width: dashboard.gaugesize
+//        joystick: j
+//        rigmodel: rig
+//        btn0: j.key_1
+//        btn_lock: j.key_4
+//        z:4
+//    }
+//    MGBU {
+//        id: mgbu_pult
+//        //anchors.centerIn: parent
+//        height: dashboard.gaugesize+48
+//        width: dashboard.gaugesize+48
+//        joystick: j
+//        rigmodel: rig
+//        btn0: j.key_1
+//        btn_lock: j.key_4 // locker key
+//        z:4
+//    }
     NPA {
         id: npa_pult
         //anchors.centerIn: parent
         height: 450
         width: 450
         joystick: j
-        rigmodel: source
+        rigmodel: rig
         btn0: j.key_1
         btn_lock: j.key_4 // locker key
         z:4
-        //state: source.gmod //move, hand
+        //state: rig.gmod //move, hand
     }
 
 
@@ -275,9 +184,9 @@ Item {
                       stepSize: 200
                       anchors.centerIn: parent
 
-                      value1:  source.voltage
-                      value2:  source.voltage2
-                      value3:  source.voltage3
+                      value1:  rig.voltage
+                      value2:  rig.voltage2
+                      value3:  rig.voltage3
 
                       centrТext: "V"
                       bottomText: "Вольт"
@@ -299,9 +208,9 @@ Item {
                       stepSize: 10
                       anchors.centerIn: parent
 
-                      value1:  (source.ampere/10).toFixed(1)
-                      value2:  (source.ampere2/10).toFixed(1)
-                      value3:  (source.ampere3/10).toFixed(1)
+                      value1:  (rig.ampere/10).toFixed(1)
+                      value2:  (rig.ampere2/10).toFixed(1)
+                      value3:  (rig.ampere3/10).toFixed(1)
                       centrТext: "А"
                       bottomText: "Ампер"
                       warningThreshold: 30
@@ -318,7 +227,7 @@ Item {
                     Pribor {
                         width: parent.width-10; height: parent.height-10
                         anchors.centerIn: parent
-                        value: (source.ampere/10).toFixed(1)
+                        value: (rig.ampere/10).toFixed(1)
                         maximumValue: 100
                         warningThreshold: maximumValue*0.9
                         stepSize: 20
@@ -338,7 +247,7 @@ Item {
                         maximumValue: 500
                         stepSize: 100
                         anchors.centerIn: parent
-                        value: source.voltage
+                        value: rig.voltage
                         centrТext: "V"
                         bottomText: "Напряжение"
                         warningThreshold: maximumValue*0.9
@@ -358,7 +267,7 @@ Item {
                         minimunValue: -20
                         stepSize: 20
                         anchors.centerIn: parent
-                        value: source.temperature
+                        value: rig.temperature
                         centrТext: "t\u00B0"
                         bottomText: "Темп. масла"
                         warningThreshold: maximumValue*0.9
@@ -376,8 +285,8 @@ Item {
                         minimunValue: -20
                         stepSize: 20
                         anchors.centerIn: parent
-                        value1: source.temperature
-                        value2: source.temperature2
+                        value1: rig.temperature
+                        value2: rig.temperature2
                         thirdvisible: false
                         centrТext: "t\u00B0"
                         bottomText: "Темп. масла"
@@ -396,7 +305,7 @@ Item {
                         maximumValue: 200
                         stepSize: 50
                         anchors.centerIn: parent
-                        value: (source.pressure/10).toFixed(1)
+                        value: (rig.pressure/10).toFixed(1)
                         centrТext: "кПа"
                         bottomText: "Давл. масла"
                         warningThreshold: maximumValue*0.9
@@ -414,8 +323,8 @@ Item {
                         maximumValue: 200
                         stepSize: 50
                         anchors.centerIn: parent
-                        value1: source.pressure
-                        value2: source.pressure2
+                        value1: rig.pressure
+                        value2: rig.pressure2
                         thirdvisible: false
                         centrТext: "кПа"
                         bottomText: "Давл. масла"
@@ -433,7 +342,7 @@ Item {
                         maximumValue: 60
                         stepSize: 10
                         anchors.centerIn: parent
-                        value: (source.voltage24/10).toFixed(1)
+                        value: (rig.voltage24/10).toFixed(1)
                         centrТext: "V"
                         bottomText: "Шина 24В"
                         warningThreshold: 49
@@ -450,8 +359,8 @@ Item {
                         maximumValue: 60
                         stepSize: 10
                         anchors.centerIn: parent
-                        value1: (source.voltage24/10).toFixed(1)
-                        value2: (source.voltage24_2/10).toFixed(1)
+                        value1: (rig.voltage24/10).toFixed(1)
+                        value2: (rig.voltage24_2/10).toFixed(1)
                         thirdvisible: false
                         centrТext: "V"
                         bottomText: "Шина 24В"
@@ -472,7 +381,7 @@ Item {
                         stepSize: 300
                         anchors.centerIn: parent
                         centrТext: "об/мин"
-                        value: source.turns// (source.turns/100).toFixed()
+                        value: rig.turns// (rig.turns/100).toFixed()
 
                         bottomText: "Обороты"
                         warningThreshold: 800
@@ -529,8 +438,8 @@ Item {
                         maximumValue: 500
                         stepSize: 100
                         anchors.centerIn: parent
-                        value1: source.leak
-                        value2: source.leak_voltage
+                        value1: rig.leak
+                        value2: rig.leak_voltage
                         thirdvisible: false
                         centrТext: "Z"
                         bottomText: "Изоляция"
@@ -546,7 +455,7 @@ Item {
                     height: gaugesize;
                     Digital {
                         width: parent.width-10; height: parent.height-10
-                        value: source.altitude
+                        value: rig.altitude
                         maxvalue: 5000
                         //interval: 100
                         anchors.centerIn: parent

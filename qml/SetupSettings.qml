@@ -8,7 +8,7 @@ Item {
     id: settingsDialog
     visible: true
     property list<RigCamera> cam
-    property RigModel rig:null
+    property Networker rig:null
     onVisibleChanged: { cbj.checked=j.ispresent}
     RegExpValidator{
         id: adr_validator
@@ -57,7 +57,7 @@ Item {
                 y: -3
                 width: 111
                 height: 20
-                text: networker.address
+                text: rig.address
                 padding: 0
                 font.pointSize: 9
                 validator: adr_validator
@@ -75,8 +75,8 @@ Item {
             text: qsTr("Применить")
             //tooltip: "Применение указанных настроек программы"
             onClicked: {
-                networker.address=rig_address.text
-                networker.port=rig_port.text
+                rig.address=rig_address.text
+                rig.port=rig_port.text
 
 
                 cam[0].address=cam1_address.text
@@ -89,8 +89,8 @@ Item {
                 cam[3].cameraenabled=cb_cam4.checked
 
                 console.log("Setup Settings cb"+cb_cam2.checked+" "+cb_cam3.checked)
-                networker.timer_send_interval=parseInt(rig_msec1.text);
-                networker.timer_connect_interval=parseInt(rig_msec2.text);
+                rig.timer_send_interval=parseInt(rig_msec1.text);
+                rig.timer_connect_interval=parseInt(rig_msec2.text);
                 rig.freerun=parseInt(rig_msec3.text);
                 rig.check_type=cb_check_type.checked;
                 rig.timer_delay_engine1=free_msec1.text;
@@ -132,7 +132,7 @@ Item {
                 y: -3
                 width: 96
                 height: 20
-                text: networker.port
+                text: rig.port
                 padding: 0
                 font.pointSize: 9
                 validator: IntValidator{bottom: 1; top: 65535}
@@ -144,7 +144,7 @@ Item {
         Label {
             id: lca0
             x: 88
-            y: 223
+            y: 187
             width: 98
             height: 13
             color: "#ffffff"
@@ -153,7 +153,7 @@ Item {
                 id: cam1_address
                 x: 121
                 y: -3
-                width: 96
+                width: 106
                 height: 20
                 text: cam[0].address
                 padding: 0
@@ -169,7 +169,7 @@ Item {
         Label {
             id: lca1
             x: 88
-            y: 252
+            y: 222
             width: 98
             height: 13
             color: "#ffffff"
@@ -179,7 +179,7 @@ Item {
                 id: cam2_address
                 x: 121
                 y: -3
-                width: 96
+                width: 106
                 height: 20
                 text: cam[1].address
                 padding: 0
@@ -194,7 +194,7 @@ Item {
         Label {
             id: lca2
             x: 88
-            y: 282
+            y: 256
             width: 98
             height: 13
             color: "#ffffff"
@@ -204,7 +204,7 @@ Item {
                 id: cam3_address
                 x: 121
                 y: -3
-                width: 96
+                width: 105
                 height: 20
                 text: cam[2].address
                 padding: 0
@@ -218,7 +218,7 @@ Item {
         Label {
             id: lca3
             x: 88
-            y: 312
+            y: 290
             width: 98
             height: 13
             color: "#ffffff"
@@ -228,7 +228,7 @@ Item {
                 id: cam4_address
                 x: 121
                 y: -3
-                width: 96
+                width: 105
                 height: 20
                 text: cam[3].address
                 padding: 0
@@ -254,7 +254,7 @@ Item {
                 y: -3
                 width: 96
                 height: 20
-                text: networker.timer_send_interval.toString();
+                text: rig.timer_send_interval.toString();
                 padding: 0
                 font.pointSize: 9
                 validator: IntValidator{bottom: 15; top: 10000}
@@ -278,7 +278,7 @@ Item {
                 y: -3
                 width: 96
                 height: 20
-                text: networker.timer_connect_interval.toString()
+                text: rig.timer_connect_interval.toString()
                 padding: 0
                 font.pointSize: 9
                 validator: IntValidator{bottom: 30000; top: 600000}
@@ -290,7 +290,7 @@ Item {
         Label {
             id: lcache
             x: 88
-            y: 341
+            y: 328
             width: 109
             height: 13
             color: "#ffffff"
@@ -318,25 +318,25 @@ Item {
         GroupBox {
             id: groupBox1
             x: 13
-            y: 392
+            y: 379
             width: 479
-            height: 38
+            height: 51
             title: qsTr("Путь к видеозаписям")
             Text {
                 id: tfilepath
-                x: 0
-                y: -10
-                width: 347
-                height: 23
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 357
+                height: 18
                 text: win.filepath
                 z: 1
-                font.pixelSize: 10
+                font.pixelSize: 12
             }
 
             Button {
                 id: filepath_dialog
                 x: 363
-                y: -16
+                y: 2
                 width: 104
                 height: 23
                 text: qsTr("Выбор")
@@ -372,8 +372,8 @@ Item {
 
         CheckBox {
             id: cb_cam1
-            x: 336
-            y: 210
+            x: 316
+            y: 174
             text: cam[0].title
             clip: false
             scale: 1
@@ -384,8 +384,8 @@ Item {
 
         CheckBox {
             id: cb_cam2
-            x: 336
-            y: 240
+            x: 316
+            y: 209
             text: cam[1].title
             scale: 1
             checked: cam[1].cameraenabled
@@ -394,8 +394,8 @@ Item {
 
         CheckBox {
             id: cb_cam3
-            x: 336
-            y: 270
+            x: 315
+            y: 243
             text: cam[2].title
             scale: 1
             checked: cam[2].cameraenabled
@@ -403,8 +403,8 @@ Item {
         }
         CheckBox {
             id: cb_cam4
-            x: 336
-            y: 299
+            x: 315
+            y: 277
             width: 119
             height: 40
             text: cam[3].title
@@ -414,42 +414,16 @@ Item {
 
         CheckBox {
             id: cbj
-            x: 377
-            y: 360
+            x: 376
+            y: 333
             checked: j.ispresent
             text: qsTr("Джойстик")
         }
 
         Label {
-            id: ltype
-            x: 26
-            y: 181
-            width: 78
-            height: 13
-            color: "#ffffff"
-            text: qsTr("Тип аппарата")
-            font.pointSize: 9
-
-            ComboBox {
-                id: cbtype
-                x: 93
-                y: -8
-                width: 221
-                height: 29
-                font.pointSize: 9
-                currentIndex: rig.rig_types.indexOf(rig.rigtype)
-                Component.onCompleted:  rig.rig_types.indexOf(rig.rigtype)
-
-                onCurrentIndexChanged: rig.rigtype=rig.rig_types[currentIndex]
-                model: ["Двухлепестковый - grab2", "Шестилепестковый - grab6", "ГКГБУ - gkgbu", "МГБУ - mgbu", "НПА - NPA" ]
-
-            }
-        }
-
-        Label {
             id: ltype1
             x: 13
-            y: 373
+            y: 360
             width: 184
             height: 13
             color: "#ffffff"
@@ -505,15 +479,6 @@ Item {
                 placeholderText: qsTr("Свободный ход клапанов в процентах")
             }
             font.pointSize: 9
-        }
-
-        CheckBox {
-            id: cb_check_type
-            x: 345
-            y: 168
-            text: qsTr("Автоопределение")
-            checked: rig.check_type
-            visible: true
         }
 
         Label {
@@ -600,7 +565,8 @@ Item {
 
 
 
-/*##^## Designer {
-    D{i:0;autoSize:true;height:480;width:640}
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}D{i:31;anchors_height:18;anchors_width:357;anchors_x:0;anchors_y:9}
 }
- ##^##*/
+##^##*/

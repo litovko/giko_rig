@@ -1,8 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-//import QtQuick.Window 2.0
-//import QtQuick.Controls.Styles 1.4
-//import QtQuick.Dialogs 1.2
+
 import QmlVlc 0.1
 import Gyco 1.0
 Item {
@@ -13,139 +11,39 @@ Item {
     property alias btn_apply: b_apply
     property alias btn_close: b_apply1
     property alias rect: rectangle1
-    states: [
-        State {
-            name: "Dialog"
-            PropertyChanges { target: rectangle1;  visible: true;}
-            PropertyChanges { target: message;  visible: false;}
+    ListModel { //список названий кнопок и соответствующих им индексов
+        id: btnlistmodel
+        Component.onCompleted: {
 
-//            PropertyChanges {
-//                target: radioButton1
-//                width: 15
-//                height: 15
-//                padding: 0
-//                focusPolicy: Qt.NoFocus
-//                autoExclusive: true
-//                display: AbstractButton.IconOnly
-//
-//
-//            }
-
-            PropertyChanges {
-                target: comboBox1
-                rightPadding: 0
-            }
-
-            PropertyChanges {
-                target: comboBox2
-                width: 55
-                height: 25
-                rightPadding: 0
-            }
-
-            PropertyChanges {
-                target: comboBox3
-                width: 55
-                height: 25
-                rightPadding: 0
-            }
-
-            PropertyChanges {
-                target: comboBox4
-                width: 55
-                height: 25
-                rightPadding: 0
-            }
-
-            PropertyChanges {
-                target: comboBox5
-                x: 185
-                y: 207
-                width: 55
-                height: 25
-                rightPadding: 0
-            }
-
-            PropertyChanges {
-                target: comboBox6
-                x: 185
-                y: 238
-                width: 55
-                height: 25
-                rightPadding: 0
-            }
-
-            PropertyChanges {
-                target: comboBox7
-                x: 185
-                y: 271
-                width: 55
-                height: 25
-                rightPadding: 0
-            }
-
-            PropertyChanges {
-                target: comboBox8
-                x: 177
-                y: 267
-                width: 55
-                height: 25
-                rightPadding: 0
-            }
-
-            PropertyChanges {
-                target: comboBox9
-                x: 185
-                y: 338
-                width: 55
-                height: 25
-                rightPadding: 0
-            }
-
-            PropertyChanges {
-                target: comboBox10
-                x: 185
-                y: 371
-                width: 55
-                height: 25
-                rightPadding: 0
-            }
-
-            PropertyChanges {
-                target: groupBox1
-                width: 464
-                height: 416
-            }
-
-            PropertyChanges {
-                target: label11
-                x: 38
-                y: 434
-            }
-
-        },
-        State {
-            name: "Message"
-            PropertyChanges { target: rectangle1;  visible: false;}
-            PropertyChanges { target: message; width: 560; height: 82; radius: 10; anchors.verticalCenterOffset: 0; anchors.horizontalCenterOffset: 0;  visible: true;}
-
-            PropertyChanges {
-                target: gradientStop1
-                color: "#ffffff"
-            }
-
-            PropertyChanges {
-                target: button1
-                anchors.bottomMargin: 7
-            }
         }
-    ]
-    Component.onCompleted: state= "Dialog"
+    }
+    ListModel {  //список вариантов выбора кнопок
+        id: btnnumberlistmodel
+    }
+    function fillistmodel(){
+        btnlistmodel.clear()
+        btnnumberlistmodel.clear()
+        print("Joystick fillistmodel: "+ joystick.ispresent +"current: "+ joystick.current)
+        if (joystick.ispresent) {
+            btnlistmodel.append({"name":"Кнопка  №1", "ind":joystickDialog.joystick.map(0), "id" : 0})
+            btnlistmodel.append({"name":"Кнопка  №2", "ind":joystickDialog.joystick.map(1), "id" : 1})
+            btnlistmodel.append({"name":"Кнопка  №3", "ind":joystickDialog.joystick.map(2), "id" : 2})
+            btnlistmodel.append({"name":"Кнопка  №4", "ind":joystickDialog.joystick.map(3), "id" : 3})
+            btnlistmodel.append({"name":"Кнопка  №5", "ind":joystickDialog.joystick.map(4), "id" : 4})
+            btnlistmodel.append({"name":"Кнопка  №6", "ind":joystickDialog.joystick.map(5), "id" : 5})
+            btnlistmodel.append({"name":"Кнопка  №7", "ind":joystickDialog.joystick.map(6), "id" : 6})
+            btnlistmodel.append({"name":"Кнопка  №8", "ind":joystickDialog.joystick.map(7), "id" : 7})
+            btnlistmodel.append({"name":"Кнопка  №9", "ind":joystickDialog.joystick.map(8), "id" : 8})
+            btnlistmodel.append({"name":"Кнопка №10", "ind":joystickDialog.joystick.map(9), "id" : 9})
+            btnlistmodel.append({"name":"Кнопка №11", "ind":joystickDialog.joystick.map(10), "id" : 10})
+            btnlistmodel.append({"name":"Кнопка №12", "ind":joystickDialog.joystick.map(11), "id" : 11})
+        }
+    }
 
     Rectangle {
         id: rectangle1
-//        width: 500
-//        height: 504
+        //        width: 500
+        //        height: 504
         gradient: Gradient {
             GradientStop {
                 id: gradientStop1
@@ -158,14 +56,14 @@ Item {
                 color: "#000000"
             }
         }
-//        anchors.left: parent.left
-//        anchors.leftMargin: 0
-//        anchors.top: parent.top
-//        anchors.topMargin: 0
         anchors.fill: parent
         opacity: 0.8
         border.width: 1
         radius: 10
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
         visible: true
         z: 0
         border.color: "yellow"
@@ -187,7 +85,6 @@ Item {
             height: 28
             text: qsTr("Применить")
             onClicked: {
-                //joystickDialog.visible=false;
                 fcommand("JOYSTICK SETTINGS")
                 mainRect.focus=true;
             }
@@ -199,22 +96,24 @@ Item {
             y: 80
             width: 464
             height: 399
-            //checked: true
             opacity: 1
 
             Label {
                 id: label1
-                x: 8
-                y: 8
+                anchors.margins: 8
+                anchors.top:parent.top
+                anchors.left: parent.left
                 width: 87
                 height: 13
                 color: "#ffffff"
                 text: qsTr("Осей координат:")
+                anchors.leftMargin: 8
+                anchors.topMargin: 2
 
                 Text {
                     id: t_axnumb
-                    x: 96
-                    y: 0
+                    anchors.left: parent.right
+                    anchors.top: parent.top
                     width: 129
                     height: 13
                     color: "#ffffff"
@@ -226,16 +125,20 @@ Item {
 
             Label {
                 id: label2
-                x: 8
-                y: 37
+                x: 156
+                anchors.margins: 8
+                anchors.top:parent.top
+                anchors.right: parent.right
                 width: 87
                 height: 13
                 color: "#ffffff"
                 text: qsTr("Кнопок:")
+                anchors.rightMargin: 197
+                anchors.topMargin: 2
                 Text {
                     id: t_axnumb1
-                    x: 96
-                    y: 0
+                    anchors.left: parent.right
+                    anchors.top: parent.top
                     width: 129
                     height: 13
                     color: "#ffffff"
@@ -243,143 +146,123 @@ Item {
                     scale: 1
                     font.pixelSize: 12
                 }
-
-                Label {
-                    id: label8
-                    x: 0
-                    y: 205
-                    width: 172
-                    height: 19
-                    color: "#ffffff"
-                    text: qsTr("Кнопка выбора группы упр.")
-                    font.pointSize: 10
-                }
-
-                Label {
-                    id: label7
-                    x: 0
-                    y: 172
-                    width: 172
-                    height: 19
-                    color: "#ffffff"
-                    text: qsTr("Кнопка разблокировки")
-                    font.pointSize: 10
-                }
-
-                Label {
-                    id: label6
-                    x: 0
-                    y: 137
-                    width: 172
-                    height: 19
-                    color: "#ffffff"
-                    text: qsTr("Номер оси x2'")
-                    font.pointSize: 10
-                }
-
-                Label {
-                    id: label5
-                    x: 0
-                    y: 104
-                    width: 172
-                    height: 19
-                    color: "#ffffff"
-                    text: qsTr("Номер оси x1'")
-                    font.pointSize: 10
-                }
-
-                Label {
-                    id: label4
-                    x: 0
-                    y: 71
-                    width: 172
-                    height: 19
-                    color: "#ffffff"
-                    text: qsTr("Номер оси для 'Мощности 2'")
-                    font.pointSize: 10
-                }
-
-                Label {
-                    id: label3
-                    x: 0
-                    y: 34
-                    width: 172
-                    height: 19
-                    color: "#ffffff"
-                    text: qsTr("Номер оси для 'Мощности 1'")
-                    font.pointSize: 10
-                }
-
-                Label {
-                    id: label9
-                    x: 1
-                    y: 236
-                    width: 172
-                    height: 19
-                    color: "#ffffff"
-                    text: qsTr("Кнопка запуска трансляции")
-                    font.pointSize: 10
-                }
-
-                Label {
-                    id: label10
-                    x: 0
-                    y: 269
-                    width: 172
-                    height: 19
-                    color: "#ffffff"
-                    text: qsTr("Выбор  раскладки экрана")
-                    visible: true
-                    font.pointSize: 10
-                }
-
-                ComboBox {
-                    id: comboBox8
-                    x: 177
-                    y: 269
-                    width: 51
-                    height: 20
-                    visible: true
-                    model: ListModel {
-                        id: mcomboBox8
-                    }
-                    onCurrentIndexChanged: {
-                        if (!joystick.ispresent) return;
-                        if (comboBox5.currentIndex===currentIndex ||
-                            comboBox6.currentIndex===currentIndex||
-                            comboBox7.currentIndex===currentIndex||
-                            comboBox9.currentIndex===currentIndex||
-                            comboBox10.currentIndex===currentIndex)
-                        {joystickDialog.state="Message"; currentIndex=joystick.key_3_ind; return;}
-                        joystick.key_3_ind=currentIndex
-                    }
-                }
-
-                RadioButton {
-                    id: radioButton4
-                    x: 250
-                    y: 270
-                    width: 15
-                    height: 15
-                    text: qsTr("")
-                    visible: true
-                    checked: joystick.key_3
-                    scale: 1
-                    clip: false
-//
-//
-                }
-
-
-
-
-
             }
+
+            Label {
+                id: label6
+                x: 0
+                y: 137
+                width: 172
+                height: 19
+                color: "#ffffff"
+                text: qsTr("Номер оси x2'")
+                font.pointSize: 10
+            }
+
+            Label {
+                id: label5
+                x: 0
+                y: 104
+                width: 172
+                height: 19
+                color: "#ffffff"
+                text: qsTr("Номер оси x1'")
+                font.pointSize: 10
+            }
+
+            Label {
+                id: label4
+                x: 0
+                y: 71
+                width: 172
+                height: 19
+                color: "#ffffff"
+                text: qsTr("Номер оси y2'")
+                font.pointSize: 10
+            }
+
+            Label {
+                id: label3
+                x: 0
+                y: 34
+                width: 172
+                height: 19
+                color: "#ffffff"
+                text: qsTr("Номер оси y1'")
+                font.pointSize: 10
+            }
+            ListView { // список кнопок
+                id: lv
+                model: btnlistmodel
+                spacing: 10
+                x: 0
+                y: 200
+                width: 300
+                height: 150
+                z: 2
+                ScrollBar.vertical: ScrollBar {
+                    contentItem:
+                        Rectangle {
+                        implicitWidth: 10
+                        implicitHeight: lv.height
+                        color: "white"
+                    }
+                    background: Rectangle{
+                        implicitWidth: 12
+                        implicitHeight: lv.height+2
+                        color: "gray"
+                    }
+
+                }
+                delegate:
+                    Row {
+                    id: m
+                    width: 200
+                    height: 26
+                    spacing: 5
+                    Text {
+                        id: tx
+                        //anchors.left: parent.left
+                        text: name
+                        verticalAlignment: Text.AlignVCenter
+                        color: "white"
+                        width: 150
+                        height: parent.height
+                        font.pixelSize: height/2
+                    }
+                    Rectangle {
+                        id: r
+                        color: joystickDialog.joystick.keys[id]?"yellow":"gray"
+                        height: parent.height
+                        width: height
+                        border.color: "white"
+
+                        radius: height/2
+                    }
+                    ComboBox{
+                        id: delegatecm
+                        model: btnnumberlistmodel
+                        currentIndex: ind
+                        width: 75
+                        height: parent.height
+                        onCurrentIndexChanged: {
+                            joystickDialog.joystick.setmap(id,delegatecm.currentIndex)
+                            ind=delegatecm.currentIndex
+                        }
+                    }
+                }
+            }
+//            Text {
+//                x:381
+//                y:2
+//                text: joystickDialog.joystick.ispresent?"hats: "+joystickDialog.joystick.hats[0]:""
+//                color: "white"
+//            }
 
             Slider {
                 id: sliderHorizontal1
-                x: 244
-                y: 69
+                x: 246
+                y: 33
                 width: 200
                 height: 22
                 from: -127
@@ -390,8 +273,8 @@ Item {
             ComboBox {
                 id: comboBox1
                 x: 185
-                y: 70
-                width: 55
+                y: 31
+                width: 65
                 height: 25
                 currentIndex: 0
                 model: ListModel {
@@ -406,9 +289,9 @@ Item {
             ComboBox {
                 id: comboBox2
                 x: 185
-                y: 107
-                width: 51
-                height: 20
+                y: 67
+                width: 65
+                height: 25
                 model: ListModel {
                     id: mcomboBox2
                 }
@@ -421,7 +304,7 @@ Item {
             Slider {
                 id: sliderHorizontal2
                 x: 244
-                y: 106
+                y: 70
                 width: 200
                 height: 22
                 value: joystick.y2axis
@@ -432,9 +315,9 @@ Item {
             ComboBox {
                 id: comboBox3
                 x: 185
-                y: 140
-                width: 51
-                height: 20
+                y: 102
+                width: 65
+                height: 25
                 model: ListModel {
                     id: mcomboBox3
                 }
@@ -446,8 +329,8 @@ Item {
 
             Slider {
                 id: sliderHorizontal3
-                x: 244
-                y: 139
+                x: 246
+                y: 103
                 width: 200
                 height: 22
                 from: -127
@@ -458,9 +341,9 @@ Item {
             ComboBox {
                 id: comboBox4
                 x: 185
-                y: 174
-                width: 51
-                height: 20
+                y: 137
+                width: 65
+                height: 25
                 model: ListModel {
                     id: mcomboBox4
                 }
@@ -472,8 +355,8 @@ Item {
 
             Slider {
                 id: sliderHorizontal4
-                x: 244
-                y: 173
+                x: 246
+                y: 136
                 width: 200
                 height: 22
                 from: -127
@@ -481,317 +364,50 @@ Item {
                 to: 127
             }
 
-            ComboBox {
-                id: comboBox5
-                x: 185
-                y: 209
-                width: 51
-                height: 20
-                model: ListModel {
-                    id: mcomboBox5
-                }
 
-                onCurrentIndexChanged: {
-                    if (!joystick.ispresent) return;
-                    if (comboBox6.currentIndex===currentIndex ||
-                        comboBox7.currentIndex===currentIndex||
-                        comboBox8.currentIndex===currentIndex||
-                        comboBox9.currentIndex===currentIndex||
-                        comboBox10.currentIndex===currentIndex)
-                    {joystickDialog.state="Message"; currentIndex=joystick.key_0_ind; return;}
-                    joystick.key_0_ind=currentIndex
-                }
-            }
-
-            RadioButton {
-                id: radioButton1
-                x: 258
-                y: 211
-                width: 15
-                height: 15
-                text: qsTr("")
-                scale: 1
-                clip: false
-                checked: joystick.key_0
-
-
-            }
-
-            ComboBox {
-                id: comboBox6
-                x: 185
-                y: 240
-                width: 51
-                height: 20
-                model: ListModel {
-                    id: mcomboBox6
-                }
-
-                onCurrentIndexChanged: {
-                    if (!joystick.ispresent) return;
-                    if (comboBox5.currentIndex===currentIndex ||
-                        comboBox7.currentIndex===currentIndex||
-                        comboBox8.currentIndex===currentIndex||
-                        comboBox9.currentIndex===currentIndex||
-                        comboBox10.currentIndex===currentIndex)
-                    {joystickDialog.state="Message"; currentIndex=joystick.key_1_ind; return;}
-                    joystick.key_1_ind=currentIndex
-                }
-
-            }
-
-            RadioButton {
-                id: radioButton2
-                x: 258
-                y: 242
-                width: 15
-                height: 15
-                text: qsTr("")
-                clip: false
-                scale: 1
-                checked: joystick.key_1
-
-
-            }
-
-            ComboBox {
-                id: comboBox7
-                x: 185
-                y: 273
-                width: 51
-                height: 20
-                model: ListModel {
-                    id: mcomboBox7
-                }
-
-                onCurrentIndexChanged: {
-                    if (!joystick.ispresent) return;
-                    if (comboBox5.currentIndex===currentIndex ||
-                        comboBox6.currentIndex===currentIndex||
-                        comboBox8.currentIndex===currentIndex||
-                        comboBox9.currentIndex===currentIndex||
-                        comboBox10.currentIndex===currentIndex)
-                    {joystickDialog.state="Message"; currentIndex=joystick.key_2_ind; return;}
-                    joystick.key_2_ind=currentIndex
-                }
-            }
-
-            RadioButton {
-                id: radioButton3
-                x: 258
-                y: 275
-                width: 15
-                height: 15
-                text: qsTr("")
-                checked: joystick.key_2
-                scale: 1
-                clip: false
-
-
-            }
-            ComboBox {
-                id: comboBox9
-                x: 185
-                y: 340
-                width: 51
-                height: 20
-                visible: true
-                model: ListModel {
-                    id: mcomboBox9
-                }
-                onCurrentIndexChanged: {
-                    if (!joystick.ispresent) return;
-                    if (comboBox5.currentIndex===currentIndex ||
-                        comboBox6.currentIndex===currentIndex||
-                        comboBox7.currentIndex===currentIndex||
-                        comboBox8.currentIndex===currentIndex||
-                        comboBox10.currentIndex===currentIndex)
-                    {joystickDialog.state="Message"; currentIndex=joystick.key_4_ind; return;}
-                    joystick.key_4_ind=currentIndex
-                }
-            }
-
-            RadioButton {
-                id: radioButton5
-                x: 258
-                y: 341
-                width: 15
-                height: 15
-                text: qsTr("")
-                visible: true
-                checked: joystick.key_4
-                scale: 1
-                clip: false
-
-
-            }
-
-            ComboBox {
-                id: comboBox10
-                x: 185
-                y: 373
-                width: 51
-                height: 20
-                visible: true
-                model: ListModel {
-                    id: mcomboBox10
-                }
-                onCurrentIndexChanged: {
-                    if (!joystick.ispresent) return;
-                    if (comboBox5.currentIndex===currentIndex ||
-                        comboBox6.currentIndex===currentIndex||
-                        comboBox7.currentIndex===currentIndex||
-                        comboBox8.currentIndex===currentIndex||
-                        comboBox9.currentIndex===currentIndex)
-                    {joystickDialog.state="Message"; currentIndex=joystick.key_5_ind; return;}
-                    joystick.key_5_ind=currentIndex
-                }
-            }
-
-            RadioButton {
-                id: radioButton6
-                x: 258
-                y: 374
-                width: 15
-                height: 15
-                text: qsTr("")
-                checked: joystick.key_5
-                visible: true
-                clip: false
-                scale: 1
-
-
-            }
 
             Label {
-                id: label12
-                x: 8
-                y: 374
-                width: 172
+                id: label0
+                x: -12
+                y: -35
+                width: 231
                 height: 19
                 color: "#ffffff"
-                text: qsTr("Выбор кнопки замедления")
-                visible: true
-                font.pointSize: 10
-            }
-        }
-
-        Label {
-            id: label0
-            x: 24
-            y: 55
-            width: 231
-            height: 19
-            color: "#ffffff"
-            text: qsTr(joystick.name)
-            font.pointSize: 12
-            onTextChanged: {
-                console.log("Jchanged:"+joystick.name+" axes:"+joystick.axes_number+" ispresent:"+joystick.ispresent)
-                for(var ji=1; ji<=joystick.axes_number; ji++) {
-                    mcomboBox1.append({text: ji})
-                    mcomboBox2.append({text: ji})
-                    mcomboBox3.append({text: ji})
-                    mcomboBox4.append({text: ji})
-                    //console.log("Jax:"+ji)
-                }
-                for( ji=1; ji<=joystick.buttons_number; ji++) {
-                    mcomboBox5.append({text: ji})
-                    mcomboBox6.append({text: ji})
-                    mcomboBox7.append({text: ji})
-                    mcomboBox8.append({text: ji})
-                    mcomboBox9.append({text: ji})
-                    mcomboBox10.append({text: ji})
-                    //console.log("Jbutton:"+ji)
-                }
-                comboBox1.currentIndex=joystick.y1axis_ind
-                comboBox2.currentIndex=joystick.y2axis_ind
-                comboBox3.currentIndex=joystick.x1axis_ind
-                comboBox4.currentIndex=joystick.x2axis_ind
-                comboBox5.currentIndex=joystick.key_0_ind
-                comboBox6.currentIndex=joystick.key_1_ind
-                comboBox7.currentIndex=joystick.key_2_ind
-                comboBox8.currentIndex=joystick.key_3_ind
-                comboBox9.currentIndex=joystick.key_4_ind
-                comboBox10.currentIndex=joystick.key_5_ind
-            }
-        }
-
-        Button {
-            id: b_apply1
-            x: 363
-            y: 49
-            width: 100
-            height: 28
-            text: qsTr("Закрыть")
-            onClicked: {
-                //joystickDialog.visible=false;
-                fcommand("JOYSTICK SETTINGS")
-                mainRect.focus=true;
-            }
-        }
-
-        Label {
-            id: label11
-            x: 33
-            y: 442
-            width: 172
-            height: 19
-            color: "#ffffff"
-            text: qsTr("Выбор кнопки защелки")
-            visible: true
-            font.pointSize: 10
-        }
-
-    }
-
-    Rectangle {
-        id: message
-        height: 70
-        width: 550
-        color: "#090808"
-        border.width: 2
-        border.color: "yellow"
-        visible: false
-        gradient: Gradient {
-            GradientStop {
-                position: 0.00;
-                color: "#090808";
-            }
-            GradientStop {
-                position: 1.00;
-                color: "#d8d8f5";
-            }
-        }
-        anchors.centerIn: parent
-        Button {
-            id: button1
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            text: "OK"
-            Text {
-                color: "#b4aaf5"
-                text: "Этот номер уже назначен, выберите другое значение"
-                font.bold: true
+                text: qsTr(joystick.name)
                 font.pointSize: 12
-                anchors.bottom: parent.top
-                anchors.margins: 7
-                anchors.horizontalCenter: parent.horizontalCenter
+                onTextChanged: {
+                    console.log("Jchanged:"+joystick.name+" axes:"+joystick.axes_number+" ispresent:"+joystick.ispresent)
+                    fillistmodel()
+                    for(var ji=1; ji<=joystick.axes_number; ji++) {
+                        mcomboBox1.append({text: ji})
+                        mcomboBox2.append({text: ji})
+                        mcomboBox3.append({text: ji})
+                        mcomboBox4.append({text: ji})
+                    }
+                    for( ji=1; ji<=joystick.buttons_number; ji++) {
+                        btnnumberlistmodel.append({text: ji})
+                    }
+                    comboBox1.currentIndex=joystick.y1axis_ind
+                    comboBox2.currentIndex=joystick.y2axis_ind
+                    comboBox3.currentIndex=joystick.x1axis_ind
+                    comboBox4.currentIndex=joystick.x2axis_ind
+                }
             }
-            onClicked: joystickDialog.state="Dialog"
+
+            Button {
+                id: b_apply1
+                x: 333
+                y: -44
+                width: 100
+                height: 28
+                text: qsTr("Закрыть")
+                onClicked: {
+                    //joystickDialog.visible=false;
+                    fcommand("JOYSTICK SETTINGS")
+                    mainRect.focus=true;
+                }
+            }
         }
-
-    }
-
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
 

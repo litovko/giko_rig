@@ -19,11 +19,9 @@
         <file>qml/Axis.qml</file>
         <file>qml/AxisVertical.qml</file>
         <file>qml/AxisHorizontal.qml</file>
-        <file>qml/GKGBU.qml</file>
         <file>qml/MyHourglass.qml</file>
         <file>qml/MyMenu.qml</file>
         <file>qml/MyMenuItem.qml</file>
-        <file>qml/MGBU.qml</file>
         <file>qml/LampsSettings.qml</file>
         <file>qml/Tik.qml</file>
         <file>qml/CAMSettings.qml</file>

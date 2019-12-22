@@ -8,8 +8,6 @@
 cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 {
     readSettings();
-
-    //=======
     using namespace std::placeholders;
     _fmap["spxy"]  = std::bind(&cRigmodel::setPosition, this, _1);
     _fmap["toil"]  = std::bind(&cRigmodel::setTemperature, this, _1);
@@ -32,18 +30,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     _fmap["vchs"]  = std::bind(&cRigmodel::setLeak_voltage, this, _1);
     _fmap["type"]  = std::bind(&cRigmodel::setRigtypeInt, this, _1);
     reset();
-    //=======
-    //connect(this, SIGNAL(addressChanged()), this, SLOT(saveSettings()));
-    //connect(this, SIGNAL(timer_send_intervalChanged()), this, SLOT(updateSendTimer()));
-    //connect(this, SIGNAL(portChanged()), this, SLOT(saveSettings()));
-//    connect(&tcpClient, SIGNAL(connected()),this, SLOT(clientConnected())); // Клиент приконнектилася к указанному адресу по указанному порту.
-//    connect(&tcpClient, SIGNAL(disconnected()),this, SLOT(clientDisconnected())); // Клиент отвалился
-//    connect(&tcpClient, SIGNAL(bytesWritten(qint64)),this, SLOT(updateClientProgress(qint64)));
-//    connect(&tcpClient, SIGNAL(readyRead()),this, SLOT(readData()));
-//    connect(&tcpClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(displayError(QAbstractSocket::SocketError)));
 
-    connect(&tcpClient, SIGNAL(connected()),this, SLOT(sendKoeff()));  //первая посылка данных - коэффициенты
-    //при изменении пользователем любого параметра сразу передаем данные
     connect(this, SIGNAL(lampChanged()),this, SLOT(sendData()));
     connect(this, SIGNAL(light1Changed()),this, SLOT(sendData()));
     connect(this, SIGNAL(light2Changed()),this, SLOT(sendData()));
@@ -65,28 +52,10 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(joystick_y1Changed()), this, SLOT(setana()));
     connect(this, SIGNAL(joystick_y2Changed()), this, SLOT(setana()));
 
-    //connect(&timer_connect, SIGNAL(timeout()), this, SLOT(start_client()));
-    //start_client();
-    //QTimer::singleShot(1000, this, SLOT(start_client())); //конектимся через 1 секунду после выполнения конструктора
-    //timer_connect.start(m_timer_connect_interval);
-    //connect(&timer_send, SIGNAL(timeout()), this, SLOT(sendData()));
-    //timer_send.start(m_timer_send_interval);
-    //emit rigtypeChanged();
-    //emit positionChanged();
 }
 void cRigmodel::reset()
 {
     for (auto const& f : _fmap) f.second(0);
-}
-
-void cRigmodel::reconnect()
-{
-    tcpClient.disconnectFromHost();
-    tcpClient.close();
-    tcpClient.abort();
-    setClient_connected(false);
-    QTimer::singleShot(2000, this, SLOT(start_client())); //конектимся через 3 секунды после выполнения конструктора
-
 }
 
 void cRigmodel::setana()
@@ -454,15 +423,7 @@ void cRigmodel::setTimer_connect_interval(const int  &timer_connect_interval)
     emit timer_connect_intervalChanged();
 }
 
-bool cRigmodel::client_connected() const
-{
-    return m_client_connected;
-}
 
-bool cRigmodel::good_data() const
-{
-    return m_good_data;
-}
 
 
 //################################################################
@@ -681,48 +642,48 @@ bool cRigmodel::engine2() const
 
 
 
-void cRigmodel::readData()
-{
+//void cRigmodel::readData()
+//{
 
-    QByteArray Data="";
-    QString CRC ="";
-    QList<QByteArray> split;
-    int m;
-    _no_resp=false;
-    Data = tcpClient.readAll();
-    qDebug()<<"read:"<<Data;
-    // {toil=29;poil=70;drpm=15;pwrv=33;pwra=3}FAFBFCFD
+//    QByteArray Data="";
+//    QString CRC ="";
+//    QList<QByteArray> split;
+//    int m;
+//    _no_resp=false;
+//    //Data = tcpClient.readAll();
+//    qDebug()<<"read:"<<Data;
+//    // {toil=29;poil=70;drpm=15;pwrv=33;pwra=3}FAFBFCFD
 
-    if (Data.startsWith("{")&&(m=Data.indexOf("}"))>0) {
-        setGood_data(true);
-        CRC=Data.mid(m+1);
-        //qDebug()<<"CRC:"<<CRC; //CRC пока не проверяем - это отдельная тема.
-        Data=Data.mid(1,m-1);
-        //qDebug()<<"truncated :"<<Data;
-        split=Data.split(';');
-        //qDebug()<<"split:"<<split;
-        QListIterator<QByteArray> i(split);
-        QByteArray s, val;
-        while (i.hasNext()){
-            s=i.next();
-            m=s.indexOf(":");
-            val=s.mid(m+1); //данные после ":"
-            s=s.left(m); // название тэга
-            setGood_data( handle_tag(s,val) );
-        }
-    }
-    else {
-        setGood_data(false);
-        qWarning()<<"Rig: wrong data receved";
-    }
-}
+//    if (Data.startsWith("{")&&(m=Data.indexOf("}"))>0) {
+//        setGood_data(true);
+//        CRC=Data.mid(m+1);
+//        //qDebug()<<"CRC:"<<CRC; //CRC пока не проверяем - это отдельная тема.
+//        Data=Data.mid(1,m-1);
+//        //qDebug()<<"truncated :"<<Data;
+//        split=Data.split(';');
+//        //qDebug()<<"split:"<<split;
+//        QListIterator<QByteArray> i(split);
+//        QByteArray s, val;
+//        while (i.hasNext()){
+//            s=i.next();
+//            m=s.indexOf(":");
+//            val=s.mid(m+1); //данные после ":"
+//            s=s.left(m); // название тэга
+//            setGood_data( handle_tag(s,val) );
+//        }
+//    }
+//    else {
+//        setGood_data(false);
+//        qWarning()<<"Rig: wrong data receved";
+//    }
+//}
 
 void cRigmodel::sendKoeff()
 {
     if(m_rigtype!="mgbu") return;
     QString Data; // Строка отправки данных.
     // проверяем, есть ли подключение клиента. Если подключения нет, то ничего не отправляем.
-    if (!m_client_connected) return;
+    //if (!m_client_connected) return;
 
     Data="{knpa:"+::QString().number(m_knpa,10);
     Data=Data+";knpv:"+::QString().number(m_knpv,10);
@@ -733,9 +694,9 @@ void cRigmodel::sendKoeff()
     Data=Data+"}CONSDATA";
     //qDebug()<<"Rig - send data: "<<Data;
 
-    bytesToWrite = static_cast<int>(tcpClient.write(::QByteArray(Data.toLatin1()).data()));
-    if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
-    if (bytesToWrite>=0)qDebug()<<"Rig:sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
+
+//    if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
+//    if (bytesToWrite>=0)qDebug()<<"Rig:sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
 }
 
 
@@ -831,20 +792,8 @@ void cRigmodel::setTangag(int tangag)
     emit tangagChanged();
 }
 
-void cRigmodel::setClient_connected(bool client_connected)
-{
-    m_client_connected = client_connected;
-    emit client_connectedChanged();
-}
 
 
-
-void cRigmodel::setGood_data(bool good_data)
-{
-    if(m_good_data == good_data) return;
-    m_good_data = good_data;
-    emit good_dataChanged();
-}
 
 unsigned int cRigmodel::position() const
 {

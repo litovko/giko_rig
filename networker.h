@@ -12,6 +12,8 @@ class cNetworker : public QObject
     Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
     Q_PROPERTY(int timer_send_interval READ timer_send_interval WRITE setTimer_send_interval NOTIFY timer_send_intervalChanged)
     Q_PROPERTY(int timer_connect_interval READ timer_connect_interval WRITE setTimer_connect_interval NOTIFY timer_connect_intervalChanged)
+    Q_PROPERTY(bool client_connected READ client_connected NOTIFY client_connectedChanged)
+    Q_PROPERTY(bool good_data READ good_data  NOTIFY good_dataChanged)
 public:
     explicit cNetworker(QObject *parent = nullptr);
     virtual ~cNetworker() {saveSettings();}
@@ -31,11 +33,16 @@ public:
     int timer_connect_interval() const;
     void setTimer_connect_interval(int timer_connect_interval);
 
+    bool good_data() const;
+    void setGood_data(bool good_data);
+
 signals:
     void addressChanged();
     void portChanged();
     void timer_send_intervalChanged();
     void timer_connect_intervalChanged();
+    void client_connectedChanged();
+    void good_dataChanged();
 
 public slots:
     Q_INVOKABLE void reg(cRigmodel *rig);
@@ -54,6 +61,7 @@ private:
     QString m_address="localhost";
     quint16 m_port=1212;
     bool m_client_connected = false;
+    bool m_good_data=false;
     QTcpSocket tcpClient;
     QTimer timer_connect;
     QTimer timer_send;

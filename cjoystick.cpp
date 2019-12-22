@@ -161,10 +161,16 @@ void cJoystick::init_joystick()
     if (joy==nullptr){
         joy = new QJoystick();
         qDebug()<<"Joystick Number:"<<current()<<"new QJoystick:"<<joy;
+        //setIspresent(true);
     }
     m_joysticks_avail=joy->availableJoysticks();
     qDebug()<<"Joysticks available:"<<m_joysticks_avail;
-    setIspresent(m_joysticks_avail>current());
+    if (current()==0 && m_joysticks_avail>0)
+        setIspresent(true);
+    else if (current()==1 && m_joysticks_avail>1)
+                setIspresent(true);
+            else
+                setIspresent(false);
     if (!ispresent()) {
         qWarning()<<"Joystick "<<current()<<" not present!!!";
         clear_joystick();
@@ -180,18 +186,24 @@ void cJoystick::init_joystick()
         // Axes
         setAxes_number(_joystick_data->number_axes = joy->joystickNumAxes(i));
         _joystick_data->name=joy->joystickName(i);
-        qDebug()<<"J:"<<i<<" name:"<<joy->joystickName(i)<<" axex:"<<joy->joystickNumAxes(i)<<"buttons:"<<joy->joystickNumButtons(i);
+        qDebug()<<"J:"<<i<<" name:"<<joy->joystickName(i)<<" axex:"<<joy->joystickNumAxes(i)<<"buttons:"<<joy->joystickNumButtons(i)<<"hats:"<<joy->joystickNumHats(i);
         for(auto j=0; j<_joystick_data->number_axes;j++)
         {
             _joystick_data->axis.append(0);
         }
-
         // Buttons
         setButtons_number( _joystick_data->number_btn  = joy->joystickNumButtons(i));
         //qDebug()<<"J"<<i<<"buttons:"<<joy->joystickNumButtons(i);
         for(auto j=0; j<_joystick_data->number_btn;j++)
         {
             _joystick_data->button.append(false);
+        }
+        // Hats
+        setHats_number(_joystick_data->number_hats = joy->joystickNumHats(i));
+        //qDebug()<<"J"<<i<<"hats:"<<joy->joystickNumHats(i);
+        for(auto j=0; j<_joystick_data->number_hats;j++)
+        {
+            _joystick_data->hat.append(0);
         }
     }
 
@@ -235,6 +247,8 @@ void cJoystick::clear_joystick()
 void cJoystick::updateData()
 {
     if (!joy) return;
+
+
     pollJoystick();
     if (!m_lock) {
         setY1axis((-_joystick_data->axis[m_y1axis_ind]*127/32767)/m_devider);
@@ -254,6 +268,26 @@ void cJoystick::updateData()
     if (b==!m_key_4) { m_key_4=b; emit key_4Changed();}
     b=_joystick_data->button[m_key_5_ind];
     if (b==!m_key_5) { m_key_5=b; emit key_5Changed();}
+    for (auto i=0; i<_joystick_data->number_btn; i++ ){
+        if (_buttons.length()==0) {_buttons = _joystick_data->button; break;}
+        if (_buttons[i]!=_joystick_data->button[i])
+        { emit keysChanged(); _buttons = _joystick_data->button;
+            keys();
+            break;
+        }
+    }
+    for (auto i=0; i<_joystick_data->number_hats; i++ ) {
+        //qDebug()<<"H"<<_hats<<"HH"<<_joystick_data->hat;
+        //qDebug()<<"H"<<_hats[0]<<"HH"<<_joystick_data->hat[0];
+        if (_hats.length()==0) {_hats=_joystick_data->hat; break;}
+        if (_hats[i]!=_joystick_data->hat[i])
+        {
+            emit hatsChanged();
+            //qDebug()<<"H"<<_hats[0]<<"HH"<<_joystick_data->hat[0];
+            _hats = _joystick_data->hat;
+            break;
+        }
+    }
 
 }
 
@@ -275,6 +309,7 @@ void cJoystick::saveSettings()
     settings.setValue("Joystick",name());
     settings.setValue("Joystick-axes",m_axes_number);
     settings.setValue("Joystick-buttons",m_buttons_number);
+    settings.setValue("Joystick-hats",m_hats_number);
     settings.setValue("Joystick-x1",m_x1axis_ind);
     settings.setValue("Joystick-x2",m_x2axis_ind);
     settings.setValue("Joystick-y1",m_y1axis_ind);
@@ -285,6 +320,8 @@ void cJoystick::saveSettings()
     settings.setValue("Joystick-b4",m_key_3_ind);
     settings.setValue("Joystick-b5",m_key_4_ind);
     settings.setValue("Joystick-b6",m_key_5_ind);
+    for (auto i=0; i<16; i++)
+        settings.setValue("Joystick-bn"+QString::number(i),key_map[i]);
     settings.endGroup();
 }
 
@@ -303,12 +340,54 @@ void cJoystick::readSettings()
     setKey_3_ind(settings.value("Joystick-b4",3).toInt());
     setKey_4_ind(settings.value("Joystick-b5",4).toInt());
     setKey_5_ind(settings.value("Joystick-b6",5).toInt());
+    for (auto i=0; i<16; i++)
+        key_map[i]=settings.value("Joystick-bn"+QString::number(i)).toInt();
+
+    settings.endGroup();
+    qDebug()<<key_map;
+}
+
+int cJoystick::map(int ind)
+{
+    return key_map[ind];
+}
+
+void cJoystick::setmap(int ind, int id)
+{
+    key_map[ind]=id;
+}
+
+int cJoystick::hats_number() const
+{
+    return m_hats_number;
+}
+
+void cJoystick::setHats_number(int hats_number)
+{
+    m_hats_number = hats_number;
+    emit hats_numberChanged();
 }
 
 void cJoystick::setButtons_number(int buttons_number)
 {
     m_buttons_number = buttons_number;
     emit buttons_numberChanged();
+}
+
+QList<bool> cJoystick::keys()
+{
+    QList<bool> _buttons;
+    for (auto i=0;i<_joystick_data->number_btn; i++)
+        _buttons.append(_joystick_data->button[key_map[i]]);
+//    qDebug()<<"IB>"<<_joystick_data->button;
+//    qDebug()<<"CB>"<<_buttons;
+    return _buttons;
+}
+
+QList<int> cJoystick::hats()
+{
+    if (!_joystick_data) qDebug()<<"JOYSTICK_DATA _NULL_PTR!!!" ;
+    return  _joystick_data->hat;
 }
 
 void cJoystick::setAxes_number(int axes_number)
@@ -480,5 +559,9 @@ void cJoystick::pollJoystick()
     for(auto i=0;i<_joystick_data->number_btn;i++)
     {
         _joystick_data->button[i] = joy->buttons[i];
+    }
+    for(auto i=0;i<_joystick_data->number_hats;i++)
+    {
+        _joystick_data->hat[i] = joy->hats[i];
     }
 }

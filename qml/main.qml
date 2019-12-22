@@ -28,7 +28,7 @@ Window {
     property bool camera_umg: false //false - камеры ПМГРЭ true - камеры ЮМГ
     property string streaming: ":sout=#duplicate{dst=display,dst=std{access=file,mux=mp4,dst=" //параметры стриминга vlc при записи - дубликация потоков
     property bool pause: false // если истина то показываются часики...
-
+    property alias rig: networker
     // Поле в реестре vlc_options
     //:high-priority,:spu,:ods,:clock-synchro=0,:clock-jitter=10000  Убрана синхронизация времени и
     //                                джиттер задран как советует VLC для тяжелых условий сетевого доступа
@@ -203,10 +203,10 @@ Window {
         repeat: true
         running: coolSettings.auto
         onTriggered: {
-            if (rig.temperature > coolSettings.text_on * 1)
-                rig.engine2 = true
-            if (rig.temperature < coolSettings.text_off * 1)
-                rig.engine2 = false
+            if (rig0.temperature > coolSettings.text_on * 1)
+                rig0.engine2 = true
+            if (rig0.temperature < coolSettings.text_off * 1)
+                rig0.engine2 = false
         }
     }
 
@@ -216,18 +216,18 @@ Window {
         if (subtitle.interval === 0)
             return
         //console.log( "CAM1 POSITION: "+vlcPlayer1.time+ " = " + vlcPlayer1.input.length + " = " + vlcPlayer1.input.time)
-        var s = "A=" + rig.ampere + ":" + rig.ampere2 + ":" + rig.ampere3 + " V="
-                + rig.voltage + ":" + rig.voltage2 + ":" + rig.voltage3 + "\r\n"
-        s = s + " P=" + rig.pressure + ":" + rig.pressure2 + " t="
-                + rig.temperature + ":" + rig.temperature2 + " h=" + rig.altitude + " k="
-                + rig.kren + " T=" + rig.tangag + " R=" + rig.turns
-        s = s + " J=" + rig.joystick_x1 + ":" + rig.joystick_x2 + ":"
-                + rig.joystick_y1 + ":" + rig.joystick_y2
+        var s = "A=" + rig0.ampere + ":" + rig0.ampere2 + ":" + rig0.ampere3 + " V="
+                + rig0.voltage + ":" + rig0.voltage2 + ":" + rig0.voltage3 + "\r\n"
+        s = s + " P=" + rig0.pressure + ":" + rig0.pressure2 + " t="
+                + rig0.temperature + ":" + rig0.temperature2 + " h=" + rig0.altitude + " k="
+                + rig0.kren + " T=" + rig0.tangag + " R=" + rig0.turns
+        s = s + " J=" + rig0.joystick_x1 + ":" + rig0.joystick_x2 + ":"
+                + rig0.joystick_y1 + ":" + rig0.joystick_y2
         cam1.write_subtitles(vlcPlayer1.time, s)
     }
 
     RigModel {
-        id: rig
+        id: rig0
         board: 0
         joystick_y1: j.y1axis * (j.key_0 || j.lock)
         joystick_y2: j.y2axis * (j.key_0 || j.lock)
@@ -243,7 +243,7 @@ Window {
         camera4: camSettings.cam4
         property bool lamp_tag: false
         property var rig_types: ["grab6", "grab2", "gkgbu", "mgbu", "NPA"]
-        Component.onCompleted: networker.reg(rig)
+        Component.onCompleted: networker.reg(rig0)
 
     }
     RigModel {
@@ -268,7 +268,7 @@ Window {
         console.log("STATE: " + mainRect.state + " ind:" + cams[0].index
                     + cams[1].index + cams[2].index + cams[3].index)
 
-        if (rig.rigtype === "mgbu") {
+        if (rig0.rigtype === "mgbu") {
             console.log("CHANGE LAYOUT FOR MGBU")
             if (mainRect.state === "LAYOUT_CAM4") {
                 mainRect.state = "4-KAM-all"
@@ -438,19 +438,6 @@ Window {
             menu.visible = false
             joystick_setup.visible = false
             break
-        case "CHANGE RIG TYPE":
-            menu.visible = false
-            camsettings.visible = false
-            settings.visible = false
-            joystick_setup.visible = false
-            help.visible = false
-            var i = rig.rig_types.indexOf(dashboard.state)
-            if (i === rig.rig_types.length - 1)
-                dashboard.state = rig.rig_types[0]
-            else
-                dashboard.state = rig.rig_types[i + 1]
-            rig.rigtype = dashboard.state
-            break
         case "MENU":
             menu.visible = menu.visible ? false : true
             camsettings.visible = false
@@ -481,14 +468,14 @@ Window {
             mainRect.state = cmd
             break
         case "LAMP":
-            rig.lamp = !rig.lamp
+            rig0.lamp = !rig0.lamp
             break
         case "LAMPS":
             lampsSettings.visible = !lampsSettings.visible
             lampsSettings.height = lampsSettings.visible ? 160 : 0
             break
         case "CAMERA ON":
-            rig.camera = rig.camera ? false : true
+            rig0.camera = rig0.camera ? false : true
             break
         case "CAMSET":
             //окно с выбором включенных камер - не передаются параметры в rig
@@ -501,22 +488,22 @@ Window {
             coolSettings.height = coolSettings.visible ? 160 : 0
             break
         case "ENGINE1":
-            rig.engine = rig.engine ? false : true
+            rig0.engine = rig0.engine ? false : true
             break
         case "ENGINE2":
-            rig.engine2 = rig.engine2 ? false : true
+            rig0.engine2 = rig0.engine2 ? false : true
             break
         case "COOLING":
-            rig.engine2 = !rig.engine2
+            rig0.engine2 = !rig0.engine2
             break
         case "RECONNECT":
-            rig.reconnect()
+            networker.reconnect()
             break
         case "PUMP":
-            rig.pump = rig.pump ? false : true
+            rig0.pump = rig0.pump ? false : true
             break
         case "MANIP":
-            rig.pump = !rig.pump
+            rig0.pump = !rig0.pump
             break
         case "SCREENSHOT":
             var dt = new Date()
@@ -530,11 +517,11 @@ Window {
         case "DEMO":
             recording = 0
             //mainRect.state = "3-KAM-bol1" // "3-KAM-mal"
-            vlcPlayer4.mrl = "file:///" + win.filepath + "/demo/04.mpg"
+            vlcPlayer4.mrl = "file:///" + win.filepath + "demo/04.mpg"
             //vlcPlayer1.play()
-            vlcPlayer3.mrl = "file:///" + win.filepath + "/demo/02.mpg"
+            vlcPlayer3.mrl = "file:///" + win.filepath + "demo/02.mpg"
             //vlcPlayer2.play()
-            vlcPlayer2.mrl = "file:///" + win.filepath + "/demo/03.mpg"
+            vlcPlayer2.mrl = "file:///" + win.filepath + "demo/03.mpg"
 
             //vlcPlayer3.play()
             //vlcPlayer1.mrl = "file:///"+win.filepath+"/demo/01.mpg"
@@ -852,8 +839,11 @@ Window {
             onKey_0Changed: if (key_0 && j.ispresent)
                                 fcommand("JKEY0")
             devider: 1 + key_5
+            //onKeysChanged: print(keys)
+            //onHatsChanged: print(hats)
             //onX1axisChanged: console.log(j.x1axis)
         }
+
         RigJoystick {
             id: j2
             current: 1
@@ -865,8 +855,8 @@ Window {
             id: dashboard
             width: 180
             z: 10
-            source: rig
-            state: rig.rigtype
+            rig: rig0
+            state: rig0.rigtype
             containerheight: parent.height
             anchors {
                 margins: 10
@@ -1368,7 +1358,8 @@ Window {
     }
     ControlPanel {
         id: controlPanel
-        source: rig
+        source: rig0
+        net: networker
         cam: win.cams
         //width: 1000
         height: 100
@@ -1433,7 +1424,7 @@ Window {
         height: 500
         anchors.centerIn: parent
         cam: win.cams
-        rig: rig
+        rig: networker
         visible: false
     }
     Joystick_setup {

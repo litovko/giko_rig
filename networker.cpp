@@ -108,7 +108,23 @@ void cNetworker::readData()
 
 void cNetworker::reconnect()
 {
+    qDebug()<<"reconnect";
+    tcpClient.disconnectFromHost();
+    tcpClient.close();
+    tcpClient.abort();
+    setClient_connected(false);
+    QTimer::singleShot(2000, this, SLOT(start_client())); //конектимся через 2 секунды после выполнения конструктора
+}
 
+bool cNetworker::good_data() const
+{
+    return m_good_data;
+}
+
+void cNetworker::setGood_data(bool good_data)
+{
+    m_good_data = good_data;
+    emit good_dataChanged();
 }
 
 int cNetworker::timer_connect_interval() const
@@ -139,6 +155,7 @@ bool cNetworker::client_connected() const
 void cNetworker::setClient_connected(bool client_connected)
 {
     m_client_connected = client_connected;
+    emit client_connectedChanged();
 }
 
 quint16 cNetworker::port() const

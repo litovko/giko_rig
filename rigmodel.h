@@ -43,13 +43,13 @@ class cRigmodel : public QObject
     Q_PROPERTY(bool engine2 READ engine2 WRITE setEngine2 NOTIFY engine2Changed)  //включение выключение мотора 2
 
     Q_PROPERTY(bool pump READ pump WRITE setPump NOTIFY pumpChanged)  //включение выключение мотора промывки
-//    Q_PROPERTY(int joystick READ joystick WRITE setJoystick NOTIFY joystickChanged)
+    //    Q_PROPERTY(int joystick READ joystick WRITE setJoystick NOTIFY joystickChanged)
 
     Q_PROPERTY(int joystick_x1 READ joystick_x1 WRITE setJoystick_x1 NOTIFY joystick_x1Changed)
     Q_PROPERTY(int joystick_y1 READ joystick_y1 WRITE setJoystick_y1 NOTIFY joystick_y1Changed)
     Q_PROPERTY(int joystick_x2 READ joystick_x2 WRITE setJoystick_x2 NOTIFY joystick_x2Changed)
     Q_PROPERTY(int joystick_y2 READ joystick_y2 WRITE setJoystick_y2 NOTIFY joystick_y2Changed)
-// NPA значения ana после пересчета по данным джойстика для NPA
+    // NPA значения ana после пересчета по данным джойстика для NPA
     Q_PROPERTY(int ana1 READ ana1 NOTIFY ana1Changed)
     Q_PROPERTY(int ana2 READ ana2 NOTIFY ana2Changed)
     Q_PROPERTY(int ana3 READ ana3 NOTIFY ana3Changed)
@@ -66,8 +66,8 @@ class cRigmodel : public QObject
     Q_PROPERTY(int light3 READ light3 WRITE setLight3 NOTIFY light3Changed)
     Q_PROPERTY(int light4 READ light4 WRITE setLight4 NOTIFY light4Changed)
     //############ адрес и порт и другие параметры
-//    Q_PROPERTY(QString address READ address WRITE setAddress NOTIFY addressChanged)
-//    Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
+    //    Q_PROPERTY(QString address READ address WRITE setAddress NOTIFY addressChanged)
+    //    Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
     Q_PROPERTY(int timer_send_interval READ timer_send_interval WRITE setTimer_send_interval NOTIFY timer_send_intervalChanged)
     Q_PROPERTY(int timer_connect_interval READ timer_connect_interval WRITE setTimer_connect_interval NOTIFY timer_connect_intervalChanged)
     Q_PROPERTY(int freerun READ freerun WRITE setFreerun NOTIFY freerunChanged) // Valve free run  - свободный ход клапанов в процентах
@@ -76,11 +76,11 @@ class cRigmodel : public QObject
     Q_PROPERTY(int timer_delay_engine2 READ timer_delay_engine2 WRITE setTimer_delay_engine2 NOTIFY timer_delay_engine2Changed)// время включения разгрузки мотора 2
     //############ свойства - статусы tcp соединения
 
-    Q_PROPERTY(bool client_connected READ client_connected NOTIFY client_connectedChanged)
-    Q_PROPERTY(bool good_data READ good_data  NOTIFY good_dataChanged)
+//    Q_PROPERTY(bool client_connected READ client_connected NOTIFY client_connectedChanged)
+//    Q_PROPERTY(bool good_data READ good_data  NOTIFY good_dataChanged)
 
 public:
-        explicit cRigmodel(QObject *parent = nullptr);
+    explicit cRigmodel(QObject *parent = nullptr);
     virtual ~cRigmodel() {saveSettings();}
     //############ занчения, получаемые по сети от контроллера
     void setPressure(const int &pressure);
@@ -108,11 +108,11 @@ public:
     QString rigtype() const;
     void setRigtypeInt(const int &rigtype);
 
-//    void setAddress(const QString  &address);
-//    QString address() const;
+    //    void setAddress(const QString  &address);
+    //    QString address() const;
 
-//    void setPort(const quint16 &port);
-//    quint16  port() const;
+    //    void setPort(const quint16 &port);
+    //    quint16  port() const;
 
     void setTimer_send_interval(const int &timer_send_interval);
     int  timer_send_interval() const;
@@ -302,8 +302,8 @@ signals:
     void camera2Changed();
     void camera3Changed();
     void camera4Changed();
-//    void addressChanged();
-//    void portChanged();
+    //    void addressChanged();
+    //    void portChanged();
     void timer_send_intervalChanged();
     void timer_connect_intervalChanged();
     void freerunChanged();
@@ -335,21 +335,21 @@ signals:
 
 public slots:
 
-//    void start_client();
+    //    void start_client();
 
-//    void clientConnected();  // слот для обработки события присоединения клиента к серверу.
-//    void clientDisconnected();
+    //    void clientConnected();  // слот для обработки события присоединения клиента к серверу.
+    //    void clientDisconnected();
     //void updateSendTimer();
     void saveSettings();
     void readSettings();
     //void updateClientProgress(qint64 numBytes);
     QJsonObject getData();
-//    void displayError(QAbstractSocket::SocketError socketError);
+    //    void displayError(QAbstractSocket::SocketError socketError);
     void sendData(); //слот должен вызываться любым событием, которое меняет данные, предназначенные для отправки.
-    void readData(); //расклаываем полученные от сервера данные по параметрам
+    //void readData(); //расклаываем полученные от сервера данные по параметрам
     void sendKoeff();
     void reset();
-    Q_INVOKABLE void reconnect();
+//    Q_INVOKABLE void reconnect();
     void setana();
 
 
@@ -383,7 +383,7 @@ private:
     //QString m_address="localhost";
     //quint16 m_port=1212;
     int m_freerun;
-    bool m_client_connected = false;
+//    bool m_client_connected = false;
 
     std::map<std::string, std::function<void(int)>> _fmap;
     bool handle_tag(const QString &tag,  const QString &val);
@@ -406,7 +406,7 @@ private:
     int m_light2=0;
     int m_light3=0;
     int m_light4=0;
-            //коэффициенты и пороги
+    //коэффициенты и пороги
     int m_knpa=1; //коэффициент тока
     int m_knpv=1; //коэффициент наприяжения
     int m_knpi=1; //коэффициент давлени масла
@@ -415,13 +415,13 @@ private:
     int m_limz=100000; //порог по току утечки
     QString m_gmod="move"; //
 
-    bool m_good_data=false;
+//    bool m_good_data=false;
     bool m_check_type=false;
 
 
 
 
-    QTcpSocket tcpClient;
+    //QTcpSocket tcpClient;
     QTimer timer_connect;
     QTimer timer_send;
     int m_timer_send_interval;

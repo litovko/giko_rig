@@ -17,7 +17,7 @@ QJoystick::QJoystick()
 //                <<"prod:"<<SDL_JoystickGetDeviceProduct(i)
 //               <<"type:"<<SDL_JoystickGetDeviceType(i)
 //              <<"inst:"<<SDL_JoystickGetDeviceInstanceID(i)
-//             <<"paly:"<<SDL_JoystickGetDevicePlayerIndex(i);
+//             <<"play:"<<SDL_JoystickGetDevicePlayerIndex(i);
 //    }
 }
 
@@ -45,6 +45,13 @@ int QJoystick::joystickNumButtons(int js)
     Q_ASSERT(js < availableJoysticks());
     Q_ASSERT(js >= 0);
     return (SDL_JoystickNumButtons(m_joystick));
+}
+
+int QJoystick::joystickNumHats(int js)
+{
+    Q_ASSERT(js < availableJoysticks());
+    Q_ASSERT(js >= 0);
+    return (SDL_JoystickNumHats(m_joystick));
 }
 
 
@@ -80,6 +87,7 @@ void QJoystick::getdata()
 {
     axis.clear();
     buttons.clear();
+    hats.clear();
 
 
         SDL_Event event;
@@ -88,14 +96,13 @@ void QJoystick::getdata()
     for(int i=0;i<SDL_JoystickNumAxes(m_joystick);i++)
     {
         axis.append(SDL_JoystickGetAxis(m_joystick,i));
-
     }
-
-
-
     for(int i=0;i<SDL_JoystickNumButtons(m_joystick);i++)
     {
         buttons.append(SDL_JoystickGetButton(m_joystick,i));
-
+    }
+    for(int i=0;i<SDL_JoystickNumHats(m_joystick);i++)
+    {
+        hats.append(SDL_JoystickGetHat(m_joystick,i));
     }
 }

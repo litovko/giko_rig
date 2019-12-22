@@ -9,6 +9,7 @@ import Gyco 1.0
 Item {
     id: controlPanel
     property RigModel source
+    property Networker net
     property list<RigCamera> cam
     property int lampSize:100
     property int fontSize:15
@@ -134,7 +135,7 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:"СВЯЗЬ"
-                    active:source.client_connected
+                    active:net.client_connected
                     command: "RECONNECT"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
@@ -143,7 +144,7 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:"ДАННЫЕ"
-                    active:source.good_data
+                    active:net.good_data
                 }
                 MyLamp{
                     id: voltage

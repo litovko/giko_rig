@@ -8,8 +8,8 @@ Item {
     property int fontSize: 12
     property bool error: false
     property string command: "Command"
-    property string command2: "PlayCommand"
-    property string command3: "StopCommand"
+    property string command2: "command2"
+    property string command3: "command3"
     signal lampClicked(string lamp_command)
     MouseArea {
         id: ma

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QVariant>
 #include "qJoyStick.h"
 
 class cJoystick : public QObject
@@ -34,7 +35,11 @@ class cJoystick : public QObject
     Q_PROPERTY(int key_5_ind READ key_5_ind WRITE setKey_5_ind NOTIFY key_5_indChanged)
     Q_PROPERTY(int axes_number READ axes_number NOTIFY axes_numberChanged)
     Q_PROPERTY(int buttons_number READ buttons_number NOTIFY buttons_numberChanged)
+    Q_PROPERTY(int hats_number READ buttons_number NOTIFY buttons_numberChanged)
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+    Q_PROPERTY(QList<bool> keys READ keys NOTIFY keysChanged)
+    Q_PROPERTY(QList<int> hats READ hats NOTIFY hatsChanged)
+
 public:
     explicit cJoystick(QObject *parent = nullptr);
     ~cJoystick();
@@ -100,6 +105,10 @@ public:
     void setAxes_number(int axes_number);
 
     void setButtons_number(int buttons_number);
+    QList<bool> keys();
+    QList<int> hats();
+    int hats_number() const;
+    void setHats_number(int hats_number);
 
 signals:
     void x1axisChanged();
@@ -124,11 +133,14 @@ signals:
     void key_5_indChanged();
     void axes_numberChanged();
     void buttons_numberChanged();
+    void hats_numberChanged();
     void ispresentChanged();
     void lockChanged();
     void deviderChanged();
     void currentChanged();
     void nameChanged();
+    void keysChanged();
+    void hatsChanged();
 public slots:
 //    void readJoystickState();
     void checkJoystick();
@@ -136,6 +148,8 @@ public slots:
     void change_numbers();
     void saveSettings();
     void readSettings();
+    Q_INVOKABLE int map(int ind);
+    Q_INVOKABLE void setmap(int ind, int id);
 private:
     QJoystick *joy=nullptr;
     bool m_ispresent=false;
@@ -164,13 +178,22 @@ private:
     int m_key_3_ind=3;
     int m_key_4_ind=4;
     int m_key_5_ind=5;
+    QMap<int,int> key_map={  // первая позиция - номер кнопки в программе IND , вторая позиция - ID физической кнопки
+        {0,0}, {1,1}, {2,2}, {3,3}, {4,4},
+        {5,5}, {6,6}, {7,7}, {8,8}, {9,9},
+        {10,10}, {11,11}, {12,12}, {13,13}, {14,14}
+    };
+
     int m_axes_number=0;
     int m_buttons_number=0;
+    int m_hats_number=0;
     struct joydata{
         int number_axes;
         int number_btn;
+        int number_hats;
         QList<int> axis;
         QList<bool> button;
+        QList<int> hat;
         QString name;
     };
     // Available number of joysticks.
@@ -180,6 +203,8 @@ private:
     void init_joystick();
     void clear_joystick();
     //QMap<int,QString> joy_map;
+    QList<bool> _buttons;
+    QList<int> _hats;
 };
 
 #endif // CJOYSTICK_H
