@@ -830,14 +830,16 @@ Window {
         RigJoystick {
             id: j
             current: 0
-            onKey_3Changed: if (key_3)
-                                fcommand("LAYOUT")
-            onKey_2Changed: if (key_2)
-                                fcommand("PLAY")
-            onKey_1Changed: if (key_1)
-                                fcommand("JKEY1")
-            onKey_0Changed: if (key_0 && j.ispresent)
-                                fcommand("JKEY0")
+            onKeyChanged:
+                console.log("KEY"+key)
+//            onKey_3Changed: if (key_3)
+//                                fcommand("LAYOUT")
+//            onKey_2Changed: if (key_2)
+//                                fcommand("PLAY")
+//            onKey_1Changed: if (key_1)
+//                                fcommand("JKEY1")
+//            onKey_0Changed: if (key_0 && j.ispresent)
+//                                fcommand("JKEY0")
             devider: 1 + key_5
             //onKeysChanged: print(keys)
             //onHatsChanged: print(hats)
@@ -1425,6 +1427,7 @@ Window {
         anchors.centerIn: parent
         cam: win.cams
         rig: networker
+        rig_model: rig0
         visible: false
     }
     Joystick_setup {

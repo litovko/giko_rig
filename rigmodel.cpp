@@ -378,28 +378,6 @@ int cRigmodel::joystick_y2() const
     return m_joystick_y2;
 }
 
-//void cRigmodel::setAddress(const QString  &address)
-//{
-//    m_address = address;
-//    emit addressChanged();
-//}
-
-//QString cRigmodel::address() const
-//{
-//    return m_address;
-//}
-
-//quint16 cRigmodel::port() const
-//{
-//    return m_port;
-//}
-
-//void cRigmodel::setPort(const quint16  &port)
-//{
-//    m_port = port;
-//    emit portChanged();
-//}
-
 int cRigmodel::timer_send_interval() const
 {
     return m_timer_send_interval;
@@ -423,53 +401,6 @@ void cRigmodel::setTimer_connect_interval(const int  &timer_connect_interval)
     emit timer_connect_intervalChanged();
 }
 
-
-
-
-//################################################################
-
-
-
-//void cRigmodel::start_client()
-//{
-//    if (m_client_connected) return;
-//    bytesWritten = 0;
-//    if (tcpClient.state()) {
-//        qDebug()<<"tcpstate:"<<tcpClient.state();
-//        return;
-//    }
-//    qDebug()<<"Rig Start client >>>"<<m_address<<"poprt"<<::QString().number(m_port);
-
-//    tcpClient.connectToHost(m_address, m_port);
-
-//}
-//void cRigmodel::clientConnected()
-//{
-//    qDebug()<<"Rig Client connected to address >>>"+this->address()+" port:"+ ::QString().number(m_port);
-//    //qDebug()<<"Rig Network state >>> "<<tcpClient.errorString();
-//    setClient_connected(true);
-//    _no_resp=false;
-//    //sendData();
-//}
-//void cRigmodel::clientDisconnected()
-//{
-//    qDebug()<<"Rig Client disconnected form address >>>"+this->address()+" port:"+ QString::number(port());
-//    setClient_connected(false);
-//    setGood_data(false);
-//    reset();
-//}
-
-
-
-
-
-//void cRigmodel::updateClientProgress(qint64 numBytes)
-//{
-//    // callen when the TCP client has written some bytes
-//    bytesWritten += static_cast<quint16>(numBytes);
-//    //qDebug()<<"Rig Update client progress >>>"+::QString().number(bytesWritten);
-//}
-
 QJsonObject cRigmodel::getData()
 {
     QJsonObject json;
@@ -489,19 +420,9 @@ QJsonObject cRigmodel::getData()
             //+ m_camera3*64*m_camera
             + m_camera4*128*m_camera
             ;
-    qDebug()<<sizeof (json);
+    //qDebug()<<sizeof (json);
     return json;
 }
-
-//void cRigmodel::displayError(QAbstractSocket::SocketError socketError)
-//{
-//    qDebug()<<"Rig Network error >>> "<<tcpClient.errorString()<<"socketError ->"<<socketError;
-//    tcpClient.close();
-//    setClient_connected(false);
-//    setGood_data(false);
-//    reset();
-
-//}
 
 
 //##################### функция отправки данных
@@ -509,30 +430,31 @@ QJsonObject cRigmodel::getData()
 void cRigmodel::sendData()
 {
     emit dataChanged();
-    qDebug()<<"data changed";
+    //qDebug()<<"data changed";
 }
-QString cRigmodel::NPA_data()
-{
-    int dig= m_engine*1
-            +   !m_pump*4  //замок манипулятора открывание
-            +   m_pump*2 //замок манипулятора закрывание
-            +   m_lamp*64
-            //+ m_camera*8
-            + m_engine2*8
-            + m_camera1*16*m_camera
-            + m_camera2*32*m_camera
-            //+ m_camera3*64*m_camera
-            + m_camera4*128*m_camera
-            ;
-    QString Data="{ana1:"+::QString().number(ana1(),10)\
-            +";ana2:"+::QString().number(ana2(),10)\
-            +";ana3:"+::QString().number(ana3(),10)\
-            +";ana4:"+::QString().number(ana4(),10);
-    Data=Data+";gmod:"+gmod_decode(m_gmod)\
-            //+";svet:"+::QString().number((m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16)))
-            +";dig1:"+::QString().number(dig,10)+"}CONSDATA";
-    return Data;
-}
+
+//QString cRigmodel::NPA_data()
+//{
+//    int dig= m_engine*1
+//            +   !m_pump*4  //замок манипулятора открывание
+//            +   m_pump*2 //замок манипулятора закрывание
+//            +   m_lamp*64
+//            //+ m_camera*8
+//            + m_engine2*8
+//            + m_camera1*16*m_camera
+//            + m_camera2*32*m_camera
+//            //+ m_camera3*64*m_camera
+//            + m_camera4*128*m_camera
+//            ;
+//    QString Data="{ana1:"+::QString().number(ana1(),10)\
+//            +";ana2:"+::QString().number(ana2(),10)\
+//            +";ana3:"+::QString().number(ana3(),10)\
+//            +";ana4:"+::QString().number(ana4(),10);
+//    Data=Data+";gmod:"+gmod_decode(m_gmod)\
+//            //+";svet:"+::QString().number((m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16)))
+//            +";dig1:"+::QString().number(dig,10)+"}CONSDATA";
+//    return Data;
+//}
 bool cRigmodel::handle_tag(const QString &tag, const QString &val)
 {
     bool ok=false;

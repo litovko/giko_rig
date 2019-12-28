@@ -38,7 +38,7 @@ void cNetworker::start_client()
         qDebug()<<"tcpstate:"<<tcpClient.state();
         return;
     }
-    qDebug()<<"Rig Start client >>>"<<address()<<"poprt"<<::QString().number( port() );
+    qDebug()<<"Rig trying to connect to >>>"<<address()<<"poprt"<<::QString().number( port() );
 
     tcpClient.connectToHost(address(), m_port);
 }
@@ -50,13 +50,13 @@ void cNetworker::updateSendTimer()
 
 void cNetworker::deviceConnected()
 {
-    qDebug()<<"Rig Client connected to address >>>"+this->address()+" port:"+ ::QString().number(port());
+    qDebug()<<"Rig Client connected to >>>"+this->address()+" port:"+ ::QString().number(port());
     setClient_connected(true);
 }
 
 void cNetworker::deviceDisconnected()
 {
-    qDebug()<<"Rig Client disconnected form address >>>"+this->address()+" port:"+ QString::number(port());
+    qDebug()<<"Rig Client disconnected form >>>"+this->address()+" port:"+ QString::number(port());
     setClient_connected(false);
 }
 
@@ -97,7 +97,7 @@ void cNetworker::sendData()
     QJsonDocument doc;
     doc.setArray(arr);
     int bytesToWrite = static_cast<int>(tcpClient.write(doc.toJson(QJsonDocument::Compact)));
-    if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
+    if (bytesToWrite<0)qWarning()<<"Rig: Something wrong on sending data >>>"+tcpClient.errorString();
     if (bytesToWrite>=0)qDebug()<<"sent:"<<doc.toJson(QJsonDocument::Compact)<<" len:"<<::QString().number(bytesToWrite);
 }
 

@@ -9,6 +9,7 @@ Item {
     visible: true
     property list<RigCamera> cam
     property Networker rig:null
+    property RigModel rig_model: null
     onVisibleChanged: { cbj.checked=j.ispresent}
     RegExpValidator{
         id: adr_validator
@@ -91,10 +92,10 @@ Item {
                 console.log("Setup Settings cb"+cb_cam2.checked+" "+cb_cam3.checked)
                 rig.timer_send_interval=parseInt(rig_msec1.text);
                 rig.timer_connect_interval=parseInt(rig_msec2.text);
-                rig.freerun=parseInt(rig_msec3.text);
-                rig.check_type=cb_check_type.checked;
-                rig.timer_delay_engine1=free_msec1.text;
-                rig.timer_delay_engine2=free_msec2.text;
+                rig_model.freerun=parseInt(rig_msec3.text);
+                rig_model.check_type=cb_check_type.checked;
+                rig_model.timer_delay_engine1=free_msec1.text;
+                rig_model.timer_delay_engine2=free_msec2.text;
                 network_caching=parseInt(netcache.text);
                 win.filesize=cbfilesize.currentText
                 j.ispresent=cbj.checked
@@ -468,7 +469,7 @@ Item {
                 y: -3
                 width: 96
                 height: 20
-                text: rig.freerun
+                text: rig_model.freerun
                 padding: 0
                 font.pointSize: 9
                 validator: IntValidator {
@@ -495,7 +496,7 @@ Item {
                 y: -2
                 width: 96
                 height: 20
-                text: rig.timer_delay_engine1
+                text: rig_model.timer_delay_engine1
                 padding: 0
                 font.pointSize: 9
                 validator: IntValidator {
@@ -522,7 +523,7 @@ Item {
                 y: -2
                 width: 96
                 height: 20
-                text: rig.timer_delay_engine2
+                text: rig_model.timer_delay_engine2
                 padding: 0
                 font.pointSize: 9
                 validator: IntValidator {

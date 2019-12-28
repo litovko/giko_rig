@@ -84,8 +84,8 @@ void cJoystick::setCurrent(const int &current)
 }
 void cJoystick::setIspresent (const bool &pr)
 {
-    m_key_0=!pr; //устанавливаем кнопку "Fire" в нажатое состояние для управления с помощью мышки и клавиатуры.
-    emit key_0Changed();
+//    m_key_0=!pr; //устанавливаем кнопку "Fire" в нажатое состояние для управления с помощью мышки и клавиатуры.
+//    emit key_0Changed();
     m_ispresent=pr;
     emit ispresentChanged();
 }
@@ -122,35 +122,35 @@ int cJoystick::current()
     return m_current;
 }
 
-bool cJoystick::key_0()
-{
-    return m_key_0;
-}
+//bool cJoystick::key_0()
+//{
+//    return m_key_0;
+//}
 
-bool cJoystick::key_1()
-{
-    return m_key_1;
-}
+//bool cJoystick::key_1()
+//{
+//    return m_key_1;
+//}
 
-bool cJoystick::key_2()
-{
-    return m_key_2;
-}
+//bool cJoystick::key_2()
+//{
+//    return m_key_2;
+//}
 
-bool cJoystick::key_3()
-{
-    return m_key_3;
-}
+//bool cJoystick::key_3()
+//{
+//    return m_key_3;
+//}
 
-bool cJoystick::key_4()
-{
-    return m_key_4;
-}
+//bool cJoystick::key_4()
+//{
+//    return m_key_4;
+//}
 
-bool cJoystick::key_5()
-{
-    return m_key_5;
-}
+//bool cJoystick::key_5()
+//{
+//    return m_key_5;
+//}
 // Initialize Joystick information
 // Get # of joysticks available
 // Populate # of axes and buttons
@@ -211,12 +211,12 @@ void cJoystick::init_joystick()
     if (m_x1axis_ind>m_axes_number-1) setX1axis_ind(0);
     if (m_y2axis_ind>m_axes_number-1) setY2axis_ind(0);
     if (m_x2axis_ind>m_axes_number-1) setX2axis_ind(0);
-    if (m_key_0_ind>m_buttons_number-1) setKey_0_ind(0);
-    if (m_key_1_ind>m_buttons_number-1) setKey_1_ind(0);
-    if (m_key_2_ind>m_buttons_number-1) setKey_2_ind(0);
-    if (m_key_3_ind>m_buttons_number-1) setKey_3_ind(0);
-    if (m_key_4_ind>m_buttons_number-1) setKey_4_ind(0);
-    if (m_key_5_ind>m_buttons_number-1) setKey_5_ind(0);
+//    if (m_key_0_ind>m_buttons_number-1) setKey_0_ind(0);
+//    if (m_key_1_ind>m_buttons_number-1) setKey_1_ind(0);
+//    if (m_key_2_ind>m_buttons_number-1) setKey_2_ind(0);
+//    if (m_key_3_ind>m_buttons_number-1) setKey_3_ind(0);
+//    if (m_key_4_ind>m_buttons_number-1) setKey_4_ind(0);
+//    if (m_key_5_ind>m_buttons_number-1) setKey_5_ind(0);
     emit axes_numberChanged();
     emit buttons_numberChanged();
     emit nameChanged();
@@ -247,8 +247,6 @@ void cJoystick::clear_joystick()
 void cJoystick::updateData()
 {
     if (!joy) return;
-
-
     pollJoystick();
     if (!m_lock) {
         setY1axis((-_joystick_data->axis[m_y1axis_ind]*127/32767)/m_devider);
@@ -256,26 +254,16 @@ void cJoystick::updateData()
         setY2axis((-_joystick_data->axis[m_y2axis_ind]*127/32767)/m_devider);
         setX2axis((_joystick_data->axis[m_x2axis_ind]*127/32767)/m_devider);
     }
-    bool b=(_joystick_data->button[m_key_0_ind]);
-    if (b==!m_key_0) { m_key_0=b; emit key_0Changed();}
-    b=_joystick_data->button[m_key_1_ind];
-    if (b==!m_key_1) { m_key_1=b; emit key_1Changed();}
-    b=_joystick_data->button[m_key_2_ind];
-    if (b==!m_key_2) { m_key_2=b; emit key_2Changed();}
-    b=_joystick_data->button[m_key_3_ind];
-    if (b==!m_key_3) { m_key_3=b; emit key_3Changed();}
-    b=_joystick_data->button[m_key_4_ind];
-    if (b==!m_key_4) { m_key_4=b; emit key_4Changed();}
-    b=_joystick_data->button[m_key_5_ind];
-    if (b==!m_key_5) { m_key_5=b; emit key_5Changed();}
+    bool keyschanged =false;
     for (auto i=0; i<_joystick_data->number_btn; i++ ){
-        if (_buttons.length()==0) {_buttons = _joystick_data->button; break;}
-        if (_buttons[i]!=_joystick_data->button[i])
-        { emit keysChanged(); _buttons = _joystick_data->button;
-            keys();
-            break;
+        if (_buttons.length()==0) {_buttons = _joystick_data->button; break;} //надо инициализировать по сигналу при изменении количества кнопок джойстик
+        if (_buttons[i]!=_joystick_data->button[i]){
+            emit keyChanged(key_map[i]);
+            _buttons[i] = _joystick_data->button[i];
+            keyschanged=true;
         }
     }
+    if (keyschanged) emit keysChanged();
     for (auto i=0; i<_joystick_data->number_hats; i++ ) {
         //qDebug()<<"H"<<_hats<<"HH"<<_joystick_data->hat;
         //qDebug()<<"H"<<_hats[0]<<"HH"<<_joystick_data->hat[0];
@@ -314,12 +302,12 @@ void cJoystick::saveSettings()
     settings.setValue("Joystick-x2",m_x2axis_ind);
     settings.setValue("Joystick-y1",m_y1axis_ind);
     settings.setValue("Joystick-y2",m_y2axis_ind);
-    settings.setValue("Joystick-b1",m_key_0_ind);
-    settings.setValue("Joystick-b2",m_key_1_ind);
-    settings.setValue("Joystick-b3",m_key_2_ind);
-    settings.setValue("Joystick-b4",m_key_3_ind);
-    settings.setValue("Joystick-b5",m_key_4_ind);
-    settings.setValue("Joystick-b6",m_key_5_ind);
+//    settings.setValue("Joystick-b1",m_key_0_ind);
+//    settings.setValue("Joystick-b2",m_key_1_ind);
+//    settings.setValue("Joystick-b3",m_key_2_ind);
+//    settings.setValue("Joystick-b4",m_key_3_ind);
+//    settings.setValue("Joystick-b5",m_key_4_ind);
+//    settings.setValue("Joystick-b6",m_key_5_ind);
     for (auto i=0; i<16; i++)
         settings.setValue("Joystick-bn"+QString::number(i),key_map[i]);
     settings.endGroup();
@@ -334,12 +322,12 @@ void cJoystick::readSettings()
     setX2axis_ind(settings.value("Joystick-x2",1).toInt());
     setY1axis_ind(settings.value("Joystick-y1",2).toInt());
     setY2axis_ind(settings.value("Joystick-y2",3).toInt());
-    setKey_0_ind(settings.value("Joystick-b1",0).toInt());
-    setKey_1_ind(settings.value("Joystick-b2",1).toInt());
-    setKey_2_ind(settings.value("Joystick-b3",2).toInt());
-    setKey_3_ind(settings.value("Joystick-b4",3).toInt());
-    setKey_4_ind(settings.value("Joystick-b5",4).toInt());
-    setKey_5_ind(settings.value("Joystick-b6",5).toInt());
+//    setKey_0_ind(settings.value("Joystick-b1",0).toInt());
+//    setKey_1_ind(settings.value("Joystick-b2",1).toInt());
+//    setKey_2_ind(settings.value("Joystick-b3",2).toInt());
+//    setKey_3_ind(settings.value("Joystick-b4",3).toInt());
+//    setKey_4_ind(settings.value("Joystick-b5",4).toInt());
+//    setKey_5_ind(settings.value("Joystick-b6",5).toInt());
     for (auto i=0; i<16; i++)
         key_map[i]=settings.value("Joystick-bn"+QString::number(i)).toInt();
 
@@ -437,71 +425,71 @@ int cJoystick::axes_number() const
     return m_axes_number;
 }
 
-int cJoystick::key_1_ind() const
-{
-    return m_key_1_ind;
-}
+//int cJoystick::key_1_ind() const
+//{
+//    return m_key_1_ind;
+//}
 
-void cJoystick::setKey_1_ind(int key_1_ind)
-{
-    m_key_1_ind = key_1_ind;
-    emit key_1_indChanged();
-}
+//void cJoystick::setKey_1_ind(int key_1_ind)
+//{
+//    m_key_1_ind = key_1_ind;
+//    emit key_1_indChanged();
+//}
 
-int cJoystick::key_2_ind() const
-{
-    return m_key_2_ind;
-}
+//int cJoystick::key_2_ind() const
+//{
+//    return m_key_2_ind;
+//}
 
-void cJoystick::setKey_2_ind(int key_2_ind)
-{
-    m_key_2_ind = key_2_ind;
-    emit key_2_indChanged();
-}
+//void cJoystick::setKey_2_ind(int key_2_ind)
+//{
+//    m_key_2_ind = key_2_ind;
+//    emit key_2_indChanged();
+//}
 
-int cJoystick::key_3_ind() const
-{
-    return m_key_3_ind;
-}
+//int cJoystick::key_3_ind() const
+//{
+//    return m_key_3_ind;
+//}
 
-void cJoystick::setKey_3_ind(int key_3_ind)
-{
-    m_key_3_ind = key_3_ind;
-    emit key_3_indChanged();
-}
+//void cJoystick::setKey_3_ind(int key_3_ind)
+//{
+//    m_key_3_ind = key_3_ind;
+//    emit key_3_indChanged();
+//}
 
-int cJoystick::key_4_ind() const
-{
-    return m_key_4_ind;
-}
+//int cJoystick::key_4_ind() const
+//{
+//    return m_key_4_ind;
+//}
 
-void cJoystick::setKey_4_ind(int key_4_ind)
-{
-    m_key_4_ind = key_4_ind;
-    emit key_4_indChanged();
-}
+//void cJoystick::setKey_4_ind(int key_4_ind)
+//{
+//    m_key_4_ind = key_4_ind;
+//    emit key_4_indChanged();
+//}
 
-int cJoystick::key_5_ind() const
-{
-    return m_key_5_ind;
-}
+//int cJoystick::key_5_ind() const
+//{
+//    return m_key_5_ind;
+//}
 
-void cJoystick::setKey_5_ind(int key_5_ind)
-{
-    m_key_5_ind = key_5_ind;
-    emit key_5_indChanged();
-}
+//void cJoystick::setKey_5_ind(int key_5_ind)
+//{
+//    m_key_5_ind = key_5_ind;
+//    emit key_5_indChanged();
+//}
 
-int cJoystick::key_0_ind() const
-{
-    return m_key_0_ind;
-}
+//int cJoystick::key_0_ind() const
+//{
+//    return m_key_0_ind;
+//}
 
-void cJoystick::setKey_0_ind(int key_0_ind)
-{
-    m_key_0_ind = key_0_ind;
-    emit key_0_indChanged();
-}
+//void cJoystick::setKey_0_ind(int key_0_ind)
+//{
+//    m_key_0_ind = key_0_ind;
+//    emit key_0_indChanged();
+//}
 
 int cJoystick::y2axis_ind() const
 {
