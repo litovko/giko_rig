@@ -14,6 +14,7 @@ Item {
     property int cx4:0 // поворот камеры вокруг своей оси Y2
     property int ca: 0 //индикатор угола поворота камеры -135...135 от нуля наверху
     property bool cool: false
+    property alias brdr: b.visible
 
     onCx1Changed: canvas.requestPaint()
     onCx2Changed: canvas.requestPaint()
@@ -26,6 +27,14 @@ Item {
         if (val>delta) return fillstyle_green
         if (Math.abs(val)<delta) return fillstyle_yellow
         return fillstyle_red
+    }
+
+    Rectangle {
+        id: b
+        color: "transparent"
+        anchors.fill: parent
+        border.color: "#FFFF00"
+        radius:10
     }
 
     GArrow {
@@ -74,39 +83,39 @@ Item {
         positive: true
         value:cx2
     }
-    GArrow { //лебедка
-        id: a4down
-        anchors.margins: npa.height*8/90
-        anchors.bottom: parent.bottom
-        angle: 0
-        height: npa.height*8/90
-        width: npa.height*8/90
-        x: npa.height*11/90
-        positive: false
-        value: cx3
-    }
-    GArrow {
-        id: a4up
-        anchors.margins: npa.height*25/90
-        anchors.bottom: parent.bottom
-        angle: 180
-        height: npa.height*8/90
-        width: npa.height*8/90
-        x: npa.height*11/90
-        positive: true
-        value: cx3
-    }
-    GArrow {
-        id: a3up
-        anchors.margins: npa.height*25/90
-        anchors.bottom: parent.bottom
-        angle: 180
-        height: npa.height*8/90
-        width: npa.height*8/90
-        x: npa.height*65.3/90
-        positive: true
-        state: cool?"RED":"NOP"
-    }
+//    GArrow { //лебедка
+//        id: a4down
+//        anchors.margins: npa.height*8/90
+//        anchors.bottom: parent.bottom
+//        angle: 0
+//        height: npa.height*8/90
+//        width: npa.height*8/90
+//        x: npa.height*11/90
+//        positive: false
+//        value: cx3
+//    }
+//    GArrow {
+//        id: a4up
+//        anchors.margins: npa.height*25/90
+//        anchors.bottom: parent.bottom
+//        angle: 180
+//        height: npa.height*8/90
+//        width: npa.height*8/90
+//        x: npa.height*11/90
+//        positive: true
+//        value: cx3
+//    }
+//    GArrow {
+//        id: a3up
+//        anchors.margins: npa.height*25/90
+//        anchors.bottom: parent.bottom
+//        angle: 180
+//        height: npa.height*8/90
+//        width: npa.height*8/90
+//        x: npa.height*65.3/90
+//        positive: true
+//        state: cool?"RED":"NOP"
+//    }
 
     Canvas {
         id: canvas
@@ -165,55 +174,55 @@ Item {
             Fig.text_m(ctx,hc+2*r0/3,x1+r0/2,th,"1", "left", "top", linestyle2)
             Fig.text_m(ctx,hc+3*r0/3,vc,th,"2", "left", "top", linestyle2)
 
-            //лебедка
-            ctx.beginPath()
-            ctx.lineWidth = 4
-            ctx.strokeStyle = Qt.rgba(0.6, 0.6, 1.0, 0.8)
+//            //лебедка
+//            ctx.beginPath()
+//            ctx.lineWidth = 4
+//            ctx.strokeStyle = Qt.rgba(0.6, 0.6, 1.0, 0.8)
             var xl1=width/6
             var wl=width/12
             var yl1=height-2*wl
             var hl=height/8
-            ctx.moveTo(xl1-wl/2,yl1)
-            ctx.lineTo(xl1-wl/2,yl1-hl)
-            ctx.moveTo(xl1+wl/2,yl1)
-            ctx.lineTo(xl1+wl/2,yl1-hl)
-            ctx.moveTo(xl1-wl/2,yl1-hl/5)
-            ctx.lineTo(xl1+wl/2,yl1-hl/5)
-            ctx.moveTo(xl1-wl/2,yl1-hl*4/5)
-            ctx.lineTo(xl1+wl/2,yl1-hl*4/5)
-            ctx.moveTo(xl1+wl/2,yl1-hl/2)
-            ctx.lineTo(xl1+wl/2+wl/4,yl1-hl/2)
-            ctx.stroke()
-            ctx.closePath()
-            Fig.circle(ctx,xl1+wl+wl/4, yl1-hl/2, wl/2, Qt.rgba(0.6, 0.6, 1.0, 0.0))
-            Fig.arrow(ctx,xl1+wl+wl/4,yl1-hl*4/6,wl/4, 0,  Qt.rgba(0.6, 0.6, 1.0, 0.8))
-            Fig.arrow(ctx,xl1+wl+wl/4,yl1-hl*2/6,wl/4, 180, Qt.rgba(0.6, 0.6, 1.0, 0.8))
-            Fig.text_m(ctx,xl1+2*wl,yl1,th,"3", "left", "top", linestyle2)
-            Fig.circle(ctx,xl1+wl+wl/4, yl1-hl*3/2, wl/4, position&4?fillstyle_red:Qt.rgba(1.0, 1.0, 1.0, 0.1))
-            Fig.circle(ctx,xl1+wl+wl/4, yl1+hl/2, wl/4, position&8?fillstyle_red:Qt.rgba(1.0, 1.0, 1.0, 0.1))
+//            ctx.moveTo(xl1-wl/2,yl1)
+//            ctx.lineTo(xl1-wl/2,yl1-hl)
+//            ctx.moveTo(xl1+wl/2,yl1)
+//            ctx.lineTo(xl1+wl/2,yl1-hl)
+//            ctx.moveTo(xl1-wl/2,yl1-hl/5)
+//            ctx.lineTo(xl1+wl/2,yl1-hl/5)
+//            ctx.moveTo(xl1-wl/2,yl1-hl*4/5)
+//            ctx.lineTo(xl1+wl/2,yl1-hl*4/5)
+//            ctx.moveTo(xl1+wl/2,yl1-hl/2)
+//            ctx.lineTo(xl1+wl/2+wl/4,yl1-hl/2)
+//            ctx.stroke()
+//            ctx.closePath()
+//            Fig.circle(ctx,xl1+wl+wl/4, yl1-hl/2, wl/2, Qt.rgba(0.6, 0.6, 1.0, 0.0))
+//            Fig.arrow(ctx,xl1+wl+wl/4,yl1-hl*4/6,wl/4, 0,  Qt.rgba(0.6, 0.6, 1.0, 0.8))
+//            Fig.arrow(ctx,xl1+wl+wl/4,yl1-hl*2/6,wl/4, 180, Qt.rgba(0.6, 0.6, 1.0, 0.8))
+//            Fig.text_m(ctx,xl1+2*wl,yl1,th,"3", "left", "top", linestyle2)
+//            Fig.circle(ctx,xl1+wl+wl/4, yl1-hl*3/2, wl/4, position&4?fillstyle_red:Qt.rgba(1.0, 1.0, 1.0, 0.1))
+//            Fig.circle(ctx,xl1+wl+wl/4, yl1+hl/2, wl/4, position&8?fillstyle_red:Qt.rgba(1.0, 1.0, 1.0, 0.1))
             xl1=width*4/6
 
-            Fig.circle(ctx,xl1+wl+wl/4, yl1-hl/2, wl/2, Qt.rgba(0.6, 0.6, 1.0, 0.0))
-            Fig.circle(ctx,xl1, yl1-hl/2, wl/2, Qt.rgba(0.6, 0.6, 1.0, 0.0))
-            Fig.arrow(ctx,xl1+wl+wl/4,yl1-hl*4/6,wl/4, 0,  Qt.rgba(0.6, 0.6, 1.0, 0.8))
-            Fig.arrow(ctx,xl1+wl+wl/4,yl1-hl*2/6,wl/4, 180, Qt.rgba(0.6, 0.6, 1.0, 0.8))
-            Fig.arrow(ctx,xl1,yl1-hl*4/6,wl/4, 0,  Qt.rgba(0.6, 0.6, 1.0, 0.8))
-            ctx.beginPath()
-            ctx.moveTo(xl1+wl/2,yl1-hl/2)
-            ctx.lineTo(xl1+wl/2+wl/4,yl1-hl/2)
-            ctx.stroke()
-            ctx.closePath()
-            ctx.beginPath()
-            ctx.strokeStyle = fillstyle_red
-            var yy=yl1-hl/2-wl/2
-            ctx.moveTo(xl1,yy)
-            for (var i=0; i<4; i++) {
-              yy=yy-wl/2*7/10
-              ctx.lineTo(xl1-wl/2,yy)
-              ctx.lineTo(xl1+wl/2,yy)
-            }
-            ctx.stroke()
-            ctx.closePath()
+//            Fig.circle(ctx,xl1+wl+wl/4, yl1-hl/2, wl/2, Qt.rgba(0.6, 0.6, 1.0, 0.0))
+//            Fig.circle(ctx,xl1, yl1-hl/2, wl/2, Qt.rgba(0.6, 0.6, 1.0, 0.0))
+//            Fig.arrow(ctx,xl1+wl+wl/4,yl1-hl*4/6,wl/4, 0,  Qt.rgba(0.6, 0.6, 1.0, 0.8))
+//            Fig.arrow(ctx,xl1+wl+wl/4,yl1-hl*2/6,wl/4, 180, Qt.rgba(0.6, 0.6, 1.0, 0.8))
+//            Fig.arrow(ctx,xl1,yl1-hl*4/6,wl/4, 0,  Qt.rgba(0.6, 0.6, 1.0, 0.8))
+//            ctx.beginPath()
+//            ctx.moveTo(xl1+wl/2,yl1-hl/2)
+//            ctx.lineTo(xl1+wl/2+wl/4,yl1-hl/2)
+//            ctx.stroke()
+//            ctx.closePath()
+//            ctx.beginPath()
+//            ctx.strokeStyle = fillstyle_red
+//            var yy=yl1-hl/2-wl/2
+//            ctx.moveTo(xl1,yy)
+//            for (var i=0; i<4; i++) {
+//              yy=yy-wl/2*7/10
+//              ctx.lineTo(xl1-wl/2,yy)
+//              ctx.lineTo(xl1+wl/2,yy)
+//            }
+//            ctx.stroke()
+//            ctx.closePath()
             ctx.restore()
 
         }

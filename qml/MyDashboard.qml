@@ -6,19 +6,16 @@ Item {
 
     property int gaugesize: 180-20 // 20 - поля: два по 10
     property int containerheight: 1080
-    property RigModel rig: null
+    property Board rig: null
 
     state: rig.rigtype
     states: [
         State {
             name: "NPA"
-//            PropertyChanges {target: gkgbu_pult;   visible: false}
-//            PropertyChanges {target: mgbu_pult;   visible: false}
             PropertyChanges {target: npa_pult;   visible: true}
             PropertyChanges {target: power2;   visible: false}
             PropertyChanges {target: power;   visible: false}
             PropertyChanges {target: turns;   visible: false}
-//            PropertyChanges {target: row_left;   visible: true}
 //            PropertyChanges {target: row_right;   visible: true}
             PropertyChanges {target: voltage_mgbu;   visible: true}
             PropertyChanges {target: voltage;   visible: false}
@@ -87,11 +84,10 @@ Item {
 //    }
     NPA {
         id: npa_pult
-        //anchors.centerIn: parent
         height: 450
         width: 450
         joystick: j
-        rigmodel: rig
+        board0: rig
         btn0: j.key_1
         btn_lock: j.key_4 // locker key
         z:4

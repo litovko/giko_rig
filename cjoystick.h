@@ -29,6 +29,7 @@ class cJoystick : public QObject
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QList<bool> keys READ keys NOTIFY keysChanged) // KEYS
     Q_PROPERTY(QList<int> hats READ hats NOTIFY hatsChanged)
+    Q_PROPERTY(QList<bool> invert READ invert WRITE setInvert NOTIFY invertChanged )
 
 public:
     explicit cJoystick(QObject *parent = nullptr);
@@ -95,6 +96,9 @@ public:
     int hats_number() const;
     void setHats_number(int hats_number);
 
+    QList<bool> invert() const;
+    void setInvert(const QList<bool> &invert);
+
 signals:
     void x1axisChanged();
     void y1axisChanged();
@@ -117,6 +121,7 @@ signals:
     void keysChanged();
     void keyChanged(int key);
     void hatsChanged();
+    void invertChanged();
 public slots:
 //    void readJoystickState();
     void checkJoystick();
@@ -170,6 +175,7 @@ private:
     //QMap<int,QString> joy_map;
     QList<bool> _buttons;
     QList<int> _hats;
+    QList<bool> m_invert={false, false, false, false};
 };
 
 #endif // CJOYSTICK_H

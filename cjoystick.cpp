@@ -244,15 +244,28 @@ void cJoystick::clear_joystick()
     emit nameChanged();
 }
 
+QList<bool> cJoystick::invert() const
+{
+//    qDebug()<<"m_invert_read:"<<m_invert;
+    return m_invert;
+}
+
+void cJoystick::setInvert(const QList<bool> &invert)
+{
+    m_invert = invert;
+//    qDebug()<<"m_invert_write:"<<m_invert;
+    emit invertChanged();
+}
+
 void cJoystick::updateData()
 {
     if (!joy) return;
     pollJoystick();
     if (!m_lock) {
-        setY1axis((-_joystick_data->axis[m_y1axis_ind]*127/32767)/m_devider);
-        setX1axis((_joystick_data->axis[m_x1axis_ind]*127/32767)/m_devider);
-        setY2axis((-_joystick_data->axis[m_y2axis_ind]*127/32767)/m_devider);
-        setX2axis((_joystick_data->axis[m_x2axis_ind]*127/32767)/m_devider);
+        setY1axis(((m_invert[m_y1axis_ind]?-1:1) * _joystick_data->axis[m_y1axis_ind]*127/32767)/m_devider);
+        setX1axis(((m_invert[m_x1axis_ind]?-1:1) * _joystick_data->axis[m_x1axis_ind]*127/32767)/m_devider);
+        setY2axis(((m_invert[m_y2axis_ind]?-1:1) * _joystick_data->axis[m_y2axis_ind]*127/32767)/m_devider);
+        setX2axis(((m_invert[m_x2axis_ind]?-1:1) * _joystick_data->axis[m_x2axis_ind]*127/32767)/m_devider);
     }
     bool keyschanged =false;
     for (auto i=0; i<_joystick_data->number_btn; i++ ){
@@ -302,14 +315,12 @@ void cJoystick::saveSettings()
     settings.setValue("Joystick-x2",m_x2axis_ind);
     settings.setValue("Joystick-y1",m_y1axis_ind);
     settings.setValue("Joystick-y2",m_y2axis_ind);
-//    settings.setValue("Joystick-b1",m_key_0_ind);
-//    settings.setValue("Joystick-b2",m_key_1_ind);
-//    settings.setValue("Joystick-b3",m_key_2_ind);
-//    settings.setValue("Joystick-b4",m_key_3_ind);
-//    settings.setValue("Joystick-b5",m_key_4_ind);
-//    settings.setValue("Joystick-b6",m_key_5_ind);
+
+
     for (auto i=0; i<16; i++)
         settings.setValue("Joystick-bn"+QString::number(i),key_map[i]);
+    for (auto i=0; i<m_invert.length(); i++)
+        settings.setValue("Joystick-axes-ivert"+QString::number(i),m_invert[i]);
     settings.endGroup();
 }
 
@@ -322,17 +333,13 @@ void cJoystick::readSettings()
     setX2axis_ind(settings.value("Joystick-x2",1).toInt());
     setY1axis_ind(settings.value("Joystick-y1",2).toInt());
     setY2axis_ind(settings.value("Joystick-y2",3).toInt());
-//    setKey_0_ind(settings.value("Joystick-b1",0).toInt());
-//    setKey_1_ind(settings.value("Joystick-b2",1).toInt());
-//    setKey_2_ind(settings.value("Joystick-b3",2).toInt());
-//    setKey_3_ind(settings.value("Joystick-b4",3).toInt());
-//    setKey_4_ind(settings.value("Joystick-b5",4).toInt());
-//    setKey_5_ind(settings.value("Joystick-b6",5).toInt());
+
     for (auto i=0; i<16; i++)
         key_map[i]=settings.value("Joystick-bn"+QString::number(i)).toInt();
-
+    for (auto i=0; i<m_invert.length(); i++)
+        m_invert[i]=settings.value("Joystick-axes-ivert"+QString::number(i)).toBool();
     settings.endGroup();
-    qDebug()<<key_map;
+//    qDebug()<<key_map;
 }
 
 int cJoystick::map(int ind)

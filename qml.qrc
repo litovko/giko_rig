@@ -44,5 +44,6 @@
         <file>qml/NPA_bubble.qml</file>
         <file>qml/StatePannel.qml</file>
         <file>qml/Joystick_setup.qml</file>
+        <file>qml/MySwitcher.qml</file>
     </qresource>
 </RCC>

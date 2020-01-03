@@ -13,6 +13,7 @@ Item {
     property int ax4:0
     property int ax5:0
     property int delta : 5
+    property alias brdr: b.visible
     onAx1Changed: canvas.requestPaint()
     onAx2Changed: {canvas.requestPaint(); }
     onAx3Changed: canvas.requestPaint()
@@ -22,6 +23,13 @@ Item {
         if (val>delta) return fillstyle_green
         if (Math.abs(val)<delta) return fillstyle_yellow
         return fillstyle_red
+    }
+    Rectangle {
+        id: b
+        color: "transparent"
+        anchors.fill: parent
+        border.color: "#FFFF00"
+        radius:10
     }
 
     GArrow {

@@ -9,7 +9,7 @@ Item {
     visible: true
     property list<RigCamera> cam
     property Networker rig:null
-    property RigModel rig_model: null
+    property Board rig_model: null
     onVisibleChanged: { cbj.checked=j.ispresent}
     RegExpValidator{
         id: adr_validator

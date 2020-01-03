@@ -11,6 +11,13 @@ Item {
     property alias btn_apply: b_apply
     property alias btn_close: b_apply1
     property alias rect: rectangle1
+    function setinvert() {
+        switcher1.inv = joystick.invert[comboBox1.currentIndex]
+        switcher2.inv = joystick.invert[comboBox2.currentIndex]
+        switcher3.inv = joystick.invert[comboBox3.currentIndex]
+        switcher4.inv = joystick.invert[comboBox4.currentIndex]
+    }
+
     ListModel { //список названий кнопок и соответствующих им индексов
         id: btnlistmodel
         Component.onCompleted: {
@@ -152,44 +159,100 @@ Item {
                 id: label6
                 x: 0
                 y: 137
-                width: 172
+                width: 62
                 height: 19
                 color: "#ffffff"
-                text: qsTr("Номер оси x2'")
+                text: qsTr("Ось №4'")
                 font.pointSize: 10
+                MySwitcher {
+                    id: switcher4
+                    onInvChanged: {
+                        joystick.invert[joystick.x2axis_ind] = inv
+                        setinvert()
+                    }
+                    Connections {
+                            target: comboBox4
+                            onCurrentIndexChanged: {
+                                joystick.x2axis_ind = comboBox4.currentIndex
+                                switcher4.inv = joystick.invert[comboBox4.currentIndex]
+                            }
+                        }
+                }
             }
 
             Label {
                 id: label5
                 x: 0
                 y: 104
-                width: 172
+                width: 62
                 height: 19
                 color: "#ffffff"
-                text: qsTr("Номер оси x1'")
+                text: qsTr("Ось №3")
                 font.pointSize: 10
+                MySwitcher {
+                    id: switcher3
+                    onInvChanged: {
+                        joystick.invert[comboBox3.currentIndex] = inv
+                        setinvert()
+                    }
+                    Connections {
+                            target: comboBox3
+                            onCurrentIndexChanged: {
+                                joystick.x1axis_ind = comboBox3.currentIndex
+                                switcher3.inv = joystick.invert[comboBox3.currentIndex]
+                            }
+                        }
+                }
             }
 
             Label {
                 id: label4
                 x: 0
                 y: 71
-                width: 172
+                width: 62
                 height: 19
                 color: "#ffffff"
-                text: qsTr("Номер оси y2'")
+                text: qsTr("Ось №2")
                 font.pointSize: 10
+                MySwitcher {
+                    id: switcher2
+                    onInvChanged: {
+                        joystick.invert[comboBox2.currentIndex] = inv
+                        setinvert()
+                    }
+                    Connections {
+                            target: comboBox2
+                            onCurrentIndexChanged: {
+                                joystick.y2axis_ind = comboBox2.currentIndex
+                                switcher2.inv = joystick.invert[comboBox2.currentIndex]
+                            }
+                        }
+                }
             }
 
             Label {
                 id: label3
                 x: 0
                 y: 34
-                width: 172
+                width: 62
                 height: 19
                 color: "#ffffff"
-                text: qsTr("Номер оси y1'")
+                text: qsTr("Ось №1")
                 font.pointSize: 10
+                MySwitcher {
+                    id: switcher1
+                    onInvChanged: {
+                        joystick.invert[comboBox1.currentIndex]=inv
+                        setinvert()
+                    }
+                    Connections {
+                            target: comboBox1
+                            onCurrentIndexChanged: {
+                                joystick.y1axis_ind = comboBox1.currentIndex
+                                switcher1.inv = joystick.invert[comboBox1.currentIndex]
+                            }
+                        }
+                }
             }
             ListView { // список кнопок
                 id: lv
@@ -281,8 +344,8 @@ Item {
                     id: mcomboBox1
                 }
                 onCurrentIndexChanged: {
-                    //                    console.log("setJy1"+currentIndex)
-                    if (joystick.ispresent) joystick.y1axis_ind=currentIndex
+                    if (!joystick.ispresent) return
+
                 }
             }
 
@@ -296,8 +359,8 @@ Item {
                     id: mcomboBox2
                 }
                 onCurrentIndexChanged: {
-                    //                    console.log("setJy2"+currentIndex)
-                    if (joystick.ispresent)joystick.y2axis_ind=currentIndex
+                    if (!joystick.ispresent) return
+
                 }
             }
 
@@ -323,7 +386,8 @@ Item {
                 }
                 onCurrentIndexChanged: {
                     //console.log("setJx1"+currentIndex)
-                    if (joystick.ispresent) joystick.x1axis_ind=currentIndex
+                    if (!joystick.ispresent) return
+                    joystick.x1axis_ind=currentIndex
                 }
             }
 
@@ -348,8 +412,9 @@ Item {
                     id: mcomboBox4
                 }
                 onCurrentIndexChanged: {
-                    //console.log("setJx2"+currentIndex)
-                    if (joystick.ispresent) joystick.x2axis_ind=currentIndex
+                    console.log("setJx2:"+currentIndex)
+                    if (joystick.ispresent) return
+
                 }
             }
 
@@ -387,10 +452,11 @@ Item {
                     for( ji=1; ji<=joystick.buttons_number; ji++) {
                         btnnumberlistmodel.append({text: ji})
                     }
-                    comboBox1.currentIndex=joystick.y1axis_ind
-                    comboBox2.currentIndex=joystick.y2axis_ind
-                    comboBox3.currentIndex=joystick.x1axis_ind
-                    comboBox4.currentIndex=joystick.x2axis_ind
+                    comboBox1.currentIndex = joystick.y1axis_ind
+                    comboBox2.currentIndex = joystick.y2axis_ind
+                    comboBox3.currentIndex = joystick.x1axis_ind
+                    comboBox4.currentIndex = joystick.x2axis_ind
+                    setinvert()
                 }
             }
 
@@ -408,6 +474,12 @@ Item {
                 }
             }
         }
-  }
+    }
 }
 
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/

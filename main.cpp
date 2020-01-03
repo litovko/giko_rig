@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
     qDebug()<<QTime::currentTime().toString("hh:mm:ss:zzz ")<<"Start"<<giko_name<<"  "<<giko_program<<" vlc_debug:"<<vlc_debug;
 
 
-    qmlRegisterType<cRigmodel>("Gyco", 1, 0, "RigModel");
+    qmlRegisterType<cRigmodel>("Gyco", 1, 0, "Board");
     qmlRegisterType<cNetworker>("Gyco", 1, 0, "Networker");
     qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
     qmlRegisterType<cJoystick>("Gyco", 1, 0, "RigJoystick");

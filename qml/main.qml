@@ -226,13 +226,13 @@ Window {
         cam1.write_subtitles(vlcPlayer1.time, s)
     }
 
-    RigModel {
+    Board {
         id: rig0
         board: 0
-        joystick_y1: j.y1axis * (j.key_0 || j.lock)
-        joystick_y2: j.y2axis * (j.key_0 || j.lock)
-        joystick_x1: j.x1axis * (j.key_0 || j.lock)
-        joystick_x2: j.x2axis * (j.key_0 || j.lock)
+//        joystick_y1: j.y1axis * (j.key_0 || j.lock)
+//        joystick_y2: j.y2axis * (j.key_0 || j.lock)
+//        joystick_x1: j.x1axis * (j.key_0 || j.lock)
+//        joystick_x2: j.x2axis * (j.key_0 || j.lock)
         light1: lampsSettings.lamp1 * lamp_tag
         light2: lampsSettings.lamp2 * lamp_tag
         light3: lampsSettings.lamp3 * lamp_tag
@@ -241,12 +241,10 @@ Window {
         camera2: camSettings.cam2
         camera3: camSettings.cam3
         camera4: camSettings.cam4
-        property bool lamp_tag: false
-        property var rig_types: ["grab6", "grab2", "gkgbu", "mgbu", "NPA"]
-        Component.onCompleted: networker.reg(rig0)
+        Component.onCompleted: networker.reg(this)
 
     }
-    RigModel {
+    Board {
         id: rig1
         board: 1
         joystick_y1: 1
@@ -257,7 +255,20 @@ Window {
         light2: 0
         light3: 0
         light4: 0
-        Component.onCompleted: networker.reg(rig1)
+        Component.onCompleted: networker.reg(this)
+    }
+    Board {
+        id: rig2
+        board: 2
+        joystick_y1: 1
+        joystick_y2: 2
+        joystick_x1: 3
+        joystick_x2: 4
+        light1: 0
+        light2: 0
+        light3: 0
+        light4: 0
+        Component.onCompleted: networker.reg(this)
     }
     Networker {
         id: networker
@@ -830,6 +841,7 @@ Window {
         RigJoystick {
             id: j
             current: 0
+
             onKeyChanged:
                 console.log("KEY"+key)
 //            onKey_3Changed: if (key_3)

@@ -43,7 +43,7 @@ Item {
     property alias a4right: a4right.value
     property alias a1left: a1left.value
     property alias a1right: a1right.value
-
+    property alias brdr: b.visible
     onA1Changed:   canvas.requestPaint()
     onA2Changed:   canvas.requestPaint()
     onA3Changed:   canvas.requestPaint()
@@ -59,7 +59,13 @@ Item {
         pos_rask=position&1
         pos_home=position&2
     }
-
+    Rectangle {
+        id: b
+        color: "transparent"
+        anchors.fill: parent
+        border.color: "#FFFF00"
+        radius:10
+    }
 
     function draw1(c, p, len, angle)
     {

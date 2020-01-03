@@ -8,7 +8,7 @@ import Gyco 1.0
 //Содержит переключатели и лампочки
 Item {
     id: controlPanel
-    property RigModel source
+    property Board source
     property Networker net
     property list<RigCamera> cam
     property int lampSize:100
