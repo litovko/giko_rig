@@ -51,6 +51,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(joystick_x2Changed()), this, SLOT(setana()));
     connect(this, SIGNAL(joystick_y1Changed()), this, SLOT(setana()));
     connect(this, SIGNAL(joystick_y2Changed()), this, SLOT(setana()));
+    connect(this, SIGNAL(pinsChanged()), this, SLOT(sendData()));
 
 }
 void cRigmodel::reset()
@@ -62,52 +63,17 @@ void cRigmodel::setana()
 {
     if (m_rigtype!="NPA") return;
     int ana1=0, ana2=0, ana3=0, ana4=0;
-    if (gmod()=="move") {
-        ana4=-m_joystick_x1; // поменяно из-за пробитого транзистора
-        ana2=m_joystick_y2; // исп
-        ana3=m_joystick_y1; // исп
-        //ana2=m_joystick_y1-m_joystick_x1;
-        //ana3=m_joystick_y1+m_joystick_x1;
-    }
-    if (gmod()=="move1") {
-        ana1=0;
-        ana2=0;
-        ana3=-m_joystick_y1; //исп инвертировал
-        ana4=-m_joystick_y2; //исп инвертировал
-    }
-    if (gmod()=="hand"){
-        ana1=m_joystick_x1;
-        ana2=m_joystick_y1;
-        ana3=m_joystick_y1;
-        ana4=m_joystick_y2;
-    }
-    if (gmod()=="hand1"){
-        ana1=m_joystick_x2;
-        ana2=m_joystick_x1;
-        ana3=0;
-        ana4=0;
-    }
-    if (gmod()=="hand2"){
-        ana1=m_joystick_y2;
-        ana2=m_joystick_y1;
-        ana3=0;
-        ana4=0;
-    }
-    if (gmod()=="group"){
-        ana1=m_joystick_y2;
-        ana2=m_joystick_y1;
-        ana3=m_joystick_x2;
-        ana4=m_joystick_x1;
-    }
-    //    m_ana1=scaling(m_ana1);
-    //    m_ana2=scaling(m_ana2);
-    //    m_ana3=scaling(m_ana3);
-    //    m_ana4=scaling(m_ana4);
-    //qDebug()<<"setana y1:"<<m_joystick_y1<<" x2:"<<m_joystick_x2<<" ana1:"<<m_ana1<<" ana2:"<<m_ana2<<" ana3:"<<m_ana3;
+
+    ana1=m_joystick_x1;
+    ana2=m_joystick_y1;
+    ana3=m_joystick_x2;
+    ana4=m_joystick_y2;
+
     if (m_ana1!=ana1) {m_ana1=ana1; emit ana1Changed();}
     if (m_ana2!=ana2) {m_ana2=ana2; emit ana2Changed();}
     if (m_ana3!=ana3) {m_ana3=ana3; emit ana3Changed();}
     if (m_ana4!=ana4) {m_ana4=ana4; emit ana4Changed();}
+    //qDebug()<<" ana1:"<<m_ana1<<" ana2:"<<m_ana2<<" ana3:"<<m_ana3<<" ana4:"<<m_ana4;
 }
 
 void cRigmodel::saveSettings()
@@ -346,6 +312,7 @@ int cRigmodel::joystick_x1() const
 void cRigmodel::setJoystick_y1(const int &joystick)
 {
     if (m_joystick_y1 == joystick) return;
+//    qDebug()<<"NAY1:"<<m_joystick_y1;
     m_joystick_y1 = joystick;
     emit joystick_y1Changed();
 }
@@ -404,22 +371,31 @@ void cRigmodel::setTimer_connect_interval(const int  &timer_connect_interval)
 QJsonObject cRigmodel::getData()
 {
     QJsonObject json;
-    json["dev1"]=board();
+    json["_dev"]=board();
     json["ana1"]=ana1();
     json["ana2"]=ana2();
     json["ana3"]=ana3();
     json["svet"]=(m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16));
-    json["dig1"]= m_engine*1
-            +   !m_pump*4  //замок манипулятора открывание
-            +   m_pump*2 //замок манипулятора закрывание
-            +   m_lamp*64
-            //+ m_camera*8
-            + m_engine2*8
-            + m_camera1*16*m_camera
-            + m_camera2*32*m_camera
-            //+ m_camera3*64*m_camera
-            + m_camera4*128*m_camera
-            ;
+//    json["dig1"]= m_engine*1
+//            +   !m_pump*4  //замок манипулятора открывание
+//            +   m_pump*2 //замок манипулятора закрывание
+//            +   m_lamp*64
+//            //+ m_camera*8
+//            + m_engine2*8
+//            + m_camera1*16*m_camera
+//            + m_camera2*32*m_camera
+//            //+ m_camera3*64*m_camera
+//            + m_camera4*128*m_camera
+//            ;
+    json["dig1"]=
+             1*m_pins[0]
+            +2*m_pins[1]
+            +4*m_pins[2]
+            +8*m_pins[3]
+            +16*m_pins[4]
+            +32*m_pins[5]
+            +64*m_pins[6]
+            +128*m_pins[7];
     //qDebug()<<sizeof (json);
     return json;
 }
@@ -477,6 +453,19 @@ bool cRigmodel::handle_tag(const QString &tag, const QString &val)
 
     return ok;
 }
+
+QList<bool> cRigmodel::pins() const
+{
+    return m_pins;
+}
+
+void cRigmodel::setPins(const QList<bool> &pins)
+{
+    m_pins = pins;
+    emit pinsChanged();
+}
+
+
 
 int cRigmodel::ana2() const
 {

@@ -96,7 +96,7 @@ void cNetworker::sendData()
         arr.append(e->getData());
     QJsonDocument doc;
     doc.setArray(arr);
-    int bytesToWrite = static_cast<int>(tcpClient.write(doc.toJson(QJsonDocument::Compact)));
+    int bytesToWrite = static_cast<int>(tcpClient.write(doc.toJson(QJsonDocument::Indented)));
     if (bytesToWrite<0)qWarning()<<"Rig: Something wrong on sending data >>>"+tcpClient.errorString();
     if (bytesToWrite>=0)qDebug()<<"sent:"<<doc.toJson(QJsonDocument::Compact)<<" len:"<<::QString().number(bytesToWrite);
 }

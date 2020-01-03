@@ -4,7 +4,7 @@ import QtQuick.Controls 1.4
 import Qt.labs.settings 1.0
 import QtQuick.Controls.Styles 1.4
 import Gyco 1.0
-
+//TODO: Надо сделать управление яркостью фонарей и раздельное включение камер
 //Содержит переключатели и лампочки
 Item {
     id: controlPanel
@@ -13,6 +13,8 @@ Item {
     property list<RigCamera> cam
     property int lampSize:100
     property int fontSize:15
+    property RigJoystick j1
+    property RigJoystick j2
     signal lampClicked(string cp_command)
     width: row.width+row.spacing
     Settings {
@@ -152,6 +154,13 @@ Item {
                     width: lampSize
                     bottomText:"ПИТАНИЕ"
                     active:source.voltage
+                }
+                MyLamp{
+                    id: j_lock
+                    height: lampSize
+                    width: lampSize
+                    bottomText:"БЛОК1"
+                    active: j1.keys[0]
                 }
                 MyLamp{
                     id: camera1

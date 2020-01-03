@@ -9,12 +9,13 @@ Item {
     property color fillstyle_yellow: Qt.rgba(1.0, 1.0, 0.0, 0.7)
     property int position:0
     property int cx1:0 // не используется
-    property int cx2:0 // поворот камеры в горизонтальной плоскости
+    property int cx2:0 // поворот камеры вокруг своей оси Y2
     property int cx3:0 // лебедка
-    property int cx4:0 // поворот камеры вокруг своей оси Y2
+    property int cx4:0 // поворот камеры в горизонтальной плоскости
     property int ca: 0 //индикатор угола поворота камеры -135...135 от нуля наверху
     property bool cool: false
     property alias brdr: b.visible
+    property int shift_y : 100
 
     onCx1Changed: canvas.requestPaint()
     onCx2Changed: canvas.requestPaint()
@@ -31,15 +32,18 @@ Item {
 
     Rectangle {
         id: b
-        color: "transparent"
+        color: "black"
         anchors.fill: parent
+        opacity: 0.5
         border.color: "#FFFF00"
         radius:10
     }
 
     GArrow {
         id: a1left
-        anchors.margins: npa.height*0.5/9
+        anchors.top: parent.top
+        anchors.topMargin: npa.shift_y+npa.height*0.5/9
+        anchors.rightMargin: npa.height*0.5/9
         anchors.right: parent.horizontalCenter
         angle: 90
         height: npa.height*8/90
@@ -50,7 +54,9 @@ Item {
     }
     GArrow {
         id: a1right
-        anchors.margins: npa.height*0.5/9
+        anchors.top: parent.top
+        anchors.topMargin: npa.shift_y+npa.height*0.5/9
+        anchors.leftMargin: npa.height*0.5/9
         anchors.left: parent.horizontalCenter
         angle: -90
         height: npa.height*8/90
@@ -61,7 +67,7 @@ Item {
     }
     GArrow {//поворот камеры в горизонтальной плоскости
         id: a5down
-        anchors.margins: npa.height*25/90
+        anchors.margins: npa.height*25/90+npa.shift_y
         //anchors.left: parent.horizontalCenter
         anchors.top: parent.top
         angle: 180
@@ -73,7 +79,7 @@ Item {
     }
     GArrow {
         id: a5up
-        anchors.margins: npa.height*25/90
+        anchors.margins: npa.height*25/90+npa.shift_y
         //anchors.left: parent.horizontalCenter
         anchors.top: parent.top
         angle: 180
@@ -129,7 +135,7 @@ Item {
             ctx.strokeStyle = linestyle
             ctx.lineWidth = 2
             ctx.fillStyle = fillstyle_yellow
-            ctx.translate(width / 2, height / 2)
+            ctx.translate(width / 2, height / 2+npa.shift_y)
             //ctx.rotate(el.angle*Math.PI/180)
             ctx.translate(-width / 2, -height / 2)
             ctx.beginPath() // frame of NPA

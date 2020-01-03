@@ -413,13 +413,13 @@ Item {
             checked: cam[3].cameraenabled
         }
 
-        CheckBox {
-            id: cbj
-            x: 376
-            y: 333
-            checked: j.ispresent
-            text: qsTr("Джойстик")
-        }
+//        CheckBox {
+//            id: cbj
+//            x: 376
+//            y: 333
+//            checked: j.ispresent
+//            text: qsTr("Джойстик")
+//        }
 
         Label {
             id: ltype1

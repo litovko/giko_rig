@@ -26,8 +26,9 @@ Item {
     }
     Rectangle {
         id: b
-        color: "transparent"
+        color: "black"
         anchors.fill: parent
+        opacity: 0.5
         border.color: "#FFFF00"
         radius:10
     }

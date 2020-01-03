@@ -167,13 +167,13 @@ Item {
                 MySwitcher {
                     id: switcher4
                     onInvChanged: {
-                        joystick.invert[joystick.x2axis_ind] = inv
+                        joystick.invert[comboBox4.currentIndex] = inv
                         setinvert()
                     }
                     Connections {
                             target: comboBox4
                             onCurrentIndexChanged: {
-                                joystick.x2axis_ind = comboBox4.currentIndex
+                                joystick.y2axis_ind = comboBox4.currentIndex
                                 switcher4.inv = joystick.invert[comboBox4.currentIndex]
                             }
                         }
@@ -198,7 +198,7 @@ Item {
                     Connections {
                             target: comboBox3
                             onCurrentIndexChanged: {
-                                joystick.x1axis_ind = comboBox3.currentIndex
+                                joystick.x2axis_ind = comboBox3.currentIndex
                                 switcher3.inv = joystick.invert[comboBox3.currentIndex]
                             }
                         }
@@ -223,7 +223,7 @@ Item {
                     Connections {
                             target: comboBox2
                             onCurrentIndexChanged: {
-                                joystick.y2axis_ind = comboBox2.currentIndex
+                                joystick.y1axis_ind = comboBox2.currentIndex
                                 switcher2.inv = joystick.invert[comboBox2.currentIndex]
                             }
                         }
@@ -248,7 +248,7 @@ Item {
                     Connections {
                             target: comboBox1
                             onCurrentIndexChanged: {
-                                joystick.y1axis_ind = comboBox1.currentIndex
+                                joystick.x1axis_ind = comboBox1.currentIndex
                                 switcher1.inv = joystick.invert[comboBox1.currentIndex]
                             }
                         }
@@ -315,12 +315,12 @@ Item {
                     }
                 }
             }
-//            Text {
-//                x:381
-//                y:2
-//                text: joystickDialog.joystick.ispresent?"hats: "+joystickDialog.joystick.hats[0]:""
-//                color: "white"
-//            }
+            Text {
+                x:381
+                y:2
+                text: joystickDialog.joystick.ispresent?"hat: "+joystickDialog.joystick.hats[0]:""
+                color: "white"
+            }
 
             Slider {
                 id: sliderHorizontal1
@@ -329,7 +329,7 @@ Item {
                 width: 200
                 height: 22
                 from: -127
-                value: joystick.y1axis
+                value: joystick.x1axis
                 to: 127
             }
 
@@ -343,10 +343,6 @@ Item {
                 model: ListModel {
                     id: mcomboBox1
                 }
-                onCurrentIndexChanged: {
-                    if (!joystick.ispresent) return
-
-                }
             }
 
             ComboBox {
@@ -358,10 +354,6 @@ Item {
                 model: ListModel {
                     id: mcomboBox2
                 }
-                onCurrentIndexChanged: {
-                    if (!joystick.ispresent) return
-
-                }
             }
 
             Slider {
@@ -370,7 +362,7 @@ Item {
                 y: 70
                 width: 200
                 height: 22
-                value: joystick.y2axis
+                value: joystick.y1axis
                 from: -127
                 to: 127
             }
@@ -384,11 +376,6 @@ Item {
                 model: ListModel {
                     id: mcomboBox3
                 }
-                onCurrentIndexChanged: {
-                    //console.log("setJx1"+currentIndex)
-                    if (!joystick.ispresent) return
-                    joystick.x1axis_ind=currentIndex
-                }
             }
 
             Slider {
@@ -398,7 +385,7 @@ Item {
                 width: 200
                 height: 22
                 from: -127
-                value: joystick.x1axis
+                value: joystick.x2axis
                 to: 127
             }
 
@@ -411,11 +398,6 @@ Item {
                 model: ListModel {
                     id: mcomboBox4
                 }
-                onCurrentIndexChanged: {
-                    console.log("setJx2:"+currentIndex)
-                    if (joystick.ispresent) return
-
-                }
             }
 
             Slider {
@@ -425,7 +407,7 @@ Item {
                 width: 200
                 height: 22
                 from: -127
-                value: joystick.x2axis
+                value: joystick.y2axis
                 to: 127
             }
 
@@ -452,10 +434,10 @@ Item {
                     for( ji=1; ji<=joystick.buttons_number; ji++) {
                         btnnumberlistmodel.append({text: ji})
                     }
-                    comboBox1.currentIndex = joystick.y1axis_ind
-                    comboBox2.currentIndex = joystick.y2axis_ind
-                    comboBox3.currentIndex = joystick.x1axis_ind
-                    comboBox4.currentIndex = joystick.x2axis_ind
+                    comboBox1.currentIndex = joystick.x1axis_ind
+                    comboBox2.currentIndex = joystick.y1axis_ind
+                    comboBox3.currentIndex = joystick.x2axis_ind
+                    comboBox4.currentIndex = joystick.y2axis_ind
                     setinvert()
                 }
             }

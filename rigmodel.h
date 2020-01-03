@@ -73,9 +73,8 @@ class cRigmodel : public QObject
     Q_PROPERTY(int freerun READ freerun WRITE setFreerun NOTIFY freerunChanged) // Valve free run  - свободный ход клапанов в процентах
     Q_PROPERTY(int check_type READ check_type WRITE setCheck_type NOTIFY check_typeChanged) // Есть возможность отключить определение типа устройства если контроллер установлен не в то устройство
     Q_PROPERTY(int timer_delay_engine1 READ timer_delay_engine1 WRITE setTimer_delay_engine1 NOTIFY timer_delay_engine1Changed)// время включения разгрузки мотора 1
-    Q_PROPERTY(int timer_delay_engine2 READ timer_delay_engine2 WRITE setTimer_delay_engine2 NOTIFY timer_delay_engine2Changed)// время включения разгрузки мотора 2
-    //############ свойства - статусы tcp соединения
-
+    Q_PROPERTY(int timer_delay_engine2 READ timer_delay_engine2 WRITE setTimer_delay_engine2 NOTIFY timer_delay_engine2Changed)// время включения разгрузки мотора 2    //############ свойства - статусы tcp соединения
+    Q_PROPERTY(QList<bool> pins READ pins WRITE setPins NOTIFY pinsChanged)
 //    Q_PROPERTY(bool client_connected READ client_connected NOTIFY client_connectedChanged)
 //    Q_PROPERTY(bool good_data READ good_data  NOTIFY good_dataChanged)
 
@@ -262,6 +261,9 @@ public:
     int board() const;
     void setBoard(int board);
 
+    QList<bool> pins() const;
+    void setPins(const QList<bool> &pins);
+
 signals:
     void positionChanged();
     void pressureChanged();
@@ -326,12 +328,11 @@ signals:
     void timer_delay_engine2Changed(int timer_delay_engine2);
 
     void ana1Changed();
-
     void ana2Changed();
-
     void ana3Changed();
-
     void ana4Changed();
+
+    void pinsChanged();
 
 public slots:
 
@@ -442,6 +443,8 @@ private:
     int m_ana2=0;
     int m_ana3=0;
     int m_ana4=0;
+    QList<bool> m_pins={false, false, false, false,    //8 силовых выходов
+                        false, false, false, false};
 };
 
 #endif // RIGMODEL_H

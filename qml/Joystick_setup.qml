@@ -39,7 +39,7 @@ Rectangle {
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
         anchors.margins: 10
-        joystick: j
+        joystick: j1
         btn_apply.visible: false
         btn_close.visible: false
         rect.border.width: 0

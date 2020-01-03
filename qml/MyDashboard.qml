@@ -14,7 +14,7 @@ Item {
             name: "NPA"
             PropertyChanges {target: npa_pult;   visible: true}
             PropertyChanges {target: power2;   visible: false}
-            PropertyChanges {target: power;   visible: false}
+            PropertyChanges {target: power;   visible: true}
             PropertyChanges {target: turns;   visible: false}
 //            PropertyChanges {target: row_right;   visible: true}
             PropertyChanges {target: voltage_mgbu;   visible: true}
@@ -53,12 +53,12 @@ Item {
         dashBoard.height=(gaugesize+20)*numrows
     }
 
-    onStateChanged: {
+//    onStateChanged: {
 
-        calculatesize()
-        j.lock=false
+//        calculatesize()
+//        j.lock=false
 
-    }
+//    }
     onContainerheightChanged: calculatesize()
 //    GKGBU {
 //        id: gkgbu_pult
@@ -86,10 +86,9 @@ Item {
         id: npa_pult
         height: 450
         width: 450
-        joystick: j
-        board0: rig
-        btn0: j.key_1
-        btn_lock: j.key_4 // locker key
+        //joystick: j1
+        board1: rig1
+        board2: rig2
         z:4
         //state: rig.gmod //move, hand
     }
@@ -132,20 +131,20 @@ Item {
                     j.y1axis=0;
                 }
 
-                onPressed: {
-                    if ((dashboard.state==="grab6"||dashboard.state==="mgbu")&&(ma.mouseX>width/2))
-                         j.y2axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
-                    else j.y1axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
-                    j.ispresent=false;
-                }
-                onPositionChanged: {
-                    if (ma.pressedButtons&(Qt.LeftButton|Qt.RightButton)&&ma.containsMouse)
-                      if ((dashboard.state==="grab6"||dashboard.state==="mgbu")&&(ma.mouseX>width/2)) j.y2axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
-                      else    j.y1axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
-                    else j.y1axis=0;
-                    //console.log("Joy Y:"+j.yaxis+"btn:"+(ma.pressedButtons&(Qt.LeftButton|Qt.RightButton)))
+//                onPressed: {
+//                    if ((dashboard.state==="grab6"||dashboard.state==="mgbu")&&(ma.mouseX>width/2))
+//                         j.y2axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
+//                    else j.y1axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
+//                    j.ispresent=false;
+//                }
+//                onPositionChanged: {
+//                    if (ma.pressedButtons&(Qt.LeftButton|Qt.RightButton)&&ma.containsMouse)
+//                      if ((dashboard.state==="grab6"||dashboard.state==="mgbu")&&(ma.mouseX>width/2)) j.y2axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
+//                      else    j.y1axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
+//                    else j.y1axis=0;
+//                    //console.log("Joy Y:"+j.yaxis+"btn:"+(ma.pressedButtons&(Qt.LeftButton|Qt.RightButton)))
 
-                }
+//                }
             }
             Flow{
               id: flowrow
@@ -395,8 +394,7 @@ Item {
                         maximumValue: 100
                         stepSize: 20
                         anchors.centerIn: parent
-
-                        value: (j.key_0||j.lock)*( j.y1axis>0?Math.round(j.y1axis*100/127):-Math.round(j.y1axis*100/127))
+                        value: Math.round(100*(j1.y2axis+127)/254)
                         centrТext: "%"
                         bottomText: "Мощность"
                         warningThreshold: maximumValue*0.9
@@ -417,7 +415,7 @@ Item {
                         stepSize: 20
                         anchors.centerIn: parent
 
-                        value: (j.key_0||j.lock)*( j.y2axis>0?Math.round(j.y2axis*100/127):-Math.round(j.y2axis*100/127))
+                        value: 0//(j.key_0||j.lock)*( j.y2axis>0?Math.round(j.y2axis*100/127):-Math.round(j.y2axis*100/127))
                         centrТext: "%"
                         bottomText: "Мощность2"
                         warningThreshold: maximumValue*0.9

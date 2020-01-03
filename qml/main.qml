@@ -84,7 +84,7 @@ Window {
         property alias camera_umg: win.camera_umg
         property alias streaming: win.streaming
         property alias subtitles: subtitle.interval
-        property alias joy_devider: j.devider
+        property alias joy_devider: j1.devider
     }
     function player_play(player_number) {
         if (cams[0].timeout || cams[1].timeout || cams[2].timeout
@@ -229,14 +229,14 @@ Window {
     Board {
         id: rig0
         board: 0
-//        joystick_y1: j.y1axis * (j.key_0 || j.lock)
-//        joystick_y2: j.y2axis * (j.key_0 || j.lock)
-//        joystick_x1: j.x1axis * (j.key_0 || j.lock)
-//        joystick_x2: j.x2axis * (j.key_0 || j.lock)
-        light1: lampsSettings.lamp1 * lamp_tag
-        light2: lampsSettings.lamp2 * lamp_tag
-        light3: lampsSettings.lamp3 * lamp_tag
-        light4: lampsSettings.lamp4 * lamp_tag
+//        joystick_y1: j1.y1axis * (j1.key_0 || j1.lock)
+//        joystick_y2: j1.y2axis * (j1.key_0 || j1.lock)
+//        joystick_x1: j1.x1axis * (j1.key_0 || j1.lock)
+//        joystick_x2: j1.x2axis * (j1.key_0 || j1.lock)
+        light1: lampsSettings.lamp1
+        light2: lampsSettings.lamp2
+        light3: lampsSettings.lamp3
+        light4: lampsSettings.lamp4
         camera1: camSettings.cam1
         camera2: camSettings.cam2
         camera3: camSettings.cam3
@@ -244,13 +244,19 @@ Window {
         Component.onCompleted: networker.reg(this)
 
     }
+    function power(v){ //регулировка мощности
+        return v*Math.round(100*(j1.y2axis+127)/254)/100;
+    }
+
     Board {
         id: rig1
         board: 1
-        joystick_y1: 1
-        joystick_y2: 2
-        joystick_x1: 3
-        joystick_x2: 4
+        //j1.keys[0] = курок
+        joystick_x1: power(j1.y1axis*j1.keys[0]) //лев задний трастер ana1
+        joystick_y1: power(j1.y1axis*j1.keys[0]) //прав задний трастер ana2
+        joystick_x2: power(j1.x2axis*j1.keys[0]) //подрулька ana3
+//        joystick_y2: j1.y2axis*j1.keys[0]
+
         light1: 0
         light2: 0
         light3: 0
@@ -260,10 +266,9 @@ Window {
     Board {
         id: rig2
         board: 2
-        joystick_y1: 1
-        joystick_y2: 2
-        joystick_x1: 3
-        joystick_x2: 4
+        joystick_x1: (j1.hats[0]===1||j1.hats[0]===4)?power(j1.y1axis*!j1.keys[0]):0 // передний лифт ana1
+        joystick_y1: (j1.hats[0]===1||j1.hats[0]===4)?power(j1.y1axis*!j1.keys[0]):0 // задний лифт ana2
+        joystick_x2: j2.x2axis*j2.keys[0] //поворот камеры
         light1: 0
         light2: 0
         light3: 0
@@ -535,7 +540,7 @@ Window {
             vlcPlayer2.mrl = "file:///" + win.filepath + "demo/03.mpg"
 
             //vlcPlayer3.play()
-            //vlcPlayer1.mrl = "file:///"+win.filepath+"/demo/01.mpg"
+            vlcPlayer1.mrl = "file:///"+win.filepath+"/demo/01.mpg"
             //vlcPlayer4.play()
             //              rig.engine=true;
             //              rig.lamp=true;
@@ -793,28 +798,28 @@ Window {
                     && (event.key === Qt.Key_V))
                 vlcPlayer4.mrl = "file:///" + win.filepath + "/demo/04.mpg"
             //if ((event.key === Qt.Key_D)) win.fcommand("DEMO") vlcPlayer1.mrl = "file:///"+win.filepath+"/demo/01.mpg"
-            if (event.key === Qt.Key_Down) {
-                j.ispresent = false
-                console.log("JFire:" + j.key_0)
-                if (j.y1axis > -127)
-                    j.y1axis = j.y1axis - 1
-            }
-            if (event.key === Qt.Key_Up) {
-                j.ispresent = false
-                console.log("JFire:" + j.key_0)
-                if (j.y1axis < 127)
-                    j.y1axis = j.y1axis + 1
-            }
-            if (event.key === Qt.Key_PageDown || event.key === Qt.Key_Left) {
-                j.ispresent = false
-                if (j.y2axis > -127)
-                    j.y2axis = j.y2axis - 1
-            }
-            if (event.key === Qt.Key_PageUp || event.key === Qt.Key_Right) {
-                j.ispresent = false
-                if (j.y2axis < 127)
-                    j.y2axis = j.y2axis + 1
-            }
+//            if (event.key === Qt.Key_Down) {
+//                j1.ispresent = false
+//                console.log("JFire:" + j1.key_0)
+//                if (j1.y1axis > -127)
+//                    j1.y1axis = j1.y1axis - 1
+//            }
+//            if (event.key === Qt.Key_Up) {
+//                j1.ispresent = false
+//                console.log("JFire:" + j1.key_0)
+//                if (j1.y1axis < 127)
+//                    j1.y1axis = j1.y1axis + 1
+//            }
+//            if (event.key === Qt.Key_PageDown || event.key === Qt.Key_Left) {
+//                j1.ispresent = false
+//                if (j1.y2axis > -127)
+//                    j1.y2axis = j1.y2axis - 1
+//            }
+//            if (event.key === Qt.Key_PageUp || event.key === Qt.Key_Right) {
+//                j1.ispresent = false
+//                if (j1.y2axis < 127)
+//                    j1.y2axis = j1.y2axis + 1
+//            }
         }
 
         StatePannel {
@@ -839,23 +844,9 @@ Window {
         }
 
         RigJoystick {
-            id: j
+            id: j1
             current: 0
-
-            onKeyChanged:
-                console.log("KEY"+key)
-//            onKey_3Changed: if (key_3)
-//                                fcommand("LAYOUT")
-//            onKey_2Changed: if (key_2)
-//                                fcommand("PLAY")
-//            onKey_1Changed: if (key_1)
-//                                fcommand("JKEY1")
-//            onKey_0Changed: if (key_0 && j.ispresent)
-//                                fcommand("JKEY0")
-            devider: 1 + key_5
-            //onKeysChanged: print(keys)
-            //onHatsChanged: print(hats)
-            //onX1axisChanged: console.log(j.x1axis)
+            devider: 1
         }
 
         RigJoystick {
@@ -1381,6 +1372,8 @@ Window {
         fontSize: 14
         //anchors { margins: 10; bottomMargin: 100; bottom: parent.bottom; left: parent.left}
         onLampClicked: fcommand(cp_command)
+        j1: j1
+        j2: j2
     }
     LampsSettings {
         id: lampsSettings

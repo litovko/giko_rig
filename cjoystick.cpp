@@ -48,6 +48,7 @@ void cJoystick::setX1axis(const int &axis)
 {
     if (axis==m_x1axis) return;
     m_x1axis=axis;
+//    qDebug()<<"X1:"<<m_x1axis;
     emit x1axisChanged();
 }
 
@@ -55,6 +56,7 @@ void cJoystick::setY1axis(const int &axis)
 {
     if (axis==m_y1axis) return;
     m_y1axis=axis;
+//    qDebug()<<"Y1:"<<m_y1axis;
     emit y1axisChanged();
 
 }
@@ -205,6 +207,7 @@ void cJoystick::init_joystick()
         {
             _joystick_data->hat.append(0);
         }
+        if (_joystick_data->number_hats==0) _joystick_data->hat.append(0);
     }
 
     if (m_y1axis_ind>m_axes_number-1) setY1axis_ind(0);
@@ -267,6 +270,7 @@ void cJoystick::updateData()
         setY2axis(((m_invert[m_y2axis_ind]?-1:1) * _joystick_data->axis[m_y2axis_ind]*127/32767)/m_devider);
         setX2axis(((m_invert[m_x2axis_ind]?-1:1) * _joystick_data->axis[m_x2axis_ind]*127/32767)/m_devider);
     }
+
     bool keyschanged =false;
     for (auto i=0; i<_joystick_data->number_btn; i++ ){
         if (_buttons.length()==0) {_buttons = _joystick_data->button; break;} //надо инициализировать по сигналу при изменении количества кнопок джойстик
