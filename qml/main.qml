@@ -181,7 +181,7 @@ Window {
                 }
             }
         } //for
-    }
+    } //check_file_size
 
     Timer {
         id: t_filesize
@@ -197,18 +197,18 @@ Window {
         onTriggered: write_subtitle()
         running: recording
     }
-    Timer {
-        id: cooling
-        interval: 10000
-        repeat: true
-        running: coolSettings.auto
-        onTriggered: {
-            if (rig0.temperature > coolSettings.text_on * 1)
-                rig0.engine2 = true
-            if (rig0.temperature < coolSettings.text_off * 1)
-                rig0.engine2 = false
-        }
-    }
+//    Timer {
+//        id: cooling
+//        interval: 10000
+//        repeat: true
+//        running: coolSettings.auto
+//        onTriggered: {
+//            if (rig0.temperature > coolSettings.text_on * 1)
+//                rig0.engine2 = true
+//            if (rig0.temperature < coolSettings.text_off * 1)
+//                rig0.engine2 = false
+//        }
+//    }
 
     function write_subtitle() {
         if (vlcPlayer1.state !== 3)
@@ -229,18 +229,15 @@ Window {
     Board {
         id: rig0
         board: 0
-//        joystick_y1: j1.y1axis * (j1.key_0 || j1.lock)
-//        joystick_y2: j1.y2axis * (j1.key_0 || j1.lock)
-//        joystick_x1: j1.x1axis * (j1.key_0 || j1.lock)
-//        joystick_x2: j1.x2axis * (j1.key_0 || j1.lock)
-        light1: lampsSettings.lamp1
-        light2: lampsSettings.lamp2
-        light3: lampsSettings.lamp3
-        light4: lampsSettings.lamp4
+        light1: 0
+        light2: 0
+        light3: 0
+        light4: 0
         camera1: camSettings.cam1
         camera2: camSettings.cam2
         camera3: camSettings.cam3
         camera4: camSettings.cam4
+        onFree_engine1Changed: pins[1] = free_engine1 // клапан разгрузки
         Component.onCompleted: networker.reg(this)
 
     }
@@ -255,12 +252,12 @@ Window {
         joystick_x1: power(j1.y1axis*j1.keys[0]) //лев задний трастер ana1
         joystick_y1: power(j1.y1axis*j1.keys[0]) //прав задний трастер ana2
         joystick_x2: power(j1.x2axis*j1.keys[0]) //подрулька ana3
-//        joystick_y2: j1.y2axis*j1.keys[0]
 
-        light1: 0
-        light2: 0
-        light3: 0
-        light4: 0
+        property bool lamp_switch: false
+        light1: lampsSettings.lamp1 * lamp_switch
+        light2: lampsSettings.lamp2 * lamp_switch
+        light3: lampsSettings.lamp3 * lamp_switch
+        light4: lampsSettings.lamp4 * lamp_switch
         Component.onCompleted: networker.reg(this)
     }
     Board {
@@ -337,9 +334,24 @@ Window {
             else
                 mainRect.state = "3-KAM-mal"
     }
+    function setcamsonoff(){
+        rig0.pins[3] = rig0.camera * camSettings.cam1
+        rig0.pins[4] = rig0.camera * camSettings.cam2
+    }
+
     function fcommand(cmd) {
         console.log("COMMAND=" + cmd)
         switch (cmd) {
+        case "SET DEFAULT":
+            win.height=1000
+            win.width=1800
+            win.x=50
+            win.y=50
+            dashboard.resetposition()
+            controlPanel.x=100
+            controlPanel.y=100
+            menu.visible = false
+            break
         case "STOP":
             players[0].stop()
             players[1].stop()
@@ -484,14 +496,17 @@ Window {
             mainRect.state = cmd
             break
         case "LAMP":
-            rig0.lamp = !rig0.lamp
+            //rig0.lamp = !rig0.lamp
+            rig1.lamp_switch = !rig1.lamp_switch
             break
         case "LAMPS":
             lampsSettings.visible = !lampsSettings.visible
             lampsSettings.height = lampsSettings.visible ? 160 : 0
             break
         case "CAMERA ON":
-            rig0.camera = rig0.camera ? false : true
+            rig0.camera = !rig0.camera
+            rig0.pins[3] = rig0.camera * camSettings.cam1
+            rig0.pins[4] = rig0.camera * camSettings.cam2
             break
         case "CAMSET":
             //окно с выбором включенных камер - не передаются параметры в rig
@@ -504,10 +519,12 @@ Window {
             coolSettings.height = coolSettings.visible ? 160 : 0
             break
         case "ENGINE1":
-            rig0.engine = rig0.engine ? false : true
+            rig0.pins[0] = !rig0.pins[0]
+            rig0.engine = rig0.pins[0]
+            if (!rig0.engine) rig0.free_engine1 = false;
             break
         case "ENGINE2":
-            rig0.engine2 = rig0.engine2 ? false : true
+            //rig0.engine2 = rig0.engine2 ? false : true
             break
         case "COOLING":
             rig0.engine2 = !rig0.engine2
@@ -519,7 +536,8 @@ Window {
             rig0.pump = rig0.pump ? false : true
             break
         case "MANIP":
-            rig0.pump = !rig0.pump
+            rig0.pump=!rig0.pump
+            rig0.pins[2] = rig0.pump
             break
         case "SCREENSHOT":
             var dt = new Date()
@@ -1399,10 +1417,10 @@ Window {
             bottom: controlPanel.top
             left: controlPanel.left
         }
-        onCam1Changed: players[0].stop()
-        onCam2Changed: players[1].stop()
-        onCam3Changed: players[2].stop()
-        onCam4Changed: players[3].stop()
+        onCam1Changed: {players[0].stop(); setcamsonoff()}
+        onCam2Changed: {players[1].stop(); setcamsonoff()}
+        onCam3Changed: {players[2].stop(); setcamsonoff()}
+        onCam4Changed: {players[3].stop(); setcamsonoff()}
     }
     COOLSettings {
         id: coolSettings

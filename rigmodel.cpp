@@ -105,8 +105,8 @@ void cRigmodel::readSettings()
 
     QSettings settings("HYCO", QCoreApplication::applicationName());
     settings.beginGroup("board_"+QString::number(m_board,10));
-//    m_address=settings.value("RigAddress","localhost").toString();
-//    m_port=static_cast<quint16>(settings.value("RigPort","1212").toUInt());
+    //    m_address=settings.value("RigAddress","localhost").toString();
+    //    m_port=static_cast<quint16>(settings.value("RigPort","1212").toUInt());
     setFreerun(settings.value("RigFreerun","0").toInt());
     m_timer_send_interval=settings.value("RigSendInterval","2000").toInt();
     if (m_timer_send_interval<50)m_timer_send_interval=50;
@@ -258,13 +258,14 @@ bool cRigmodel::camera() const
 
 void cRigmodel::setEngine(const bool &engine)
 {
+    //NOTE: если во время включения разгрузки выключить двигатель, то перед следующим запуском надо подождать отключения разгрузки. Иначе разгрузка может отключиться раньше
     if (m_engine == engine ) return;
-    if (m_free_engine2 && engine) return;
+    //if (m_free_engine2 && engine) return;
     m_engine = engine;
-    setfree_engine1(engine&&rigtype()=="mgbu");
-    if (m_engine)
+    if (m_engine) {
+        setfree_engine1(true);
         QTimer::singleShot(m_timer_delay_engine1, [this](){setfree_engine1(false);});
-
+    }
     emit engineChanged();
 }
 
@@ -312,7 +313,7 @@ int cRigmodel::joystick_x1() const
 void cRigmodel::setJoystick_y1(const int &joystick)
 {
     if (m_joystick_y1 == joystick) return;
-//    qDebug()<<"NAY1:"<<m_joystick_y1;
+    //    qDebug()<<"NAY1:"<<m_joystick_y1;
     m_joystick_y1 = joystick;
     emit joystick_y1Changed();
 }
@@ -376,19 +377,19 @@ QJsonObject cRigmodel::getData()
     json["ana2"]=ana2();
     json["ana3"]=ana3();
     json["svet"]=(m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16));
-//    json["dig1"]= m_engine*1
-//            +   !m_pump*4  //замок манипулятора открывание
-//            +   m_pump*2 //замок манипулятора закрывание
-//            +   m_lamp*64
-//            //+ m_camera*8
-//            + m_engine2*8
-//            + m_camera1*16*m_camera
-//            + m_camera2*32*m_camera
-//            //+ m_camera3*64*m_camera
-//            + m_camera4*128*m_camera
-//            ;
+    //    json["dig1"]= m_engine*1
+    //            +   !m_pump*4  //замок манипулятора открывание
+    //            +   m_pump*2 //замок манипулятора закрывание
+    //            +   m_lamp*64
+    //            //+ m_camera*8
+    //            + m_engine2*8
+    //            + m_camera1*16*m_camera
+    //            + m_camera2*32*m_camera
+    //            //+ m_camera3*64*m_camera
+    //            + m_camera4*128*m_camera
+    //            ;
     json["dig1"]=
-             1*m_pins[0]
+            1*m_pins[0]
             +2*m_pins[1]
             +4*m_pins[2]
             +8*m_pins[3]
@@ -463,6 +464,7 @@ void cRigmodel::setPins(const QList<bool> &pins)
 {
     m_pins = pins;
     emit pinsChanged();
+    qDebug()<<"PINS:"<<m_pins;
 }
 
 
@@ -606,8 +608,8 @@ void cRigmodel::sendKoeff()
     //qDebug()<<"Rig - send data: "<<Data;
 
 
-//    if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
-//    if (bytesToWrite>=0)qDebug()<<"Rig:sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
+    //    if (bytesToWrite<0)qWarning()<<"Rig: Something wrong due to send data >>>"+tcpClient.errorString();
+    //    if (bytesToWrite>=0)qDebug()<<"Rig:sent>>>"<<Data<<":"<<::QString().number(bytesToWrite);
 }
 
 

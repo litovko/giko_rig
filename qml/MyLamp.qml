@@ -11,6 +11,7 @@ Item {
     property string command2: "command2"
     property string command3: "command3"
     signal lampClicked(string lamp_command)
+    property string text: ""
     MouseArea {
         id: ma
         anchors.fill: parent
@@ -65,6 +66,18 @@ Item {
                     anchors.fill:  parent
                 }
             }
+        }
+        Text {
+            id: tooltip
+            color: "white"
+            text: lamp.text
+            font.bold: true
+            font.pointSize: 10
+            visible: ma.containsMouse
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            anchors.bottom:  parent.top
+            anchors.left: parent.horizontalCenter
         }
     }
 }

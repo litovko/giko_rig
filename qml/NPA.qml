@@ -20,7 +20,9 @@ Item {
         property alias y_group: npa_group.y
         property alias state: npa.state
     }
-
+    function resetposition(){
+        npa_move.x=npa_move.y=npa_hand.x=npa_hand.y=npa_group.x=npa_group.y=0
+    }
 
     states: [
         State {

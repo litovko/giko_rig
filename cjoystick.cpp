@@ -13,6 +13,7 @@ cJoystick::cJoystick(QObject *parent) : QObject(parent)
     timer_checkjoystick = new QTimer(this);
     connect(this, SIGNAL(currentChanged()),this, SLOT(change_numbers()));
     connect(timer_checkjoystick,SIGNAL(timeout()),this,SLOT(checkJoystick()));
+    //connect(this, &cJoystick::keyChanged, this, []( int k ) { qDebug()<<"k:"<<k; });
     init_joystick();
     //checkJoystick();
     timer_checkjoystick->start(J_CHECK_INTERVAL);
@@ -207,7 +208,12 @@ void cJoystick::init_joystick()
         {
             _joystick_data->hat.append(0);
         }
-        if (_joystick_data->number_hats==0) _joystick_data->hat.append(0);
+        if (_joystick_data->number_hats==0) _joystick_data->hat.append(0); //NOTE: сделано чтобы не передавать пустой список в QML для борьбы с адресацией к пустому списку.
+        //WARNING: Некоторый трюк для избавления от первой HAT у джойстика LOGITECH - преобразуем первую кепку HAT в простые кнопки - 4 кнопоки на каждую кепку HAT.
+        if (_joystick_data->number_hats) {
+            setButtons_number(buttons_number()+4);
+            for (auto j=0; j<4; j++) _joystick_data->button.append(false);
+        }
     }
 
     if (m_y1axis_ind>m_axes_number-1) setY1axis_ind(0);
@@ -272,8 +278,8 @@ void cJoystick::updateData()
     }
 
     bool keyschanged =false;
-    for (auto i=0; i<_joystick_data->number_btn; i++ ){
-        if (_buttons.length()==0) {_buttons = _joystick_data->button; break;} //надо инициализировать по сигналу при изменении количества кнопок джойстик
+    for (auto i=0; i<buttons_number(); i++ ){
+        if (_buttons.length()==0) {_buttons = _joystick_data->button; break;} //TODO: надо  перенести в инициализацию джойстика
         if (_buttons[i]!=_joystick_data->button[i]){
             emit keyChanged(key_map[i]);
             _buttons[i] = _joystick_data->button[i];
@@ -321,7 +327,7 @@ void cJoystick::saveSettings()
     settings.setValue("Joystick-y2",m_y2axis_ind);
 
 
-    for (auto i=0; i<16; i++)
+    for (auto i=0; i<key_map.size(); i++)
         settings.setValue("Joystick-bn"+QString::number(i),key_map[i]);
     for (auto i=0; i<m_invert.length(); i++)
         settings.setValue("Joystick-axes-ivert"+QString::number(i),m_invert[i]);
@@ -338,7 +344,7 @@ void cJoystick::readSettings()
     setY1axis_ind(settings.value("Joystick-y1",2).toInt());
     setY2axis_ind(settings.value("Joystick-y2",3).toInt());
 
-    for (auto i=0; i<16; i++)
+    for (auto i=0; i<key_map.size(); i++)
         key_map[i]=settings.value("Joystick-bn"+QString::number(i)).toInt();
     for (auto i=0; i<m_invert.length(); i++)
         m_invert[i]=settings.value("Joystick-axes-ivert"+QString::number(i)).toBool();
@@ -376,7 +382,7 @@ void cJoystick::setButtons_number(int buttons_number)
 QList<bool> cJoystick::keys()
 {
     QList<bool> _buttons;
-    for (auto i=0;i<_joystick_data->number_btn; i++)
+    for (auto i=0;i<buttons_number(); i++)
         _buttons.append(_joystick_data->button[key_map[i]]);
 //    qDebug()<<"IB>"<<_joystick_data->button;
 //    qDebug()<<"CB>"<<_buttons;
@@ -435,72 +441,6 @@ int cJoystick::axes_number() const
 {
     return m_axes_number;
 }
-
-//int cJoystick::key_1_ind() const
-//{
-//    return m_key_1_ind;
-//}
-
-//void cJoystick::setKey_1_ind(int key_1_ind)
-//{
-//    m_key_1_ind = key_1_ind;
-//    emit key_1_indChanged();
-//}
-
-//int cJoystick::key_2_ind() const
-//{
-//    return m_key_2_ind;
-//}
-
-//void cJoystick::setKey_2_ind(int key_2_ind)
-//{
-//    m_key_2_ind = key_2_ind;
-//    emit key_2_indChanged();
-//}
-
-//int cJoystick::key_3_ind() const
-//{
-//    return m_key_3_ind;
-//}
-
-//void cJoystick::setKey_3_ind(int key_3_ind)
-//{
-//    m_key_3_ind = key_3_ind;
-//    emit key_3_indChanged();
-//}
-
-//int cJoystick::key_4_ind() const
-//{
-//    return m_key_4_ind;
-//}
-
-//void cJoystick::setKey_4_ind(int key_4_ind)
-//{
-//    m_key_4_ind = key_4_ind;
-//    emit key_4_indChanged();
-//}
-
-//int cJoystick::key_5_ind() const
-//{
-//    return m_key_5_ind;
-//}
-
-//void cJoystick::setKey_5_ind(int key_5_ind)
-//{
-//    m_key_5_ind = key_5_ind;
-//    emit key_5_indChanged();
-//}
-
-//int cJoystick::key_0_ind() const
-//{
-//    return m_key_0_ind;
-//}
-
-//void cJoystick::setKey_0_ind(int key_0_ind)
-//{
-//    m_key_0_ind = key_0_ind;
-//    emit key_0_indChanged();
-//}
 
 int cJoystick::y2axis_ind() const
 {
@@ -562,5 +502,12 @@ void cJoystick::pollJoystick()
     for(auto i=0;i<_joystick_data->number_hats;i++)
     {
         _joystick_data->hat[i] = joy->hats[i];
+    }
+    if (_joystick_data->number_hats) { //WARNING: преобразование кепок в кнопки - проставляем значения.
+        for (auto j=0; j<4; j++) {
+            _joystick_data->button[_joystick_data->number_btn+j]=(_joystick_data->hat[0]) & (1 << j);
+//            if ((_joystick_data->hat[0]) & (1 << j))
+//                qDebug()<<"fantom button:"<<_joystick_data->number_btn+j<<"length:"<<_joystick_data->button.length();
+        }
     }
 }

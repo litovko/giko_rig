@@ -31,17 +31,20 @@ Item {
             PropertyChanges {target: leak;   visible: true}
         }
     ]
+    function resetposition() {
+        npa_pult.resetposition()
+    }
+
     Component.onCompleted: calculatesize()
     onVisibleChildrenChanged: calculatesize()
     function calculatesize(){
-
-        // ВРЕТ ФУНКЦИЯ СТРАШНО
+        // ВРЕТ ФУНКЦИЯ СТРАШНО некорректно выдает количество видимых приборов.
         //var num_gauge=flowrow.visibleChildren.length
         var num_gauge=6
 
         if (state=="mgbu") num_gauge=10 //прописал железно
         if (state=="grab6") num_gauge=7
-        if (state=="NPA") num_gauge=7
+        if (state=="NPA") num_gauge=8
         var numrows=Math.floor((containerheight-20)/(gaugesize+20))
         numrows=numrows?numrows:num_gauge
 
@@ -60,28 +63,7 @@ Item {
 
 //    }
     onContainerheightChanged: calculatesize()
-//    GKGBU {
-//        id: gkgbu_pult
-//        //anchors.centerIn: parent
-//        height: dashboard.gaugesize+20
-//        width: dashboard.gaugesize
-//        joystick: j
-//        rigmodel: rig
-//        btn0: j.key_1
-//        btn_lock: j.key_4
-//        z:4
-//    }
-//    MGBU {
-//        id: mgbu_pult
-//        //anchors.centerIn: parent
-//        height: dashboard.gaugesize+48
-//        width: dashboard.gaugesize+48
-//        joystick: j
-//        rigmodel: rig
-//        btn0: j.key_1
-//        btn_lock: j.key_4 // locker key
-//        z:4
-//    }
+
     NPA {
         id: npa_pult
         height: 450
@@ -131,20 +113,7 @@ Item {
                     j.y1axis=0;
                 }
 
-//                onPressed: {
-//                    if ((dashboard.state==="grab6"||dashboard.state==="mgbu")&&(ma.mouseX>width/2))
-//                         j.y2axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
-//                    else j.y1axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
-//                    j.ispresent=false;
-//                }
-//                onPositionChanged: {
-//                    if (ma.pressedButtons&(Qt.LeftButton|Qt.RightButton)&&ma.containsMouse)
-//                      if ((dashboard.state==="grab6"||dashboard.state==="mgbu")&&(ma.mouseX>width/2)) j.y2axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
-//                      else    j.y1axis=(ma.pressedButtons&Qt.RightButton?-1:1)*(127- 127*ma.mouseY/r.height)
-//                    else j.y1axis=0;
-//                    //console.log("Joy Y:"+j.yaxis+"btn:"+(ma.pressedButtons&(Qt.LeftButton|Qt.RightButton)))
 
-//                }
             }
             Flow{
               id: flowrow

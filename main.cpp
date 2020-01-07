@@ -124,10 +124,10 @@ int main(int argc, char *argv[])
     }
     semaphore.release();
     if(is_running){
-       qWarning()<<"The program is already running!";
-       std::string str;
-       std::getline(std::cin, str);
-       return 1;
+        qWarning()<<"The program is already running!";
+        std::string str;
+        std::getline(std::cin, str);
+        return 1;
     }
     setlocale(LC_ALL, ""); // избавляемся от кракозябров в консоли
 

@@ -73,7 +73,7 @@ QJoystick::~QJoystick()
     axis.clear();
     buttons.clear();
     SDL_JoystickClose(m_joystick);
-    SDL_QuitSubSystem(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
+    SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER | SDL_INIT_JOYSTICK);
     //this->deleteLater();
 }
 

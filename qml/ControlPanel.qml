@@ -4,7 +4,6 @@ import QtQuick.Controls 1.4
 import Qt.labs.settings 1.0
 import QtQuick.Controls.Styles 1.4
 import Gyco 1.0
-//TODO: Надо сделать управление яркостью фонарей и раздельное включение камер
 //Содержит переключатели и лампочки
 Item {
     id: controlPanel
@@ -65,8 +64,10 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:"СВЕТ[F2]"
-                    active: source.lamp
+                    active: rig1.lamp_switch
                     command: "LAMP"
+                    command3: "LAMPS"
+                    text: "Правая кн. мышки - меню управления яркостью фонарей"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
@@ -77,15 +78,16 @@ Item {
                     active:source.camera
                     command: "CAMERA ON"
                     command3: "CAMSET"
+                    text: "Правая кн. мышки - меню включения питания камер"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
                     id: engine1
                     height: lampSize
                     width: lampSize
-                    bottomText:"НАСОС1[F4]"
-                    error: source.free_engine1
-                    active:source.engine
+                    bottomText:"НАСОС[F4]"
+                    error: rig0.pins[1]
+                    active:rig0.pins[0]
                     command: "ENGINE1"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
@@ -100,28 +102,28 @@ Item {
                     command: "ENGINE2"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
-               MyLamp{
-                   visible: source.rigtype==="NPA"
-                   id: cooling
-                   height: lampSize
-                   width: lampSize
-                   bottomText:"ОХЛАЖД[F7]"
-                   error: source.free_engine2
-                   active:source.engine2
-                   command: "COOLING"
-                   command3: "COOLSET"
-                   onLampClicked: controlPanel.lampClicked(lamp_command)
-               }
-                MyLamp{
-                    id: engine3
-                    visible: source.rigtype==="mgbu"
-                    height: lampSize
-                    width: lampSize
-                    bottomText:"ПРОМЫВКА[П]"
-                    active:source.pump
-                    command: "PUMP"
-                    onLampClicked: controlPanel.lampClicked(lamp_command)
-                }
+//               MyLamp{
+//                   visible: source.rigtype==="NPA"
+//                   id: cooling
+//                   height: lampSize
+//                   width: lampSize
+//                   bottomText:"ОХЛАЖД[F7]"
+//                   error: source.free_engine2
+//                   active:source.engine2
+//                   command: "COOLING"
+//                   command3: "COOLSET"
+//                   onLampClicked: controlPanel.lampClicked(lamp_command)
+//               }
+//                MyLamp{
+//                    id: engine3
+//                    visible: source.rigtype==="mgbu"
+//                    height: lampSize
+//                    width: lampSize
+//                    bottomText:"ПРОМЫВКА[П]"
+//                    active:source.pump
+//                    command: "PUMP"
+//                    onLampClicked: controlPanel.lampClicked(lamp_command)
+//                }
                 MyLamp{
                     id: manip
                     visible: source.rigtype==="NPA"
@@ -139,6 +141,7 @@ Item {
                     bottomText:"СВЯЗЬ"
                     active:net.client_connected
                     command: "RECONNECT"
+                    text: "При клике на лампочку происходит реконнект к аппарату"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
@@ -160,6 +163,7 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:"БЛОК1"
+                    text: "Горит при нажатии на курок джойстика"
                     active: j1.keys[0]
                 }
                 MyLamp{
@@ -173,6 +177,7 @@ Item {
                     command: "LAYOUT_CAM1"
                     command2: "PLAY1"
                     command3: "STOP1"
+                    text: "Левая кн. мышки - изображение на весь экран. Правая - стоп. Двойной клик - запуск"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
@@ -186,6 +191,7 @@ Item {
                     command: "LAYOUT_CAM2"
                     command2: "PLAY2"
                     command3: "STOP2"
+                    text: "Левая кн. мышки - изображение на весь экран. Правая - стоп. Двойной клик - запуск"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
@@ -199,6 +205,7 @@ Item {
                     command: "LAYOUT_CAM3"
                     command2: "PLAY3"
                     command3: "STOP3"
+                    text: "Левая кн. мышки - изображение на весь экран. Правая - стоп. Двойной клик - запуск"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
                 MyLamp{
@@ -212,6 +219,7 @@ Item {
                     command: "LAYOUT_CAM4"
                     command2: "PLAY4"
                     command3: "STOP4"
+                    text: "Левая кн. мышки - изображение на весь экран. Правая - стоп. Двойной клик - запуск"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
 
