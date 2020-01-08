@@ -162,7 +162,7 @@ Item {
                     id: j_lock
                     height: lampSize
                     width: lampSize
-                    bottomText:"БЛОК1"
+                    bottomText:"РАЗБЛ1"
                     text: "Горит при нажатии на курок джойстика"
                     active: j1.keys[0]
                 }

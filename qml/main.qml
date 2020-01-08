@@ -197,18 +197,6 @@ Window {
         onTriggered: write_subtitle()
         running: recording
     }
-//    Timer {
-//        id: cooling
-//        interval: 10000
-//        repeat: true
-//        running: coolSettings.auto
-//        onTriggered: {
-//            if (rig0.temperature > coolSettings.text_on * 1)
-//                rig0.engine2 = true
-//            if (rig0.temperature < coolSettings.text_off * 1)
-//                rig0.engine2 = false
-//        }
-//    }
 
     function write_subtitle() {
         if (vlcPlayer1.state !== 3)
@@ -241,7 +229,7 @@ Window {
         Component.onCompleted: networker.reg(this)
 
     }
-    function power(v){ //регулировка мощности
+    function power(v){ //регулировка мощности - зависит от движка на джойстике
         return v*Math.round(100*(j1.y2axis+127)/254)/100;
     }
 
@@ -259,17 +247,33 @@ Window {
         light3: lampsSettings.lamp3 * lamp_switch
         light4: lampsSettings.lamp4 * lamp_switch
         Component.onCompleted: networker.reg(this)
+        pin0: j2.keys[14];
+        pin1: j2.keys[13];
+        pin2: j2.keys[11];
+        pin3: j2.keys[12];
+        pin5: j2.keys[3]*(j2.x1axis>100);
+        pin4: j2.keys[3]*(j2.x1axis<-100);
+        pin7: j2.keys[1]*(j2.x1axis>100);
+        pin6: j2.keys[1]*(j2.x1axis<-100);
     }
     Board {
         id: rig2
         board: 2
         joystick_x1: (j1.hats[0]===1||j1.hats[0]===4)?power(j1.y1axis*!j1.keys[0]):0 // передний лифт ana1
         joystick_y1: (j1.hats[0]===1||j1.hats[0]===4)?power(j1.y1axis*!j1.keys[0]):0 // задний лифт ana2
-        joystick_x2: j2.x2axis*j2.keys[0] //поворот камеры
+        joystick_x2: j2.x2axis*j2.keys[0]*!j2.keys[3] //поворот камеры ana3
         light1: 0
         light2: 0
         light3: 0
         light4: 0
+        pin1: j2.keys[2]*(j2.x1axis>100);
+        pin0: j2.keys[2]*(j2.x1axis<-100);
+        pin3: j2.keys[0]*(j2.y1axis>100);
+        pin2: j2.keys[0]*(j2.y1axis<-100);
+        pin5: j2.keys[0]*(j2.x1axis>100);
+        pin4: j2.keys[0]*(j2.x1axis<-100);
+        pin6: j2.keys[0]*j2.keys[3]*(j2.x2axis<-100);
+        pin7: j2.keys[0]*j2.keys[3]*(j2.x2axis>100);
         Component.onCompleted: networker.reg(this)
     }
     Networker {

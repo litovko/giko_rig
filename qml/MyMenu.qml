@@ -5,7 +5,6 @@ import QtQuick.Controls.Styles 1.4
 
 import QtQuick.Extras 1.4
 
-//TODO: Надо сделать кнопку восстановления положения и габаритов окна программы, а также все перемещаемых панелей в начальное состояение.
 Item {
     id: menu
     visible: false

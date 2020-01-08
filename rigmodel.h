@@ -75,6 +75,15 @@ class cRigmodel : public QObject
     Q_PROPERTY(int timer_delay_engine1 READ timer_delay_engine1 WRITE setTimer_delay_engine1 NOTIFY timer_delay_engine1Changed)// время включения разгрузки мотора 1
     Q_PROPERTY(int timer_delay_engine2 READ timer_delay_engine2 WRITE setTimer_delay_engine2 NOTIFY timer_delay_engine2Changed)// время включения разгрузки мотора 2    //############ свойства - статусы tcp соединения
     Q_PROPERTY(QList<bool> pins READ pins WRITE setPins NOTIFY pinsChanged)
+    Q_PROPERTY(bool pin0 READ pin0 WRITE setPin0 NOTIFY pin0Changed)
+    Q_PROPERTY(bool pin1 READ pin1 WRITE setPin1 NOTIFY pin1Changed)
+    Q_PROPERTY(bool pin2 READ pin2 WRITE setPin2 NOTIFY pin2Changed)
+    Q_PROPERTY(bool pin3 READ pin3 WRITE setPin3 NOTIFY pin3Changed)
+    Q_PROPERTY(bool pin4 READ pin4 WRITE setPin4 NOTIFY pin4Changed)
+    Q_PROPERTY(bool pin5 READ pin5 WRITE setPin5 NOTIFY pin5Changed)
+    Q_PROPERTY(bool pin6 READ pin6 WRITE setPin6 NOTIFY pin6Changed)
+    Q_PROPERTY(bool pin7 READ pin7 WRITE setPin7 NOTIFY pin7Changed)
+
 //    Q_PROPERTY(bool client_connected READ client_connected NOTIFY client_connectedChanged)
 //    Q_PROPERTY(bool good_data READ good_data  NOTIFY good_dataChanged)
 
@@ -264,6 +273,23 @@ public:
     QList<bool> pins() const;
     void setPins(const QList<bool> &pins);
 
+    bool pin0() {return m_pins[0];}
+    void setPin0(bool p) {if (m_pins[0]==p) return; m_pins[0]=p; emit pin0Changed();}
+    bool pin1() {return m_pins[1];}
+    void setPin1(bool p) {if (m_pins[1]==p) return; m_pins[1]=p; emit pin1Changed();}
+    bool pin2() {return m_pins[2];}
+    void setPin2(bool p) {if (m_pins[2]==p) return; m_pins[2]=p; emit pin2Changed();}
+    bool pin3() {return m_pins[3];}
+    void setPin3(bool p) {if (m_pins[3]==p) return; m_pins[3]=p; emit pin3Changed();}
+    bool pin4() {return m_pins[4];}
+    void setPin4(bool p) {if (m_pins[4]==p) return; m_pins[4]=p; emit pin4Changed();}
+    bool pin5() {return m_pins[5];}
+    void setPin5(bool p) {if (m_pins[5]==p) return; m_pins[5]=p; emit pin5Changed();}
+    bool pin6() {return m_pins[6];}
+    void setPin6(bool p) {if (m_pins[6]==p) return; m_pins[6]=p; emit pin6Changed();}
+    bool pin7() {return m_pins[7];}
+    void setPin7(bool p) {if (m_pins[7]==p) return; m_pins[7]=p; emit pin7Changed();}
+
 signals:
     void positionChanged();
     void pressureChanged();
@@ -333,6 +359,15 @@ signals:
     void ana4Changed();
 
     void pinsChanged();
+    void pin0Changed();
+    void pin1Changed();
+    void pin2Changed();
+    void pin3Changed();
+    void pin4Changed();
+    void pin5Changed();
+    void pin6Changed();
+    void pin7Changed();
+
 
 public slots:
 

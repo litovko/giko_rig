@@ -306,9 +306,9 @@ void cJoystick::change_numbers()
 {
     timer_joystick->stop();
     init_joystick();
-    emit axes_numberChanged();
-    emit buttons_numberChanged();
-    emit nameChanged();
+//    emit axes_numberChanged();
+//    emit buttons_numberChanged();
+//    emit nameChanged();
 }
 
 void cJoystick::saveSettings()
@@ -503,11 +503,9 @@ void cJoystick::pollJoystick()
     {
         _joystick_data->hat[i] = joy->hats[i];
     }
-    if (_joystick_data->number_hats) { //WARNING: преобразование кепок в кнопки - проставляем значения.
+    if (_joystick_data->number_hats) { //WARNING: преобразование первой кепки кепок в 4 кнопки - проставляем значения.
         for (auto j=0; j<4; j++) {
             _joystick_data->button[_joystick_data->number_btn+j]=(_joystick_data->hat[0]) & (1 << j);
-//            if ((_joystick_data->hat[0]) & (1 << j))
-//                qDebug()<<"fantom button:"<<_joystick_data->number_btn+j<<"length:"<<_joystick_data->button.length();
         }
     }
 }
