@@ -237,10 +237,14 @@ Window {
         id: rig1
         board: 1
         //j1.keys[0] = курок
+        //TODO: не плохо было бы сделать регулировку трастеров при боковом движении - хотя бы 3 коэффициента 0..1
         joystick_x1: power(j1.y1axis*j1.keys[0]) //лев задний трастер ana1
+                     - j1.x1axis*(j1.keys[13]+j1.keys[15]) // при боковом движении лев задний
         joystick_y1: power(j1.y1axis*j1.keys[0]) //прав задний трастер ana2
-        joystick_x2: power(j1.x2axis*j1.keys[0]) //подрулька ana3
-
+                     + j1.x1axis*(j1.keys[13]+j1.keys[15]) // при боковом движении прав задний
+        joystick_x2: power(j1.x2axis*j1.keys[0]) // подрулька ana3
+                     + j1.x1axis*(j1.keys[13]+j1.keys[15]) //подрулька при боковом движении ana3
+        //1.keys[13]+j1.keys[15] - 13 кепка вправо 15 - кепка влево
         property bool lamp_switch: false
         light1: lampsSettings.lamp1 * lamp_switch
         light2: lampsSettings.lamp2 * lamp_switch
@@ -869,6 +873,7 @@ Window {
             id: j1
             current: 0
             devider: 1
+            onKeysChanged: print(keys)
         }
 
         RigJoystick {

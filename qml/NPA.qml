@@ -15,10 +15,12 @@ Item {
         property alias y_hand: npa_hand.y
         property alias x_group: npa_group.x
         property alias y_group: npa_group.y
+        property alias x_bubbble: bubble2.x
+        property alias y_bubbble: bubble2.y
         property alias state: npa.state
     }
     function resetposition(){
-        npa_move.x=npa_move.y=npa_hand.x=npa_hand.y=npa_group.x=npa_group.y=0
+        bubble2.x=bubble2.y=npa_move.x=npa_move.y=npa_hand.x=npa_hand.y=npa_group.x=npa_group.y=0
     }
 
     states: [
@@ -79,7 +81,8 @@ Item {
             id:npa_move
             width: parent.width
             height: parent.height
-            ax1: board1.ana3 //подрулька
+
+            ax1: -board1.ana3 //подрулька
             ax3: board1.ana1 //левый задний движок
             ax2: board1.ana2 //правый задний
             ax4: board2.ana1 //лифт передний
@@ -157,7 +160,35 @@ Item {
                 //drag.maximumX: container.width - rect.width
             }
         }
-
+        MyBubble2 {
+                    id: bubble2
+                    height:300
+                    width:300
+                    //anchors.horizontalCenter: parent.horizontalCenter
+                    //anchors.top: panel.bottom
+                    //anchors.verticalCenter: parent.verticalCenter
+                    roll: Math.round(rig.kren)
+                    pitch: -Math.round(rig.tangag)
+                    azimuth: Math.round(rig.altitude)
+                    Behavior on azimuth {
+                            NumberAnimation { easing.type: Easing.OutCurve; duration: 250 }
+                    }
+                    Behavior on roll {
+                            NumberAnimation { easing.type: Easing.OutQuad; duration: 250 }
+                    }
+                    Behavior on pitch {
+                            NumberAnimation { easing.type: Easing.OutQuad; duration: 250 }
+                    }
+                    MouseArea {
+                        id: mb
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        drag.target: bubble2
+                        drag.axis: Drag.XAndYAxis
+                        //drag.minimumX: 0
+                        //drag.maximumX: container.width - rect.width
+                    }
+                }
 //        MouseArea {
 //            id: ma
 //            anchors.fill: parent

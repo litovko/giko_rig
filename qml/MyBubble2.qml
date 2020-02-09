@@ -3,6 +3,7 @@ import QtQuick 2.5
 Item {
     property real roll: 20 //крен
     property real pitch: 0 //тангаж
+    property real azimuth: 20
 
 //    Timer {
 //            interval: 1000; running: true; repeat: true
@@ -12,13 +13,14 @@ Item {
 //                pitch=pitch+0.5; if (pitch>90) pitch=-90
 //            }
 //    }
-    onRollChanged: if (visible) canvas.requestPaint()
-    onPitchChanged:if (visible) canvas.requestPaint()
+    onRollChanged: canvas.requestPaint()
+    onPitchChanged: canvas.requestPaint()
+    onAzimuthChanged: canvas.requestPaint()
     function rollline(c, angle)
     {
         var r=10
         c.save();
-        c.strokeStyle = Qt.rgba(0.7, 0.7, 1.0, 1)
+        c.strokeStyle = Qt.rgba(0.5, 0.5, 1.0, 0.8)
         c.lineWidth = 2
         c.beginPath()
         c.translate(width/2, height/2)
@@ -34,12 +36,61 @@ Item {
         c.stroke();
         c.restore();
     }
+    function az(c, grad)
+    {
+        var r=width/3.2
+        var rt=7
+        c.save();
+        c.strokeStyle = Qt.rgba(0.5, 0.5, 0.5, 0.8)
+        c.setLineDash([1, 3, 1,3]);
+        c.lineWidth = 2
+        c.beginPath()
+        c.translate(width/2, height/2)
+//
+        c.moveTo(r,0)
+        c.arc(0,0, r, 0, Math.PI*2)
+        c.stroke();
+        c.beginPath()
+        c.lineWidth = 2
+        c.setLineDash([500]);
+
+        var ax=r*Math.sin(-grad/180*Math.PI+Math.PI)
+        var ay=r*Math.cos(-grad/180*Math.PI+Math.PI)
+
+        c.translate(ax,ay);
+        c.rotate(grad/180*Math.PI+Math.PI);
+        c.moveTo(-rt,0)
+        c.lineTo(rt,0);
+        c.lineTo(0, rt*2);
+        c.lineTo(-rt,0)
+        c.closePath()
+        //c.fillStyle = 'gray';
+        c.fillStyle = "rgba(255, 255, 255, 0.5)";
+        c.fill();
+        c.stroke();
+        c.restore();
+    }
+    function threeangle(c,s){
+        var r=s
+        c.save();
+        c.strokeStyle = Qt.rgba(0.5, 0.5, 0.5, 0.8)
+        c.lineWidth = 2
+        c.beginPath()
+        //c.rotate(angle*Math.PI/180);
+        c.moveTo(-r/4,0)
+        c.lineTo(r/4,0);
+        c.lineTo(0,r/2);
+        c.lineTo(-r/4,0)
+        c.stroke();
+        c.restore();
+    }
+
     function riski(c)
     {
         var r=25
         var step=30
         c.save();
-        c.strokeStyle = Qt.rgba(0.7, 0.7, 1.0, 1)
+        c.strokeStyle = Qt.rgba(0.5, 0.5, 1.0, 0.8)
         c.lineWidth = 1
         c.beginPath()
         c.translate(width/2, height/2)
@@ -60,7 +111,7 @@ Item {
     function hline(c,angle, rad)
     {
         c.save();
-        c.strokeStyle = Qt.rgba(1.0, 1.0, 1.0, 1)
+        c.strokeStyle = Qt.rgba(1.0, 1.0, 1.0, 0.5)
         c.beginPath()
         c.moveTo(0,height/2);
         c.lineTo(width/2-rad,height/2);
@@ -74,7 +125,7 @@ Item {
         var m=angle*(height-15)/2/60;
         c.save();
         c.lineWidth = 5
-        c.strokeStyle = Qt.rgba(0.0, 1.0, 0, 1)
+        c.strokeStyle = Qt.rgba(0.0, 1.0, 0, 0.8)
         c.beginPath()
         c.translate(width/2, height/2)
         c.moveTo(-rad,m);
@@ -84,6 +135,21 @@ Item {
         //c.closePath();
 
         c.stroke();
+        //пунктир горизонтальный
+        c.lineWidth = 1
+        c.setLineDash([2,0,2]);
+        c.moveTo(width/2,m);
+        c.lineTo(-width/2,m);
+        c.closePath()
+        c.stroke();
+// sky and ground
+        c.fillStyle = Qt.rgba(0.0, 0.0, 1.0, 0.1);
+        c.fillRect(-width/2, m, width, -height/2-m);
+        c.stroke();
+        c.fillStyle = Qt.rgba(1, 0.5, 0.0, 0.1);
+        c.fillRect(-width/2, m, width, height/2-m);
+        c.stroke();
+
         c.restore();
     }
     function setka(c)
@@ -93,7 +159,7 @@ Item {
         var height_grad=60
         var font_size=15
         var tick_size=(height-font_size)/2/height_grad
-        var st=Qt.rgba(0.0, 1.0, 0.0, 1)
+        var st=Qt.rgba(0.0, 1.0, 0.0, 0.8)
         c.save();
         c.strokeStyle = st
         c.beginPath()
@@ -127,7 +193,7 @@ Item {
     function line(c, x1,y1,x2,y2)
     {
         c.save();
-        c.strokeStyle = Qt.rgba(1.0, 1.0, 1.0, 1)
+        c.strokeStyle = Qt.rgba(1.0, 1.0, 1.0, 0.5)
         c.lineWidth = 1
         c.beginPath()
         c.lineCap="butt"
@@ -190,7 +256,6 @@ Item {
         onPaint: {
             var ctx = getContext('2d')
             ctx.clearRect(0, 0, width, height)
-            //ctx.globalAlpha = 1
             //ctx.strokeStyle = "lightyellow"
             ctx.lineWidth =2
 //            ctx.strokeStyle = "#cf0";
@@ -203,10 +268,13 @@ Item {
             hline(ctx,roll, width/6)
             rollline(ctx, roll)
             horizont(ctx, pitch, 100)
-            text_f(ctx,width/2,height-30,30,Math.round(pitch),"center", "middle",Qt.rgba(0.0, 1.0, 0.0, 0.8))
-            text_f(ctx,width/2,height/2-100,30,roll,"center", "middle",Qt.rgba(0.5, 0.5, 1.0, 0.8))
+            az(ctx, azimuth)
+            text_f(ctx,width/2,height-15,30,Math.round(pitch),"center", "middle",Qt.rgba(0.0, 1.0, 0.0, 0.8))
+            text_f(ctx,width/2,height/2-120,30,Math.round(roll),"center", "middle",Qt.rgba(0.5, 0.5, 1.0, 0.8))
+            text_f(ctx,width/2,height/2-55,30,Math.round(azimuth),"center", "middle",Qt.rgba(0.5, 0.5, 0.5, 0.8))
 
             setka(ctx)
+
 
             //ctx.stroke()
             //ctx.closePath();

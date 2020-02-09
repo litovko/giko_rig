@@ -345,7 +345,7 @@ void cJoystick::readSettings()
     setY2axis_ind(settings.value("Joystick-y2",3).toInt());
 
     for (auto i=0; i<key_map.size(); i++)
-        key_map[i]=settings.value("Joystick-bn"+QString::number(i)).toInt();
+        key_map[i]=settings.value("Joystick-bn"+QString::number(i),i).toInt();
     for (auto i=0; i<m_invert.length(); i++)
         m_invert[i]=settings.value("Joystick-axes-ivert"+QString::number(i)).toBool();
     settings.endGroup();

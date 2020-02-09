@@ -21,7 +21,7 @@ Item {
             PropertyChanges {target: voltage;   visible: false}
             PropertyChanges {target: current_mgbu;   visible: true}
             PropertyChanges {target: current_a;   visible: false}
-            PropertyChanges {target: altimetr_mgbu;   visible: false}
+            PropertyChanges {target: altimetr_mgbu;   visible: true}
             PropertyChanges {target: temperature;   visible: false}
             PropertyChanges {target: temperature_mgbu;   visible: true}
             PropertyChanges {target: pressure;   visible: false}
@@ -119,22 +119,22 @@ Item {
               id: flowrow
               spacing: 20
               anchors.fill: parent
-              Rectangle {
-                  id: bubble
-                  color:"transparent";
-                  //opacity: 0.5
-                  width:  gaugesize;
-                  height: gaugesize;
-                  objectName: "voltage_mgbu"
-                  NPA_bubble {
-                      //anchors.fill: parent
-                      anchors.fill: parent
-                      anchors.margins: 5
-                      a1:rig.kren
-                      a2:rig.tangag
-                      radius: 14
-                  }
-              }
+//              Rectangle {
+//                  id: bubble
+//                  color:"transparent";
+//                  //opacity: 0.5
+//                  width:  gaugesize;
+//                  height: gaugesize;
+//                  objectName: "voltage_mgbu"
+//                  NPA_bubble {
+//                      //anchors.fill: parent
+//                      anchors.fill: parent
+//                      anchors.margins: 5
+//                      a1:rig.kren
+//                      a2:rig.tangag
+//                      radius: 14
+//                  }
+//              }
               Rectangle {
                   id: voltage_mgbu
                   color:"transparent";
