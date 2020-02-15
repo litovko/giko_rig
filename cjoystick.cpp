@@ -329,6 +329,8 @@ void cJoystick::saveSettings()
 
     for (auto i=0; i<key_map.size(); i++)
         settings.setValue("Joystick-bn"+QString::number(i),key_map[i]);
+    foreach (auto el, key_name_map.keys())
+        settings.setValue("Joystick-bname"+QString::number(el),key_name_map[el]);
     for (auto i=0; i<m_invert.length(); i++)
         settings.setValue("Joystick-axes-ivert"+QString::number(i),m_invert[i]);
     settings.endGroup();
@@ -346,6 +348,12 @@ void cJoystick::readSettings()
 
     for (auto i=0; i<key_map.size(); i++)
         key_map[i]=settings.value("Joystick-bn"+QString::number(i),i).toInt();
+    for (auto i=0; i<25; i++)
+    {
+        auto v=settings.value("Joystick-bname"+QString::number(i),"null").toString();
+        if (v!="null")
+            key_name_map[i] = v;
+    }
     for (auto i=0; i<m_invert.length(); i++)
         m_invert[i]=settings.value("Joystick-axes-ivert"+QString::number(i)).toBool();
     settings.endGroup();
@@ -360,6 +368,11 @@ int cJoystick::map(int ind)
 void cJoystick::setmap(int ind, int id)
 {
     key_map[ind]=id;
+}
+
+void cJoystick::set_button_name(int ind, QString name)
+{
+    key_name_map[ind]=name;
 }
 
 int cJoystick::hats_number() const
@@ -384,8 +397,14 @@ QList<bool> cJoystick::keys()
     QList<bool> _buttons;
     for (auto i=0;i<buttons_number(); i++)
         _buttons.append(_joystick_data->button[key_map[i]]);
-//    qDebug()<<"IB>"<<_joystick_data->button;
-//    qDebug()<<"CB>"<<_buttons;
+    return _buttons;
+}
+
+QList<QString> cJoystick::names()
+{
+    QList<QString> _buttons;
+    for (auto i=0;i<buttons_number(); i++)
+        _buttons.append(key_name_map.value(i));
     return _buttons;
 }
 

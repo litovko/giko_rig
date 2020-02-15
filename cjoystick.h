@@ -28,6 +28,7 @@ class cJoystick : public QObject
     Q_PROPERTY(int hats_number READ buttons_number NOTIFY buttons_numberChanged)
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QList<bool> keys READ keys NOTIFY keysChanged) // KEYS
+    Q_PROPERTY(QList<QString> names READ names NOTIFY namesChanged) // KEY NAMES
     Q_PROPERTY(QList<int> hats READ hats NOTIFY hatsChanged)
     Q_PROPERTY(QList<bool> invert READ invert WRITE setInvert NOTIFY invertChanged )
 
@@ -92,6 +93,7 @@ public:
 
     void setButtons_number(int buttons_number);
     QList<bool> keys();
+    QList<QString> names();
     QList<int> hats();
     int hats_number() const;
     void setHats_number(int hats_number);
@@ -119,6 +121,7 @@ signals:
     void currentChanged();
     void nameChanged();
     void keysChanged();
+    void namesChanged();
     void keyChanged(int key);
     void hatsChanged();
     void invertChanged();
@@ -131,6 +134,7 @@ public slots:
     void readSettings();
     Q_INVOKABLE int map(int ind);
     Q_INVOKABLE void setmap(int ind, int id);
+    Q_INVOKABLE void set_button_name(int ind, QString name);
 private:
     QJoystick *joy=nullptr;
     bool m_ispresent=false;
@@ -156,7 +160,14 @@ private:
         {20,20}, {21,21}, {22,22}, {23,23}, {24,24},
 
     };
-
+    QMap<int, QString>key_name_map={
+        {0,"Курок"},
+//        {1,"Имя 2"}, {2,"Имя 3"}, {3,"Имя 4"}, {4,"Имя 5"},
+//        {5,"Имя 6"}, {6,"Имя 7"}, {7,"Имя 8"}, {8,"Имя 9"}, {9,"Имя 10"},
+//        {10,"Имя 11"}, {11,"Имя 12"}, {12,"Имя 13"}, {13,"Имя 14"}, {14,"Имя 15"},
+//        {15,"Имя 16"}, {16,"Имя 17"}, {17,"Имя 18"}, {18,"Имя 19"}, {19,"Имя 20"},
+//        {20,"Имя 21"}, {21,"Имя 22"}, {22,"Имя 23"}, {23,"Имя 24"}, {24,"Имя 25"},
+    };
     int m_axes_number=0;
     int m_buttons_number=0;
     int m_hats_number=0;

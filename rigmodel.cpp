@@ -464,7 +464,7 @@ void cRigmodel::setPins(const QList<bool> &pins)
 {
     m_pins = pins;
     emit pinsChanged();
-    qDebug()<<"PINS:"<<m_pins;
+    //qDebug()<<"PINS:"<<m_pins;
 }
 
 

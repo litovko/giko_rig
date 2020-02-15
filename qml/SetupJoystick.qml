@@ -30,23 +30,20 @@ Item {
     function fillistmodel(){
         btnlistmodel.clear()
         btnnumberlistmodel.clear()
-        print("Joystick fillistmodel: "+ joystick.ispresent +"current: "+ joystick.current)
         if (joystick.ispresent) {
             for (var i=0; i<joystick.buttons_number; i++)
-            btnlistmodel.append({"name":"Кнопка  №"+(i+1), "ind":joystickDialog.joystick.map(i), "id" : i})
-//            btnlistmodel.append({"name":"Кнопка  №2", "ind":joystickDialog.joystick.map(1), "id" : 1})
-//            btnlistmodel.append({"name":"Кнопка  №3", "ind":joystickDialog.joystick.map(2), "id" : 2})
-//            btnlistmodel.append({"name":"Кнопка  №4", "ind":joystickDialog.joystick.map(3), "id" : 3})
-//            btnlistmodel.append({"name":"Кнопка  №5", "ind":joystickDialog.joystick.map(4), "id" : 4})
-//            btnlistmodel.append({"name":"Кнопка  №6", "ind":joystickDialog.joystick.map(5), "id" : 5})
-//            btnlistmodel.append({"name":"Кнопка  №7", "ind":joystickDialog.joystick.map(6), "id" : 6})
-//            btnlistmodel.append({"name":"Кнопка  №8", "ind":joystickDialog.joystick.map(7), "id" : 7})
-//            btnlistmodel.append({"name":"Кнопка  №9", "ind":joystickDialog.joystick.map(8), "id" : 8})
-//            btnlistmodel.append({"name":"Кнопка №10", "ind":joystickDialog.joystick.map(9), "id" : 9})
-//            btnlistmodel.append({"name":"Кнопка №11", "ind":joystickDialog.joystick.map(10), "id" : 10})
-//            btnlistmodel.append({"name":"Кнопка №12", "ind":joystickDialog.joystick.map(11), "id" : 11})
+                btnlistmodel.append({"name":joystick.names[i], "ind":joystickDialog.joystick.map(i), "id" : i, "num":i+1})
         }
     }
+    onVisibleChanged: if (!visible) {
+
+                          for(var i=0 ; i<btnlistmodel.count; i++){ // записываем  названия кнопок
+                              var n = lv.model.get(i).name
+                              if (n.length !== 0) {
+                                  joystick.set_button_name(i,n)
+                              }
+                          }
+                      }
 
     Rectangle {
         id: rectangle1
@@ -93,6 +90,7 @@ Item {
             height: 28
             text: qsTr("Применить")
             onClicked: {
+
                 fcommand("JOYSTICK SETTINGS")
                 mainRect.focus=true;
             }
@@ -284,16 +282,34 @@ Item {
                     width: 200
                     height: 26
                     spacing: 5
+
                     Text {
-                        id: tx
-                        //anchors.left: parent.left
-                        text: name
-                        verticalAlignment: Text.AlignVCenter
+                        text: num
                         color: "white"
+                        height: parent.height
+                        font.pixelSize: height/2
+                        verticalAlignment: Text.AlignVCenter
+                        width: 20
+                    }
+
+                    TextField {
+                        id: tx
+                        text: name
+                        onTextChanged: model.name = text
+                        verticalAlignment: Text.AlignVCenter
+                        color: hovered?"yellow":"white"
                         width: 150
                         height: parent.height
                         font.pixelSize: height/2
+                        placeholderText: qsTr("Имя кнопки")
+                        background: Rectangle {
+                                  anchors.fill: parent
+                                  color: tx.enabled ? "gray" : "black"
+                                  border.color: tx.hovered ? "white" : "transparent"
+                              }
                     }
+
+
                     Rectangle {
                         id: r
                         color: joystickDialog.joystick.keys[id]?"yellow":"gray"

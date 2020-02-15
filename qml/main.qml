@@ -90,6 +90,7 @@ Window {
         if (cams[0].timeout || cams[1].timeout || cams[2].timeout
                 || cams[3].timeout)
             return
+        if (players[player_number].state===1) return; //NOTE: не даем остановить или запустить новый поток пока находимся в статусе "Открытие"
         players[player_number].stop()
         players[player_number].playlist.clear()
         players[player_number].playlist.addWithOptions(
@@ -243,7 +244,7 @@ Window {
         joystick_y1: power(j1.y1axis*j1.keys[0]) //прав задний трастер ana2
                      + j1.x1axis*(j1.keys[13]+j1.keys[15]) // при боковом движении прав задний
         joystick_x2: power(j1.x2axis*j1.keys[0]) // подрулька ana3
-                     + j1.x1axis*(j1.keys[13]+j1.keys[15]) //подрулька при боковом движении ana3
+                     + j1.x1axis*(j1.keys[13]+j1.keys[15]) // при боковом движении подрулька ana3
         //1.keys[13]+j1.keys[15] - 13 кепка вправо 15 - кепка влево
         property bool lamp_switch: false
         light1: lampsSettings.lamp1 * lamp_switch
@@ -265,7 +266,8 @@ Window {
         board: 2
         joystick_x1: (j1.hats[0]===1||j1.hats[0]===4)?power(j1.y1axis*!j1.keys[0]):0 // передний лифт ana1
         joystick_y1: (j1.hats[0]===1||j1.hats[0]===4)?power(j1.y1axis*!j1.keys[0]):0 // задний лифт ana2
-        joystick_x2: j2.x2axis*j2.keys[0]*!j2.keys[3] //поворот камеры ana3
+        //joystick_x2: j2.x2axis*j2.keys[0]*!j2.keys[3] //поворот камеры ana3
+        joystick_x2: 127*(j2.keys[4]-j2.keys[5]) //поворот камеры ana3
         light1: 0
         light2: 0
         light3: 0
@@ -873,7 +875,12 @@ Window {
             id: j1
             current: 0
             devider: 1
-            onKeysChanged: print(keys)
+            //onKeysChanged: print(names)
+            onKeyChanged: {
+                //console.log(keys)
+                if (key === 8 & !keys[8]) fcommand("PLAY")
+                if (key === 9 & !keys[9]) fcommand("STOP")
+            }
         }
 
         RigJoystick {

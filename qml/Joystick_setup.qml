@@ -33,29 +33,29 @@ Rectangle {
     visible: false    
     SetupJoystick {
         id: joysetup
-        text: "Джойстик 1"
+        text: "Джойстик 1 - движение"
+        width: 500
+        height: 500
+
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.margins: 10
+        joystick: j1
+
+        rect.border.width: 0
+    }
+    SetupJoystick {
+        id: joysetup2
+        text: "Джойстик 2 - манипулятор"
         width: 500
         height: 500
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
         anchors.margins: 10
-        joystick: j1
         btn_apply.visible: false
         btn_close.visible: false
-        rect.border.width: 0
-        //visible: false
-    }
-    SetupJoystick {
-        id: joysetup2
-        text: "Джойстик 2"
-        width: 500
-        height: 500
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: 10
         joystick: j2
         rect.border.width: 0
-        //visible: false
     }
     
 }
