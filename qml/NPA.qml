@@ -147,7 +147,8 @@ Item {
             position: board2.position
             cx2: board2.pin7*127-board2.pin6*127 //выращение по часовой стрелке и против
             cx4: board2.ana3 //поворот камеры влево-вправо
-            ca:  0 //указатель угла поворота камеры
+            ca:  scale (1, 0, mbus.values[0]) //TODO: сделать масштабирование указатель угла поворота камеры
+            cb:  scale (1, 0, mbus.values[1]) //TODO: сделать масштабирование указатель угла вращения камеры
             cool: board2.engine2
             brdr: mag.containsMouse
             MouseArea {

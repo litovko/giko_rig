@@ -108,3 +108,25 @@ function arrow(c, x, y, len, angle, fillstyle)
 
 }
 
+function threeangle_(c,ax,ay,s,grad, fillstyle=Qt.rgba(1, 1, 0, 0.8)){
+    var r=s
+    c.save();
+    c.strokeStyle = Qt.rgba(0.5, 0.5, 0.5, 0.8)
+    c.lineWidth = 2
+    c.beginPath()
+    c.fillStyle = fillstyle
+    //c.rotate(angle*Math.PI/180);
+    c.translate(ax,ay);
+    c.rotate(grad/180*Math.PI+Math.PI);
+    c.moveTo(-r/4,0)
+    c.lineTo(r/4,0);
+    c.lineTo(0,r/2);
+    c.lineTo(-r/4,0);
+    c.closePath();
+    c.fill();
+    c.stroke();
+    c.restore();
+}
+function calc(a){
+    return a
+}

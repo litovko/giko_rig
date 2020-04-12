@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import "./figure.js" as Fig
+//import './scale.js' as FScale
 Item {
     id: npa
     property color linestyle: Qt.rgba(1.0, 0.5, 0.5, 0.5)
@@ -13,6 +14,7 @@ Item {
     property int cx3:0 // лебедка
     property int cx4:0 // поворот камеры в горизонтальной плоскости
     property int ca: 0 //индикатор угола поворота камеры -135...135 от нуля наверху
+    property int cb: 0 //индикатор угола поворота камеры -135...135 вокруг своей оси
     property bool cool: false
     property alias brdr: b.visible
     property int shift_y : 100
@@ -22,12 +24,18 @@ Item {
     onCx3Changed: canvas.requestPaint()
     onCx4Changed: canvas.requestPaint()
     onCaChanged:  canvas.requestPaint()
+    onCbChanged:  canvas.requestPaint()
     onPositionChanged: canvas.requestPaint()
 
     function func(val){
         if (val>delta) return fillstyle_green
         if (Math.abs(val)<delta) return fillstyle_yellow
         return fillstyle_red
+    }
+
+
+    function scale(k, m, v) {
+        return v*k + m
     }
 
     Rectangle {
@@ -173,12 +181,17 @@ Item {
             ctx.arc(hc, vc, r2,Math.PI*135/180,2.25*Math.PI)
             var cax=Math.cos(-Math.PI/2+Math.PI*ca/180)*r3
             var cay=Math.sin(-Math.PI/2+Math.PI*ca/180)*r3
+            var cbx=Math.cos(-Math.PI/2+Math.PI*cb/180)*r3
+            var cby=Math.sin(-Math.PI/2+Math.PI*cb/180)*r3
             ctx.strokeStyle = Qt.rgba(1.0, 1.0, 1.0, 0.5)
             ctx.stroke()
             ctx.closePath()
-            Fig.circle(ctx,hc+cax, vc+cay, r0/5, fillstyle_yellow)
+            Fig.circle(ctx,hc+cax, vc+cay, r0/5, fillstyle_yellow) //указатель угла поворота
+            Fig.threeangle_(ctx,hc+cbx, vc+cby,r0,cb, fillstyle_yellow ) // указатель угла вращения камеры
             Fig.text_m(ctx,hc+2*r0/3,x1+r0/2,th,"1", "left", "top", linestyle2)
+            Fig.text_m(ctx,hc+2*r0/2,x1+r0/2,th,ca, "left", "top", fillstyle_yellow)
             Fig.text_m(ctx,hc+3*r0/3,vc,th,"2", "left", "top", linestyle2)
+            Fig.text_m(ctx,hc,vc+r0/2,th,cb, "center", "top", fillstyle_yellow)
 
 //            //лебедка
 //            ctx.beginPath()

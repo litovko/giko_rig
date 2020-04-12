@@ -15,6 +15,7 @@ cJoystick::cJoystick(QObject *parent) : QObject(parent)
     connect(timer_checkjoystick,SIGNAL(timeout()),this,SLOT(checkJoystick()));
     //connect(this, &cJoystick::keyChanged, this, []( int k ) { qDebug()<<"k:"<<k; });
     init_joystick();
+
     //checkJoystick();
     timer_checkjoystick->start(J_CHECK_INTERVAL);
     //    readSettings();
@@ -165,6 +166,7 @@ void cJoystick::init_joystick()
         joy = new QJoystick();
         qDebug()<<"Joystick Number:"<<current()<<"new QJoystick:"<<joy;
         //setIspresent(true);
+
     }
     m_joysticks_avail=joy->availableJoysticks();
     qDebug()<<"Joysticks available:"<<m_joysticks_avail;
@@ -410,7 +412,10 @@ QList<QString> cJoystick::names()
 
 QList<int> cJoystick::hats()
 {
-    if (!_joystick_data) qDebug()<<"JOYSTICK_DATA _NULL_PTR!!!" ;
+    if (_joystick_data==nullptr) {
+        qDebug()<<"JOYSTICK_DATA _NULL_PTR!!!";
+        qDebug()<<"ПОДКЛЮЧИ ДЖОЙСТИКИ!!!";
+    }
     return  _joystick_data->hat;
 }
 

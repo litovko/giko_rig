@@ -152,6 +152,15 @@ Item {
                     active:net.good_data
                 }
                 MyLamp{
+                    id: data_modbus
+                    height: lampSize
+                    width: lampSize
+                    bottomText:"ДАННЫЕ Ш"
+                    active:mbus.good_data
+                    command: "MODBUS RECONNECT"
+                    onLampClicked: controlPanel.lampClicked(lamp_command)
+                }
+                MyLamp{
                     id: voltage
                     height: lampSize
                     width: lampSize

@@ -44,6 +44,8 @@
 #include <QFile>
 #include <iostream>
 
+#include "modbus\cmodbusclient.h"
+
 
 static QFile logfile;
 static QTextStream out(&logfile);
@@ -150,6 +152,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<cNetworker>("Gyco", 1, 0, "Networker");
     qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
     qmlRegisterType<cJoystick>("Gyco", 1, 0, "RigJoystick");
+    qmlRegisterType<cModbusClient>("Gyco", 1, 0, "Modbus");
     QCoreApplication::setAttribute(Qt::AA_DisableShaderDiskCache);
 
     QGuiApplication app(argc, argv);

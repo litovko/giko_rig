@@ -1,12 +1,12 @@
-QT += quick network core
+QT += quick network core serialbus
 CONFIG += c++11  console
-TARGET = NPA
 #CONFIG+=debug
 #mingw:QMAKE_CXXFLAGS_DEBUG += "-gstabs+"
 #mingw:QMAKE_CFLAGS_DEBUG += "-gstabs+"
 VERSION = 5.10.0.1
 #INCLUDEPATH += deps
 SOURCES += main.cpp \
+    modbus/cmodbusclient.cpp \
     networker.cpp \
     rigmodel.cpp \
     camera.cpp \
@@ -24,6 +24,7 @@ QML_IMPORT_PATH = C:\Qt\5.12.1\msvc2017_64\qml\QtQuick
 #include(deps/QmlVlc/QmlVlc.pri)
 include(../QmlVlc\QmlVlc.pri)
 
+
 #OTHER_FILES += \
 #    skin/basic_2.qml \
 #    skin/pause.png \
@@ -33,6 +34,7 @@ include(../QmlVlc\QmlVlc.pri)
 
 #
 HEADERS += \
+    modbus/cmodbusclient.h \
     networker.h \
     rigmodel.h \
     camera.h \

@@ -215,6 +215,17 @@ Window {
         cam1.write_subtitles(vlcPlayer1.time, s)
     }
 
+    Modbus {
+        id: mbus
+        address: networker.address
+        port: 502
+        device_address: 16
+        pooling_time: 200
+        reconnect_interval: 100
+        request_timeout: 300
+
+        //onValuesChanged: print(values)
+    }
     Board {
         id: rig0
         board: 0
@@ -541,6 +552,9 @@ Window {
             break
         case "RECONNECT":
             networker.reconnect()
+            break
+        case "MODBUS RECONNECT":
+            mbus.modbus_disconnect()
             break
         case "PUMP":
             rig0.pump = rig0.pump ? false : true

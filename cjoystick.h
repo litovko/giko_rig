@@ -182,7 +182,7 @@ private:
     };
     // Available number of joysticks.
     int m_joysticks_avail=0;
-    joydata* _joystick_data=nullptr;
+    joydata* _joystick_data=nullptr; //TODO: избавиться от указателя.
     void pollJoystick();
     void init_joystick();
     void clear_joystick();
