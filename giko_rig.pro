@@ -3,7 +3,7 @@ CONFIG += c++11  console
 #CONFIG+=debug
 #mingw:QMAKE_CXXFLAGS_DEBUG += "-gstabs+"
 #mingw:QMAKE_CFLAGS_DEBUG += "-gstabs+"
-VERSION = 5.10.0.1
+VERSION = 5.11.0.0
 #INCLUDEPATH += deps
 SOURCES += main.cpp \
     modbus/cmodbusclient.cpp \

@@ -18,6 +18,11 @@ Item {
         property alias x_bubbble: bubble2.x
         property alias y_bubbble: bubble2.y
         property alias state: npa.state
+        property real ku : 1
+        property real au : 0
+        property real kv : 1
+        property real av : 0
+
     }
     function resetposition(){
         bubble2.x=bubble2.y=npa_move.x=npa_move.y=npa_hand.x=npa_hand.y=npa_group.x=npa_group.y=0
@@ -147,8 +152,8 @@ Item {
             position: board2.position
             cx2: board2.pin7*127-board2.pin6*127 //выращение по часовой стрелке и против
             cx4: board2.ana3 //поворот камеры влево-вправо
-            ca:  scale (1, 0, mbus.values[0]) //TODO: сделать масштабирование указатель угла поворота камеры
-            cb:  scale (1, 0, mbus.values[1]) //TODO: сделать масштабирование указатель угла вращения камеры
+            ca:  scale (settings.ku, settings.au, mbus.values[0]) //TODO: сделать масштабирование указатель угла поворота камеры
+            cb:  scale (settings.kv, settings.av, mbus.values[1]) //TODO: сделать масштабирование указатель угла вращения камеры
             cool: board2.engine2
             brdr: mag.containsMouse
             MouseArea {

@@ -147,7 +147,7 @@ Window {
 
         var fn = file_name(camindex)
         cams[camindex].recordfile = fn //The recorded file name stored in camera object
-        //        var popt=[":network-caching="+network_caching.toString()
+        //         var popt=[":network-caching="+network_caching.toString()
         //                  ,":sout=#stream_out_duplicate{dst=display,dst=std{access=file,mux=mp4,dst="
         //                  + fn
         //                  + "}}"
@@ -217,12 +217,12 @@ Window {
 
     Modbus {
         id: mbus
-        address: networker.address
-        port: 502
-        device_address: 16
-        pooling_time: 200
-        reconnect_interval: 100
-        request_timeout: 300
+        //address: networker.address
+        //port: 502
+        //device_address: 16
+        //pooling_time: 200
+        //reconnect_interval: 100
+        //request_timeout: 300
 
         //onValuesChanged: print(values)
     }
@@ -909,7 +909,7 @@ Window {
             width: 180
             z: 10
             rig: rig0
-            state: rig0.rigtype
+            state: "NPA"
             containerheight: parent.height
             anchors {
                 margins: 10

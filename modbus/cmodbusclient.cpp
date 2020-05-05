@@ -5,6 +5,7 @@
 cModbusClient::cModbusClient(QObject *parent) : QObject(parent)
 {
     m_modbusclient =  new QModbusTcpClient(parent);
+    readSettings();
     connect(m_modbusclient, SIGNAL(errorOccurred(QModbusDevice::Error)), this, SLOT(onError(QModbusDevice::Error)));
     connect(m_modbusclient, SIGNAL(stateChanged(QModbusDevice::State)), this, SLOT(onState(QModbusDevice::State)));
 
@@ -145,7 +146,8 @@ void cModbusClient::send_request()
                      start_address(),
                      registers()),
                      device_address());
-    //qDebug()<<pModbusReply;
+
+    //qDebug()<<"==devadr:"<<device_address();
     connect(pModbusReply, SIGNAL(finished()),this, SLOT(read_data()));
     connect(pModbusReply, SIGNAL(errorOccurred(QModbusDevice::Error)), this, SLOT(onError(QModbusDevice::Error)));
     //qDebug()<<pModbusReply->error();
@@ -180,6 +182,12 @@ void cModbusClient::readSettings()
     setReconnect_interval(settings.value("Reconnect interval",1000).toInt());
     setRegisters(static_cast<unsigned short>(settings.value("Registers number",3).toUInt()));
     setStart_address(settings.value("Registers start address",3).toInt());
+    qDebug()<<"==modbus";
+    qDebug()<<"==addrs:"<<address();
+    qDebug()<<"==devad:"<<device_address();
+    qDebug()<<"==start:"<<start_address();
+    qDebug()<<"==regnu:"<<registers();
+    qDebug()<<"==modbus";
 }
 
 int cModbusClient::_scale(int v)

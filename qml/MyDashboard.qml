@@ -8,7 +8,7 @@ Item {
     property int containerheight: 1080
     property Board rig: null
 
-    state: rig.rigtype
+    state: "NPA"
     states: [
         State {
             name: "NPA"

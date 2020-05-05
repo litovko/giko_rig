@@ -30,8 +30,13 @@ class cRigmodel : public QObject
     Q_PROPERTY(int altitude READ altitude WRITE setAltitude NOTIFY altitudeChanged)
     Q_PROPERTY(int tangag READ tangag WRITE setTangag NOTIFY tangagChanged)
     Q_PROPERTY(int kren READ kren WRITE setKren NOTIFY krenChanged)
+    Q_PROPERTY(int azimuth READ azimuth WRITE setAzimuth NOTIFY azimuthChanged)
     Q_PROPERTY(int turns READ turns WRITE setTurns NOTIFY turnsChanged)
     Q_PROPERTY(int temperature READ temperature WRITE setTemperature NOTIFY temperatureChanged)
+
+    Q_PROPERTY(int board_temp READ board_temp WRITE setBoard_temp NOTIFY board_tempChanged)
+    Q_PROPERTY(int board_humid READ board_humid WRITE setBoard_humid NOTIFY board_humidChanged)
+
     Q_PROPERTY(QString rigtype READ rigtype WRITE setRigtype NOTIFY rigtypeChanged)
     Q_PROPERTY(int board READ board WRITE setBoard NOTIFY boardChanged)
     Q_PROPERTY(QString gmod READ gmod WRITE setGmod NOTIFY gmodChanged)
@@ -84,8 +89,8 @@ class cRigmodel : public QObject
     Q_PROPERTY(bool pin6 READ pin6 WRITE setPin6 NOTIFY pin6Changed)
     Q_PROPERTY(bool pin7 READ pin7 WRITE setPin7 NOTIFY pin7Changed)
 
-//    Q_PROPERTY(bool client_connected READ client_connected NOTIFY client_connectedChanged)
-//    Q_PROPERTY(bool good_data READ good_data  NOTIFY good_dataChanged)
+    //    Q_PROPERTY(bool client_connected READ client_connected NOTIFY client_connectedChanged)
+    //    Q_PROPERTY(bool good_data READ good_data  NOTIFY good_dataChanged)
 
 public:
     explicit cRigmodel(QObject *parent = nullptr);
@@ -290,6 +295,15 @@ public:
     bool pin7() {return m_pins[7];}
     void setPin7(bool p) {if (m_pins[7]==p) return; m_pins[7]=p; emit pin7Changed();}
 
+    int azimuth() const;
+    void setAzimuth(int azimuth);
+
+    int board_humid() const;
+    void setBoard_humid(int board_humid);
+
+    int board_temp() const;
+    void setBoard_temp(int board_temp);
+
 signals:
     void positionChanged();
     void pressureChanged();
@@ -308,8 +322,11 @@ signals:
     void altitudeChanged();
     void tangagChanged();
     void krenChanged();
+    void azimuthChanged();
     void turnsChanged();
     void temperatureChanged();
+    void board_tempChanged();
+    void board_humidChanged();
     void rigtypeChanged();
     void gmodChanged();
     void lampChanged();
@@ -380,12 +397,13 @@ public slots:
     void readSettings();
     //void updateClientProgress(qint64 numBytes);
     QJsonObject getData();
+    void readData(const QJsonValue &jdata);
     //    void displayError(QAbstractSocket::SocketError socketError);
-    void sendData(); //слот должен вызываться любым событием, которое меняет данные, предназначенные для отправки.
+    void readData(); //слот должен вызываться любым событием, которое меняет данные, предназначенные для отправки.
     //void readData(); //расклаываем полученные от сервера данные по параметрам
     void sendKoeff();
     void reset();
-//    Q_INVOKABLE void reconnect();
+    //    Q_INVOKABLE void reconnect();
     void setana();
 
 
@@ -394,6 +412,8 @@ private:
     int m_board=0;
     int m_pressure=50;
     int m_pressure2=60;
+    int m_board_temp=10;
+    int m_board_humid=10;
     int m_temperature=10;
     int m_temperature2=20;
     int m_voltage=251;
@@ -409,6 +429,7 @@ private:
     int m_altitude=10;
     int m_tangag=10;
     int m_kren=10;
+    int m_azimuth=0;
     int m_turns=0;
     QString gmod_decode(QString gmod) const;
     QString NPA_data();
@@ -419,7 +440,7 @@ private:
     //QString m_address="localhost";
     //quint16 m_port=1212;
     int m_freerun;
-//    bool m_client_connected = false;
+    //    bool m_client_connected = false;
 
     std::map<std::string, std::function<void(int)>> _fmap;
     bool handle_tag(const QString &tag,  const QString &val);
@@ -451,7 +472,7 @@ private:
     int m_limz=100000; //порог по току утечки
     QString m_gmod="move"; //
 
-//    bool m_good_data=false;
+    //    bool m_good_data=false;
     bool m_check_type=false;
 
 

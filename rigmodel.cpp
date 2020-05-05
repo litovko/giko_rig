@@ -29,29 +29,33 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
     _fmap["leak"]  = std::bind(&cRigmodel::setLeak, this, _1);
     _fmap["vchs"]  = std::bind(&cRigmodel::setLeak_voltage, this, _1);
     _fmap["type"]  = std::bind(&cRigmodel::setRigtypeInt, this, _1);
+    _fmap["azmt"]  = std::bind(&cRigmodel::setAzimuth, this, _1);
+    _fmap["temp"]  = std::bind(&cRigmodel::setBoard_temp, this, _1);
+    _fmap["humi"]  = std::bind(&cRigmodel::setBoard_humid, this, _1);
+    _fmap["_dev"]  = std::bind(&cRigmodel::setRigtypeInt, this, _1);
     reset();
 
-    connect(this, SIGNAL(lampChanged()),this, SLOT(sendData()));
-    connect(this, SIGNAL(light1Changed()),this, SLOT(sendData()));
-    connect(this, SIGNAL(light2Changed()),this, SLOT(sendData()));
-    connect(this, SIGNAL(light3Changed()),this, SLOT(sendData()));
-    connect(this, SIGNAL(light4Changed()),this, SLOT(sendData()));
-    connect(this, SIGNAL(engineChanged()),this, SLOT(sendData()));
-    connect(this, SIGNAL(engine2Changed()),this, SLOT(sendData()));
-    connect(this, SIGNAL(free_engine1Changed(bool)),this, SLOT(sendData()));
-    connect(this, SIGNAL(free_engine2Changed(bool)),this, SLOT(sendData()));
-    connect(this, SIGNAL(pumpChanged()),this, SLOT(sendData()));
-    connect(this, SIGNAL(cameraChanged()),this, SLOT(sendData()));
-    connect(this, SIGNAL(camera1Changed()),this, SLOT(sendData()));
-    connect(this, SIGNAL(camera2Changed()),this, SLOT(sendData()));
-    connect(this, SIGNAL(camera3Changed()),this, SLOT(sendData()));
-    connect(this, SIGNAL(camera4Changed()),this, SLOT(sendData()));
-    connect(this, SIGNAL(gmodChanged()),this, SLOT(sendData()));
+    connect(this, SIGNAL(lampChanged()),this, SLOT(readData()));
+    connect(this, SIGNAL(light1Changed()),this, SLOT(readData()));
+    connect(this, SIGNAL(light2Changed()),this, SLOT(readData()));
+    connect(this, SIGNAL(light3Changed()),this, SLOT(readData()));
+    connect(this, SIGNAL(light4Changed()),this, SLOT(readData()));
+    connect(this, SIGNAL(engineChanged()),this, SLOT(readData()));
+    connect(this, SIGNAL(engine2Changed()),this, SLOT(readData()));
+    connect(this, SIGNAL(free_engine1Changed(bool)),this, SLOT(readData()));
+    connect(this, SIGNAL(free_engine2Changed(bool)),this, SLOT(readData()));
+    connect(this, SIGNAL(pumpChanged()),this, SLOT(readData()));
+    connect(this, SIGNAL(cameraChanged()),this, SLOT(readData()));
+    connect(this, SIGNAL(camera1Changed()),this, SLOT(readData()));
+    connect(this, SIGNAL(camera2Changed()),this, SLOT(readData()));
+    connect(this, SIGNAL(camera3Changed()),this, SLOT(readData()));
+    connect(this, SIGNAL(camera4Changed()),this, SLOT(readData()));
+    connect(this, SIGNAL(gmodChanged()),this, SLOT(readData()));
     connect(this, SIGNAL(joystick_x1Changed()), this, SLOT(setana()));
     connect(this, SIGNAL(joystick_x2Changed()), this, SLOT(setana()));
     connect(this, SIGNAL(joystick_y1Changed()), this, SLOT(setana()));
     connect(this, SIGNAL(joystick_y2Changed()), this, SLOT(setana()));
-    connect(this, SIGNAL(pinsChanged()), this, SLOT(sendData()));
+    connect(this, SIGNAL(pinsChanged()), this, SLOT(readData()));
 
 }
 void cRigmodel::reset()
@@ -401,49 +405,35 @@ QJsonObject cRigmodel::getData()
     return json;
 }
 
+void cRigmodel::readData(const QJsonValue &jdata)
+{
+    //qDebug()<<"isArray:"<<jdata.isArray()<<"rig:"<<jdata.toString();
+    QVariantMap json_map=jdata.toVariant().toMap();
+    //qDebug()<<json_map;
+    foreach(auto &el, json_map.keys()) {
+        qDebug()<<"b:"<<m_board<<el<<"="<<json_map.value(el);
+        handle_tag(el, json_map.value(el).toString());
+
+    }
+}
+
 
 //##################### функция отправки данных
 
-void cRigmodel::sendData()
+void cRigmodel::readData()
 {
     emit dataChanged();
     //qDebug()<<"data changed";
 }
 
-//QString cRigmodel::NPA_data()
-//{
-//    int dig= m_engine*1
-//            +   !m_pump*4  //замок манипулятора открывание
-//            +   m_pump*2 //замок манипулятора закрывание
-//            +   m_lamp*64
-//            //+ m_camera*8
-//            + m_engine2*8
-//            + m_camera1*16*m_camera
-//            + m_camera2*32*m_camera
-//            //+ m_camera3*64*m_camera
-//            + m_camera4*128*m_camera
-//            ;
-//    QString Data="{ana1:"+::QString().number(ana1(),10)\
-//            +";ana2:"+::QString().number(ana2(),10)\
-//            +";ana3:"+::QString().number(ana3(),10)\
-//            +";ana4:"+::QString().number(ana4(),10);
-//    Data=Data+";gmod:"+gmod_decode(m_gmod)\
-//            //+";svet:"+::QString().number((m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16)))
-//            +";dig1:"+::QString().number(dig,10)+"}CONSDATA";
-//    return Data;
-//}
+
 bool cRigmodel::handle_tag(const QString &tag, const QString &val)
 {
     bool ok=false;
     auto it = _fmap.find(tag.toUtf8().constData());
     if(it != _fmap.end()) {
-        if (val=="type") {
-            setRigtype(val);
-            if (rigtype()=="mgbu_") setRigtype("mgbu")
-                    ;
-            if(!(ok=(m_rigtype=="grab2"||m_rigtype=="grab6"||m_rigtype=="gkgbu"||m_rigtype=="mgbu")))
-                qWarning()<<"Data! Wrong rig type <"<<val<<">";
-
+        if (tag=="type") {
+            setRigtype("NPA");
         }
         else {
             auto v=val.toInt(&ok,10);
@@ -555,41 +545,6 @@ bool cRigmodel::engine2() const
 
 
 
-//void cRigmodel::readData()
-//{
-
-//    QByteArray Data="";
-//    QString CRC ="";
-//    QList<QByteArray> split;
-//    int m;
-//    _no_resp=false;
-//    //Data = tcpClient.readAll();
-//    qDebug()<<"read:"<<Data;
-//    // {toil=29;poil=70;drpm=15;pwrv=33;pwra=3}FAFBFCFD
-
-//    if (Data.startsWith("{")&&(m=Data.indexOf("}"))>0) {
-//        setGood_data(true);
-//        CRC=Data.mid(m+1);
-//        //qDebug()<<"CRC:"<<CRC; //CRC пока не проверяем - это отдельная тема.
-//        Data=Data.mid(1,m-1);
-//        //qDebug()<<"truncated :"<<Data;
-//        split=Data.split(';');
-//        //qDebug()<<"split:"<<split;
-//        QListIterator<QByteArray> i(split);
-//        QByteArray s, val;
-//        while (i.hasNext()){
-//            s=i.next();
-//            m=s.indexOf(":");
-//            val=s.mid(m+1); //данные после ":"
-//            s=s.left(m); // название тэга
-//            setGood_data( handle_tag(s,val) );
-//        }
-//    }
-//    else {
-//        setGood_data(false);
-//        qWarning()<<"Rig: wrong data receved";
-//    }
-//}
 
 void cRigmodel::sendKoeff()
 {
@@ -623,6 +578,40 @@ int cRigmodel::scaling(const int &value)
     else
         return static_cast<int>(-ceil(df - value*(100-m_freerun)/100.0));
 
+}
+
+int cRigmodel::board_temp() const
+{
+    return m_board_temp;
+}
+
+void cRigmodel::setBoard_temp(int board_temp)
+{
+    if (m_board_temp == board_temp) return;
+    m_board_temp = board_temp;
+}
+
+int cRigmodel::board_humid() const
+{
+    return m_board_humid;
+}
+
+void cRigmodel::setBoard_humid(int board_humid)
+{
+    if(m_board_humid == board_humid) return;
+    m_board_humid = board_humid;
+}
+
+int cRigmodel::azimuth() const
+{
+    return m_azimuth;
+}
+
+void cRigmodel::setAzimuth(int azimuth)
+{
+    if(m_azimuth==azimuth) return;
+    m_azimuth = azimuth;
+    emit azimuthChanged();
 }
 
 int cRigmodel::board() const

@@ -126,35 +126,8 @@ int cJoystick::current()
     return m_current;
 }
 
-//bool cJoystick::key_0()
-//{
-//    return m_key_0;
-//}
 
-//bool cJoystick::key_1()
-//{
-//    return m_key_1;
-//}
 
-//bool cJoystick::key_2()
-//{
-//    return m_key_2;
-//}
-
-//bool cJoystick::key_3()
-//{
-//    return m_key_3;
-//}
-
-//bool cJoystick::key_4()
-//{
-//    return m_key_4;
-//}
-
-//bool cJoystick::key_5()
-//{
-//    return m_key_5;
-//}
 // Initialize Joystick information
 // Get # of joysticks available
 // Populate # of axes and buttons
@@ -222,17 +195,12 @@ void cJoystick::init_joystick()
     if (m_x1axis_ind>m_axes_number-1) setX1axis_ind(0);
     if (m_y2axis_ind>m_axes_number-1) setY2axis_ind(0);
     if (m_x2axis_ind>m_axes_number-1) setX2axis_ind(0);
-//    if (m_key_0_ind>m_buttons_number-1) setKey_0_ind(0);
-//    if (m_key_1_ind>m_buttons_number-1) setKey_1_ind(0);
-//    if (m_key_2_ind>m_buttons_number-1) setKey_2_ind(0);
-//    if (m_key_3_ind>m_buttons_number-1) setKey_3_ind(0);
-//    if (m_key_4_ind>m_buttons_number-1) setKey_4_ind(0);
-//    if (m_key_5_ind>m_buttons_number-1) setKey_5_ind(0);
+
     emit axes_numberChanged();
     emit buttons_numberChanged();
     emit nameChanged();
     connect(timer_joystick,SIGNAL(timeout()),this,SLOT(updateData()));
-    timer_joystick->start();
+    timer_joystick->start(J_POLL_INTERVAL);
 }
 
 void cJoystick::clear_joystick()
