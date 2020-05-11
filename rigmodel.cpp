@@ -350,6 +350,11 @@ int cRigmodel::joystick_y2() const
     return m_joystick_y2;
 }
 
+bool cRigmodel::good_data() const
+{
+    return m_good_data;
+}
+
 int cRigmodel::timer_send_interval() const
 {
     return m_timer_send_interval;
@@ -411,9 +416,9 @@ void cRigmodel::readData(const QJsonValue &jdata)
     QVariantMap json_map=jdata.toVariant().toMap();
     //qDebug()<<json_map;
     foreach(auto &el, json_map.keys()) {
-        qDebug()<<"b:"<<m_board<<el<<"="<<json_map.value(el);
-        handle_tag(el, json_map.value(el).toString());
-
+        //qDebug()<<"b:"<<m_board<<el<<"="<<json_map.value(el);
+        setGood_data(true);
+        (handle_tag(el, json_map.value(el).toString()));
     }
 }
 
@@ -707,6 +712,13 @@ void cRigmodel::setPosition(unsigned int position)
     if (m_position == position) return;
     m_position = position;
     emit positionChanged();
+}
+
+void cRigmodel::setGood_data(bool good_data)
+{
+    if (m_good_data == good_data) return;
+    m_good_data = good_data;
+    emit good_dataChanged();
 }
 
 int cRigmodel::pressure2() const

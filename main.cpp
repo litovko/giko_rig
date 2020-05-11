@@ -1,33 +1,6 @@
-/*******************************************************************************
-* Copyright (c) 2014, Sergey Radionov <rsatom_gmail.com>
-* All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
-* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-* OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-* OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*******************************************************************************/
-
 #include <QtGui/QGuiApplication>
-//#include <QQuickView>
 
 #include <QmlVlc.h>
-//#include <QmlVlc/QmlVlcConfig.h>
 
 
 #include "rigmodel.h"
@@ -39,6 +12,9 @@
 
 #define giko_name "HYCO"
 #define giko_program "NPA Console"
+#define LOG_PATH "log"
+#define LOG_PREFFIX "/NPA_log_"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <QFile>
@@ -50,7 +26,6 @@
 static QFile logfile;
 static QTextStream out(&logfile);
 static bool recordinglog=false;
-//static QTextCodec *codec = QTextCodec::codecForName("IBM866");
 //Включение и отключение записи логов
 extern void toggle_log(bool recordlog) {
     if (!recordlog) {
@@ -64,7 +39,11 @@ extern void toggle_log(bool recordlog) {
         return;
     }
     if (!logfile.isOpen()) {
-        logfile.setFileName("log/NPA_log_"+QDateTime::currentDateTime().toString("dd-MM-yyyy_hh-mm-ss-zzz.log"));
+        QString s=LOG_PATH;
+        if (!QDir(s).exists())
+            QDir().mkdir(s);
+
+        logfile.setFileName(s+LOG_PREFFIX+QDateTime::currentDateTime().toString("dd-MM-yyyy_hh-mm-ss-zzz.log"));
         logfile.open(QIODevice::WriteOnly | QIODevice::Text);
         logfile.write("Open\n");
     }
@@ -78,19 +57,19 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
     switch (type) {
     case QtDebugMsg:
         fprintf(stderr, "D:%s %s (%s:%u, %s)\n",QTime::currentTime().toString("hh:mm:ss:zzz ").toLocal8Bit().data(), localMsg.constData(), context.file, context.line, context.function);
-        out<<"Debug:"<<QDateTime::currentDateTime().toString("dd:hh:mm:ss:zzz ").toUtf8().data()<<" "<<msg<<"("<<context.file<<":"<<context.line<<", "<<context.function<<")\n";
+        out<<"D:"<<QDateTime::currentDateTime().toString("dd.MM:hh:mm:ss:zzz ").toUtf8().data()<<" "<<msg<<"("<<context.file<<":"<<context.line<<", "<<context.function<<")\n";
         break;
     case QtWarningMsg:
         fprintf(stderr, "W:%s %s (%s:%u, %s)\n",QTime::currentTime().toString("hh:mm:ss:zzz ").toLocal8Bit().data(), localMsg.constData(), context.file, context.line, context.function);
-        out<<"Warning:"<<QDateTime::currentDateTime().toString("dd:hh:mm:ss:zzz ").toLocal8Bit().data()<<" "<<msg<<"("<<context.file<<":"<<context.line<<", "<<context.function<<")\n";
+        out<<"W:"<<QDateTime::currentDateTime().toString("dd.MM:hh:mm:ss:zzz ").toLocal8Bit().data()<<" "<<msg<<"("<<context.file<<":"<<context.line<<", "<<context.function<<")\n";
         break;
     case QtCriticalMsg:
         fprintf(stderr, "C:%s %s (%s:%u, %s)\n",QTime::currentTime().toString("hh:mm:ss:zzz ").toLocal8Bit().data(), localMsg.constData(), context.file, context.line, context.function);
-        out<<"Critical:"<<QDateTime::currentDateTime().toString("dd:hh:mm:ss:zzz ").toLocal8Bit().data()<<" "<<localMsg.constData()<<"("<<context.file<<":"<<context.line<<", "<<context.function<<")\n";
+        out<<"C:"<<QDateTime::currentDateTime().toString("dd.MM:hh:mm:ss:zzz ").toLocal8Bit().data()<<" "<<localMsg.constData()<<"("<<context.file<<":"<<context.line<<", "<<context.function<<")\n";
         break;
     case QtFatalMsg:
         fprintf(stderr, "F:%s %s (%s:%u, %s)\n",QTime::currentTime().toString("hh:mm:ss:zzz ").toLocal8Bit().data(), localMsg.constData(), context.file, context.line, context.function);
-        out<<"FATAL:"<<QDateTime::currentDateTime().toString("dd:hh:mm:ss:zzz ").toLocal8Bit().data()<<" "<<msg<<"("<<context.file<<":"<<context.line<<", "<<context.function<<")\n";
+        out<<"FATAL:"<<QDateTime::currentDateTime().toString("dd.MM:hh:mm:ss:zzz ").toLocal8Bit().data()<<" "<<msg<<"("<<context.file<<":"<<context.line<<", "<<context.function<<")\n";
         abort();
     }
     if(logfile.isOpen()) out.flush();
@@ -125,13 +104,15 @@ int main(int argc, char *argv[])
         is_running = false;
     }
     semaphore.release();
+    setlocale(LC_ALL, ""); // избавляемся от кракозябров в консоли
     if(is_running){
         qWarning()<<"The program is already running!";
+        qWarning()<<"Программа уже запущена!";
         std::string str;
         std::getline(std::cin, str);
         return 1;
     }
-    setlocale(LC_ALL, ""); // избавляемся от кракозябров в консоли
+
 
     RegisterQmlVlc();
     QSettings settings(giko_name, giko_program);
@@ -145,7 +126,7 @@ int main(int argc, char *argv[])
     config.setNetworkCacheTime(cache);
     config.enableNoVideoTitleShow(true);
     config.enableDebug( vlc_debug );
-    qDebug()<<QTime::currentTime().toString("hh:mm:ss:zzz ")<<"Start"<<giko_name<<"  "<<giko_program<<" vlc_debug:"<<vlc_debug;
+    qDebug()<<"Start"<<giko_name<<"  "<<giko_program<<" vlc_debug:"<<vlc_debug;
 
 
     qmlRegisterType<cRigmodel>("Gyco", 1, 0, "Board");

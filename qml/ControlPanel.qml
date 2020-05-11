@@ -149,7 +149,7 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:"ДАННЫЕ"
-                    active:net.good_data
+                    active: rig0.good_data
                 }
                 MyLamp{
                     id: data_modbus

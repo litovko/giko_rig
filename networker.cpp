@@ -104,11 +104,9 @@ void cNetworker::sendData()
 void cNetworker::readData()
 {
     QByteArray jdata=tcpClient.readAll();
-    //jdata ="[{%_dev%:0,%type%:%npa__%,%dc1v%:114,%dc2v%:0,%toil%:70,%toi2%:0,%temp%:0,%humi%:0,%poil%:33,%poi2%:44,%pwrv%:0,%pwv2%:0,%pwv3%:0,%vchs%:0,%pwra%:100,%pwa2%:0,%pwa3%:0,%leak%:0,%tang%:3,%kren%:1,%azmt%:-5,%spxy%:65487,%drpm%:0}]";
     //[{"_dev":0,"type":"npa__","dc1v":114,"dc2v":0,"toil":-100,"toi2":0,"temp":0,"humi":0,"poil":0,"poi2":0,"pwrv":0,"pwv2":0,"pwv3":0,"vchs":0,"pwra":0,"pwa2":0,"pwa3":0,"leak":0,"tang":3,"kren":1,"azmt":0,"spxy":65487,"drpm":0}]
-    //jdata=jdata.replace("%","\"");
-    //qDebug()<<"json:"<<jdata;
     QJsonDocument doc=QJsonDocument::fromJson(jdata);
+    qDebug()<<"data:"<<doc.toJson(QJsonDocument::Compact);
     QJsonArray arr = doc.array();
     if (!doc.isArray()) {
         qWarning()<<"Wrong data from controller";

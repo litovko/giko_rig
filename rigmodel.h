@@ -90,7 +90,7 @@ class cRigmodel : public QObject
     Q_PROPERTY(bool pin7 READ pin7 WRITE setPin7 NOTIFY pin7Changed)
 
     //    Q_PROPERTY(bool client_connected READ client_connected NOTIFY client_connectedChanged)
-    //    Q_PROPERTY(bool good_data READ good_data  NOTIFY good_dataChanged)
+    Q_PROPERTY(bool good_data READ good_data  NOTIFY good_dataChanged)
 
 public:
     explicit cRigmodel(QObject *parent = nullptr);
@@ -472,7 +472,7 @@ private:
     int m_limz=100000; //порог по току утечки
     QString m_gmod="move"; //
 
-    //    bool m_good_data=false;
+    bool m_good_data=false;
     bool m_check_type=false;
 
 
