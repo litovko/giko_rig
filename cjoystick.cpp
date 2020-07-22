@@ -380,9 +380,11 @@ QList<QString> cJoystick::names()
 
 QList<int> cJoystick::hats()
 {
+    QList<int> empty_list;
     if (_joystick_data==nullptr) {
         qDebug()<<"JOYSTICK_DATA _NULL_PTR!!!";
         qDebug()<<"ПОДКЛЮЧИ ДЖОЙСТИКИ!!!";
+        return empty_list; //NOTE: Не штатная работа программы без джойстиков
     }
     return  _joystick_data->hat;
 }

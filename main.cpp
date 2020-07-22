@@ -78,7 +78,9 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling); // DPI support
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps); // HiDPI pixmaps
+    qputenv("QT_SCALE_FACTOR", "1");
     QCoreApplication::setAttribute(Qt::AA_DisableShaderDiskCache);
     //QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
     qInstallMessageHandler(myMessageOutput);
