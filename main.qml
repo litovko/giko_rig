@@ -113,7 +113,7 @@ Window {
     }
     function file_name(camindexx) {
         var dt=new Date();
-        var s=filepath+"hyco-"
+        var s=filepath+"mgbu-"
                 +"cam"+(camindexx+1)+"-"
                 +cams[camindexx].overlaytext + "-"
                 + dt.toLocaleString(Qt.locale(),"dd-MM-yyyy_HH-mm-ss")
@@ -161,9 +161,11 @@ Window {
             if(players[i].state===3) {
                 console.log ("file_name"+i+":"+cams[i].recordfile + "size:"+ cams[i].get_filesize())
                 if (curfilesize[i]>=cams[i].get_filesize()) {
-                    console.warn("NO RECORDINGS!!!");
+                    console.warn("NO RECORDINGS!!! CAM:"+i);
+                    cams[i].recorderror=true;
                     onrecord=false;
-                }
+                } else
+                    cams[i].recorderror=false;
                 curfilesize[i]=cams[i].get_filesize();
                 if ((cams[i].get_filesize()>=filesize*1024*1024)&&!flag) {
                     flag=true;
@@ -714,15 +716,15 @@ Window {
                     margins: 10
                 }
                 Text {
-                    text: "НЕТ ЗАПИСИ!!! - Проверь путь!"
+                    text: "нет записи"
                     font.bold: true
                     style: Text.Raised
                     color: "red"
-                    font.pointSize: 20
+                    font.pointSize: 12
                     visible: !onrecord
                 }
                 Text {
-                    text: "Тип аппарата:" + rig.rigtype+"."+rig.gmod
+                    text: " Версия 2.0, Тип аппарата:" + rig.rigtype+"."+rig.gmod
                     color: "lightblue"
                     font.pointSize: 12
                 }
@@ -796,12 +798,14 @@ Window {
             onKey_2Changed: if (key_2) fcommand("PLAY")
             onKey_1Changed: if (key_1) fcommand("JKEY1")
             onKey_0Changed: if (key_0&&j.ispresent) fcommand("JKEY0")
-            devider: 1+key_5
+            onKey_5Changed: if (key_5) dashboard.mgbu_pult.slow=!dashboard.mgbu_pult.slow
+            devider: 1+dashboard.mgbu_pult.slow //замедление
         }
         MyDashboard {
+            id: dashboard
             visible: true
             height: 600
-            id: dashboard
+
             width: 180
             z: 10
             source: rig

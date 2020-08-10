@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
     int vlc_debug=settings.value("vlc_debug",2).toInt();
     QmlVlcConfig& config = QmlVlcConfig::instance();
     config.enableAdjustFilter( false );
-    config.enableMarqueeFilter( false ); //litovko
+    config.enableMarqueeFilter( false ); //не впечатываем текст в картинку
     config.enableLogoFilter( false );
     config.setTrustedEnvironment(true); // не будет воприниматься :sout иначе.
     config.setNetworkCacheTime(cache);

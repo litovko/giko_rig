@@ -7,7 +7,7 @@ Item {
     property RigModel rigmodel:null
     property bool btn0:false
     property bool btn_lock:false //button to locking
-
+    property bool slow: false
     Settings {
         id:settings
         category: "MGBU"
@@ -31,18 +31,18 @@ Item {
             PropertyChanges {target: name;   text: "Отрыв"}
             PropertyChanges {target: y1;   text: qsTr("ХОД-Y"); visible: false}
             PropertyChanges {target: y2;   text: qsTr("ХОД-Y"); visible: true}
-            PropertyChanges {target: x1;   text: qsTr("КАМЕРА"); visible: false}
+            PropertyChanges {target: x1;   text: qsTr("СТРЕЛА"); visible: false}
             PropertyChanges {target: bubble; visible: false}
             PropertyChanges {target: coordinate; visible: true}
         },
         State {
-           name: "tool"
-           PropertyChanges {target: name;   text: "Манипулятор"}
-           PropertyChanges {target: y1;   text: qsTr("ЗАМОК"); visible: true}
-           PropertyChanges {target: y2;   text: qsTr("ПРАВАЯ"); visible: false}
-           PropertyChanges {target: x1;   text: qsTr("СТРЕЛА"); visible: true}
-           PropertyChanges {target: bubble; visible: false}
-           PropertyChanges {target: coordinate; visible: true}
+            name: "tool"
+            PropertyChanges {target: name;   text: "Манипулятор"}
+            PropertyChanges {target: y1;   text: qsTr("ЗАМОК"); visible: true}
+            PropertyChanges {target: y2;   text: qsTr("ПРАВАЯ"); visible: false}
+            PropertyChanges {target: x1;   text: qsTr("СТРЕЛА"); visible: true}
+            PropertyChanges {target: bubble; visible: false}
+            PropertyChanges {target: coordinate; visible: true}
         },
         State {
             name: "horiz"
@@ -77,21 +77,21 @@ Item {
         else if (joystick.lock&&btn_lock) joystick.lock=false
     }
     transitions: [
-            Transition {
-                 ColorAnimation { target: s1; duration: 500}
-                 ColorAnimation { target: s2; duration: 500}
-                 ColorAnimation { target: s3; duration: 500}
-                 ColorAnimation { target: s4; duration: 500}
-            }
-        ]
+        Transition {
+            ColorAnimation { target: s1; duration: 500}
+            ColorAnimation { target: s2; duration: 500}
+            ColorAnimation { target: s3; duration: 500}
+            ColorAnimation { target: s4; duration: 500}
+        }
+    ]
 
     function changestate(){
-      //console.log("oldstate="+state)
-      if (btn0===true) return
-      if (state==="drill") state="tore"
-      else if (state==="tore") state="tool"
-           else if (state==="tool") state="horiz"
-                else  state="drill"
+        //console.log("oldstate="+state)
+        if (btn0===true) return
+        if (state==="drill") state="tore"
+        else if (state==="tore") state="tool"
+        else if (state==="tool") state="horiz"
+        else  state="drill"
 
     }
     Rectangle {
@@ -175,8 +175,8 @@ Item {
 
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
-  //              anchors.top: parent.top
-  //              anchors.margins: 10
+                //              anchors.top: parent.top
+                //              anchors.margins: 10
                 spacing: 3
                 Rectangle {
                     id: s1
@@ -186,11 +186,6 @@ Item {
                     border.color: "#3f3f40"
                     radius:2
 
-                    ColorAnimation {
-                        from: "transparent"
-                        to: "yellow"
-                        duration: 200
-                    }
                 }
                 Rectangle {
                     id: s2
@@ -231,27 +226,29 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 20
                 AxisVertical {
-                       id: y1
-                       //anchors.horizontalCenter: parent.horizontalCenter
-                       height: 90
-                       text: qsTr("ЛЕВАЯ")
-                       width: 50
+                    id: y1
+                    //anchors.horizontalCenter: parent.horizontalCenter
+                    height: 90
+                    text: qsTr("ЛЕВАЯ")
+                    width: 50
 
-                       value: joystick.y1axis
-                       container: false
+                    value: joystick.y1axis
+                    container: false
                 }
                 AxisVertical {
-                       id: y2
-                       //anchors.horizontalCenter: parent.horizontalCenter
-                       height: 90
-                       text: qsTr("ПРАВАЯ")
-                       width: 50
+                    id: y2
+                    //anchors.horizontalCenter: parent.horizontalCenter
+                    height: 90
+                    text: qsTr("ПРАВАЯ")
+                    width: 50
 
-                       value: joystick.y2axis
-                       container: false
+                    value: joystick.y2axis
+                    container: false
                 }
             }//Row
+
             Text {
+                id: z
                 anchors.horizontalCenter: parent.horizontalCenter;
                 font.pointSize: 9
                 color: joystick.lock?"white":"transparent"
@@ -267,16 +264,38 @@ Item {
             }
 
             AxisHorizontal {
-              id: x1
-              anchors.horizontalCenter: parent.horizontalCenter;
-              value: -joystick.x1axis
-              width: 120
-              height: 40
-              text: qsTr("ОТВАЛ")
-              container: false
+                id: x1
+                anchors.horizontalCenter: parent.horizontalCenter;
+                value: -joystick.x1axis
+                width: 120
+                height: 40
+                text: qsTr("ОТВАЛ")
+                container: false
             }
 
-      }//Column
+        }//Column
+        Row {
+            anchors.bottom: body.bottom
+            anchors.bottomMargin: 2
+            anchors.horizontalCenter: body.horizontalCenter
+            spacing: 15
+            Rectangle {
+                id: slowdown
+                height: 8
+                width: 15
+                color: mgbu.slow? "yellow":"transparent"
+                border.color: "#3f3f40"
+                radius:2
+
+            }
+            Text {
+                id: zamedl
+                text: qsTr("Замедление")
+                //anchors.left: slowdown.right
+                anchors.verticalCenter: slowdown.verticalCenter
+                anchors.margins: 10
+            }
+        }
     }//body Rectangle
 }
 

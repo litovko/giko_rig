@@ -306,6 +306,7 @@ QString cCamera::title() const
         QString s;
         if (m_type==2) { // камеры ЮМГ
            s="rtsp://"+m_address+":554/main";
+           //s="http://"+m_address+":8080/video";
 
 //                   rtsp://192.168.123.143:554/main - для основного потока
 //                   rtsp://192.168.123.143:554/sub - для вспомогательного потока

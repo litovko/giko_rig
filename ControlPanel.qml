@@ -135,6 +135,7 @@ Item {
                     bottomText:cam[0].title
                     active:cam[0].camerapresent
                     error: cam[0].onrequest
+                    error2: cam[0].recorderror
                     visible: cam[0].cameraenabled
                     command: "LAYOUT_CAM1"
                     command2: "PLAY1"
@@ -149,6 +150,7 @@ Item {
                     visible: cam[1].cameraenabled
                     active:cam[1].camerapresent
                     error: cam[1].onrequest
+                    error2: cam[1].recorderror
                     command: "LAYOUT_CAM2"
                     command2: "PLAY2"
                     command3: "STOP2"
@@ -162,6 +164,7 @@ Item {
                     active:cam[2].camerapresent
                     visible: cam[2].cameraenabled
                     error: cam[2].onrequest
+                    error2: cam[2].recorderror
                     command: "LAYOUT_CAM3"
                     command2: "PLAY3"
                     command3: "STOP3"
@@ -175,6 +178,7 @@ Item {
                     active:cam[3].camerapresent
                     visible: cam[3].cameraenabled
                     error: cam[3].onrequest
+                    error2: cam[3].recorderror
                     command: "LAYOUT_CAM4"
                     command2: "PLAY4"
                     command3: "STOP4"

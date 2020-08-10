@@ -6,6 +6,7 @@ Item {
     property RigModel source
     property int gaugesize: 180-20 // 20 - поля: два по 10
     property int containerheight: 1080
+    property alias mgbu_pult: mgbu_pult
 
     state: rig.rigtype
     states: [
@@ -139,7 +140,7 @@ Item {
     MGBU {
         id: mgbu_pult
         //anchors.centerIn: parent
-        height: dashboard.gaugesize+48
+        height: dashboard.gaugesize+60
         width: dashboard.gaugesize+48
         joystick: j
         rigmodel: source

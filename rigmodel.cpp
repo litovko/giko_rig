@@ -63,7 +63,7 @@ cRigmodel::cRigmodel(QObject *parent) : QObject(parent)
 
     connect(&timer_connect, SIGNAL(timeout()), this, SLOT(start_client()));
     //start_client();
-    QTimer::singleShot(1000, this, SLOT(start_client())); //конектимся через 3 секунды после выполнения конструктора
+    QTimer::singleShot(3000, this, SLOT(start_client())); //конектимся через 3 секунды после выполнения конструктора
     timer_connect.start(m_timer_connect_interval);
     connect(&timer_send, SIGNAL(timeout()), this, SLOT(sendData()));
     timer_send.start(m_timer_send_interval);
@@ -484,8 +484,8 @@ void cRigmodel::sendData()
     QString svet=";svet:"+::QString().number(lamp()*(m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16)));
     if (m_rigtype=="mgbu") Data=Data+svet;
 
-    if (free_engine1()) {Data="{ana3:-127;gmod:grup1"+svet;}
-    if (free_engine2()) {Data="{ana2:-127;gmod:grup3"+svet;}
+    if (free_engine1()) {Data="{ana3:-127;gmod:grup1"+svet;} //подаем на команду -ana3 для срабатывания клапана разгрузки
+    if (free_engine2()) {Data="{ana2:-127;gmod:grup3"+svet;} //клапан разгрузки
     Data=Data+";dig1:"+::QString().number(data[0],10)+"}CONSDATA";
 
     //qDebug()<<"Rig - send data: "<<Data;

@@ -7,6 +7,7 @@ Item {
     property string bottomText: "ЛАМПЫ[F2]"
     property int fontSize: 12
     property bool error: false
+    property bool error2: false
     property string command: "Command"
     property string command2: "PlayCommand"
     property string command3: "StopCommand"
@@ -43,9 +44,10 @@ Item {
                 Rectangle {
                     anchors.fill: parent
                     color:"transparent"
-                    border.color: ma.containsMouse?"yellow":"transparent"
+                    border.color: ma.containsMouse?"yellow":lamp.error2?"red":"transparent"
                     radius: 10
                 }
+
             }
 
 

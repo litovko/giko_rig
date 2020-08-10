@@ -28,6 +28,7 @@ class cCamera : public QObject
     Q_PROPERTY(bool camerapresent READ camerapresent NOTIFY camerapresentChanged)
     Q_PROPERTY(bool cameraenabled READ cameraenabled WRITE setCameraenabled NOTIFY cameraenabledChanged)
     Q_PROPERTY(bool onrequest READ onrequest  NOTIFY onrequestChanged)
+    Q_PROPERTY(bool recorderror MEMBER m_recorderror  NOTIFY recordChanged)
     Q_PROPERTY(int videocodec READ videocodec WRITE setVideocodec NOTIFY videocodecChanged) // режим количества видеопотоков
     Q_PROPERTY(int videocodeccombo READ videocodeccombo WRITE setVideocodeccombo NOTIFY videocodeccomboChanged) // режим типов видеопотоков - MPEG, H264
     Q_PROPERTY(int videocodecres READ videocodecres WRITE setVideocodecres NOTIFY videocodecresChanged) // режим разрешения видиопотоков
@@ -186,7 +187,7 @@ signals:
     void img2aChanged();
     void img2atypeChanged();
     void recordfileChanged();
-
+    void recordChanged();
     void downloaded();
     void timeoutChanged();
 public slots:
@@ -228,6 +229,7 @@ private:
     bool m_videopage;
     bool m_videosettings;
     bool m_onrequest=false;
+    bool m_recorderror=false;
     QString m_url1;//="rtsp://192.168.1.168:8553/PSIA/Streaming/channels/1?videoCodecType=MPEG4";
     QString m_url2="";
     int parse_int(QString param);
