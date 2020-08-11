@@ -26,7 +26,8 @@ Window {
     property variant curfilesize:[-1,-1,-1,-1]
     property bool onrecord: true; //true если меняется размер записываемого файла.
     property bool camera_umg: false //false - камеры ПМГРЭ true - камеры ЮМГ
-    property string streaming: ":sout=#duplicate{dst=display,dst=std{access=file,mux=mp4,dst=" //параметры стриминга vlc при записи - дубликация потоков
+    property string streaming: ":sout=#duplicate{dst=display,dst=std{access=file,mux=ps,dst=" //параметры стриминга vlc при записи - дубликация потоков
+    property int slow_procent: 50 //процент замедления от полной скорости/мощности
     // Поле в реестре vlc_options
     //:high-priority,:spu,:ods,:clock-synchro=0,:clock-jitter=10000  Убрана синхронизация времени и
     //                                джиттер задран как советует VLC для тяжелых условий сетевого доступа
@@ -88,6 +89,7 @@ Window {
         property alias camera_umg: win.camera_umg
         property alias streaming: win.streaming
         property alias subtitles: subtitle.interval
+        property alias slow_procent: win.slow_procent
     }
     function player_play(player_number){
         if (cams[0].timeout||cams[1].timeout||cams[2].timeout||cams[3].timeout) return;
@@ -416,6 +418,9 @@ Window {
               break;
           case "PUMP":
               rig.pump=rig.pump?false:true;
+              break;
+          case "JKEY0":
+              j.stop=false;
               break;
           case "DEMO":
               recording=0
@@ -799,7 +804,7 @@ Window {
             onKey_1Changed: if (key_1) fcommand("JKEY1")
             onKey_0Changed: if (key_0&&j.ispresent) fcommand("JKEY0")
             onKey_5Changed: if (key_5) dashboard.mgbu_pult.slow=!dashboard.mgbu_pult.slow
-            devider: 1+dashboard.mgbu_pult.slow //замедление
+            devider: 100-slow_procent*dashboard.mgbu_pult.slow //замедление slow_procent - процент замедления 10% замедления это 90% от полной мощности.
         }
         MyDashboard {
             id: dashboard

@@ -236,10 +236,16 @@ void cJoystick::updateData()
     if (!m_ispresent) return;
     pollJoystick();
     if (!m_lock) {
-        setY1axis((-joystick.at(current())->axis[m_y1axis_ind]*127/32767)/m_devider);
-        setX1axis((joystick.at(current())->axis[m_x1axis_ind]*127/32767)/m_devider);
-        setY2axis((-joystick.at(current())->axis[m_y2axis_ind]*127/32767)/m_devider);
-        setX2axis((joystick.at(current())->axis[m_x2axis_ind]*127/32767)/m_devider);
+        setY1axis((-joystick.at(current())->axis[m_y1axis_ind]*127/32767)*m_devider/100);
+        setX1axis((joystick.at(current())->axis[m_x1axis_ind]*127/32767)*m_devider/100);
+        setY2axis((-joystick.at(current())->axis[m_y2axis_ind]*127/32767)*m_devider/100);
+        setX2axis((joystick.at(current())->axis[m_x2axis_ind]*127/32767)*m_devider/100);
+    }
+    if (m_stop) {
+        setY1axis(0);
+        setX1axis(0);
+        setY2axis(0);
+        setX2axis(0);
     }
     bool b=(joystick.at(current())->button[m_key_0_ind]);
     if (b==!m_key_0) { m_key_0=b; emit key_0Changed();}

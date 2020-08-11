@@ -133,7 +133,7 @@ Item {
             anchors.fill: parent
             position:  rigmodel.position
             y_axes: j.y2axis*(mgbu.state==="drill")*(!joystick.lock)*joystick.key_0
-
+            onXswitched: { joystick.stop=true; console.log("Stop moving:"+position)}
         }
     }
 
@@ -278,7 +278,7 @@ Item {
             anchors.bottom: body.bottom
             anchors.bottomMargin: 2
             anchors.horizontalCenter: body.horizontalCenter
-            spacing: 15
+            spacing: 5
             Rectangle {
                 id: slowdown
                 height: 8
@@ -290,9 +290,25 @@ Item {
             }
             Text {
                 id: zamedl
-                text: qsTr("Замедление")
+                text: qsTr("Замедл.")
                 //anchors.left: slowdown.right
                 anchors.verticalCenter: slowdown.verticalCenter
+                anchors.margins: 10
+            }
+            Rectangle {
+                id: st
+                height: 8
+                width: 15
+                color: joystick.stop? "yellow":"transparent"
+                border.color: "#3f3f40"
+                radius:2
+
+            }
+            Text {
+                id: stopor
+                text: qsTr("Стоп!")
+                //anchors.left: slowdown.right
+                anchors.verticalCenter: st.verticalCenter
                 anchors.margins: 10
             }
         }

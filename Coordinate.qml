@@ -8,7 +8,7 @@ Item {
     property int position: 0
     property alias backgroundopacity: r.opacity
     property var prev: []
-
+    signal xswitched
     Rectangle {
         id: r
         anchors.fill: parent
@@ -16,8 +16,8 @@ Item {
         opacity: 0.6
 
     }
-    onXvalueChanged: xval()
-    onYvalueChanged: yval()
+    //onXvalueChanged: xval()
+    //onYvalueChanged: yval()
     onY_axesChanged: yax();
     function  yax() {
         if (y_axes>0 ) state="UP"
@@ -26,14 +26,14 @@ Item {
     }
 
     function xval() {
-        //console.log(xvalue)
-        if (xvalue&1) l1.state="ON"; else l1.state="OFF"
-        if (xvalue&2) l2.state="ON"; else l2.state="OFF"
-        if (xvalue&4) l3.state="ON"; else l3.state="OFF"
-        if (xvalue&8) r1.state="ON"; else r1.state="OFF"
-        if (xvalue&16) r2.state="ON"; else r2.state="OFF"
-        if (xvalue&32) r3.state="ON"; else r3.state="OFF"
-        if (xvalue&128) cx.x_on=true; else cx.x_on=false
+        console.log(xvalue)
+        if (xvalue&1) {l1.state="ON"; xswitched()} else l1.state="OFF"
+        if (xvalue&2) {l2.state="ON"; xswitched()} else l2.state="OFF"
+        if (xvalue&4) {l3.state="ON"; xswitched()} else l3.state="OFF"
+        if (xvalue&8) {r1.state="ON"; xswitched()} else r1.state="OFF"
+        if (xvalue&16) {r2.state="ON"; xswitched()} else r2.state="OFF"
+        if (xvalue&32) {r3.state="ON"; xswitched()} else r3.state="OFF"
+        if (xvalue&128) {cx.x_on=true; xswitched()} else cx.x_on=false
     }
     function _pr() {
         var s="|"
@@ -154,6 +154,7 @@ Item {
                         height: 10
                         transform: Rotation {  angle: -90}
                         textrotate: 90
+                        onStateChanged: if (l1.state==="ON") coord.xswitched()
 
                     }
                     Tik {
