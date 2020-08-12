@@ -27,13 +27,13 @@ Item {
 
     function xval() {
         console.log(xvalue)
-        if (xvalue&1) {l1.state="ON"; xswitched()} else l1.state="OFF"
-        if (xvalue&2) {l2.state="ON"; xswitched()} else l2.state="OFF"
-        if (xvalue&4) {l3.state="ON"; xswitched()} else l3.state="OFF"
-        if (xvalue&8) {r1.state="ON"; xswitched()} else r1.state="OFF"
-        if (xvalue&16) {r2.state="ON"; xswitched()} else r2.state="OFF"
-        if (xvalue&32) {r3.state="ON"; xswitched()} else r3.state="OFF"
-        if (xvalue&128) {cx.x_on=true; xswitched()} else cx.x_on=false
+        if (xvalue&1) {if (l1.state!="ON") {l1.state="ON"; xswitched()}} else l1.state="OFF" // сигнал посылаем только если идет переключение.
+        if (xvalue&2) {if (l2.state!="ON") {l2.state="ON"; xswitched()}} else l2.state="OFF"
+        if (xvalue&4) {if (l3.state!="ON") {l3.state="ON"; xswitched()}} else l3.state="OFF"
+        if (xvalue&8) {if (r1.state!="ON") {r1.state="ON"; xswitched()}} else r1.state="OFF"
+        if (xvalue&16) {if (r2.state!="ON") {r2.state="ON"; xswitched()}} else r2.state="OFF"
+        if (xvalue&32) {if (r3.state!="ON") {r3.state="ON"; xswitched()}} else r3.state="OFF"
+        if (xvalue&128) {if (!cx.x_on){cx.x_on=true; xswitched()}} else cx.x_on=false
     }
     function _pr() {
         var s="|"
@@ -70,6 +70,7 @@ Item {
         }
     }
     function yval() {
+        if (c.state!="ON" && yvalue&128) {xswitched()}
         change_y(y1,yvalue&1)
         change_y(y2,yvalue&2)
         change_y(y3,yvalue&4)

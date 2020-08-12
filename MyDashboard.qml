@@ -391,7 +391,7 @@ Item {
                         stepSize: 50
                         anchors.centerIn: parent
                         value: (source.pressure/10).toFixed(1)
-                        centrТext: "кПа"
+                        centrТext: "кг/см"+"t\u00B2"
                         bottomText: "Давл. масла"
                         warningThreshold: maximumValue*0.9
                         minorTickmarks:5
@@ -411,7 +411,7 @@ Item {
                         value1: source.pressure
                         value2: source.pressure2
                         thirdvisible: false
-                        centrТext: "кПа"
+                        centrТext: "кг/см"+"\u00B2"
                         bottomText: "Давл. масла"
                         warningThreshold: maximumValue*0.9
                         minorTickmarks:5

@@ -729,7 +729,7 @@ Window {
                     visible: !onrecord
                 }
                 Text {
-                    text: " Версия 2.0, Тип аппарата:" + rig.rigtype+"."+rig.gmod
+                    text: " Версия 2.7, Тип аппарата:" + rig.rigtype+"."+rig.gmod
                     color: "lightblue"
                     font.pointSize: 12
                 }
