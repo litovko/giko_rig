@@ -31,6 +31,7 @@ cJoystick::~cJoystick(){
 
 void cJoystick::checkJoystick()
 {
+    if (!m_check) return;
     bool old=ispresent();
     if (joy==0){
         joy = new QJoystick();

@@ -602,7 +602,7 @@ void cRigmodel::readData()
         Data=Data.mid(1,m-1);
         //qDebug()<<"truncated :"<<Data;
         split=Data.split(';');
-        qDebug()<<"split:"<<split;
+        //qDebug()<<"split:"<<split;
         QListIterator<QByteArray> i(split);
         QByteArray s, val;
         while (i.hasNext()){

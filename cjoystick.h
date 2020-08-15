@@ -25,6 +25,7 @@ class cJoystick : public QObject
     Q_PROPERTY(int y2axis_ind READ y2axis_ind  WRITE setY2axis_ind NOTIFY y2axis_indChanged)
     Q_PROPERTY(bool ispresent READ ispresent WRITE setIspresent  NOTIFY ispresentChanged)
     Q_PROPERTY(bool lock READ lock WRITE setLock  NOTIFY lockChanged)
+    Q_PROPERTY(bool check MEMBER m_check NOTIFY checkChanged)
     Q_PROPERTY(bool stop MEMBER m_stop NOTIFY stopChanged) // при достижении координаты джойстик не реагирует на оси.
     Q_PROPERTY(int devider READ devider WRITE setDevider NOTIFY deviderChanged) //делитель выходных значений джойстика
     Q_PROPERTY(int key_0_ind READ key_0_ind WRITE setKey_0_ind NOTIFY key_0_indChanged)
@@ -127,9 +128,10 @@ signals:
     void currentChanged();
     void nameChanged();
     void stopChanged();
+    void checkChanged();
 public slots:
 //    void readJoystickState();
-    void checkJoystick();
+Q_INVOKABLE    void checkJoystick();
     void updateData();
     void change_numbers();
     void saveSettings();
@@ -137,6 +139,7 @@ public slots:
 private:
     QJoystick *joy=0;
     bool m_ispresent=false;
+    bool m_check=true; //проверять наличие джойстика.
     bool m_lock=false;
     bool m_stop=false;
     int  m_devider=1;

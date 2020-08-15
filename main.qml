@@ -420,7 +420,11 @@ Window {
               rig.pump=rig.pump?false:true;
               break;
           case "JKEY0":
-              j.stop=false;
+              j.stop=false; // всегда включаем передачу данных джойстика при нажатии курка, необходимо после автоматической остановки
+              break;
+          case "KEYS":
+              j.check=true;
+              j.checkJoystick()
               break;
           case "DEMO":
               recording=0
@@ -665,20 +669,24 @@ Window {
             //if ((event.key === Qt.Key_D)) win.fcommand("DEMO") vlcPlayer1.mrl = "file:///"+win.filepath+"/demo/01.mpg"
             if (event.key === Qt.Key_Down) {
                 j.ispresent=false
-                console.log("JFire:"+j.key_0)
+                j.check=false
+//                console.log("JFire:"+j.key_0)
                 if(j.y1axis>-127) j.y1axis=j.y1axis-1;
             }
             if (event.key === Qt.Key_Up) {
                 j.ispresent=false
-                console.log("JFire:"+j.key_0)
+                j.check=false
+//                console.log("JFire:"+j.key_0)
                 if(j.y1axis<127) j.y1axis=j.y1axis+1;
             }
             if (event.key === Qt.Key_PageDown||event.key === Qt.Key_Left) {
                 j.ispresent=false
+                j.check=false
                 if(j.y2axis>-127) j.y2axis=j.y2axis-1;
             }
             if (event.key === Qt.Key_PageUp||event.key === Qt.Key_Right) {
                 j.ispresent=false
+                j.check=false
                 if(j.y2axis<127) j.y2axis=j.y2axis+1;
             }
 

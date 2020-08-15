@@ -184,6 +184,17 @@ Item {
                     command3: "STOP4"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
+                MyLamp{
+                    id: keyboard_control
+                    height: lampSize
+                    width: lampSize
+                    bottomText:"КЛАВ."
+                    active: !j.check
+                    command: "KEYS"
+                    command2: "KEYS"
+                    command3: "KEYS"
+                    onLampClicked: controlPanel.lampClicked(lamp_command)
+                }
 
             }
 
