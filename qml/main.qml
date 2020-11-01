@@ -11,7 +11,7 @@ import QtQuick.Extras 1.4
 Window {
     id: win
     //    visibility: Window.FullScreen
-    title: "HYCO ПУЛЬТ УПРАВЛЕНИЯ НЕОБИТАЕМЫМ ПОДВОДНЫМ АППАРАТОМ"
+    title: "HYCO ПУЛЬТ УПРАВЛЕНИЯ МАНИПУЛЯТОРОМ"
     visible: true
 
     height: 720
@@ -84,7 +84,7 @@ Window {
         property alias camera_umg: win.camera_umg
         property alias streaming: win.streaming
         property alias subtitles: subtitle.interval
-        property alias joy_devider: j1.devider
+        property alias joy_devider: j2.devider
     }
     function player_play(player_number) {
         if (cams[0].timeout || cams[1].timeout || cams[2].timeout
@@ -215,17 +215,17 @@ Window {
         cam1.write_subtitles(vlcPlayer1.time, s)
     }
 
-    Modbus {
-        id: mbus
-        //address: networker.address
-        //port: 502
-        //device_address: 16
-        //pooling_time: 200
-        //reconnect_interval: 100
-        //request_timeout: 300
+//    Modbus {
+//        id: mbus
+//        //address: networker.address
+//        //port: 502
+//        //device_address: 16
+//        //pooling_time: 200
+//        //reconnect_interval: 100
+//        //request_timeout: 300
 
-        //onValuesChanged: print(values)
-    }
+//        //onValuesChanged: print(values)
+//    }
     Board {
         id: rig0
         board: 0
@@ -242,57 +242,54 @@ Window {
 
     }
     function power(v){ //регулировка мощности - зависит от движка на джойстике
-        return v*Math.round(100*(j1.y2axis+127)/254)/100;
+        return v*Math.round(100*(j2.y2axis+127)/254)/100;
     }
 
     Board {
         id: rig1
         board: 1
         //j1.keys[0] = курок
-        //TODO: не плохо было бы сделать регулировку трастеров при боковом движении - хотя бы 3 коэффициента 0..1
-        joystick_x1: power(j1.y1axis*j1.keys[0]) //лев задний трастер ana1
-                     - j1.x1axis*(j1.keys[13]+j1.keys[15]) // при боковом движении лев задний
-        joystick_y1: power(j1.y1axis*j1.keys[0]) //прав задний трастер ana2
-                     + j1.x1axis*(j1.keys[13]+j1.keys[15]) // при боковом движении прав задний
-        joystick_x2: power(j1.x2axis*j1.keys[0]) // подрулька ana3
-                     + j1.x1axis*(j1.keys[13]+j1.keys[15]) // при боковом движении подрулька ana3
-        //1.keys[13]+j1.keys[15] - 13 кепка вправо 15 - кепка влево
+        joystick_x1: power(j2.y1axis*j2.keys[12])  //ana1 Схват
+
+        joystick_y1: power(j2.x2axis*j2.keys[0])   //ana2 поворот Схвата
+
+        joystick_x2: power(j2.x1axis*j2.keys[0])   //ana2 поворот руки
         property bool lamp_switch: false
         light1: lampsSettings.lamp1 * lamp_switch
         light2: lampsSettings.lamp2 * lamp_switch
         light3: lampsSettings.lamp3 * lamp_switch
         light4: lampsSettings.lamp4 * lamp_switch
         Component.onCompleted: networker.reg(this)
-        pin0: j2.keys[14];
-        pin1: j2.keys[13];
-        pin2: j2.keys[11];
-        pin3: j2.keys[12];
-        pin5: j2.keys[3]*(j2.x1axis>100);
-        pin4: j2.keys[3]*(j2.x1axis<-100);
-        pin7: j2.keys[1]*(j2.x1axis>100);
-        pin6: j2.keys[1]*(j2.x1axis<-100);
+        pin0: j2.keys[15]*(j2.x1axis>40);
+        pin1: j2.keys[15]*(j2.x1axis<-40);
+        pin2: j2.keys[3]*(j2.y1axis>40);
+        pin3: j2.keys[3]*(j2.y1axis<-40);
+        pin4: j2.keys[14]*(j2.y1axis>40);
+        pin5: j2.keys[14]*(j2.y1axis<-40);
+        pin6: j2.keys[0]*(j2.y1axis>40);
+        pin7: j2.keys[0]*(j2.y1axis<-40);
     }
-    Board {
-        id: rig2
-        board: 2
-        joystick_x1: (j1.hats[0]===1||j1.hats[0]===4)?power(j1.y1axis*!j1.keys[0]):0 // передний лифт ana1
-        joystick_y1: (j1.hats[0]===1||j1.hats[0]===4)?power(j1.y1axis*!j1.keys[0]):0 // задний лифт ana2
-        //joystick_x2: j2.x2axis*j2.keys[0]*!j2.keys[3] //поворот камеры ana3
-        joystick_x2: 127*(j2.keys[4]-j2.keys[5]) //поворот камеры ana3
-        light1: 0
-        light2: 0
-        light3: 0
-        light4: 0
-        pin1: j2.keys[2]*(j2.x1axis>100);
-        pin0: j2.keys[2]*(j2.x1axis<-100);
-        pin3: j2.keys[0]*(j2.y1axis>100);
-        pin2: j2.keys[0]*(j2.y1axis<-100);
-        pin5: j2.keys[0]*(j2.x1axis>100);
-        pin4: j2.keys[0]*(j2.x1axis<-100);
-        pin6: j2.keys[0]*j2.keys[3]*(j2.x2axis<-100);
-        pin7: j2.keys[0]*j2.keys[3]*(j2.x2axis>100);
-        Component.onCompleted: networker.reg(this)
-    }
+//    Board {
+//        id: rig2
+//        board: 2
+//        joystick_x1: (j1.hats[0]===1||j1.hats[0]===4)?power(j1.y1axis*!j1.keys[0]):0 // передний лифт ana1
+//        joystick_y1: (j1.hats[0]===1||j1.hats[0]===4)?power(j1.y1axis*!j1.keys[0]):0 // задний лифт ana2
+//        //joystick_x2: j2.x2axis*j2.keys[0]*!j2.keys[3] //поворот камеры ana3
+//        joystick_x2: 127*(j2.keys[4]-j2.keys[5]) //поворот камеры ana3
+//        light1: 0
+//        light2: 0
+//        light3: 0
+//        light4: 0
+//        pin1: j2.keys[2]*(j2.x1axis>100);
+//        pin0: j2.keys[2]*(j2.x1axis<-100);
+//        pin3: j2.keys[0]*(j2.y1axis>100);
+//        pin2: j2.keys[0]*(j2.y1axis<-100);
+//        pin5: j2.keys[0]*(j2.x1axis>100);
+//        pin4: j2.keys[0]*(j2.x1axis<-100);
+//        pin6: j2.keys[0]*j2.keys[3]*(j2.x2axis<-100);
+//        pin7: j2.keys[0]*j2.keys[3]*(j2.x2axis>100);
+//        Component.onCompleted: networker.reg(this)
+//    }
     Networker {
         id: networker
     }
@@ -475,6 +472,7 @@ Window {
             help.visible = false
             break
         case "CAMERA SETTINGS":
+            camsettings.currentcam = 0
             camsettings.visible = !camsettings.visible
             menu.visible = false
             settings.visible = false
@@ -565,7 +563,7 @@ Window {
             break
         case "SCREENSHOT":
             var dt = new Date()
-            var s = filepath + "NPA-screenshot" + dt.toLocaleString(
+            var s = filepath + "MGM-screenshot" + dt.toLocaleString(
                         Qt.locale(), "dd-MM-yyyy_HH-mm-ss") + ".png"
             win.contentItem.grabToImage(function (result) {
                 result.saveToFile(s)
@@ -886,10 +884,10 @@ Window {
         }
 
         RigJoystick {
-            id: j1
+            id: j2
             current: 0
             devider: 1
-            //onKeysChanged: print(names)
+            onKeysChanged: print(keys)
             onKeyChanged: {
                 //console.log(keys)
                 if (key === 8 & !keys[8]) fcommand("PLAY")
@@ -897,11 +895,11 @@ Window {
             }
         }
 
-        RigJoystick {
-            id: j2
-            current: 1
-            //onX1axisChanged: console.log(j2.x1axis)
-        }
+//        RigJoystick {
+//            id: j2
+//            current: 1
+//            //onX1axisChanged: console.log(j2.x1axis)
+//        }
         MyDashboard {
             visible: true
             height: 600

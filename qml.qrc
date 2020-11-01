@@ -45,5 +45,6 @@
         <file>qml/StatePannel.qml</file>
         <file>qml/Joystick_setup.qml</file>
         <file>qml/MySwitcher.qml</file>
+        <file>skin/mgm7_2.svg</file>
     </qresource>
 </RCC>

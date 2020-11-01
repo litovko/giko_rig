@@ -70,7 +70,7 @@ Item {
         width: 450
         //joystick: j1
         board1: rig1
-        board2: rig2
+//        board2: rig2
         z:4
         //state: rig.gmod //move, hand
     }
@@ -363,7 +363,7 @@ Item {
                         maximumValue: 100
                         stepSize: 20
                         anchors.centerIn: parent
-                        value: Math.round(100*(j1.y2axis+127)/254)
+                        value: Math.round(100*(j2.y2axis+127)/254)
                         centrТext: "%"
                         bottomText: "Мощность"
                         warningThreshold: maximumValue*0.9
@@ -423,7 +423,7 @@ Item {
                         //interval: 100
                         anchors.centerIn: parent
                         anchors.margins: 5
-                        digname: "Альтиметр"
+                        digname: "Глубина"
                         graphtimer: true
                         digits: 0
                     }

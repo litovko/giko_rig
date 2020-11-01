@@ -10,7 +10,7 @@ Item {
     property list<RigCamera> cam
     property Networker rig:null
     property Board rig_model: null
-    onVisibleChanged: { cbj.checked=j.ispresent}
+//    onVisibleChanged: { cbj.checked=j.ispresent}
     RegExpValidator{
         id: adr_validator
         regExp: /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/

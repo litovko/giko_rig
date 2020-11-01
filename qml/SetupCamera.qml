@@ -1,5 +1,5 @@
 import QtQuick 2.11
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.12
 //import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
 import QmlVlc 0.1
@@ -14,7 +14,11 @@ Item {
     property int currentcam: 0
 //    property int currentplayer: 0
     //antialiasing: false
-    onVisibleChanged: spinBox_videomode.currentIndex=cam[currentcam].comby;
+    onVisibleChanged: {
+        print(currentcam)
+        currentcam=0
+        spinBox_videomode.currentIndex=cam[currentcam].comby;
+    }
 
 
     Rectangle {
@@ -79,6 +83,7 @@ Item {
                     listCams.append({text: cam[2].title+" ["+cam[2].address+"]"})
                     listCams.append({text: cam[3].title+" ["+cam[3].address+"]"})
                     currentIndex=0
+                    currentcam=0
                 }
                 onVisibleChanged: {
                     listCams.clear()
@@ -86,11 +91,15 @@ Item {
                     listCams.append({text: cam[1].title+" ["+cam[1].address+"]"})
                     listCams.append({text: cam[2].title+" ["+cam[2].address+"]"})
                     listCams.append({text: cam[3].title+" ["+cam[3].address+"]"})
+                    currentIndex=0
+                    currentcam=0
                 }
                 model: ListModel {
                     id: listCams
                 }
-                onCurrentIndexChanged: {currentcam=currentIndex; camurl.text= cam[currentcam].url1}
+                onCurrentIndexChanged: {
+                    currentcam=currentIndex; camurl.text= cam[currentcam].url1
+                }
             }
         }
         Label {
@@ -151,7 +160,7 @@ Item {
             y: 77
             opacity: 0.8
             text: qsTr("Применить")
-            tooltip: "Применение указанных настроек камеры"
+            font.pointSize: 14
             onClicked: {
                 //               console.log("Кликнули");
                 //console.log("Setup Camera  Comby button clicked");
@@ -169,7 +178,8 @@ Item {
             width: 75
             height: 34
             text: qsTr("Закрыть")
-            isDefault: true
+            font.pointSize: 14
+//            isDefault: true
             opacity: 0.8
             onClicked: {
                 setupDialog.visible=false;
@@ -239,7 +249,8 @@ Item {
                 height: 22
                 z: 3
                 stepSize: 1
-                maximumValue: 255
+                from: 0
+                to: 255
                 value: cam[currentcam].brightness
             }
 
@@ -249,7 +260,8 @@ Item {
                 y: 34
                 width: 269
                 height: 22
-                maximumValue: 255
+                from: 0
+                to: 255
                 z: 3
                 value: cam[currentcam].contrast
                 stepSize: 1
@@ -261,7 +273,8 @@ Item {
                 y: 63
                 width: 269
                 height: 22
-                maximumValue: 255
+                from: 0
+                to: 255
                 z: 3
                 value: cam[currentcam].saturation
                 stepSize: 1
@@ -297,7 +310,8 @@ Item {
                 y: 89
                 width: 269
                 height: 22
-                maximumValue: 255
+                from: 0
+                to: 255
                 z: 3
                 value: cam[currentcam].sharpness
                 stepSize: 1
@@ -321,8 +335,9 @@ Item {
                 y: 117
                 width: 136
                 height: 22
-                tickmarksEnabled: true
-                maximumValue: 3
+//                tickmarksEnabled: true
+                from: 0
+                to: 255
                 z: 3
                 value: cam[currentcam].dynrange
                 stepSize: 1
@@ -362,7 +377,6 @@ Item {
                 y: 265
                 text: qsTr("Применить настройки видео")
                 clip: false
-                tooltip: "Применение указанных настроек видео"
                 scale: 1.1
                 z: 3
                 onClicked: {
@@ -420,22 +434,22 @@ Item {
 
                     //console.log("Setup Camera  NIGHT=1/DAY=0"+ cam[currentcam].colorkiller);
                 }
-                style: RadioButtonStyle {
-                    indicator: Rectangle {
-                        implicitWidth: 16
-                        implicitHeight: 16
-                        radius: 9
-                        //border.color: control.activeFocus ? "yellow" : "gray"
-                        border.width: 1
-                        Rectangle {
-                            anchors.fill: parent
-                            visible: control.checked
-                            color: control.checked ? "yellow" : "gray"
-                            radius: 9
-                            anchors.margins: 4
-                        }
-                    }
-                }
+//                style: RadioButtonStyle {
+//                    indicator: Rectangle {
+//                        implicitWidth: 16
+//                        implicitHeight: 16
+//                        radius: 9
+//                        //border.color: control.activeFocus ? "yellow" : "gray"
+//                        border.width: 1
+//                        Rectangle {
+//                            anchors.fill: parent
+//                            visible: control.checked
+//                            color: control.checked ? "yellow" : "gray"
+//                            radius: 9
+//                            anchors.margins: 4
+//                        }
+//                    }
+//                }
 
             }
 
@@ -459,22 +473,22 @@ Item {
                 scale: 1.5
                 transformOrigin: Item.Left
                 rotation: 0
-                style: RadioButtonStyle {
-                    indicator: Rectangle {
-                        implicitWidth: 16
-                        implicitHeight: 16
-                        radius: 9
-                        //border.color: control.activeFocus ? "yellow" : "gray"
-                        border.width: 1
-                        Rectangle {
-                            anchors.fill: parent
-                            visible: control.checked
-                            color: control.checked ? "yellow" : "gray"
-                            radius: 9
-                            anchors.margins: 4
-                        }
-                    }
-                }
+//                style: RadioButtonStyle {
+//                    indicator: Rectangle {
+//                        implicitWidth: 16
+//                        implicitHeight: 16
+//                        radius: 9
+//                        //border.color: control.activeFocus ? "yellow" : "gray"
+//                        border.width: 1
+//                        Rectangle {
+//                            anchors.fill: parent
+//                            visible: control.checked
+//                            color: control.checked ? "yellow" : "gray"
+//                            radius: 9
+//                            anchors.margins: 4
+//                        }
+//                    }
+//                }
             }
 
             Label {
@@ -584,7 +598,6 @@ Item {
             height: 23
             text: qsTr("Установить время")
             opacity: 0.8
-            tooltip: "Установка текущего времени"
             onClicked: {
                 //console.log("Setup Camera SetTime Clicked");
                 players[currentcam].stop();
@@ -599,7 +612,6 @@ Item {
             width: 113
             height: 23
             text: qsTr("Перезапуск камеры")
-            tooltip: "Программынй ресет камеры"
             opacity: 0.8
             onClicked: cam[currentcam].send_reset();
         }

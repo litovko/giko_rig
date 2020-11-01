@@ -3,7 +3,7 @@ CONFIG += c++11  console
 #CONFIG+=debug
 #mingw:QMAKE_CXXFLAGS_DEBUG += "-gstabs+"
 #mingw:QMAKE_CFLAGS_DEBUG += "-gstabs+"
-VERSION = 5.11.0.1
+VERSION = 7.0.0.3
 #INCLUDEPATH += deps
 SOURCES += main.cpp \
     modbus/cmodbusclient.cpp \
@@ -22,7 +22,7 @@ QML_IMPORT_PATH = C:\Qt\5.12.1\msvc2017_64\qml\QtQuick
 #include(deployment.pri)
 # This line is from QmlVlcDemo.pro
 #include(deps/QmlVlc/QmlVlc.pri)
-include(../QmlVlc\QmlVlc.pri)
+include(../QmlVlc/QmlVlc.pri)
 
 
 #OTHER_FILES += \
@@ -43,7 +43,7 @@ HEADERS += \
 
 DISTFILES += \
     skin/hycoicon.ico \
-    NPA_hand.qml \
+#    NPA_hand.qml \
     NPA_hand.qml \
     skin/npa.ico \
     skin/favicon.ico
@@ -70,9 +70,15 @@ equals(Kit,"C:/Qt/5.12.1/msvc2017_64"){
     LIBS += -L$$PWD/SDL2/lib/x64  -lSDL2 -lSDL2main
     DESTDIR = D:\dest.rig.5.12.msvc
 }
-message(LIBS $$LIBS)
-message(KIT $$Kit)
-TARGET=NPA
+equals(Kit,"C:/Qt/5.15.1/msvc2017_64"){
+    message("Kit for 64 bit MSVC")
+    #LIBS += -L$$PWD/SDL/lib/x64 -lSDL
+    LIBS += -L$$PWD/SDL2/lib/x64  -lSDL2 -lSDL2main
+    DESTDIR = D:\dest.rig.5.12.msvc
+}
+#message(LIBS $$LIBS)
+#message(KIT $$Kit)
+TARGET=MGM7
 
 
 

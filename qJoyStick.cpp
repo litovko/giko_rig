@@ -1,5 +1,5 @@
-#include "qjoystick.h"
-
+#include "qJoyStick.h"
+#include "SDL.h"
 #include <QDebug>
 #include <QByteArray>
 

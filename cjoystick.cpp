@@ -23,7 +23,7 @@ cJoystick::cJoystick(QObject *parent) : QObject(parent)
 cJoystick::~cJoystick(){
     timer_joystick->stop();
     timer_checkjoystick->stop();
-    if (joy)delete joy; joy=nullptr;
+    if (joy != nullptr) delete joy; joy=nullptr;
     if (timer_joystick) delete timer_joystick;
     if (timer_checkjoystick) delete timer_checkjoystick;
     //    int n=joystick.length();

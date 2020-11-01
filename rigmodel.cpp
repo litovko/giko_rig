@@ -65,7 +65,6 @@ void cRigmodel::reset()
 
 void cRigmodel::setana()
 {
-    if (m_rigtype!="NPA") return;
     int ana1=0, ana2=0, ana3=0, ana4=0;
 
     ana1=m_joystick_x1;
@@ -234,7 +233,7 @@ QString cRigmodel::rigtype() const
 
 void cRigmodel::setRigtypeInt(const int &rigtype)
 {
-
+Q_UNUSED(rigtype)
 }
 
 void cRigmodel::setLamp(const bool &lamp)

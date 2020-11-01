@@ -11,16 +11,16 @@
 #include <QSettings>
 
 #define giko_name "HYCO"
-#define giko_program "NPA Console"
+#define giko_program "MGM-7 Console"
 #define LOG_PATH "log"
-#define LOG_PREFFIX "/NPA_log_"
+#define LOG_PREFFIX "/MGM7_log_"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <QFile>
 #include <iostream>
 
-#include "modbus\cmodbusclient.h"
+//#include "modbus\cmodbusclient.h"
 
 
 static QFile logfile;
@@ -80,12 +80,14 @@ int main(int argc, char *argv[])
 {
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling); // DPI support
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps); // HiDPI pixmaps
-    qputenv("QT_SCALE_FACTOR", "1");
+
+    qputenv("QT_SCALE_FACTOR", "0.8"); //NOTE: Scale Factore
+//    qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "0.5");
     QCoreApplication::setAttribute(Qt::AA_DisableShaderDiskCache);
     //QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
     qInstallMessageHandler(myMessageOutput);
     toggle_log(true);
-    QSystemSemaphore semaphore("hyco npa", 1);  // create semaphore
+    QSystemSemaphore semaphore("hyco mgm-7", 1);  // create semaphore
     semaphore.acquire(); // Raise the semaphore, barring other instances to work with shared memory
 
 #ifndef Q_OS_WIN32
@@ -97,7 +99,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-    QSharedMemory sharedMemory("hyco npa smem");  // Create a copy of the shared memory
+    QSharedMemory sharedMemory("hyco mgm-7 smem");  // Create a copy of the shared memory
     bool is_running;
     if (sharedMemory.attach()){ //trying to attach to the existant shared memory
         is_running = true;
@@ -135,7 +137,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<cNetworker>("Gyco", 1, 0, "Networker");
     qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
     qmlRegisterType<cJoystick>("Gyco", 1, 0, "RigJoystick");
-    qmlRegisterType<cModbusClient>("Gyco", 1, 0, "Modbus");
+//    qmlRegisterType<cModbusClient>("Gyco", 1, 0, "Modbus");
     QCoreApplication::setAttribute(Qt::AA_DisableShaderDiskCache);
 
     QGuiApplication app(argc, argv);

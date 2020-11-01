@@ -91,17 +91,17 @@ Item {
                     command: "ENGINE1"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
-               MyLamp{
-                    visible: source.rigtype==="mgbu"
-                    id: engine2
-                    height: lampSize
-                    width: lampSize
-                    bottomText:"НАСОС2[F7]"
-                    error: source.free_engine2
-                    active:source.engine2
-                    command: "ENGINE2"
-                    onLampClicked: controlPanel.lampClicked(lamp_command)
-                }
+//               MyLamp{
+//                    visible: source.rigtype==="mgbu"
+//                    id: engine2
+//                    height: lampSize
+//                    width: lampSize
+//                    bottomText:"НАСОС2[F7]"
+//                    error: source.free_engine2
+//                    active:source.engine2
+//                    command: "ENGINE2"
+//                    onLampClicked: controlPanel.lampClicked(lamp_command)
+//                }
 //               MyLamp{
 //                   visible: source.rigtype==="NPA"
 //                   id: cooling
@@ -124,16 +124,16 @@ Item {
 //                    command: "PUMP"
 //                    onLampClicked: controlPanel.lampClicked(lamp_command)
 //                }
-                MyLamp{
-                    id: manip
-                    visible: source.rigtype==="NPA"
-                    height: lampSize
-                    width: lampSize
-                    bottomText:"МАНИП[П]"
-                    active:source.pump
-                    command: "MANIP"
-                    onLampClicked: controlPanel.lampClicked(lamp_command)
-                }
+//                MyLamp{
+//                    id: manip
+//                    visible: source.rigtype==="NPA"
+//                    height: lampSize
+//                    width: lampSize
+//                    bottomText:"МАНИП[П]"
+//                    active:source.pump
+//                    command: "MANIP"
+//                    onLampClicked: controlPanel.lampClicked(lamp_command)
+//                }
                 MyLamp{
                     id: connect
                     height: lampSize
@@ -152,29 +152,28 @@ Item {
                     active: rig0.good_data
                 }
                 MyLamp{
-                    id: data_modbus
+                    id: data_faza
                     height: lampSize
                     width: lampSize
-                    bottomText:"ДАННЫЕ Ш"
-                    active:mbus.good_data
-                    command: "MODBUS RECONNECT"
+                    bottomText:"ФАЗИРОВКА"
+                    active: true //TODO: тэг фазировки от контроллера
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
-                MyLamp{
-                    id: voltage
-                    height: lampSize
-                    width: lampSize
-                    bottomText:"ПИТАНИЕ"
-                    active:source.voltage
-                }
-                MyLamp{
-                    id: j_lock
-                    height: lampSize
-                    width: lampSize
-                    bottomText:"РАЗБЛ1"
-                    text: "Горит при нажатии на курок джойстика"
-                    active: j1.keys[0]
-                }
+//                MyLamp{
+//                    id: voltage
+//                    height: lampSize
+//                    width: lampSize
+//                    bottomText:"ПИТАНИЕ"
+//                    active:source.voltage
+//                }
+//                MyLamp{
+//                    id: j_lock
+//                    height: lampSize
+//                    width: lampSize
+//                    bottomText:"РАЗБЛ1"
+//                    text: "Горит при нажатии на курок джойстика"
+//                    active: j1.keys[0]
+//                }
                 MyLamp{
                     id: camera1
                     height: lampSize

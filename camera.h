@@ -9,11 +9,11 @@
 #include <QNetworkReply>
 #include <QFile>
 #include <QTextStream>
-
-#define USERNAME "user"  //"admin"
+//TODO уточнить пароли камеры
+#define USERNAME "Admin"  //"admin"
 #define USERPASS "9999" //"scam"
-#define USERNAME_MGBU "admin"
-#define USERPASS_MGBU "scam"
+#define USERNAME_MGBU "Admin"
+#define USERPASS_MGBU "hyco[123]"
 #define TIMEOUT 10000  //  таймаут для установки видеорежимов
 #define TIMEOUT_RESET 20000 //
 
@@ -221,14 +221,14 @@ private:
 private:
     QString m_address;
     QString m_title;
-    int m_type=1; //тип камеры - 1 - для телегрейферов и ГКГБУ 2 - камеры ЮМГ для МГБУ
+    int m_type=3; //тип камеры - 1 - для телегрейферов и ГКГБУ 2 - камеры ЮМГ для МГБУ , 3 - МГМ-7
     int m_index=0;
     bool m_camerapresent=false;  //доступна ли камера по сети?
     bool m_cameraenabled=false;
     bool m_videopage;
     bool m_videosettings;
     bool m_onrequest=false;
-    QString m_url1;//="rtsp://192.168.1.168:8553/PSIA/Streaming/channels/1?videoCodecType=MPEG4";
+    QString m_url1;
     QString m_url2="";
     int parse_int(QString param);
     QString parse_string(QString param);

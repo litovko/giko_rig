@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 
-import QmlVlc 0.1
+//import QmlVlc 0.1
 import Gyco 1.0
 Item {
     id: joystickDialog
@@ -84,16 +84,16 @@ Item {
         }
         Button {
             id: b_apply
-            x: 363
-            y: 15
+            x: 508
+            y: 64
             width: 100
             height: 28
             text: qsTr("Применить")
             onClicked: {
-
                 fcommand("JOYSTICK SETTINGS")
                 mainRect.focus=true;
             }
+            font.pointSize: 14
         }
 
         GroupBox {
@@ -106,33 +106,34 @@ Item {
 
             Label {
                 id: label1
-                anchors.margins: 8
+//                anchors.margins: 2
                 anchors.top:parent.top
                 anchors.left: parent.left
-                width: 87
+                width: 130
                 height: 13
                 color: "#ffffff"
                 text: qsTr("Осей координат:")
+                font.pointSize: 14
                 anchors.leftMargin: 8
-                anchors.topMargin: 2
+//                anchors.topMargin: 2
 
                 Text {
                     id: t_axnumb
                     anchors.left: parent.right
-                    anchors.top: parent.top
+                    anchors.verticalCenter: parent.verticalCenter
                     width: 129
                     height: 13
                     color: "#ffffff"
                     text: joystick.axes_number
                     scale: 1
-                    font.pixelSize: 12
+                    font.pointSize: 14
                 }
             }
 
             Label {
                 id: label2
                 x: 156
-                anchors.margins: 8
+//                anchors.margins: 8
                 anchors.top:parent.top
                 anchors.right: parent.right
                 width: 87
@@ -140,17 +141,19 @@ Item {
                 color: "#ffffff"
                 text: qsTr("Кнопок:")
                 anchors.rightMargin: 197
-                anchors.topMargin: 2
+                font.pointSize: 14
+//                anchors.topMargin: 2
                 Text {
                     id: t_axnumb1
                     anchors.left: parent.right
-                    anchors.top: parent.top
+                    anchors.top:parent.top
+                    anchors.verticalCenter: parent.verticalCenter
                     width: 129
                     height: 13
                     color: "#ffffff"
                     text: joystick.buttons_number
                     scale: 1
-                    font.pixelSize: 12
+                    font.pointSize: 14
                 }
             }
 
@@ -162,7 +165,7 @@ Item {
                 height: 19
                 color: "#ffffff"
                 text: qsTr("Ось №4'")
-                font.pointSize: 10
+                font.pointSize: 14
                 MySwitcher {
                     id: switcher4
                     onInvChanged: {
@@ -187,7 +190,7 @@ Item {
                 height: 19
                 color: "#ffffff"
                 text: qsTr("Ось №3")
-                font.pointSize: 10
+                font.pointSize: 14
                 MySwitcher {
                     id: switcher3
                     onInvChanged: {
@@ -212,7 +215,7 @@ Item {
                 height: 19
                 color: "#ffffff"
                 text: qsTr("Ось №2")
-                font.pointSize: 10
+                font.pointSize: 14
                 MySwitcher {
                     id: switcher2
                     onInvChanged: {
@@ -237,7 +240,7 @@ Item {
                 height: 19
                 color: "#ffffff"
                 text: qsTr("Ось №1")
-                font.pointSize: 10
+                font.pointSize: 14
                 MySwitcher {
                     id: switcher1
                     onInvChanged: {
@@ -329,6 +332,7 @@ Item {
                             joystickDialog.joystick.setmap(id,delegatecm.currentIndex)
                             ind=delegatecm.currentIndex
                         }
+                        font.pointSize: 14
                     }
                 }
             }
@@ -337,6 +341,7 @@ Item {
                 y:2
                 text: joystickDialog.joystick.ispresent?"hat: "+joystickDialog.joystick.hats[0]:""
                 color: "white"
+                font.pointSize: 14
             }
 
             Slider {
@@ -356,6 +361,7 @@ Item {
                 y: 31
                 width: 65
                 height: 25
+                font.pointSize: 14
                 currentIndex: 0
                 model: ListModel {
                     id: mcomboBox1
@@ -368,6 +374,7 @@ Item {
                 y: 67
                 width: 65
                 height: 25
+                font.pointSize: 14
                 model: ListModel {
                     id: mcomboBox2
                 }
@@ -390,6 +397,7 @@ Item {
                 y: 102
                 width: 65
                 height: 25
+                font.pointSize: 14
                 model: ListModel {
                     id: mcomboBox3
                 }
@@ -412,6 +420,7 @@ Item {
                 y: 137
                 width: 65
                 height: 25
+                font.pointSize: 14
                 model: ListModel {
                     id: mcomboBox4
                 }
@@ -461,10 +470,11 @@ Item {
 
             Button {
                 id: b_apply1
-                x: 333
-                y: -44
+                x: 478
+                y: 31
                 width: 100
                 height: 28
+                font.pointSize: 14
                 text: qsTr("Закрыть")
                 onClicked: {
                     //joystickDialog.visible=false;

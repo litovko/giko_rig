@@ -85,7 +85,7 @@ void cNetworker::readSettings()
 
 void cNetworker::displayError(QAbstractSocket::SocketError socketError)
 {
-
+Q_UNUSED(socketError)
 }
 
 void cNetworker::sendData()
