@@ -17,7 +17,6 @@ Item {
     onVisibleChanged: {
         print(currentcam)
         currentcam=0
-        spinBox_videomode.currentIndex=cam[currentcam].comby;
     }
 
 
@@ -57,6 +56,7 @@ Item {
             readOnly: true
             text: cam[currentcam].url1
             font.pixelSize: 10
+            selectByMouse: true
         }
 
         Label {
@@ -67,14 +67,14 @@ Item {
             height: 13
             color: "white"
             text: qsTr("Камера")
-            font.pointSize: 9
+            font.pointSize: 10
 
             ComboBox {
                 id: cb_cam
                 x: 72
                 y: 0
                 width: 176
-                height: 20
+                height: 22
                 z: 20
                 Component.onCompleted: {
 
@@ -102,338 +102,334 @@ Item {
                 }
             }
         }
-        Label {
-            id: label_stream
-            x: 8
-            y: 82
-            width: 67
-            height: 13
-            color: "white"
-            text: qsTr("Видеорежим")
-            font.pointSize: 9
-            ComboBox {
-                id: spinBox_videomode
-                x: 73
-                y: -4
-                width: 181
-                height: 20
+//        Label {
+//            id: label_stream
+//            x: 8
+//            y: 82
+//            width: 67
+//            height: 13
+//            color: "white"
+//            text: qsTr("Видеорежим")
+//            font.pointSize: 9
+//            ComboBox {
+//                id: spinBox_videomode
+//                x: 73
+//                y: -4
+//                width: 181
+//                height: 20
 
-                Component.onCompleted: {
-                    fill_list_model();
-                    currentIndex: cam[currentcam].comby
-                }
-                model: ListModel {
-                    id: listStreams
-                }
+//                Component.onCompleted: {
+//                    fill_list_model();
+//                    currentIndex: cam[currentcam].comby
+//                }
+//                model: ListModel {
+//                    id: listStreams
+//                }
 
-                function fill_list_model() {
+//                function fill_list_model() {
 
-                    var  s=cam[currentcam].combylist;
+//                    var  s=cam[currentcam].combylist;
 
-                    var  c=s.substring(s.indexOf(","))
-                    var  i = s.indexOf(",");
-                    var  strlen=s.length;
-                    listStreams.clear();
-                    //console.log("Setup Camera cam"<<currentcam<<".combylist:"+cam[currentcam].combylist)
-                    while(i>0){
+//                    var  c=s.substring(s.indexOf(","))
+//                    var  i = s.indexOf(",");
+//                    var  strlen=s.length;
+//                    listStreams.clear();
+//                    //console.log("Setup Camera cam"<<currentcam<<".combylist:"+cam[currentcam].combylist)
+//                    while(i>0){
 
-                        c=s.substring(0,i);
-                        s=s.substring(i+1,strlen);
-                        listStreams.append({text: c})
+//                        c=s.substring(0,i);
+//                        s=s.substring(i+1,strlen);
+//                        listStreams.append({text: c})
 
-                        i = s.indexOf(",");
-                        strlen=s.length;
+//                        i = s.indexOf(",");
+//                        strlen=s.length;
 
-                    }
-                    listStreams.append({text: s}) // добавляем последний элемент
-                    spinBox_videomode.currentIndex=cam[currentcam].comby;
-                    //console.log("Setup Camera  Filllistmodel() cam.comby:"+cam[currentcam].comby+"curindex:"+spinBox_videomode.currentIndex);
-                    return;
-                }
-            }
-        }
+//                    }
+//                    listStreams.append({text: s}) // добавляем последний элемент
+//                    spinBox_videomode.currentIndex=cam[currentcam].comby;
+//                    //console.log("Setup Camera  Filllistmodel() cam.comby:"+cam[currentcam].comby+"curindex:"+spinBox_videomode.currentIndex);
+//                    return;
+//                }
+//            }
+//        }
 
 
-        Button {
-            id: ok
-            x: 281
-            y: 77
-            opacity: 0.8
-            text: qsTr("Применить")
-            font.pointSize: 14
-            onClicked: {
-                //               console.log("Кликнули");
-                //console.log("Setup Camera  Comby button clicked");
-                players[currentcam].stop();
-                cam[currentcam].comby=spinBox_videomode.currentIndex;
-                //console.log("Setup Camera  Button Apply clicked, comby:"+cam[currentcam].comby);
-                cam[currentcam].videopage=true;
-            }
-        }
+//        Button {
+//            id: ok
+//            x: 281
+//            y: 77
+//            opacity: 0.8
+//            text: qsTr("Применить")
+////            font.pointSize: 14
+//            onClicked: {
+////                players[currentcam].stop();
+////                cam[currentcam].comby=spinBox_videomode.currentIndex;
+////                cam[currentcam].videopage=true;
+//            }
+//        }
 
-        Button {
+        MyButton {
             id: close
             x: 411
             y: 16
-            width: 75
-            height: 34
+            width: 80
+            height: 50
             text: qsTr("Закрыть")
-            font.pointSize: 14
+//            font.pointSize: 14
 //            isDefault: true
             opacity: 0.8
             onClicked: {
                 setupDialog.visible=false;
                 mainRect.focus=true;
-                console.log("Setup Camera Exit pressed");
             }
         }
 
-        Rectangle {
-            id: rectsettings
-            x: 20
-            y: 175
-            width: 466
-            height: 305
-            radius: 5
-            gradient: Gradient {
-                GradientStop {
-                    position: 0
-                    color: "#ffffff"
-                }
+//        Rectangle {
+//            id: rectsettings
+//            x: 20
+//            y: 175
+//            width: 466
+//            height: 305
+//            radius: 5
+//            gradient: Gradient {
+//                GradientStop {
+//                    position: 0
+//                    color: "#ffffff"
+//                }
 
-                GradientStop {
-                    position: 0.993
-                    color: "#ffffff"
-                }
+//                GradientStop {
+//                    position: 0.993
+//                    color: "#ffffff"
+//                }
 
-                GradientStop {
-                    position: 0.51
-                    color: "#000000"
-                }
+//                GradientStop {
+//                    position: 0.51
+//                    color: "#000000"
+//                }
 
-            }
-            opacity: 0.8
-            z: 1
-            border.color: "#f4f400"
+//            }
+//            opacity: 0.8
+//            z: 1
+//            border.color: "#f4f400"
 
-            Label {
-                id: l1
-                x: 8
-                y: 12
-                width: 122
-                height: 17
-                color: "#ffffff"
-                text: qsTr("Яркость")
-                font.pointSize: 10
-                verticalAlignment: Text.AlignVCenter
-                font.bold: true
-            }
+//            Label {
+//                id: l1
+//                x: 8
+//                y: 12
+//                width: 122
+//                height: 17
+//                color: "#ffffff"
+//                text: qsTr("Яркость")
+//                font.pointSize: 10
+//                verticalAlignment: Text.AlignVCenter
+//                font.bold: true
+//            }
 
-            Label {
-                id: l2
-                x: 8
-                y: 37
-                width: 122
-                height: 17
-                color: "#ffffff"
-                text: qsTr("Контрастность")
-                font.pointSize: 10
-                font.bold: true
-            }
+//            Label {
+//                id: l2
+//                x: 8
+//                y: 37
+//                width: 122
+//                height: 17
+//                color: "#ffffff"
+//                text: qsTr("Контрастность")
+//                font.pointSize: 10
+//                font.bold: true
+//            }
 
-            Slider {
-                id: s1
-                x: 136
-                y: 9
-                width: 269
-                height: 22
-                z: 3
-                stepSize: 1
-                from: 0
-                to: 255
-                value: cam[currentcam].brightness
-            }
+//            Slider {
+//                id: s1
+//                x: 136
+//                y: 9
+//                width: 269
+//                height: 22
+//                z: 3
+//                stepSize: 1
+//                from: 0
+//                to: 255
+//                value: cam[currentcam].brightness
+//            }
 
-            Slider {
-                id: s2
-                x: 136
-                y: 34
-                width: 269
-                height: 22
-                from: 0
-                to: 255
-                z: 3
-                value: cam[currentcam].contrast
-                stepSize: 1
-            }
+//            Slider {
+//                id: s2
+//                x: 136
+//                y: 34
+//                width: 269
+//                height: 22
+//                from: 0
+//                to: 255
+//                z: 3
+//                value: cam[currentcam].contrast
+//                stepSize: 1
+//            }
 
-            Slider {
-                id: s3
-                x: 136
-                y: 63
-                width: 269
-                height: 22
-                from: 0
-                to: 255
-                z: 3
-                value: cam[currentcam].saturation
-                stepSize: 1
-            }
+//            Slider {
+//                id: s3
+//                x: 136
+//                y: 63
+//                width: 269
+//                height: 22
+//                from: 0
+//                to: 255
+//                z: 3
+//                value: cam[currentcam].saturation
+//                stepSize: 1
+//            }
 
-            Label {
-                id: l3
-                x: 8
-                y: 66
-                width: 122
-                height: 17
-                color: "#ffffff"
-                text: qsTr("Цветность")
-                font.pointSize: 10
-                font.bold: true
-            }
+//            Label {
+//                id: l3
+//                x: 8
+//                y: 66
+//                width: 122
+//                height: 17
+//                color: "#ffffff"
+//                text: qsTr("Цветность")
+//                font.pointSize: 10
+//                font.bold: true
+//            }
 
-            Label {
-                id: l4
-                x: 8
-                y: 91
-                width: 122
-                height: 17
-                color: "#ffffff"
-                text: qsTr("Четкость")
-                font.pointSize: 10
-                font.bold: true
-            }
+//            Label {
+//                id: l4
+//                x: 8
+//                y: 91
+//                width: 122
+//                height: 17
+//                color: "#ffffff"
+//                text: qsTr("Четкость")
+//                font.pointSize: 10
+//                font.bold: true
+//            }
 
-            Slider {
-                id: s4
-                x: 136
-                y: 89
-                width: 269
-                height: 22
-                from: 0
-                to: 255
-                z: 3
-                value: cam[currentcam].sharpness
-                stepSize: 1
-            }
+//            Slider {
+//                id: s4
+//                x: 136
+//                y: 89
+//                width: 269
+//                height: 22
+//                from: 0
+//                to: 255
+//                z: 3
+//                value: cam[currentcam].sharpness
+//                stepSize: 1
+//            }
 
-            Label {
-                id: l5
-                x: 10
-                y: 119
-                width: 122
-                height: 17
-                color: "#ffffff"
-                text: qsTr("Усиление динамического диапазона")
-                font.pointSize: 10
-                font.bold: true
-            }
+//            Label {
+//                id: l5
+//                x: 10
+//                y: 119
+//                width: 122
+//                height: 17
+//                color: "#ffffff"
+//                text: qsTr("Усиление динамического диапазона")
+//                font.pointSize: 10
+//                font.bold: true
+//            }
 
-            Slider {
-                id: s5
-                x: 269
-                y: 117
-                width: 136
-                height: 22
-//                tickmarksEnabled: true
-                from: 0
-                to: 255
-                z: 3
-                value: cam[currentcam].dynrange
-                stepSize: 1
-            }
+//            Slider {
+//                id: s5
+//                x: 269
+//                y: 117
+//                width: 136
+//                height: 22
+////                tickmarksEnabled: true
+//                from: 0
+//                to: 255
+//                z: 3
+//                value: cam[currentcam].dynrange
+//                stepSize: 1
+//            }
 
-            Label {
-                id: l6
-                x: 8
-                y: 229
-                width: 187
-                height: 17
-                color: "#ffffff"
-                text: qsTr("Текст - название профиля")
+//            Label {
+//                id: l6
+//                x: 8
+//                y: 229
+//                width: 187
+//                height: 17
+//                color: "#ffffff"
+//                text: qsTr("Текст - название профиля")
 
-                font.pointSize: 10
-                font.bold: true
-            }
+//                font.pointSize: 10
+//                font.bold: true
+//            }
 
-            TextField {
-                id: textField1
-                x: 207
-                y: 227
-                width: 198
-                height: 20
-                text: cam[currentcam].overlaytext
-                //  /[a-zA-Z]/
-                validator: RegExpValidator {
-                    regExp:  /[a-zA-Z0-9\s-]*/
-                }
+//            TextField {
+//                id: textField1
+//                x: 207
+//                y: 227
+//                width: 198
+//                height: 20
+//                text: cam[currentcam].overlaytext
+//                //  /[a-zA-Z]/
+//                validator: RegExpValidator {
+//                    regExp:  /[a-zA-Z0-9\s-]*/
+//                }
 
-                placeholderText: qsTr("Профиль")
-            }
+//                placeholderText: qsTr("Профиль")
+//            }
 
-            Button {
-                id: ok1
-                x: 131
-                y: 265
-                text: qsTr("Применить настройки видео")
-                clip: false
-                scale: 1.1
-                z: 3
-                onClicked: {
-                    cam[currentcam].brightness=s1.value;
-                    cam[currentcam].contrast=s2.value;
-                    cam[currentcam].saturation=s3.value;
-                    cam[currentcam].sharpness=s4.value;
-                    cam[currentcam].colorkiller=radioDay.checked?1:0;
-                    cam[currentcam].img2a=cbwhitebal.currentIndex;
-                    cam[currentcam].overlaytext=textField1.text
-                    cam[currentcam].videosettings=true;
-                }
+//            Button {
+//                id: ok1
+//                x: 131
+//                y: 265
+//                text: qsTr("Применить настройки видео")
+//                clip: false
+//                scale: 1.1
+//                z: 3
+//                onClicked: {
+//                    cam[currentcam].brightness=s1.value;
+//                    cam[currentcam].contrast=s2.value;
+//                    cam[currentcam].saturation=s3.value;
+//                    cam[currentcam].sharpness=s4.value;
+//                    cam[currentcam].colorkiller=radioDay.checked?1:0;
+//                    cam[currentcam].img2a=cbwhitebal.currentIndex;
+//                    cam[currentcam].overlaytext=textField1.text
+//                    cam[currentcam].videosettings=true;
+//                }
 
-            }
+//            }
 
-            ComboBox {
-                id: cbwhitebal
-                x: 215
-                y: 154
-                width: 190
-                height: 18
+//            ComboBox {
+//                id: cbwhitebal
+//                x: 215
+//                y: 154
+//                width: 190
+//                height: 18
 
-                model: ListModel {
-                    id: li
-                    ListElement { text: "NONE"; color: "Yellow" }
-                    ListElement { text: "APPRO"; color: "Green" }
-                    ListElement { text: "TI"; color: "Brown" }
-                }
-                currentIndex: cam[currentcam].img2a
-            }
+//                model: ListModel {
+//                    id: li
+//                    ListElement { text: "NONE"; color: "Yellow" }
+//                    ListElement { text: "APPRO"; color: "Green" }
+//                    ListElement { text: "TI"; color: "Brown" }
+//                }
+//                currentIndex: cam[currentcam].img2a
+//            }
 
-            Label {
-                id: l7
-                x: 105
-                y: 155
-                width: 122
-                height: 17
-                color: "#ffffff"
-                text: qsTr("Баланс белого")
-                font.pointSize: 10
-                font.bold: true
-            }
+//            Label {
+//                id: l7
+//                x: 105
+//                y: 155
+//                width: 122
+//                height: 17
+//                color: "#ffffff"
+//                text: qsTr("Баланс белого")
+//                font.pointSize: 10
+//                font.bold: true
+//            }
 
-            RadioButton {
-                id: radioNight
-                x: 25
-                y: 187
-                width: 55
-                height: 17
-                scale: 1.5
-                onCheckedChanged: {
-                    if (checked) radioDay.checked=false
-                    else radioDay.checked=true;
-                    cam[currentcam].colorkiller=checked?0:1
+//            RadioButton {
+//                id: radioNight
+//                x: 25
+//                y: 187
+//                width: 55
+//                height: 17
+//                scale: 1.5
+//                onCheckedChanged: {
+//                    if (checked) radioDay.checked=false
+//                    else radioDay.checked=true;
+//                    cam[currentcam].colorkiller=checked?0:1
 
-                    //console.log("Setup Camera  NIGHT=1/DAY=0"+ cam[currentcam].colorkiller);
-                }
+//                    //console.log("Setup Camera  NIGHT=1/DAY=0"+ cam[currentcam].colorkiller);
+//                }
 //                style: RadioButtonStyle {
 //                    indicator: Rectangle {
 //                        implicitWidth: 16
@@ -453,26 +449,26 @@ Item {
 
             }
 
-            RadioButton {
+//            RadioButton {
 
-                id: radioDay
+//                id: radioDay
 
-                onCheckedChanged: {
+//                onCheckedChanged: {
 
-                    if (checked) radioNight.checked=false
-                    else radioNight.checked=true;
-                    cam[currentcam].colorkiller=checked?1:0
-                    //console.log("Setup Camera onCheckedChanged NIGHT=1/DAY=0"+ cam[currentcam].colorkiller);
-                }
-                Component.onCompleted:  checked=cam[currentcam].colorkiller==0?true:false
+//                    if (checked) radioNight.checked=false
+//                    else radioNight.checked=true;
+//                    cam[currentcam].colorkiller=checked?1:0
+//                    //console.log("Setup Camera onCheckedChanged NIGHT=1/DAY=0"+ cam[currentcam].colorkiller);
+//                }
+//                Component.onCompleted:  checked=cam[currentcam].colorkiller==0?true:false
 
-                x: 11
-                y: 160
-                width: 56
-                height: 17
-                scale: 1.5
-                transformOrigin: Item.Left
-                rotation: 0
+//                x: 11
+//                y: 160
+//                width: 56
+//                height: 17
+//                scale: 1.5
+//                transformOrigin: Item.Left
+//                rotation: 0
 //                style: RadioButtonStyle {
 //                    indicator: Rectangle {
 //                        implicitWidth: 16
@@ -489,96 +485,96 @@ Item {
 //                        }
 //                    }
 //                }
-            }
+//            }
 
-            Label {
-                id: ldn1
-                x: 43
-                y: 161
-                width: 37
-                height: 17
-                color: "#ffffff"
-                text: qsTr("День")
-                font.bold: radioDay.checked
-            }
+//            Label {
+//                id: ldn1
+//                x: 43
+//                y: 161
+//                width: 37
+//                height: 17
+//                color: "#ffffff"
+//                text: qsTr("День")
+//                font.bold: radioDay.checked
+//            }
 
-            Label {
-                id: ldn2
-                x: 43
-                y: 188
-                width: 37
-                height: 17
-                color: "#fbfbfb"
-                text: qsTr("Ночь")
-                font.bold: radioNight.checked
-            }
+//            Label {
+//                id: ldn2
+//                x: 43
+//                y: 188
+//                width: 37
+//                height: 17
+//                color: "#fbfbfb"
+//                text: qsTr("Ночь")
+//                font.bold: radioNight.checked
+//            }
 
-            Label {
-                id: lb1
-                x: 411
-                y: 12
-                width: 33
-                height: 17
-                color: "#ffffff"
-                text: s1.value
-                font.bold: true
-                font.pointSize: 10
-                verticalAlignment: Text.AlignVCenter
-            }
+//            Label {
+//                id: lb1
+//                x: 411
+//                y: 12
+//                width: 33
+//                height: 17
+//                color: "#ffffff"
+//                text: s1.value
+//                font.bold: true
+//                font.pointSize: 10
+//                verticalAlignment: Text.AlignVCenter
+//            }
 
-            Label {
-                id: lb2
-                x: 411
-                y: 37
-                width: 33
-                height: 17
-                color: "#ffffff"
-                text: s2.value
-                font.bold: true
-                font.pointSize: 10
-                verticalAlignment: Text.AlignVCenter
-            }
+//            Label {
+//                id: lb2
+//                x: 411
+//                y: 37
+//                width: 33
+//                height: 17
+//                color: "#ffffff"
+//                text: s2.value
+//                font.bold: true
+//                font.pointSize: 10
+//                verticalAlignment: Text.AlignVCenter
+//            }
 
-            Label {
-                id: lb3
-                x: 411
-                y: 66
-                width: 33
-                height: 17
-                color: "#ffffff"
-                text: s3.value
-                font.bold: true
-                font.pointSize: 10
-                verticalAlignment: Text.AlignVCenter
-            }
+//            Label {
+//                id: lb3
+//                x: 411
+//                y: 66
+//                width: 33
+//                height: 17
+//                color: "#ffffff"
+//                text: s3.value
+//                font.bold: true
+//                font.pointSize: 10
+//                verticalAlignment: Text.AlignVCenter
+//            }
 
-            Label {
-                id: lb4
-                x: 411
-                y: 91
-                width: 33
-                height: 17
-                color: "#ffffff"
-                text: s4.value
-                font.bold: true
-                font.pointSize: 10
-                verticalAlignment: Text.AlignVCenter
-            }
-        }
+//            Label {
+//                id: lb4
+//                x: 411
+//                y: 91
+//                width: 33
+//                height: 17
+//                color: "#ffffff"
+//                text: s4.value
+//                font.bold: true
+//                font.pointSize: 10
+//                verticalAlignment: Text.AlignVCenter
+//            }
+//        }
 
-        Label {
-            id: label1
-            x: 170
-            y: 148
-            width: 160
-            height: 21
-            color: "#ffffff"
-            text: qsTr("Настройки видео")
-            font.pointSize: 10
-            z: 3
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
+//        Label {
+//            id: label1
+//            x: 170
+//            y: 148
+//            width: 160
+//            height: 21
+//            color: "#ffffff"
+//            text: qsTr("Настройки видео")
+//            font.pointSize: 10
+//            z: 3
+//            horizontalAlignment: Text.AlignHCenter
+//            verticalAlignment: Text.AlignVCenter
+//        }
 
         Text {
             id: vlcversion
@@ -590,45 +586,46 @@ Item {
             font.pixelSize: 12
         }
 
-        Button {
-            id: time
-            x: 82
-            y: 114
-            width: 110
-            height: 23
-            text: qsTr("Установить время")
-            opacity: 0.8
-            onClicked: {
-                //console.log("Setup Camera SetTime Clicked");
-                players[currentcam].stop();
-                cam[currentcam].setDateTimesettings();
-            }
-        }
+//        Button {
+//            id: time
+//            x: 82
+//            y: 114
+//            width: 110
+//            height: 23
+//            text: qsTr("Установить время")
+//            opacity: 0.8
+//            onClicked: {
+//                //console.log("Setup Camera SetTime Clicked");
+//                players[currentcam].stop();
+//                cam[currentcam].setDateTimesettings();
+//            }
+//        }
 
-        Button {
-            id: btn_reset
-            x: 243
-            y: 114
-            width: 113
-            height: 23
-            text: qsTr("Перезапуск камеры")
-            opacity: 0.8
-            onClicked: cam[currentcam].send_reset();
-        }
+//        Button {
+//            id: btn_reset
+//            x: 243
+//            y: 114
+//            width: 113
+//            height: 23
+//            text: qsTr("Перезапуск камеры")
+//            opacity: 0.8
+//            onClicked: cam[currentcam].send_reset();
+//        }
 
 
-    }
+//    }
 
-    TextField {
+    Label {
         id: cam_name
         x: 13
         y: 452
         width: 70
         height: 20
-        text: cam[currentcam].title
-        readOnly: true
+        text: cam[currentcam].title+":"
+//        readOnly: true
         opacity: 0.8
-        placeholderText: qsTr("Выбранная камера")
+        font.pointSize: 12
+//        placeholderText: qsTr("Выбранная камера")
     }
 
 }

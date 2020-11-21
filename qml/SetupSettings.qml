@@ -68,13 +68,14 @@ Item {
         }
 
 
-        Button {
+        MyButton {
             id: ok
             x: 394
             y: 86
-            opacity: 0.8
+            width: 80
+            height: 50
+//            opacity: 0.8
             text: qsTr("Применить")
-            //tooltip: "Применение указанных настроек программы"
             onClicked: {
                 rig.address=rig_address.text
                 rig.port=rig_port.text
@@ -102,19 +103,16 @@ Item {
             }
         }
 
-        Button {
+        MyButton {
             id: close
             x: 394
             y: 27
+            width: 80
+            height: 50
             text: qsTr("Закрыть")
-            flat: false
-            highlighted: false
-            //isDefault: true
-            opacity: 0.8
             onClicked: {
                 settingsDialog.visible=false;
                 mainRect.focus=true;
-                console.log("Setup Settings - Close clicked");
             }
         }
 
@@ -334,7 +332,7 @@ Item {
                 font.pixelSize: 12
             }
 
-            Button {
+            MyButton {
                 id: filepath_dialog
                 x: 363
                 y: 2

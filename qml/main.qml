@@ -7,7 +7,7 @@ import QmlVlc 0.1
 import Qt.labs.settings 1.0
 import QtQuick.Extras 1.4
 
-//import QtQml 2.2
+//TODO Сделать управление камерой (Зум и фокус)
 Window {
     id: win
     //    visibility: Window.FullScreen
@@ -803,7 +803,7 @@ Window {
             if (event.key === Qt.Key_G || event.key === 1055)
                 win.fcommand("MANIP")
             if (event.key === Qt.Key_F8 || event.key === Qt.Key_8)
-                win.fcommand("CHANGE RIG TYPE")
+                win.fcommand("SET DEFAULT")
             if (event.key === Qt.Key_F9 || event.key === Qt.Key_9)
                 win.fcommand("JOYSTICK SETTINGS")
             if (event.key === Qt.Key_F10 || event.key === Qt.Key_0)

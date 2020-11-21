@@ -16,7 +16,8 @@
 #define USERPASS_MGBU "hyco[123]"
 #define TIMEOUT 10000  //  таймаут для установки видеорежимов
 #define TIMEOUT_RESET 20000 //
-
+//TODO Добавить управление зумом камеры
+//TODO Переделать декодирование видео в ffmpeg
 
 class cCamera : public QObject
 {

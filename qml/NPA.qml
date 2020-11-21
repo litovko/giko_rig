@@ -25,7 +25,7 @@ Item {
 
     }
     function resetposition(){
-        bubble2.x=bubble2.y=npa_move.x=npa_move.y=npa_hand.x=npa_hand.y=npa_group.x=npa_group.y=0
+        bubble2.x=bubble2.y=npa_hand.x=npa_hand.y=0
     }
 
     states: [

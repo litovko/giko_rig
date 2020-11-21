@@ -11,7 +11,6 @@
         <file>skin/needle_shadow.png</file>
         <file>qml/ControlPanel.qml</file>
         <file>skin/settings.png</file>
-        <file>qml/MyBotton.qml</file>
         <file>qml/SetupCamera.qml</file>
         <file>qml/SetupSettings.qml</file>
         <file>qml/SetupJoystick.qml</file>
@@ -26,6 +25,7 @@
         <file>qml/Tik.qml</file>
         <file>qml/CAMSettings.qml</file>
         <file>qml/MyBubble2.qml</file>
+        <file>qml/MyButton.qml</file>
         <file>qml/Coordinate.qml</file>
         <file>qml/Pribor3.qml</file>
         <file>qml/Digital.qml</file>

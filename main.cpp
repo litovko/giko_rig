@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling); // DPI support
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps); // HiDPI pixmaps
 
-    qputenv("QT_SCALE_FACTOR", "0.8"); //NOTE: Scale Factore
+    qputenv("QT_SCALE_FACTOR", "1.0"); //NOTE: Scale Factore
 //    qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "0.5");
     QCoreApplication::setAttribute(Qt::AA_DisableShaderDiskCache);
     //QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);

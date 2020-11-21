@@ -51,7 +51,7 @@ Rectangle {
             visible: !onrecord
         }
         Text {
-            text: "v"+Qt.application.version+" Тип аппарата:" + rig0.rigtype
+            text: "v"+Qt.application.version+" Тип аппарата:" + "МГМ-7"
             color: "lightblue"
             font.pointSize: 12
         }

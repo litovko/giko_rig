@@ -82,18 +82,18 @@ Item {
             font.bold: true
             font.pointSize: 20
         }
-        Button {
+        MyButton {
             id: b_apply
             x: 508
             y: 64
-            width: 100
-            height: 28
+            width: 80
+            height: 50
             text: qsTr("Применить")
             onClicked: {
                 fcommand("JOYSTICK SETTINGS")
                 mainRect.focus=true;
             }
-            font.pointSize: 14
+            font.pointSize: 10
         }
 
         GroupBox {
@@ -468,13 +468,13 @@ Item {
                 }
             }
 
-            Button {
+            MyButton {
                 id: b_apply1
                 x: 478
                 y: 31
-                width: 100
-                height: 28
-                font.pointSize: 14
+                width: 80
+                height: 50
+                font.pointSize: 10
                 text: qsTr("Закрыть")
                 onClicked: {
                     //joystickDialog.visible=false;
