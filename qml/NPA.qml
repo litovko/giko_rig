@@ -143,28 +143,7 @@ Item {
             a7up: board1.pin6*127
             a7down: -board1.pin7*127
         }
-        //        NPA_group { //группа поворота камеры лебедки и проч
-        //            id: npa_group
-        //            width: parent.width
-        //            height: parent.height
-        //            //anchors.left: parent.right
-        //            position: board2.position
-        //            cx2: board2.pin7*127-board2.pin6*127 //выращение по часовой стрелке и против
-        //            cx4: board2.ana3 //поворот камеры влево-вправо
-        //            ca:  scale (settings.ku, settings.au, mbus.values[0]) //TODO: сделать масштабирование указатель угла поворота камеры
-        //            cb:  scale (settings.kv, settings.av, mbus.values[1]) //TODO: сделать масштабирование указатель угла вращения камеры
-        //            cool: board2.engine2
-        //            brdr: mag.containsMouse
-        //            MouseArea {
-        //                id: mag
-        //                anchors.fill: parent
-        //                hoverEnabled: true
-        //                drag.target: npa_group
-        //                drag.axis: Drag.XAndYAxis
-        //                //drag.minimumX: 0
-        //                //drag.maximumX: container.width - rect.width
-        //            }
-        //        }
+
         MyBubble2 {
             id: bubble2
             height:300

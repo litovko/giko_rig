@@ -1,16 +1,16 @@
-import QtQuick 2.11
-import QtQuick.Controls 2.4
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 //import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
-import QmlVlc 0.1
 import Gyco 1.0
+//import HYCO 1.0
 Item {
     id: settingsDialog
     visible: true
-    property list<RigCamera> cam
+    property list<MyCamera> cam
     property Networker rig:null
     property Board rig_model: null
-//    onVisibleChanged: { cbj.checked=j.ispresent}
+    //    onVisibleChanged: { cbj.checked=j.ispresent}
     RegExpValidator{
         id: adr_validator
         regExp: /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
@@ -74,30 +74,20 @@ Item {
             y: 86
             width: 80
             height: 50
-//            opacity: 0.8
+            //            opacity: 0.8
             text: qsTr("Применить")
             onClicked: {
                 rig.address=rig_address.text
                 rig.port=rig_port.text
-
-
+                cam[0].media=cam1_media.text
                 cam[0].address=cam1_address.text
-                cam[1].address=cam2_address.text
-                cam[2].address=cam3_address.text
-                cam[3].address=cam4_address.text
-                cam[0].cameraenabled=cb_cam1.checked
-                cam[1].cameraenabled=cb_cam2.checked
-                cam[2].cameraenabled=cb_cam3.checked
-                cam[3].cameraenabled=cb_cam4.checked
-
-                console.log("Setup Settings cb"+cb_cam2.checked+" "+cb_cam3.checked)
                 rig.timer_send_interval=parseInt(rig_msec1.text);
                 rig.timer_connect_interval=parseInt(rig_msec2.text);
                 rig_model.freerun=parseInt(rig_msec3.text);
                 rig_model.check_type=cb_check_type.checked;
                 rig_model.timer_delay_engine1=free_msec1.text;
                 rig_model.timer_delay_engine2=free_msec2.text;
-                network_caching=parseInt(netcache.text);
+                //                network_caching=parseInt(netcache.text);
                 win.filesize=cbfilesize.currentText
                 j.ispresent=cbj.checked
             }
@@ -124,6 +114,7 @@ Item {
             width: 98
             height: 13
             color: "#ffffff"
+            font.pointSize: 9
             text: qsTr("Порт аппарата")
             TextField {
                 id: rig_port
@@ -138,106 +129,85 @@ Item {
                 placeholderText: qsTr("IP-адрес телегрейфера")
                 opacity: 0.8
             }
-            font.pointSize: 9
+
         }
         Label {
             id: lca0
-            x: 88
-            y: 187
-            width: 98
-            height: 13
+            anchors.left: parent.left
+            anchors.margins: 10
+            anchors.top: lris3.bottom
+            width: 150
+            height: 20
             color: "#ffffff"
-            text: qsTr("Адрес видеокамеры")
+            text: qsTr("Адрес видеокамеры "+cam[0].name)
+            font.pointSize: 9
             TextField {
                 id: cam1_address
-                x: 121
-                y: -3
-                width: 106
-                height: 20
+                anchors.left: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.margins: 20
+                width: 100
+                height: 25
                 text: cam[0].address
-                padding: 0
                 font.pointSize: 9
                 readOnly: false
                 validator: adr_validator
                 placeholderText: qsTr("IP-адрес видеокамеры")
                 opacity: 0.8
+                CheckBox {
+                    id: cb_cam1
+                    anchors.left: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: 20
+                    text: cam[0].name
+                    checked: cam[0].cameraenabled
+                    onCheckedChanged: cam[0].cameraenabled=checked
+                }
+
+            }
+            TextField {
+                id: cam1_media
+                anchors.left: parent.right
+                anchors.top: parent.bottom
+                anchors.margins: 20
+                width: 300
+                height: 25
+                text: cam[0].media
+                font.pointSize: 9
+                readOnly: false
+                placeholderText: qsTr("RTSP медиапоток ") // /PSIA/Streaming/channels/2?videoCodecType=H.264
+                opacity: 0.8
+            }
+
+        }
+        Label {
+            id: lcache
+            anchors.left: parent.right
+            anchors.top: lca0.bottom
+            anchors.margins: 20
+            width: 109
+            height: 13
+            color: "#ffffff"
+            text: qsTr("Интервал проверки камеры, мс")
+            TextField {
+                id: netcache
+                anchors.left: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                width: 96
+                height: 20
+                text: "Надо задать"
+                padding: 0
+                font.pointSize: 9
+                opacity: 0.8
+                placeholderText: qsTr("миллисекунды")
+                validator: IntValidator {
+                    bottom: 5000
+                    top: 30000
+                }
             }
             font.pointSize: 9
         }
 
-        Label {
-            id: lca1
-            x: 88
-            y: 222
-            width: 98
-            height: 13
-            color: "#ffffff"
-            text: qsTr("Адрес видеокамеры")
-            font.pointSize: 9
-            TextField {
-                id: cam2_address
-                x: 121
-                y: -3
-                width: 106
-                height: 20
-                text: cam[1].address
-                padding: 0
-                font.pointSize: 9
-                validator: adr_validator
-                opacity: 0.8
-                placeholderText: qsTr("IP-адрес видеокамеры")
-                readOnly: false
-            }
-        }
-
-        Label {
-            id: lca2
-            x: 88
-            y: 256
-            width: 98
-            height: 13
-            color: "#ffffff"
-            text: qsTr("Адрес видеокамеры")
-            font.pointSize: 9
-            TextField {
-                id: cam3_address
-                x: 121
-                y: -3
-                width: 105
-                height: 20
-                text: cam[2].address
-                padding: 0
-                font.pointSize: 9
-                validator: adr_validator
-                opacity: 0.8
-                placeholderText: qsTr("IP-адрес видеокамеры")
-                readOnly: false
-            }
-        }
-        Label {
-            id: lca3
-            x: 88
-            y: 290
-            width: 98
-            height: 13
-            color: "#ffffff"
-            text: qsTr("Адрес видеокамеры")
-            font.pointSize: 9
-            TextField {
-                id: cam4_address
-                x: 121
-                y: -3
-                width: 105
-                height: 20
-                text: cam[3].address
-                padding: 0
-                font.pointSize: 9
-                validator: adr_validator
-                opacity: 0.8
-                placeholderText: qsTr("IP-адрес видеокамеры")
-                readOnly: false
-            }
-        }
         Label {
             id: lris1
             x: 39
@@ -286,32 +256,6 @@ Item {
             }
         }
 
-        Label {
-            id: lcache
-            x: 88
-            y: 328
-            width: 109
-            height: 13
-            color: "#ffffff"
-            text: qsTr("Кэш видеопотока, мс")
-            TextField {
-                id: netcache
-                x: 121
-                y: -3
-                width: 96
-                height: 20
-                text: network_caching.toString()
-                padding: 0
-                font.pointSize: 9
-                opacity: 0.8
-                placeholderText: qsTr("network-cache")
-                validator: IntValidator {
-                    bottom: 50
-                    top: 600
-                }
-            }
-            font.pointSize: 9
-        }
 
 
         GroupBox {
@@ -369,35 +313,17 @@ Item {
 
         }
 
-        CheckBox {
-            id: cb_cam1
-            x: 316
-            y: 174
-            text: cam[0].title
-            clip: false
-            scale: 1
-            checked: cam[0].cameraenabled
-            //onCheckedChanged: cam[0].cameraenabled=checked
 
-        }
 
-        CheckBox {
-            id: cb_cam2
-            x: 316
-            y: 209
-            text: cam[1].title
-            scale: 1
-            checked: cam[1].cameraenabled
-            //onCheckedChanged: cam[1].cameraenabled=checked
-        }
+
 
         CheckBox {
             id: cb_cam3
             x: 315
             y: 243
-            text: cam[2].title
+            //            text: cam[2].title
             scale: 1
-            checked: cam[2].cameraenabled
+            //            checked: cam[2].cameraenabled
             //onCheckedChanged: cam[2].cameraenabled=checked
         }
         CheckBox {
@@ -406,18 +332,18 @@ Item {
             y: 277
             width: 119
             height: 40
-            text: cam[3].title
+            //            text: cam[3].title
             scale: 1
-            checked: cam[3].cameraenabled
+            //            checked: cam[3].cameraenabled
         }
 
-//        CheckBox {
-//            id: cbj
-//            x: 376
-//            y: 333
-//            checked: j.ispresent
-//            text: qsTr("Джойстик")
-//        }
+        //        CheckBox {
+        //            id: cbj
+        //            x: 376
+        //            y: 333
+        //            checked: j.ispresent
+        //            text: qsTr("Джойстик")
+        //        }
 
         Label {
             id: ltype1
@@ -533,14 +459,14 @@ Item {
             }
             font.pointSize: 9
         }
-//        ComboBox {
-//            id: test
-//            x: 0
-//            y: 0
-//            width: 69
-//            height: 20
-//            model: [50, 500, 700, 1000, 1200, 4000]
-//        }
+        //        ComboBox {
+        //            id: test
+        //            x: 0
+        //            y: 0
+        //            width: 69
+        //            height: 20
+        //            model: [50, 500, 700, 1000, 1200, 4000]
+        //        }
 
     }
 

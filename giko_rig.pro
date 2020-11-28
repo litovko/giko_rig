@@ -1,53 +1,47 @@
-QT += quick network core serialbus
+QT +=  quick network multimedia
 CONFIG += c++11  console
-#CONFIG+=debug
-#mingw:QMAKE_CXXFLAGS_DEBUG += "-gstabs+"
-#mingw:QMAKE_CFLAGS_DEBUG += "-gstabs+"
-VERSION = 7.0.0.3
-#INCLUDEPATH += deps
+VERSION = 7.7.0.1
 SOURCES += main.cpp \
-    modbus/cmodbusclient.cpp \
+    camera/camera.cpp \
+    camera/checktcp.cpp \
+    camera/decoder.cpp \
+    camera/frame_buffer.cpp \
+    camera/ipcamera.cpp \
+    camera/recorder.cpp \
+    camera/rtsp_stream.cpp \
     networker.cpp \
     rigmodel.cpp \
-    camera.cpp \
     cjoystick.cpp \
     qJoyStick.cpp
 
 RESOURCES += qml.qrc
-#mingw: QMAKE_LFLAGS +=-static-libgcc -static-libstdc++
-# Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH = C:\Qt\5.12.1\msvc2017_64\qml\QtQuick
+#QML_IMPORT_PATH = C:\Qt\5.12.1\msvc2017_64\qml\QtQuick
 
-# Default rules for deployment.
-#include(deployment.pri)
-# This line is from QmlVlcDemo.pro
-#include(deps/QmlVlc/QmlVlc.pri)
-include(../QmlVlc/QmlVlc.pri)
-
-
-#OTHER_FILES += \
-#    skin/basic_2.qml \
-#    skin/pause.png \
-#    skin/play.png
-
-
-
-#
-HEADERS += \
-    modbus/cmodbusclient.h \
-    networker.h \
+HEADERS += networker.h \
+    camera/camera.h \
+    camera/checktcp.h \
+    camera/decoder.h \
+    camera/frame_buffer.h \
+    camera/ipcamera.h \
+    camera/recorder.h \
+    camera/rtsp_stream.h \
     rigmodel.h \
-    camera.h \
     cjoystick.h \
     qJoyStick.h
 
-DISTFILES += \
-    NPA_hand.qml \
-    qml/MyButton.qml \
-    skin/mgm7.ico
+INCLUDEPATH += $$PWD/../FFmpeg
+
+LIBS += -L$$PWD/../FFmpeg/lib/ -lavcodec
+LIBS += -L$$PWD/../FFmpeg/lib/ -lavformat
+LIBS += -L$$PWD/../FFmpeg/lib/ -lavutil
+LIBS += -L$$PWD/../FFmpeg/lib/ -lswscale
+
+#DISTFILES += \
+#    NPA_hand.qml \
+#    qml/MyButton.qml \
+#    skin/mgm7.ico
 
 RC_ICONS = skin/mgm7.ico
-
 
 INCLUDEPATH += $$PWD/SDL2/include
 
@@ -66,17 +60,23 @@ equals(Kit,"C:/Qt/5.12.1/msvc2017_64"){
     message("Kit for 64 bit MSVC")
     #LIBS += -L$$PWD/SDL/lib/x64 -lSDL
     LIBS += -L$$PWD/SDL2/lib/x64  -lSDL2 -lSDL2main
-    DESTDIR = D:\dest.rig.5.12.msvc
+    DESTDIR = D:\dest.mgm7.5.12.msvc
 }
-equals(Kit,"C:/Qt/5.15.1/msvc2017_64"){
-    message("Kit for 64 bit MSVC")
-    #LIBS += -L$$PWD/SDL/lib/x64 -lSDL
+equals(Kit,"C:/Qt/5.15.1/msvc2019_64"){
+    message("Kit for 64 bit MSVC2019")
     LIBS += -L$$PWD/SDL2/lib/x64  -lSDL2 -lSDL2main
-    DESTDIR = D:\dest.rig.5.12.msvc
+    DESTDIR = d:\dest.mgm7.5.15.msvc
+}
+equals(Kit,"C:/Qt/5.15.2/msvc2019_64"){
+    message("Kit for 64 bit MSVC2019")
+    LIBS += -L$$PWD/SDL2/lib/x64  -lSDL2 -lSDL2main
+    DESTDIR = d:\dest.mgm7.5.15.2.msvc
 }
 #message(LIBS $$LIBS)
 #message(KIT $$Kit)
 TARGET=MGM7
 
 
+#######
+# C:\Qt\5.15.2\msvc2019_64\bin\qmake -spec win32-msvc -tp vc
 

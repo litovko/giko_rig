@@ -109,8 +109,8 @@ Item {
                 hoverEnabled: true
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 onReleased: {
-                    if (dashboard.state==="grab6")  j.y2axis=0;
-                    j.y1axis=0;
+//                    if (dashboard.state==="grab6")  j.y2axis=0;
+//                    j.y1axis=0;
                 }
 
 

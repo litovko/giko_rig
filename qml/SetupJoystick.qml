@@ -174,7 +174,7 @@ Item {
                     }
                     Connections {
                             target: comboBox4
-                            onCurrentIndexChanged: {
+                            function onCurrentIndexChanged() {
                                 joystick.y2axis_ind = comboBox4.currentIndex
                                 switcher4.inv = joystick.invert[comboBox4.currentIndex]
                             }
@@ -199,7 +199,7 @@ Item {
                     }
                     Connections {
                             target: comboBox3
-                            onCurrentIndexChanged: {
+                            function onCurrentIndexChanged() {
                                 joystick.x2axis_ind = comboBox3.currentIndex
                                 switcher3.inv = joystick.invert[comboBox3.currentIndex]
                             }
@@ -224,7 +224,7 @@ Item {
                     }
                     Connections {
                             target: comboBox2
-                            onCurrentIndexChanged: {
+                            function onCurrentIndexChanged() {
                                 joystick.y1axis_ind = comboBox2.currentIndex
                                 switcher2.inv = joystick.invert[comboBox2.currentIndex]
                             }
@@ -249,7 +249,7 @@ Item {
                     }
                     Connections {
                             target: comboBox1
-                            onCurrentIndexChanged: {
+                            function onCurrentIndexChanged() {
                                 joystick.x1axis_ind = comboBox1.currentIndex
                                 switcher1.inv = joystick.invert[comboBox1.currentIndex]
                             }
@@ -449,7 +449,7 @@ Item {
                 text: qsTr(joystick.name)
                 font.pointSize: 12
                 onTextChanged: {
-                    console.log("Jchanged:"+joystick.name+" axes:"+joystick.axes_number+" ispresent:"+joystick.ispresent)
+//                    console.log("Jchanged:"+joystick.name+" axes:"+joystick.axes_number+" ispresent:"+joystick.ispresent)
                     fillistmodel()
                     for(var ji=1; ji<=joystick.axes_number; ji++) {
                         mcomboBox1.append({text: ji})

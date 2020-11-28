@@ -9,7 +9,7 @@ Item {
     id: controlPanel
     property Board source
     property Networker net
-    property list<RigCamera> cam
+//    property list<RigCamera> cam
     property int lampSize:100
     property int fontSize:15
     property RigJoystick j1
@@ -156,7 +156,7 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:"ФАЗИРОВКА"
-                    active: true //TODO: тэг фазировки от контроллера
+                    active: rig0.position //DONE: тэг фазировки от контроллера
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }
 //                MyLamp{
@@ -178,55 +178,13 @@ Item {
                     id: camera1
                     height: lampSize
                     width: lampSize
-                    bottomText:cam[0].title
-                    active:cam[0].camerapresent
-                    error: cam[0].onrequest
-                    visible: cam[0].cameraenabled
+                    bottomText: "Камера"
+                    active:checke_tcp.ok
+                    error: false
+                    visible: true
                     command: "LAYOUT_CAM1"
                     command2: "PLAY1"
                     command3: "STOP1"
-                    text: "Левая кн. мышки - изображение на весь экран. Правая - стоп. Двойной клик - запуск"
-                    onLampClicked: controlPanel.lampClicked(lamp_command)
-                }
-                MyLamp{
-                    id: camera2
-                    height: lampSize
-                    width: lampSize
-                    bottomText:cam[1].title
-                    visible: cam[1].cameraenabled
-                    active:cam[1].camerapresent
-                    error: cam[1].onrequest
-                    command: "LAYOUT_CAM2"
-                    command2: "PLAY2"
-                    command3: "STOP2"
-                    text: "Левая кн. мышки - изображение на весь экран. Правая - стоп. Двойной клик - запуск"
-                    onLampClicked: controlPanel.lampClicked(lamp_command)
-                }
-                MyLamp{
-                    id: camera3
-                    height: lampSize
-                    width: lampSize
-                    bottomText:cam[2].title
-                    active:cam[2].camerapresent
-                    visible: cam[2].cameraenabled
-                    error: cam[2].onrequest
-                    command: "LAYOUT_CAM3"
-                    command2: "PLAY3"
-                    command3: "STOP3"
-                    text: "Левая кн. мышки - изображение на весь экран. Правая - стоп. Двойной клик - запуск"
-                    onLampClicked: controlPanel.lampClicked(lamp_command)
-                }
-                MyLamp{
-                    id: camera4
-                    height: lampSize
-                    width: lampSize
-                    bottomText:cam[3].title
-                    active:cam[3].camerapresent
-                    visible: cam[3].cameraenabled
-                    error: cam[3].onrequest
-                    command: "LAYOUT_CAM4"
-                    command2: "PLAY4"
-                    command3: "STOP4"
                     text: "Левая кн. мышки - изображение на весь экран. Правая - стоп. Двойной клик - запуск"
                     onLampClicked: controlPanel.lampClicked(lamp_command)
                 }

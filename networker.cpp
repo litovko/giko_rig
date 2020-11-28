@@ -34,11 +34,12 @@ void cNetworker::reg(cRigmodel *rig)
 void cNetworker::start_client()
 {
     if (m_client_connected) return;
-    if (tcpClient.state()) {
-        qDebug()<<"tcpstate:"<<tcpClient.state();
-        return;
+    if (tcpClient.state() == QAbstractSocket::ConnectingState) {
+//        qDebug()<<"tcpstate:"<<tcpClient.state();
+        tcpClient.abort();
+//        return;
     }
-    qDebug()<<"Rig trying to connect to >>>"<<address()<<"poprt"<<::QString().number( port() );
+//    qDebug()<<"Trying to connect to >>>"<<address()<<"poprt"<<::QString().number( port() );
 
     tcpClient.connectToHost(address(), m_port);
 }

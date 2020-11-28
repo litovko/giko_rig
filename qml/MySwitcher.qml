@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 
-import QmlVlc 0.1
+//import QmlVlc 0.1
 import Gyco 1.0
 Rectangle {
     id: switcher

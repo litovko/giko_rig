@@ -1,73 +1,24 @@
-import QtQuick 2.11
-import QtQuick.Window 2.11
-//import QtQuick.Controls 2.5
+import QtQuick 2.12
+import QtQuick.Window 2.12
 import Gyco 1.0
-import QmlVlc 0.1
-//import QtMultimedia 5.5
+import HYCO 1.0
 import Qt.labs.settings 1.0
 import QtQuick.Extras 1.4
 
-//TODO Сделать управление камерой (Зум и фокус)
+//DONE Сделать управление камерой (Зум и фокус)
 Window {
     id: win
-    //    visibility: Window.FullScreen
     title: "HYCO ПУЛЬТ УПРАВЛЕНИЯ МАНИПУЛЯТОРОМ"
     visible: true
-
     height: 720
     width: 1280
     color: "transparent"
     property int recording: 0
     property int play_on_start: 0
-    property int network_caching: 250
-    property string vlc_options: "--no-audio"
     property string filepath: ""
     property int filesize: 700 //Mbyte
-    property variant curfilesize: [-1, -1, -1, -1]
-    property bool onrecord: true //true если меняется размер записываемого файла.
-    property bool camera_umg: false //false - камеры ПМГРЭ true - камеры ЮМГ
-    property string streaming: ":sout=#duplicate{dst=display,dst=std{access=file,mux=mp4,dst=" //параметры стриминга vlc при записи - дубликация потоков
-    property bool pause: false // если истина то показываются часики...
     property alias rig: networker
-    // Поле в реестре vlc_options
-    //:high-priority,:spu,:ods,:clock-synchro=0,:clock-jitter=10000  Убрана синхронизация времени и
-    //                                джиттер задран как советует VLC для тяжелых условий сетевого доступа
-    property list<VlcPlayer> players: [
-        VlcPlayer {
-            id: vlcPlayer1
-        },
-        VlcPlayer {
-            id: vlcPlayer2
-        },
-        VlcPlayer {
-            id: vlcPlayer3
-        },
-        VlcPlayer {
-            id: vlcPlayer4
-        }
-    ]
-    property list<RigCamera> cams: [
-        RigCamera {
-            id: cam1
-            index: 1
-            type: 1 + win.camera_umg
-        },
-        RigCamera {
-            id: cam2
-            index: 2
-            type: 1 + win.camera_umg
-        },
-        RigCamera {
-            id: cam3
-            index: 3
-            type: 1 + win.camera_umg
-        },
-        RigCamera {
-            id: cam4
-            index: 4
-            type: 1 + win.camera_umg
-        }
-    ]
+    property list<MyCamera> cams
 
     Settings {
         property alias x: win.x
@@ -77,27 +28,12 @@ Window {
         property alias recording: win.recording
         property alias state: mainRect.state
         property alias play_on_start: win.play_on_start
-        property alias network_caching: win.network_caching
-        property alias vlc_options: win.vlc_options
         property alias filepath: win.filepath
         property alias filesize: win.filesize
-        property alias camera_umg: win.camera_umg
-        property alias streaming: win.streaming
-        property alias subtitles: subtitle.interval
         property alias joy_devider: j2.devider
     }
-    function player_play(player_number) {
-        if (cams[0].timeout || cams[1].timeout || cams[2].timeout
-                || cams[3].timeout)
-            return
-        if (players[player_number].state===1) return; //NOTE: не даем остановить или запустить новый поток пока находимся в статусе "Открытие"
-        players[player_number].stop()
-        players[player_number].playlist.clear()
-        players[player_number].playlist.addWithOptions(
-                    cams[player_number].url1, getrecordoption(player_number))
-        players[player_number].play()
-        curfilesize[player_number] = -1
-        onrecord = true
+    function register_camera(c) {
+        cams.push(c)
     }
 
     function statename(camstate) {
@@ -119,113 +55,8 @@ Window {
             return "Ошибка"
         return "UNKNOWN"
     }
-    function file_name(camindexx) {
-        var dt = new Date()
-        var s = filepath + "hyco-" + "cam" + (camindexx + 1) + "-"
-                + cams[camindexx].overlaytext + "-" + dt.toLocaleString(
-                    Qt.locale(), "dd-MM-yyyy_HH-mm-ss") + ".mpg"
-        //console.log("main: file_name->"+s)
-        return s
-    }
 
-    function getrecordoption(camindex) {
-        //var dt=new Date();
-        var i
-        var vlc = vlc_options.split(',')
-        console.log("registry vlc options - cam" + (camindex + 1) + ": (" + win.vlc_options + ")")
-        if (camindex === undefined)
-            console.assert("getrecordoption camindex undefined!!!")
-        var sopt = [":network-caching=" + network_caching.toString()]
-        //, ":sout-all", ":sout-keep" ];
-        console.log("getrecordoption:(" + sopt + ")")
-        if (recording === 0) {
-            console.log("Cam" + (camindex + 1) + " Options without recording:" + sopt)
-            for (i = 0; i < vlc.length; i++)
-                sopt.push(vlc[i])
-            return sopt
-        }
 
-        var fn = file_name(camindex)
-        cams[camindex].recordfile = fn //The recorded file name stored in camera object
-        //         var popt=[":network-caching="+network_caching.toString()
-        //                  ,":sout=#stream_out_duplicate{dst=display,dst=std{access=file,mux=mp4,dst="
-        //                  + fn
-        //                  + "}}"
-        //                 ]
-        var popt = [":network-caching=" + network_caching.toString(
-                        ), streaming + fn + "}}"]
-
-        for (i = 0; i < vlc.length; i++)
-            popt.unshift(vlc[i])
-        console.log("Options with recording Cam" + (camindex + 1) + ":  " + popt)
-        //:venc=ffmpeg,--no-audio,--high-priority,:threads=16
-        return popt
-    }
-    function check_file_size() {
-        if (recording === 0)
-            return
-        var flag = false
-        for (var i = 0; i < 4; i++) {
-            if (players[i].state === 3) {
-                console.log("file_name" + i + ":" + cams[i].recordfile + "size:"
-                            + cams[i].get_filesize())
-                if (curfilesize[i] >= cams[i].get_filesize()) {
-                    console.warn("NO RECORDINGS!!!" + "CAM:" + i)
-                    onrecord = false
-                }
-                curfilesize[i] = cams[i].get_filesize()
-                if ((cams[i].get_filesize() >= filesize * 1024 * 1024)
-                        && !flag) {
-                    flag = true
-                    console.warn("Reset recording file for CAM" + i)
-                    player_play(i)
-                }
-            }
-        } //for
-    } //check_file_size
-
-    Timer {
-        id: t_filesize
-        interval: 30000
-        repeat: true
-        onTriggered: check_file_size()
-        running: true
-    }
-    Timer {
-        id: subtitle
-        interval: subtitle.interval
-        repeat: subtitle.interval
-        onTriggered: write_subtitle()
-        running: recording
-    }
-
-    function write_subtitle() {
-        if (vlcPlayer1.state !== 3)
-            return
-        if (subtitle.interval === 0)
-            return
-        //console.log( "CAM1 POSITION: "+vlcPlayer1.time+ " = " + vlcPlayer1.input.length + " = " + vlcPlayer1.input.time)
-        var s = "A=" + rig0.ampere + ":" + rig0.ampere2 + ":" + rig0.ampere3 + " V="
-                + rig0.voltage + ":" + rig0.voltage2 + ":" + rig0.voltage3 + "\r\n"
-        s = s + " P=" + rig0.pressure + ":" + rig0.pressure2 + " t="
-                + rig0.temperature + ":" + rig0.temperature2 + " h=" + rig0.altitude + " k="
-                + rig0.kren + " T=" + rig0.tangag + " R=" + rig0.turns
-        s = s + " J=" + rig0.joystick_x1 + ":" + rig0.joystick_x2 + ":"
-                + rig0.joystick_y1 + ":" + rig0.joystick_y2
-        cam1.write_subtitles(vlcPlayer1.time, s)
-    }
-
-//    Modbus {
-//        id: mbus
-//        //address: networker.address
-//        //port: 502
-//        //device_address: 16
-//        //pooling_time: 200
-//        //reconnect_interval: 100
-//        //request_timeout: 300
-
-//        //onValuesChanged: print(values)
-//    }
     Board {
         id: rig0
         board: 0
@@ -249,7 +80,7 @@ Window {
         id: rig1
         board: 1
         //j1.keys[0] = курок
-        joystick_x1: power(j2.y1axis*j2.keys[12])  //ana1 Схват
+        joystick_x1: power(j2.y1axis*j2.keys[1])  //ana1 Схват
 
         joystick_y1: power(j2.x2axis*j2.keys[0])   //ana2 поворот Схвата
 
@@ -260,14 +91,14 @@ Window {
         light3: lampsSettings.lamp3 * lamp_switch
         light4: lampsSettings.lamp4 * lamp_switch
         Component.onCompleted: networker.reg(this)
-        pin0: j2.keys[15]*(j2.x1axis>40);
-        pin1: j2.keys[15]*(j2.x1axis<-40);
-        pin2: j2.keys[3]*(j2.y1axis>40);
-        pin3: j2.keys[3]*(j2.y1axis<-40);
-        pin4: j2.keys[14]*(j2.y1axis>40);
-        pin5: j2.keys[14]*(j2.y1axis<-40);
-        pin6: j2.keys[0]*(j2.y1axis>40);
-        pin7: j2.keys[0]*(j2.y1axis<-40);
+        pin0: j2.keys[2]*(j2.x1axis>40); // поворот кисти влево
+        pin1: j2.keys[2]*(j2.x1axis<-40);// поворот кисти вправо
+        pin2: j2.keys[3]*(j2.y1axis>40);// направ кисти Подъем
+        pin3: j2.keys[3]*(j2.y1axis<-40);// направ кисти Спуск
+        pin4: j2.keys[2]*(j2.y1axis>40);// направл локтя Подъем
+        pin5: j2.keys[2]*(j2.y1axis<-40);// направл локть Спуск
+        pin6: j2.keys[0]*(j2.y1axis>40); // направл плеча Подъем
+        pin7: j2.keys[0]*(j2.y1axis<-40);// направл плеча Спуск
     }
 //    Board {
 //        id: rig2
@@ -296,65 +127,7 @@ Window {
 
     function changestate() {
 
-        console.log("STATE: " + mainRect.state + " ind:" + cams[0].index
-                    + cams[1].index + cams[2].index + cams[3].index)
-
-        if (rig0.rigtype === "mgbu") {
-            console.log("CHANGE LAYOUT FOR MGBU")
-            if (mainRect.state === "LAYOUT_CAM4") {
-                mainRect.state = "4-KAM-all"
-                return
-            }
-            if (mainRect.state === "LAYOUT_CAM3") {
-                mainRect.state = "LAYOUT_CAM4"
-                return
-            }
-            if (mainRect.state === "LAYOUT_CAM2") {
-                mainRect.state = "LAYOUT_CAM3"
-                return
-            }
-            if (mainRect.state === "LAYOUT_CAM1") {
-                mainRect.state = "LAYOUT_CAM2"
-                return
-            }
-            if (mainRect.state === "4-KAM-all") {
-                mainRect.state = "LAYOUT_CAM1"
-                return
-            }
-            mainRect.state = "4-KAM-all"
-            return
-        }
-        if ((!cams[1].cameraenabled && !cams[2].cameraenabled))
-            // только одна камера
-            if (mainRect.state === "1-KAM-bol")
-                mainRect.state = "1-KAM-mal"
-            else
-                mainRect.state = "1-KAM-bol"
-        if (cams[1].cameraenabled && !cams[2].cameraenabled)
-            // две камеры
-            if (mainRect.state === "2-KAM-mal")
-                mainRect.state = "2-KAM-bol1"
-            else if (mainRect.state === "2-KAM-bol1")
-                mainRect.state = "2-KAM-bol2"
-            else
-                mainRect.state = "2-KAM-mal"
-
-        if (cams[1].cameraenabled && cams[2].cameraenabled)
-            //три камеры
-            if (mainRect.state === "3-KAM-mal")
-                mainRect.state = "3-KAM-bol1"
-            else if (mainRect.state === "3-KAM-bol1")
-                mainRect.state = "3-KAM-bol2"
-            else if (mainRect.state === "3-KAM-bol2")
-                mainRect.state = "3-KAM-bol3"
-            else if (mainRect.state === "3-KAM-bol3")
-                mainRect.state = "3-KAM-mal"
-            else
-                mainRect.state = "3-KAM-mal"
-    }
-    function setcamsonoff(){
-        rig0.pins[3] = rig0.camera * camSettings.cam1
-        rig0.pins[4] = rig0.camera * camSettings.cam2
+        console.log("STATE: " + mainRect.state + " ind:" )
     }
 
     function fcommand(cmd) {
@@ -370,87 +143,75 @@ Window {
             controlPanel.y=100
             menu.visible = false
             break
+        case "FOCUS+START":
+            cam_control.focus_minus()
+            break
+        case "FOCUS+STOP":
+            cam_control.focus_minus_stop()
+            break
         case "STOP":
-            players[0].stop()
-            players[1].stop()
-            players[2].stop()
-            players[3].stop()
             menu.visible = false
-            camsettings.visible = false
+//            camsettings.visible = false
             joystick_setup.visible = false
             settings.visible = false
             help.visible = false
+            cm.cam.stop()
             break
         case "PLAY":
-            if (cams[0].cameraenabled)
-                player_play(0)
-            if (cams[1].cameraenabled)
-                player_play(1)
-            if (cams[2].cameraenabled)
-                player_play(2)
-            if (cams[3].cameraenabled)
-                player_play(3)
             menu.visible = false
-            camsettings.visible = false
+//            camsettings.visible = false
             settings.visible = false
             help.visible = false
-
-            break
-        case "PLAY1":
-            if (cams[0].cameraenabled)
-                player_play(0)
-            menu.visible = false
-            camsettings.visible = false
-            settings.visible = false
-            help.visible = false
+            cm.cam.play()
+            cm.cam.record(cm.video_path, cm.video_file_extension)
             break
         case "PLAY2":
-            if (cams[1].cameraenabled)
-                player_play(1)
+//            if (cams[1].cameraenabled)
+//                player_play(1)
             menu.visible = false
             camsettings.visible = false
             settings.visible = false
             help.visible = false
             break
         case "PLAY3":
-            if (cams[2].cameraenabled)
-                player_play(2)
+//            if (cams[2].cameraenabled)
+//                player_play(2)
             menu.visible = false
             camsettings.visible = false
             settings.visible = false
             help.visible = false
             break
         case "PLAY4":
-            if (cams[3].cameraenabled)
-                player_play(3)
+//            if (cams[3].cameraenabled)
+//                player_play(3)
             menu.visible = false
             camsettings.visible = false
             settings.visible = false
             help.visible = false
             break
         case "STOP1":
-            players[0].stop()
+//            players[0].stop()
             menu.visible = false
             camsettings.visible = false
             settings.visible = false
             help.visible = false
             break
         case "STOP2":
-            players[1].stop()
+//            players[1].stop()
             menu.visible = false
             camsettings.visible = false
             settings.visible = false
             help.visible = false
             break
         case "STOP3":
-            players[2].stop()
+//            players[2].stop()
             menu.visible = false
             camsettings.visible = false
             settings.visible = false
             help.visible = false
             break
         case "STOP4":
-            players[3].stop()
+//            players[3].stop()
             menu.visible = false
             camsettings.visible = false
             settings.visible = false
@@ -472,8 +233,8 @@ Window {
             help.visible = false
             break
         case "CAMERA SETTINGS":
-            camsettings.currentcam = 0
-            camsettings.visible = !camsettings.visible
+//            camsettings.currentcam = 0
+//            camsettings.visible = !camsettings.visible
             menu.visible = false
             settings.visible = false
             joystick_setup.visible = false
@@ -481,7 +242,7 @@ Window {
             break
         case "HELP":
             help.visible = !help.visible
-            camsettings.visible = false
+//            camsettings.visible = false
             menu.visible = false
             joystick_setup.visible = false
             break
@@ -572,19 +333,6 @@ Window {
             break
         case "DEMO":
             recording = 0
-            //mainRect.state = "3-KAM-bol1" // "3-KAM-mal"
-            vlcPlayer4.mrl = "file:///" + win.filepath + "demo/04.mpg"
-            //vlcPlayer1.play()
-            vlcPlayer3.mrl = "file:///" + win.filepath + "demo/02.mpg"
-            //vlcPlayer2.play()
-            vlcPlayer2.mrl = "file:///" + win.filepath + "demo/03.mpg"
-
-            //vlcPlayer3.play()
-            vlcPlayer1.mrl = "file:///"+win.filepath+"/demo/01.mpg"
-            //vlcPlayer4.play()
-            //              rig.engine=true;
-            //              rig.lamp=true;
-            //              rig.camera=true;
             break
         }
     }
@@ -598,198 +346,9 @@ Window {
         border.width: 3
         focus: true
         state: "1-KAM-bol"
-        //        property list<VlcVideoSurface> surfs: [suface1, surface2, surface3]
-        VlcVideoSurface {
-            id: surface1
-            source: win.players[0]
-            anchors.top: mainRect.top
-            anchors.topMargin: 10
-            anchors.left: mainRect.left
-            anchors.leftMargin: anchors.topMargin
-            width: mainRect.width / 1 - anchors.leftMargin * 2
-            height: mainRect.height / 1 - anchors.topMargin * 2
-            opacity: 1
-            visible: true
-            Behavior on opacity {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on y {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on x {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on width {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on height {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-        }
-        VlcVideoSurface {
-            id: surface2
-            source: win.players[1]
-            anchors.top: mainRect.top
-            anchors.topMargin: 10
-            anchors.left: mainRect.left
-            anchors.leftMargin: anchors.topMargin
-            width: mainRect.width / 1 - anchors.leftMargin * 2
-            height: mainRect.height / 1 - anchors.topMargin * 2
-            opacity: 1
-            visible: false
-            Behavior on opacity {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on y {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on x {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on width {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on height {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-        }
-        VlcVideoSurface {
-            id: surface3
-            source: win.players[2]
-            anchors.top: mainRect.top
-            anchors.topMargin: 10
-            anchors.left: mainRect.left
-            anchors.leftMargin: anchors.topMargin
-            width: mainRect.width / 1 - anchors.leftMargin * 2
-            height: mainRect.height / 1 - anchors.topMargin * 2
-            opacity: 1
-            visible: false
-            Behavior on opacity {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on y {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on x {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on width {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on height {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-        }
-        VlcVideoSurface {
-            id: surface4
-            source: win.players[3]
-            anchors.top: mainRect.top
-            anchors.topMargin: 10
-            anchors.left: mainRect.left
-            anchors.leftMargin: anchors.topMargin
-            width: mainRect.width / 1 - anchors.leftMargin * 2
-            height: mainRect.height / 1 - anchors.topMargin * 2
-            opacity: 1
-            visible: false
-            Behavior on opacity {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on y {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on x {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on width {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            Behavior on height {
-
-                NumberAnimation {
-                    duration: 600
-                    easing.type: Easing.InOutQuad
-                }
-            }
-        }
 
         Keys.onPressed: {
-            console.log("KeY:" + event.key)
+//            console.log("KeY:" + event.key)
             if (event.key === Qt.Key_F1 || event.key === Qt.Key_1)
                 win.fcommand("HELP")
             if (event.key === Qt.Key_F2 || event.key === Qt.Key_2)
@@ -861,7 +420,14 @@ Window {
 //                    j1.y2axis = j1.y2axis + 1
 //            }
         }
-
+        MyCamera{
+            id: cm
+            anchors.centerIn: parent
+            anchors.fill: parent
+            anchors.margins: 10
+            name: "cam1"
+            Component.onCompleted: register_camera(cm)
+        }
         StatePannel {
             id: statePannel
         }
@@ -889,9 +455,19 @@ Window {
             devider: 1
             onKeysChanged: print(keys)
             onKeyChanged: {
-                //console.log(keys)
+                console.log(key)
                 if (key === 8 & !keys[8]) fcommand("PLAY")
                 if (key === 9 & !keys[9]) fcommand("STOP")
+
+                if (key === 11 & keys[11]) fcommand("FOCUS+START")
+                if (key === 11 & !keys[11]) fcommand("FOCUS+STOP")
+                if (key === 10 & keys[10]) fcommand("FOCUS-START")
+                if (key === 10 & !keys[10]) fcommand("FOCUS-STOP")
+
+                if (key === 7 & keys[7]) fcommand("ZOOM+START")
+                if (key === 7 & !keys[7]) fcommand("ZOOM+STOP")
+                if (key === 6 & keys[6]) fcommand("ZOOM-START")
+                if (key === 6 & !keys[6]) fcommand("ZOOM-STOP")
             }
         }
 
@@ -921,489 +497,10 @@ Window {
             State {
                 // первая камера
                 name: "LAYOUT_CAM1"
-                PropertyChanges {
-                    target: surface1
-                    z: 0
-                    opacity: 1
-                    visible: cams[0].cameraenabled
-                    height: mainRect.height / 1 - 10
-                    width: mainRect.width / 1 - 10
-                    anchors.centerIn: parent
-                }
-                PropertyChanges {
-                    target: surface2
-                    z: 1
-                    opacity: 0.6
-                    visible: cams[1].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface3
-                    z: 1
-                    opacity: 0.6
-                    visible: cams[2].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: surface2.bottom
-                }
-                PropertyChanges {
-                    target: surface4
-                    z: 1
-                    opacity: 0.6
-                    visible: cams[3].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: surface3.bottom
-                }
             },
             State {
                 // вторая камера
                 name: "LAYOUT_CAM2"
-                PropertyChanges {
-                    target: surface2
-                    z: 0
-                    opacity: 1
-                    visible: cams[1].cameraenabled
-                    height: mainRect.height / 1 - 10
-                    width: mainRect.width / 1 - 10
-                    anchors.centerIn: parent
-                }
-                PropertyChanges {
-                    target: surface1
-                    z: 1
-                    opacity: 0.6
-                    visible: cams[0].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface3
-                    z: 1
-                    opacity: 0.6
-                    visible: cams[2].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: surface1.bottom
-                }
-                PropertyChanges {
-                    target: surface4
-                    z: 1
-                    opacity: 0.6
-                    visible: cams[3].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: surface3.bottom
-                }
-            },
-            State {
-                // третья камера
-                name: "LAYOUT_CAM3"
-                PropertyChanges {
-                    target: surface3
-                    z: 0
-                    opacity: 1
-                    visible: cams[2].cameraenabled
-                    height: mainRect.height / 1 - 10
-                    width: mainRect.width / 1 - 10
-                    anchors.centerIn: parent
-                }
-                PropertyChanges {
-                    target: surface1
-                    z: 1
-                    opacity: 0.6
-                    visible: cams[0].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface2
-                    z: 1
-                    opacity: 0.6
-                    visible: cams[1].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: surface1.bottom
-                }
-                PropertyChanges {
-                    target: surface4
-                    z: 1
-                    opacity: 0.6
-                    visible: cams[3].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: surface2.bottom
-                }
-            },
-            State {
-                // четвертая камера
-                name: "LAYOUT_CAM4"
-                PropertyChanges {
-                    target: surface4
-                    z: 0
-                    opacity: 1
-                    visible: cams[3].cameraenabled
-                    height: mainRect.height / 1 - 10
-                    width: mainRect.width / 1 - 10
-                    anchors.centerIn: parent
-                }
-                PropertyChanges {
-                    target: surface1
-                    z: 1
-                    opacity: 0.6
-                    visible: cams[0].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface2
-                    z: 1
-                    opacity: 0.6
-                    visible: cams[1].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: surface1.bottom
-                }
-                PropertyChanges {
-                    target: surface3
-                    z: 1
-                    opacity: 0.6
-                    visible: cams[2].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: surface2.bottom
-                }
-            },
-            State {
-                // бол 1 камера
-                name: "3-KAM-bol1"
-                PropertyChanges {
-                    target: surface1
-                    z: 0
-                    opacity: 1
-                    visible: true
-                    height: mainRect.height / 1 - anchors.topMargin * 2
-                    width: mainRect.width / 1 - anchors.leftMargin * 2
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface2
-                    z: 1
-                    opacity: 0.6
-                    visible: true
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface3
-                    z: 1
-                    opacity: 0.6
-                    visible: true
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: surface2.bottom
-                }
-            },
-            State {
-                // четыре камеры по центру
-                name: "4-KAM-all"
-                PropertyChanges {
-                    target: surface1
-                    z: 0
-                    opacity: 1
-                    visible: cams[0].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface2
-                    z: 0
-                    opacity: 1
-                    visible: cams[1].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: surface1.right
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface3
-                    z: 0
-                    opacity: 1
-                    visible: cams[2].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: surface1.bottom
-                }
-                PropertyChanges {
-                    target: surface4
-                    z: 0
-                    opacity: 1
-                    visible: cams[3].cameraenabled
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: surface1.right
-                    anchors.top: surface2.bottom
-                }
-            },
-            State {
-                // три камеры рядом
-                name: "3-KAM-mal"
-                PropertyChanges {
-                    target: surface3
-                    z: 0
-                    opacity: 1
-                    visible: true
-                    height: mainRect.height / 3
-                    width: mainRect.width / 3 - anchors.leftMargin * 2
-                    anchors.top: mainRect.top
-                    anchors.left: mainRect.left
-                }
-                PropertyChanges {
-                    target: surface2
-                    z: 0
-                    opacity: 1
-                    visible: true
-                    height: mainRect.height / 3
-                    width: mainRect.width / 3 - anchors.leftMargin * 2
-                    anchors.top: mainRect.top
-                    anchors.left: surface3.right
-                }
-                PropertyChanges {
-                    target: surface1
-                    z: 0
-                    opacity: 1
-                    visible: true
-                    height: mainRect.height / 3
-                    width: mainRect.width / 3 - anchors.leftMargin * 2
-                    anchors.top: surface2.bottom
-                    anchors.left: surface3.right
-                }
-            },
-            State {
-                name: "3-KAM-bol2"
-                PropertyChanges {
-                    target: surface2
-                    z: 0
-                    opacity: 1
-                    visible: true
-                    height: mainRect.height / 1 - anchors.topMargin * 2
-                    width: mainRect.width / 1 - anchors.leftMargin * 2
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface1
-                    z: 1
-                    opacity: 0.6
-                    visible: true
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface3
-                    z: 1
-                    opacity: 0.6
-                    visible: true
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: surface1.bottom
-                }
-            },
-            State {
-                name: "3-KAM-bol3"
-                PropertyChanges {
-                    target: surface3
-                    z: 0
-                    opacity: 1
-                    visible: true
-                    height: mainRect.height / 1 - anchors.topMargin * 2
-                    width: mainRect.width / 1 - anchors.leftMargin * 2
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface2
-                    z: 1
-                    opacity: 0.6
-                    visible: true
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface1
-                    z: 1
-                    opacity: 0.6
-                    visible: true
-                    height: mainRect.height / 4
-                    width: mainRect.width / 4
-                    anchors.left: mainRect.left
-                    anchors.top: surface2.bottom
-                }
-            },
-            State {
-                // одна камера во весь экран
-                name: "1-KAM-bol"
-                PropertyChanges {
-                    target: surface1
-                    z: 0
-                    opacity: 1
-                    visible: true
-                    height: mainRect.height / 1 - anchors.topMargin * 2
-                    width: mainRect.width / 1 - anchors.leftMargin * 2
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface2
-                    visible: cams[1].index
-                }
-                PropertyChanges {
-                    target: surface3
-                    visible: cams[2].index
-                }
-            },
-            State {
-                // одна камера часть экрана
-                name: "1-KAM-mal"
-                PropertyChanges {
-                    target: surface1
-                    z: 0
-                    opacity: 1
-                    visible: true
-                    height: mainRect.height - dashboard.width
-                    width: mainRect.width - dashboard.width
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface2
-                    visible: cams[1].index
-                }
-                PropertyChanges {
-                    target: surface3
-                    visible: cams[2].index
-                }
-            },
-            State {
-                // две камеры, одинаковые
-                name: "2-KAM-mal"
-                PropertyChanges {
-                    target: surface1
-                    z: 0
-                    opacity: 1
-                    visible: true
-                    height: mainRect.height / 2 - anchors.topMargin * 2
-                    width: mainRect.width / 2 - anchors.leftMargin * 2
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface2
-                    visible: cams[1].index
-                    opacity: 1
-                    height: mainRect.height / 2 - anchors.topMargin * 2
-                    width: mainRect.width / 2 - anchors.leftMargin * 2
-                    anchors.left: mainRect.left
-                    anchors.top: surface1.bottom
-                }
-                PropertyChanges {
-                    target: surface3
-                    visible: cams[2].index
-                }
-            },
-            State {
-                // две камеры, первая большая
-                name: "2-KAM-bol1"
-                PropertyChanges {
-                    target: surface1
-                    z: 0
-                    opacity: 1
-                    visible: true
-                    height: mainRect.height / 1 - anchors.topMargin * 2
-                    width: mainRect.width / 1 - anchors.leftMargin * 2
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface2
-                    visible: cams[1].index
-                    opacity: 0.8
-                    height: mainRect.height / 4 - anchors.topMargin * 2
-                    width: mainRect.width / 4 - anchors.leftMargin * 2
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface3
-                    visible: cams[2].index
-                    opacity: 0.8
-                    height: mainRect.height / 4 - anchors.topMargin * 2
-                    width: mainRect.width / 4 - anchors.leftMargin * 2
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-            },
-            State {
-                // две камеры, вторая большая
-                name: "2-KAM-bol2"
-                PropertyChanges {
-                    target: surface2
-                    z: 0
-                    opacity: 1
-                    visible: cams[1].index
-                    height: mainRect.height / 1 - anchors.topMargin * 2
-                    width: mainRect.width / 1 - anchors.leftMargin * 2
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface3
-                    z: 0
-                    opacity: 1
-                    visible: cams[2].index
-                    height: mainRect.height / 4 - anchors.topMargin * 2
-                    width: mainRect.width / 4 - anchors.leftMargin * 2
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
-                PropertyChanges {
-                    target: surface1
-                    z: 1
-                    visible: cams[0].index
-                    opacity: 0.8
-                    height: mainRect.height / 4 - anchors.topMargin * 2
-                    width: mainRect.width / 4 - anchors.leftMargin * 2
-                    anchors.left: mainRect.left
-                    anchors.top: mainRect.top
-                }
             }
         ]
     }
@@ -1411,7 +508,7 @@ Window {
         id: controlPanel
         source: rig0
         net: networker
-        cam: win.cams
+//        cam: win.cams
         //width: 1000
         height: 100
         lampSize: 90
@@ -1438,17 +535,13 @@ Window {
         width: 150
         height: 0
         visible: false
-        cam: win.cams
+//        cam: win.carms
         anchors {
             margins: 10
             leftMargin: 160
             bottom: controlPanel.top
             left: controlPanel.left
         }
-        onCam1Changed: {players[0].stop(); setcamsonoff()}
-        onCam2Changed: {players[1].stop(); setcamsonoff()}
-        onCam3Changed: {players[2].stop(); setcamsonoff()}
-        onCam4Changed: {players[3].stop(); setcamsonoff()}
     }
     COOLSettings {
         id: coolSettings
@@ -1462,15 +555,15 @@ Window {
             left: controlPanel.left
         }
     }
-    SetupCamera {
-        id: camsettings
-        width: 600
-        height: 500
-        visible: false
-        anchors.centerIn: parent
-        cam: win.cams
-        players: win.players
-    }
+//    SetupCamera {
+//        id: camsettings
+//        width: 600
+//        height: 500
+//        visible: false
+//        anchors.centerIn: parent
+//        cam: win.cams
+//        players: win.players
+//    }
     SetupSettings {
         id: settings
         width: 600
@@ -1491,22 +584,20 @@ Window {
         height: 600
         anchors.centerIn: parent
     }
-
-    MyHourglass {
-        x: 300
-        y: 300
-        z: 10
-        anchors.centerIn: parent
-        visible: cam1.timeout | cam2.timeout | cam3.timeout | cam4.timeout | win.pause
+    CheckTCP {
+        id: checke_tcp
+        address:  cm.address //"192.168.1.168"
+        port: 80
+        interval: 5000
+        timeout: 1000
+        onOkChanged: console.log("camera " + (checke_tcp.ok ? "availavle": "unavailable"))
     }
-
+    CamControl {
+        id: cam_control
+        address: cm.address
+    }
     Component.onDestruction: {
         console.log("Good bye!")
-        players[0].stop()
-        players[1].stop()
-        players[2].stop()
-        players[3].stop()
-        console.log("All players stopped")
     }
 
 }

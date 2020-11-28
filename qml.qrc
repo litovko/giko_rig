@@ -18,7 +18,6 @@
         <file>qml/Axis.qml</file>
         <file>qml/AxisVertical.qml</file>
         <file>qml/AxisHorizontal.qml</file>
-        <file>qml/MyHourglass.qml</file>
         <file>qml/MyMenu.qml</file>
         <file>qml/MyMenuItem.qml</file>
         <file>qml/LampsSettings.qml</file>
@@ -46,5 +45,6 @@
         <file>qml/Joystick_setup.qml</file>
         <file>qml/MySwitcher.qml</file>
         <file>skin/mgm7_2.svg</file>
+        <file>qml/MyCamera.qml</file>
     </qresource>
 </RCC>

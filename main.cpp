@@ -1,11 +1,11 @@
-#include <QtGui/QGuiApplication>
-
-#include <QmlVlc.h>
-
-
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include "camera/ipcamera.h"
+#include <QSystemSemaphore>
+//#include <QSharedMemory>
+#include <QDir>
 #include "rigmodel.h"
 #include "networker.h"
-#include "camera.h"
 #include <QtQml>
 #include "cjoystick.h"
 #include <QSettings>
@@ -19,9 +19,12 @@
 #include <stdlib.h>
 #include <QFile>
 #include <iostream>
-
-//#include "modbus\cmodbusclient.h"
-
+#include "camera/checktcp.h"
+#include "camera/camera.h"
+//DONE: протестировать утечку памяти
+// https://kinddragon.github.io/vld/
+// C:\Qt\5.15.2\msvc2019_64\bin\qmake -spec win32-msvc -tp vc
+//#include <vld.h>
 
 static QFile logfile;
 static QTextStream out(&logfile);
@@ -53,7 +56,6 @@ extern void toggle_log(bool recordlog) {
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = msg.toLocal8Bit();
-    //QByteArray lMsg=codec->convertToUnicode(msg);
     switch (type) {
     case QtDebugMsg:
         fprintf(stderr, "D:%s %s (%s:%u, %s)\n",QTime::currentTime().toString("hh:mm:ss:zzz ").toLocal8Bit().data(), localMsg.constData(), context.file, context.line, context.function);
@@ -79,16 +81,18 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 int main(int argc, char *argv[])
 {
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling); // DPI support
-    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps); // HiDPI pixmaps
 
-    qputenv("QT_SCALE_FACTOR", "1.0"); //NOTE: Scale Factore
+//    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps); // HiDPI pixmaps
+    //TODO Сделать переменную в реестре.
+//    qputenv("QT_SCALE_FACTOR", "0.5"); //NOTE: Scale Factore
+    
 //    qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "0.5");
-    QCoreApplication::setAttribute(Qt::AA_DisableShaderDiskCache);
+//    QCoreApplication::setAttribute(Qt::AA_DisableShaderDiskCache);
     //QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
     qInstallMessageHandler(myMessageOutput);
     toggle_log(true);
-    QSystemSemaphore semaphore("hyco mgm-7", 1);  // create semaphore
-    semaphore.acquire(); // Raise the semaphore, barring other instances to work with shared memory
+    QSystemSemaphore semaphore("hyco mgm-7", 1);  // Создали семафор
+    semaphore.acquire(); // Подняли семафор.
 
 #ifndef Q_OS_WIN32
     // in linux / unix shared memory is not freed when the application terminates abnormally,
@@ -117,28 +121,14 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-
-    RegisterQmlVlc();
     QSettings settings(giko_name, giko_program);
-    int cache=settings.value("network_caching",250).toInt();
-    int vlc_debug=settings.value("vlc_debug",2).toInt();
-    QmlVlcConfig& config = QmlVlcConfig::instance();
-    config.enableAdjustFilter( false );
-    config.enableMarqueeFilter( false ); //litovko
-    config.enableLogoFilter( false );
-    config.setTrustedEnvironment(true); // не будет воприниматься :sout иначе.
-    config.setNetworkCacheTime(cache);
-    config.enableNoVideoTitleShow(true);
-    config.enableDebug( vlc_debug );
-    qDebug()<<"Start"<<giko_name<<"  "<<giko_program<<" vlc_debug:"<<vlc_debug;
-
-
     qmlRegisterType<cRigmodel>("Gyco", 1, 0, "Board");
     qmlRegisterType<cNetworker>("Gyco", 1, 0, "Networker");
-    qmlRegisterType<cCamera>("Gyco", 1, 0, "RigCamera");
     qmlRegisterType<cJoystick>("Gyco", 1, 0, "RigJoystick");
-//    qmlRegisterType<cModbusClient>("Gyco", 1, 0, "Modbus");
-    QCoreApplication::setAttribute(Qt::AA_DisableShaderDiskCache);
+    qmlRegisterType<ipcamera>("HYCO", 1, 0, "IPCamera");
+    qmlRegisterType<camera>("HYCO", 1, 0, "CamControl");
+    qmlRegisterType<CheckTCP>("HYCO", 1, 0, "CheckTCP");
+    QCoreApplication::setAttribute(Qt::AA_DisableShaderDiskCache); //NOTE понять зачем это?
 
     QGuiApplication app(argc, argv);
     app.setOrganizationName(giko_name);
@@ -147,14 +137,18 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
-    qDebug()<<"Engine loaded"<<giko_name<<"  "<<giko_program;
+    const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+                     &app, [url](QObject *obj, const QUrl &objUrl) {
+        if (!obj && url == objUrl)
+            QCoreApplication::exit(-1);
+    }, Qt::QueuedConnection);
+    engine.load(url);
 
-    int ex=app.exec();
-    settings.setValue("vlc_debug", vlc_debug);
+    return app.exec();
+
     qDebug()<<"Good bye"<<giko_name<<"  "<<giko_program;
     //toggle_log(false);
     out.flush();
-    return ex;
 }
 

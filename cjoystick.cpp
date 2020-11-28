@@ -137,12 +137,12 @@ void cJoystick::init_joystick()
     readSettings();
     if (joy==nullptr){
         joy = new QJoystick();
-        qDebug()<<"Joystick Number:"<<current()<<"new QJoystick:"<<joy;
+//        qDebug()<<"Joystick Number:"<<current()<<"new QJoystick:"<<joy;
         //setIspresent(true);
 
     }
     m_joysticks_avail=joy->availableJoysticks();
-    qDebug()<<"Joysticks available:"<<m_joysticks_avail;
+//    qDebug()<<"Joysticks available:"<<m_joysticks_avail;
     if (current()==0 && m_joysticks_avail>0)
         setIspresent(true);
     else if (current()==1 && m_joysticks_avail>1)
@@ -164,7 +164,7 @@ void cJoystick::init_joystick()
         // Axes
         setAxes_number(_joystick_data->number_axes = joy->joystickNumAxes(i));
         _joystick_data->name=joy->joystickName(i);
-        qDebug()<<"J:"<<i<<" name:"<<joy->joystickName(i)<<" axex:"<<joy->joystickNumAxes(i)<<"buttons:"<<joy->joystickNumButtons(i)<<"hats:"<<joy->joystickNumHats(i);
+        qDebug()<<"Joystick:"<<i<<" name:"<<joy->joystickName(i)<<" axex:"<<joy->joystickNumAxes(i)<<"buttons:"<<joy->joystickNumButtons(i)<<"hats:"<<joy->joystickNumHats(i);
         for(auto j=0; j<_joystick_data->number_axes;j++)
         {
             _joystick_data->axis.append(0);
