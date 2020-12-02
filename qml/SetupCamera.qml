@@ -1,29 +1,17 @@
-import QtQuick 2.11
+import QtQuick 2.12
 import QtQuick.Controls 2.12
-//import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
-import QmlVlc 0.1
-import Gyco 1.0
-
+import QtQuick.Dialogs 1.2
 Item {
-    id: setupDialog
+    id: setupCamera
     visible: true
-    //property RigCamera cam: null
-    property list<RigCamera> cam
-    property list<VlcPlayer> players
+    property list<MyCamera> cam
     property int currentcam: 0
-//    property int currentplayer: 0
-    //antialiasing: false
-    onVisibleChanged: {
-        print(currentcam)
-        currentcam=0
-    }
-
-
+    width: 500
+    height: 547
     Rectangle {
         id: rectangle1
-        width: 500
-        height: 547
+
         gradient: Gradient {
             GradientStop {
                 position: 1
@@ -35,597 +23,229 @@ Item {
                 color: "#000000"
             }
         }
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.top: parent.top
-        anchors.topMargin: -36
+        anchors.fill: parent
         opacity: 0.8
         border.width: 3
         radius: 10
         visible: true
         z: 0
         border.color: "yellow"
-
-        TextField {
-            id: camurl
-            x: 90
-            y: 486
-            z: 3
-            width: 387
-            height: 24
-            readOnly: true
-            text: cam[currentcam].url1
-            font.pixelSize: 10
-            selectByMouse: true
-        }
-
-        Label {
-            id: label2
-            x: 8
-            y: 26
-            width: 67
-            height: 13
-            color: "white"
-            text: qsTr("Камера")
-            font.pointSize: 10
-
-            ComboBox {
-                id: cb_cam
-                x: 72
-                y: 0
-                width: 176
-                height: 22
-                z: 20
-                Component.onCompleted: {
-
-                    listCams.append({text: cam[0].title+" ["+cam[0].address+"]"})
-                    listCams.append({text: cam[1].title+" ["+cam[1].address+"]"})
-                    listCams.append({text: cam[2].title+" ["+cam[2].address+"]"})
-                    listCams.append({text: cam[3].title+" ["+cam[3].address+"]"})
-                    currentIndex=0
-                    currentcam=0
+        Column {
+            spacing: 10
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.margins: 20
+            MyButton {
+                id: ok
+                width: 80
+                height: 50
+                //            opacity: 0.8
+                text: qsTr("Применить")
+                onClicked: {
+                    cam[0].media = cam1_media.text
+                    cam[0].address = cam1_address.text
+                    cam[0].port = cam1_port.text
+                    checke_tcp.interval = interval.text
+                    win.filesize=cbfilesize.currentText
+                    setupCamera.visible=false;
+                    mainRect.focus=true;
                 }
-                onVisibleChanged: {
-                    listCams.clear()
-                    listCams.append({text: cam[0].title+" ["+cam[0].address+"]"})
-                    listCams.append({text: cam[1].title+" ["+cam[1].address+"]"})
-                    listCams.append({text: cam[2].title+" ["+cam[2].address+"]"})
-                    listCams.append({text: cam[3].title+" ["+cam[3].address+"]"})
-                    currentIndex=0
-                    currentcam=0
-                }
-                model: ListModel {
-                    id: listCams
-                }
-                onCurrentIndexChanged: {
-                    currentcam=currentIndex; camurl.text= cam[currentcam].url1
+            }
+            MyButton {
+                id: close
+                width: 80
+                height: 50
+                text: qsTr("Закрыть")
+                onClicked: {
+                    setupCamera.visible=false;
+                    mainRect.focus=true;
                 }
             }
         }
-//        Label {
-//            id: label_stream
-//            x: 8
-//            y: 82
-//            width: 67
-//            height: 13
-//            color: "white"
-//            text: qsTr("Видеорежим")
-//            font.pointSize: 9
-//            ComboBox {
-//                id: spinBox_videomode
-//                x: 73
-//                y: -4
-//                width: 181
-//                height: 20
+        Column {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.margins:  20
+            spacing: 20
+            Label {
+                id: check_camera
+                width: 180
+                height: 13
+                color: "#ffffff"
+                text: qsTr("Интервал проверки камеры, мс:")
+                font.pointSize: 9
+                TextField {
+                    id: interval
+                    anchors.left: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 100
+                    height: 20
+                    text: checke_tcp.interval
+                    padding: 0
+                    font.pointSize: 9
+                    opacity: 0.8
+                    placeholderText: qsTr("миллисекунды")
+                    validator: IntValidator {
+                        bottom: 5000
+                        top: 60000
+                    }
+                }
+            }
+            Label {
+                id: lca0
+                width: 180
+                height: 20
+                color: "#ffffff"
+                text: qsTr("Адрес видеокамеры "+cam[0].name +":")
+                font.pointSize: 9
+                TextField {
+                    id: cam1_address
+                    anchors.left: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 120
+                    height: 25
+                    text: cam[0].address
+                    font.pointSize: 9
+                    readOnly: false
+                    validator: adr_validator
+                    placeholderText: qsTr("IP-адрес видеокамеры")
+                    opacity: 0.8
+                    CheckBox {
+                        id: cb_cam1
+                        anchors.left: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.margins: 20
+                        text: cam[0].name
+                        checked: cam[0].cameraenabled
+                        onCheckedChanged: cam[0].cameraenabled=checked
+                    }
 
-//                Component.onCompleted: {
-//                    fill_list_model();
-//                    currentIndex: cam[currentcam].comby
-//                }
-//                model: ListModel {
-//                    id: listStreams
-//                }
+                }
+            }
+            Label {
+                id: cam_port
+                width: 180
+                height: 20
+                color: "#ffffff"
+                text: qsTr("Порт видеокамеры  "+cam[0].name +":")
+                font.pointSize: 9
+                TextField {
+                    id: cam1_port
+                    anchors.left: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 120
+                    height: 25
+                    text: cam[0].port
+                    font.pointSize: 9
+                    readOnly: false
+                    validator: IntValidator {bottom: 1001; top: 65535;}
+                    placeholderText: qsTr("IP-порт видеокамеры")
+                    opacity: 0.8
+                }
+            }
+            Label {
+                id: meliastream
+                width: 140
+                height: 20
+                color: "#ffffff"
+                text: qsTr("Медиапоток: ")
+                font.pointSize: 9
+                TextField {
+                    id: cam1_media
+                    anchors.left: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 300
+                    height: 25
+                    text: cam[0].media
+                    font.pointSize: 9
+                    readOnly: false
+                    placeholderText: qsTr("RTSP медиапоток ") // /PSIA/Streaming/channels/2?videoCodecType=H.264
+                    opacity: 0.8
+                }
+            }
+            Label {
+                id: fpath
+                width: 140
+                height: 20
+                color: "#ffffff"
+                text: qsTr("Папка для видео: ")
+                font.pointSize: 9
+                MyButton {
+                    id: filepath_dialog
+                    anchors.left: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 80
+                    height: 23
+                    text: qsTr("Сменить")
+                    opacity: 0.8
+                    onClicked: {
+                        fileDialog.visible=true
+                    }
+                    TextField {
+                        id: vpath
+                        width: 240
+                        height: parent.height
+                        anchors.left: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.margins: 10
+                        text: win.filepath
+                        font.pointSize: 9
+                        readOnly: true
+                    }
+                    FileDialog {
+                        id: fileDialog
+                        title: "Выберите каталог для видеозаписей"
+                        folder: "file:///"+win.filepath
+                        selectFolder: true
+                        sidebarVisible : true
+                        visible: false
+                        onAccepted: {
+                            console.log(" Setup Settings You chose: " + Qt.resolvedUrl(fileDialog.fileUrl))
 
-//                function fill_list_model() {
+                            win.filepath=fileDialog.fileUrl.toString().substring(8,fileDialog.fileUrl.length)+"/"
+                            console.log(" Setup SettingsYou chose: " + win.filepath)
+                            fileDialog.visible=false
+                        }
+                        onRejected: {
+                            console.log("Setup Settings Canceled")
+                            fileDialog.visible=false
+                        }
+                        //Component.onCompleted: visible = false
+                    }
+                }
+            }
+            Label {
+                id: file_size
+                width: 200
+                height: 20
+                color: "#ffffff"
+                text: qsTr("Размер нарезки видеофалов, Мб")
+                font.pointSize: 9
+                ComboBox {
+                    id: cbfilesize
+                    width: 75
+                    height: 24
+                    anchors.left: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pointSize: 9
+                    model: [50, 500, 700, 1000, 1200, 4000]
+                    Component.onCompleted: {
+                        currentIndex=0
+                        switch (win.filesize){
+                        case 50: currentIndex=0; break;
+                        case 500: currentIndex=1; break;
+                        case 700: currentIndex=2; break;
+                        case 1000: currentIndex=3; break;
+                        case 1200: currentIndex=4; break;
+                        case 4000: currentIndex=5; break;
+                        default: currentIndex=0;
+                        }
+                    }
 
-//                    var  s=cam[currentcam].combylist;
-
-//                    var  c=s.substring(s.indexOf(","))
-//                    var  i = s.indexOf(",");
-//                    var  strlen=s.length;
-//                    listStreams.clear();
-//                    //console.log("Setup Camera cam"<<currentcam<<".combylist:"+cam[currentcam].combylist)
-//                    while(i>0){
-
-//                        c=s.substring(0,i);
-//                        s=s.substring(i+1,strlen);
-//                        listStreams.append({text: c})
-
-//                        i = s.indexOf(",");
-//                        strlen=s.length;
-
-//                    }
-//                    listStreams.append({text: s}) // добавляем последний элемент
-//                    spinBox_videomode.currentIndex=cam[currentcam].comby;
-//                    //console.log("Setup Camera  Filllistmodel() cam.comby:"+cam[currentcam].comby+"curindex:"+spinBox_videomode.currentIndex);
-//                    return;
-//                }
-//            }
-//        }
-
-
-//        Button {
-//            id: ok
-//            x: 281
-//            y: 77
-//            opacity: 0.8
-//            text: qsTr("Применить")
-////            font.pointSize: 14
-//            onClicked: {
-////                players[currentcam].stop();
-////                cam[currentcam].comby=spinBox_videomode.currentIndex;
-////                cam[currentcam].videopage=true;
-//            }
-//        }
-
-        MyButton {
-            id: close
-            x: 411
-            y: 16
-            width: 80
-            height: 50
-            text: qsTr("Закрыть")
-//            font.pointSize: 14
-//            isDefault: true
-            opacity: 0.8
-            onClicked: {
-                setupDialog.visible=false;
-                mainRect.focus=true;
+                }
             }
         }
-
-//        Rectangle {
-//            id: rectsettings
-//            x: 20
-//            y: 175
-//            width: 466
-//            height: 305
-//            radius: 5
-//            gradient: Gradient {
-//                GradientStop {
-//                    position: 0
-//                    color: "#ffffff"
-//                }
-
-//                GradientStop {
-//                    position: 0.993
-//                    color: "#ffffff"
-//                }
-
-//                GradientStop {
-//                    position: 0.51
-//                    color: "#000000"
-//                }
-
-//            }
-//            opacity: 0.8
-//            z: 1
-//            border.color: "#f4f400"
-
-//            Label {
-//                id: l1
-//                x: 8
-//                y: 12
-//                width: 122
-//                height: 17
-//                color: "#ffffff"
-//                text: qsTr("Яркость")
-//                font.pointSize: 10
-//                verticalAlignment: Text.AlignVCenter
-//                font.bold: true
-//            }
-
-//            Label {
-//                id: l2
-//                x: 8
-//                y: 37
-//                width: 122
-//                height: 17
-//                color: "#ffffff"
-//                text: qsTr("Контрастность")
-//                font.pointSize: 10
-//                font.bold: true
-//            }
-
-//            Slider {
-//                id: s1
-//                x: 136
-//                y: 9
-//                width: 269
-//                height: 22
-//                z: 3
-//                stepSize: 1
-//                from: 0
-//                to: 255
-//                value: cam[currentcam].brightness
-//            }
-
-//            Slider {
-//                id: s2
-//                x: 136
-//                y: 34
-//                width: 269
-//                height: 22
-//                from: 0
-//                to: 255
-//                z: 3
-//                value: cam[currentcam].contrast
-//                stepSize: 1
-//            }
-
-//            Slider {
-//                id: s3
-//                x: 136
-//                y: 63
-//                width: 269
-//                height: 22
-//                from: 0
-//                to: 255
-//                z: 3
-//                value: cam[currentcam].saturation
-//                stepSize: 1
-//            }
-
-//            Label {
-//                id: l3
-//                x: 8
-//                y: 66
-//                width: 122
-//                height: 17
-//                color: "#ffffff"
-//                text: qsTr("Цветность")
-//                font.pointSize: 10
-//                font.bold: true
-//            }
-
-//            Label {
-//                id: l4
-//                x: 8
-//                y: 91
-//                width: 122
-//                height: 17
-//                color: "#ffffff"
-//                text: qsTr("Четкость")
-//                font.pointSize: 10
-//                font.bold: true
-//            }
-
-//            Slider {
-//                id: s4
-//                x: 136
-//                y: 89
-//                width: 269
-//                height: 22
-//                from: 0
-//                to: 255
-//                z: 3
-//                value: cam[currentcam].sharpness
-//                stepSize: 1
-//            }
-
-//            Label {
-//                id: l5
-//                x: 10
-//                y: 119
-//                width: 122
-//                height: 17
-//                color: "#ffffff"
-//                text: qsTr("Усиление динамического диапазона")
-//                font.pointSize: 10
-//                font.bold: true
-//            }
-
-//            Slider {
-//                id: s5
-//                x: 269
-//                y: 117
-//                width: 136
-//                height: 22
-////                tickmarksEnabled: true
-//                from: 0
-//                to: 255
-//                z: 3
-//                value: cam[currentcam].dynrange
-//                stepSize: 1
-//            }
-
-//            Label {
-//                id: l6
-//                x: 8
-//                y: 229
-//                width: 187
-//                height: 17
-//                color: "#ffffff"
-//                text: qsTr("Текст - название профиля")
-
-//                font.pointSize: 10
-//                font.bold: true
-//            }
-
-//            TextField {
-//                id: textField1
-//                x: 207
-//                y: 227
-//                width: 198
-//                height: 20
-//                text: cam[currentcam].overlaytext
-//                //  /[a-zA-Z]/
-//                validator: RegExpValidator {
-//                    regExp:  /[a-zA-Z0-9\s-]*/
-//                }
-
-//                placeholderText: qsTr("Профиль")
-//            }
-
-//            Button {
-//                id: ok1
-//                x: 131
-//                y: 265
-//                text: qsTr("Применить настройки видео")
-//                clip: false
-//                scale: 1.1
-//                z: 3
-//                onClicked: {
-//                    cam[currentcam].brightness=s1.value;
-//                    cam[currentcam].contrast=s2.value;
-//                    cam[currentcam].saturation=s3.value;
-//                    cam[currentcam].sharpness=s4.value;
-//                    cam[currentcam].colorkiller=radioDay.checked?1:0;
-//                    cam[currentcam].img2a=cbwhitebal.currentIndex;
-//                    cam[currentcam].overlaytext=textField1.text
-//                    cam[currentcam].videosettings=true;
-//                }
-
-//            }
-
-//            ComboBox {
-//                id: cbwhitebal
-//                x: 215
-//                y: 154
-//                width: 190
-//                height: 18
-
-//                model: ListModel {
-//                    id: li
-//                    ListElement { text: "NONE"; color: "Yellow" }
-//                    ListElement { text: "APPRO"; color: "Green" }
-//                    ListElement { text: "TI"; color: "Brown" }
-//                }
-//                currentIndex: cam[currentcam].img2a
-//            }
-
-//            Label {
-//                id: l7
-//                x: 105
-//                y: 155
-//                width: 122
-//                height: 17
-//                color: "#ffffff"
-//                text: qsTr("Баланс белого")
-//                font.pointSize: 10
-//                font.bold: true
-//            }
-
-//            RadioButton {
-//                id: radioNight
-//                x: 25
-//                y: 187
-//                width: 55
-//                height: 17
-//                scale: 1.5
-//                onCheckedChanged: {
-//                    if (checked) radioDay.checked=false
-//                    else radioDay.checked=true;
-//                    cam[currentcam].colorkiller=checked?0:1
-
-//                    //console.log("Setup Camera  NIGHT=1/DAY=0"+ cam[currentcam].colorkiller);
-//                }
-//                style: RadioButtonStyle {
-//                    indicator: Rectangle {
-//                        implicitWidth: 16
-//                        implicitHeight: 16
-//                        radius: 9
-//                        //border.color: control.activeFocus ? "yellow" : "gray"
-//                        border.width: 1
-//                        Rectangle {
-//                            anchors.fill: parent
-//                            visible: control.checked
-//                            color: control.checked ? "yellow" : "gray"
-//                            radius: 9
-//                            anchors.margins: 4
-//                        }
-//                    }
-//                }
-
-            }
-
-//            RadioButton {
-
-//                id: radioDay
-
-//                onCheckedChanged: {
-
-//                    if (checked) radioNight.checked=false
-//                    else radioNight.checked=true;
-//                    cam[currentcam].colorkiller=checked?1:0
-//                    //console.log("Setup Camera onCheckedChanged NIGHT=1/DAY=0"+ cam[currentcam].colorkiller);
-//                }
-//                Component.onCompleted:  checked=cam[currentcam].colorkiller==0?true:false
-
-//                x: 11
-//                y: 160
-//                width: 56
-//                height: 17
-//                scale: 1.5
-//                transformOrigin: Item.Left
-//                rotation: 0
-//                style: RadioButtonStyle {
-//                    indicator: Rectangle {
-//                        implicitWidth: 16
-//                        implicitHeight: 16
-//                        radius: 9
-//                        //border.color: control.activeFocus ? "yellow" : "gray"
-//                        border.width: 1
-//                        Rectangle {
-//                            anchors.fill: parent
-//                            visible: control.checked
-//                            color: control.checked ? "yellow" : "gray"
-//                            radius: 9
-//                            anchors.margins: 4
-//                        }
-//                    }
-//                }
-//            }
-
-//            Label {
-//                id: ldn1
-//                x: 43
-//                y: 161
-//                width: 37
-//                height: 17
-//                color: "#ffffff"
-//                text: qsTr("День")
-//                font.bold: radioDay.checked
-//            }
-
-//            Label {
-//                id: ldn2
-//                x: 43
-//                y: 188
-//                width: 37
-//                height: 17
-//                color: "#fbfbfb"
-//                text: qsTr("Ночь")
-//                font.bold: radioNight.checked
-//            }
-
-//            Label {
-//                id: lb1
-//                x: 411
-//                y: 12
-//                width: 33
-//                height: 17
-//                color: "#ffffff"
-//                text: s1.value
-//                font.bold: true
-//                font.pointSize: 10
-//                verticalAlignment: Text.AlignVCenter
-//            }
-
-//            Label {
-//                id: lb2
-//                x: 411
-//                y: 37
-//                width: 33
-//                height: 17
-//                color: "#ffffff"
-//                text: s2.value
-//                font.bold: true
-//                font.pointSize: 10
-//                verticalAlignment: Text.AlignVCenter
-//            }
-
-//            Label {
-//                id: lb3
-//                x: 411
-//                y: 66
-//                width: 33
-//                height: 17
-//                color: "#ffffff"
-//                text: s3.value
-//                font.bold: true
-//                font.pointSize: 10
-//                verticalAlignment: Text.AlignVCenter
-//            }
-
-//            Label {
-//                id: lb4
-//                x: 411
-//                y: 91
-//                width: 33
-//                height: 17
-//                color: "#ffffff"
-//                text: s4.value
-//                font.bold: true
-//                font.pointSize: 10
-//                verticalAlignment: Text.AlignVCenter
-//            }
-//        }
-
-//        Label {
-//            id: label1
-//            x: 170
-//            y: 148
-//            width: 160
-//            height: 21
-//            color: "#ffffff"
-//            text: qsTr("Настройки видео")
-//            font.pointSize: 10
-//            z: 3
-//            horizontalAlignment: Text.AlignHCenter
-//            verticalAlignment: Text.AlignVCenter
-//        }
-
-        Text {
-            id: vlcversion
-            x: 100
-            y: 520
-            width: 218
-            height: 19
-            text:"Версия библиотек VLC:"+ players[currentcam].vlcVersion
-            font.pixelSize: 12
-        }
-
-//        Button {
-//            id: time
-//            x: 82
-//            y: 114
-//            width: 110
-//            height: 23
-//            text: qsTr("Установить время")
-//            opacity: 0.8
-//            onClicked: {
-//                //console.log("Setup Camera SetTime Clicked");
-//                players[currentcam].stop();
-//                cam[currentcam].setDateTimesettings();
-//            }
-//        }
-
-//        Button {
-//            id: btn_reset
-//            x: 243
-//            y: 114
-//            width: 113
-//            height: 23
-//            text: qsTr("Перезапуск камеры")
-//            opacity: 0.8
-//            onClicked: cam[currentcam].send_reset();
-//        }
-
-
-//    }
-
-    Label {
-        id: cam_name
-        x: 13
-        y: 452
-        width: 70
-        height: 20
-        text: cam[currentcam].title+":"
-//        readOnly: true
-        opacity: 0.8
-        font.pointSize: 12
-//        placeholderText: qsTr("Выбранная камера")
     }
-
 }
+
+

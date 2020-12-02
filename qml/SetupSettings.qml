@@ -7,7 +7,6 @@ import Gyco 1.0
 Item {
     id: settingsDialog
     visible: true
-    property list<MyCamera> cam
     property Networker rig:null
     property Board rig_model: null
     //    onVisibleChanged: { cbj.checked=j.ispresent}
@@ -17,8 +16,7 @@ Item {
     }
     Rectangle {
         id: rectangle1
-        width: 500
-        height: 480
+        anchors.fill: parent
         anchors.left: parent.left
         anchors.leftMargin: 0
         anchors.top: parent.top
@@ -67,10 +65,33 @@ Item {
             }
         }
 
-
+        Label {
+            id: lris2
+            x: 8
+            y: 120
+            width: 245
+            height: 13
+            color: "#ffffff"
+            text: qsTr("Интервал попыток подключения, сек/1000")
+            font.pointSize: 9
+            TextField {
+                id: rig_msec2
+                x: 251
+                y: -3
+                width: 96
+                height: 20
+                text: rig.timer_connect_interval.toString()
+                padding: 0
+                font.pointSize: 9
+                validator: IntValidator{bottom: 30000; top: 600000}
+                opacity: 0.8
+                placeholderText: qsTr("Интервал попыток подключения в миллисекундах")
+            }
+        }
         MyButton {
             id: ok
-            x: 394
+            anchors.right: parent.right
+            anchors.margins: 20
             y: 86
             width: 80
             height: 50
@@ -79,8 +100,7 @@ Item {
             onClicked: {
                 rig.address=rig_address.text
                 rig.port=rig_port.text
-                cam[0].media=cam1_media.text
-                cam[0].address=cam1_address.text
+
                 rig.timer_send_interval=parseInt(rig_msec1.text);
                 rig.timer_connect_interval=parseInt(rig_msec2.text);
                 rig_model.freerun=parseInt(rig_msec3.text);
@@ -88,14 +108,15 @@ Item {
                 rig_model.timer_delay_engine1=free_msec1.text;
                 rig_model.timer_delay_engine2=free_msec2.text;
                 //                network_caching=parseInt(netcache.text);
-                win.filesize=cbfilesize.currentText
+
                 j.ispresent=cbj.checked
             }
         }
 
         MyButton {
             id: close
-            x: 394
+            anchors.right: parent.right
+            anchors.margins: 20
             y: 27
             width: 80
             height: 50
@@ -131,82 +152,6 @@ Item {
             }
 
         }
-        Label {
-            id: lca0
-            anchors.left: parent.left
-            anchors.margins: 10
-            anchors.top: lris3.bottom
-            width: 150
-            height: 20
-            color: "#ffffff"
-            text: qsTr("Адрес видеокамеры "+cam[0].name)
-            font.pointSize: 9
-            TextField {
-                id: cam1_address
-                anchors.left: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: 20
-                width: 100
-                height: 25
-                text: cam[0].address
-                font.pointSize: 9
-                readOnly: false
-                validator: adr_validator
-                placeholderText: qsTr("IP-адрес видеокамеры")
-                opacity: 0.8
-                CheckBox {
-                    id: cb_cam1
-                    anchors.left: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: 20
-                    text: cam[0].name
-                    checked: cam[0].cameraenabled
-                    onCheckedChanged: cam[0].cameraenabled=checked
-                }
-
-            }
-            TextField {
-                id: cam1_media
-                anchors.left: parent.right
-                anchors.top: parent.bottom
-                anchors.margins: 20
-                width: 300
-                height: 25
-                text: cam[0].media
-                font.pointSize: 9
-                readOnly: false
-                placeholderText: qsTr("RTSP медиапоток ") // /PSIA/Streaming/channels/2?videoCodecType=H.264
-                opacity: 0.8
-            }
-
-        }
-        Label {
-            id: lcache
-            anchors.left: parent.right
-            anchors.top: lca0.bottom
-            anchors.margins: 20
-            width: 109
-            height: 13
-            color: "#ffffff"
-            text: qsTr("Интервал проверки камеры, мс")
-            TextField {
-                id: netcache
-                anchors.left: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                width: 96
-                height: 20
-                text: "Надо задать"
-                padding: 0
-                font.pointSize: 9
-                opacity: 0.8
-                placeholderText: qsTr("миллисекунды")
-                validator: IntValidator {
-                    bottom: 5000
-                    top: 30000
-                }
-            }
-            font.pointSize: 9
-        }
 
         Label {
             id: lris1
@@ -232,156 +177,12 @@ Item {
             }
         }
 
-        Label {
-            id: lris2
-            x: 8
-            y: 120
-            width: 245
-            height: 13
-            color: "#ffffff"
-            text: qsTr("Интервал попыток подключения, сек/1000")
-            font.pointSize: 9
-            TextField {
-                id: rig_msec2
-                x: 251
-                y: -3
-                width: 96
-                height: 20
-                text: rig.timer_connect_interval.toString()
-                padding: 0
-                font.pointSize: 9
-                validator: IntValidator{bottom: 30000; top: 600000}
-                opacity: 0.8
-                placeholderText: qsTr("Интервал попыток подключения в миллисекундах")
-            }
-        }
 
-
-
-        GroupBox {
-            id: groupBox1
-            x: 13
-            y: 379
-            width: 479
-            height: 51
-            title: qsTr("Путь к видеозаписям")
-            Text {
-                id: tfilepath
-                anchors.left: parent.left
-                anchors.top: parent.top
-                width: 357
-                height: 18
-                text: win.filepath
-                z: 1
-                font.pixelSize: 12
-            }
-
-            MyButton {
-                id: filepath_dialog
-                x: 363
-                y: 2
-                width: 104
-                height: 23
-                text: qsTr("Выбор")
-                opacity: 0.8
-                //tooltip: "Выбор папки для сохранения видео"
-                onClicked: {
-                    fileDialog.visible=true
-                }
-
-                FileDialog {
-                    id: fileDialog
-                    title: "Выберите каталог для видеозаписей"
-                    folder: "file:///"+win.filepath
-                    selectFolder: true
-                    sidebarVisible : true
-                    visible: false
-                    onAccepted: {
-                        console.log(" Setup Settings You chose: " + Qt.resolvedUrl(fileDialog.fileUrl))
-
-                        win.filepath=fileDialog.fileUrl.toString().substring(8,fileDialog.fileUrl.length)+"/"
-                        console.log(" Setup SettingsYou chose: " + win.filepath)
-                        fileDialog.visible=false
-                    }
-                    onRejected: {
-                        console.log("Setup Settings Canceled")
-                        fileDialog.visible=false
-                    }
-                    //Component.onCompleted: visible = false
-                }
-            }
-
-        }
-
-
-
-
-
-        CheckBox {
-            id: cb_cam3
-            x: 315
-            y: 243
-            //            text: cam[2].title
-            scale: 1
-            //            checked: cam[2].cameraenabled
-            //onCheckedChanged: cam[2].cameraenabled=checked
-        }
-        CheckBox {
-            id: cb_cam4
-            x: 315
-            y: 277
-            width: 119
-            height: 40
-            //            text: cam[3].title
-            scale: 1
-            //            checked: cam[3].cameraenabled
-        }
-
-        //        CheckBox {
-        //            id: cbj
-        //            x: 376
-        //            y: 333
-        //            checked: j.ispresent
-        //            text: qsTr("Джойстик")
-        //        }
-
-        Label {
-            id: ltype1
-            x: 13
-            y: 360
-            width: 184
-            height: 13
-            color: "#ffffff"
-            text: qsTr("Размер нарезки видеофалов, Мб")
-            font.pointSize: 9
-            ComboBox {
-                id: cbfilesize
-                x: 201
-                y: -3
-                width: 75
-                height: 24
-                font.pointSize: 9
-                model: [50, 500, 700, 1000, 1200, 4000]
-                Component.onCompleted: {
-                    currentIndex=0
-                    switch (win.filesize){
-                    case 50: currentIndex=0; break;
-                    case 500: currentIndex=1; break;
-                    case 700: currentIndex=2; break;
-                    case 1000: currentIndex=3; break;
-                    case 1200: currentIndex=4; break;
-                    case 4000: currentIndex=5; break;
-                    default: currentIndex=0;
-                    }
-                }
-
-            }
-        }
 
         Label {
             id: lris3
             x: 7
-            y: 147
+            y: 150
             width: 245
             height: 13
             color: "#ffffff"
@@ -409,15 +210,15 @@ Item {
         Label {
             id: lris4
             x: 8
-            y: 444
+            y: 180
             width: 113
             height: 13
             color: "#ffffff"
             text: qsTr("Разгр. двиг-ля1, мс")
             TextField {
                 id: free_msec1
-                x: 109
-                y: -2
+                anchors.left: parent.right
+                anchors.verticalCenter: parent.verticalCenter
                 width: 96
                 height: 20
                 text: rig_model.timer_delay_engine1
@@ -436,15 +237,15 @@ Item {
         Label {
             id: lris5
             x: 235
-            y: 444
+            y: 180
             width: 108
             height: 13
             color: "#ffffff"
             text: qsTr("Разгр. двиг-ля2, мс")
             TextField {
                 id: free_msec2
-                x: 109
-                y: -2
+                anchors.left: parent.right
+                anchors.verticalCenter: parent.verticalCenter
                 width: 96
                 height: 20
                 text: rig_model.timer_delay_engine2
@@ -459,39 +260,8 @@ Item {
             }
             font.pointSize: 9
         }
-        //        ComboBox {
-        //            id: test
-        //            x: 0
-        //            y: 0
-        //            width: 69
-        //            height: 20
-        //            model: [50, 500, 700, 1000, 1200, 4000]
-        //        }
-
     }
 
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}D{i:31;anchors_height:18;anchors_width:357;anchors_x:0;anchors_y:9}
-}
-##^##*/

@@ -84,7 +84,7 @@ Window {
 
         joystick_y1: power(j2.x2axis*j2.keys[0])   //ana2 поворот Схвата
 
-        joystick_x2: power(j2.x1axis*j2.keys[0])   //ana2 поворот руки
+        joystick_x2: power(j2.x1axis*j2.keys[0])   //ana3 поворот руки
         property bool lamp_switch: false
         light1: lampsSettings.lamp1 * lamp_switch
         light2: lampsSettings.lamp2 * lamp_switch
@@ -151,7 +151,7 @@ Window {
             break
         case "STOP":
             menu.visible = false
-//            camsettings.visible = false
+            camsettings.visible = false
             joystick_setup.visible = false
             settings.visible = false
             help.visible = false
@@ -159,11 +159,11 @@ Window {
             break
         case "PLAY":
             menu.visible = false
-//            camsettings.visible = false
+            camsettings.visible = false
             settings.visible = false
             help.visible = false
             cm.cam.play()
-            cm.cam.record(cm.video_path, cm.video_file_extension)
+            cm.cam.record(win.filepath, cm.video_file_extension)
             break
         case "PLAY2":
 //            if (cams[1].cameraenabled)
@@ -234,7 +234,7 @@ Window {
             break
         case "CAMERA SETTINGS":
 //            camsettings.currentcam = 0
-//            camsettings.visible = !camsettings.visible
+            camsettings.visible = !camsettings.visible
             menu.visible = false
             settings.visible = false
             joystick_setup.visible = false
@@ -242,7 +242,7 @@ Window {
             break
         case "HELP":
             help.visible = !help.visible
-//            camsettings.visible = false
+            camsettings.visible = false
             menu.visible = false
             joystick_setup.visible = false
             break
@@ -426,6 +426,7 @@ Window {
             anchors.fill: parent
             anchors.margins: 10
             name: "cam1"
+            video_path: win.filepath
             Component.onCompleted: register_camera(cm)
         }
         StatePannel {
@@ -555,21 +556,19 @@ Window {
             left: controlPanel.left
         }
     }
-//    SetupCamera {
-//        id: camsettings
-//        width: 600
-//        height: 500
-//        visible: false
-//        anchors.centerIn: parent
-//        cam: win.cams
-//        players: win.players
-//    }
+    SetupCamera {
+        id: camsettings
+        width: 600
+        height: 300
+        visible: false
+        anchors.centerIn: parent
+        cam: win.cams
+    }
     SetupSettings {
         id: settings
         width: 600
-        height: 500
+        height: 300
         anchors.centerIn: parent
-        cam: win.cams
         rig: networker
         rig_model: rig0
         visible: false
