@@ -36,25 +36,25 @@ Window {
         cams.push(c)
     }
 
-    function statename(camstate) {
-        if (camstate === 0)
-            return "---"
-        if (camstate === 1)
-            return "Открытие"
-        if (camstate === 2)
-            return "Буферизация"
-        if (camstate === 3)
-            return "Трансляция"
-        if (camstate === 4)
-            return "Пауза"
-        if (camstate === 5)
-            return "Остановлено"
-        if (camstate === 6)
-            return "Завершено"
-        if (camstate === 7)
-            return "Ошибка"
-        return "UNKNOWN"
-    }
+//    function statename(camstate) {
+//        if (camstate === 0)
+//            return "---"
+//        if (camstate === 1)
+//            return "Открытие"
+//        if (camstate === 2)
+//            return "Буферизация"
+//        if (camstate === 3)
+//            return "Трансляция"
+//        if (camstate === 4)
+//            return "Пауза"
+//        if (camstate === 5)
+//            return "Остановлено"
+//        if (camstate === 6)
+//            return "Завершено"
+//        if (camstate === 7)
+//            return "Ошибка"
+//        return "UNKNOWN"
+//    }
 
 
     Board {
@@ -80,11 +80,11 @@ Window {
         id: rig1
         board: 1
         //j1.keys[0] = курок
-        joystick_x1: power(j2.y1axis*j2.keys[1])  //ana1 Схват
+        joystick_x1: power((j2.y1axis>30||j2.y1axis<-30)*j2.y1axis*j2.keys[1])  //ana1 Схват
 
-        joystick_y1: power(j2.x2axis*j2.keys[0])   //ana2 поворот Схвата
+        joystick_y1: power((j2.x2axis>30||j2.x2axis<-30)*j2.x2axis*j2.keys[0])   //ana2 поворот Схвата
 
-        joystick_x2: power(j2.x1axis*j2.keys[0])   //ana3 поворот руки
+        joystick_x2: power((j2.x1axis>30||j2.x1axis<-30)*j2.x1axis*j2.keys[0])   //ana3 поворот руки
         property bool lamp_switch: false
         light1: lampsSettings.lamp1 * lamp_switch
         light2: lampsSettings.lamp2 * lamp_switch
@@ -454,11 +454,11 @@ Window {
             id: j2
             current: 0
             devider: 1
-            onKeysChanged: print(keys)
+//            onKeysChanged: print(keys)
             onKeyChanged: {
-                console.log(key)
-                if (key === 8 & !keys[8]) fcommand("PLAY")
-                if (key === 9 & !keys[9]) fcommand("STOP")
+//                console.log(key)
+//                if (key === 8 & !keys[8]) fcommand("PLAY")
+//                if (key === 9 & !keys[9]) fcommand("STOP")
 
                 if (key === 11 & keys[11]) fcommand("FOCUS+START")
                 if (key === 11 & !keys[11]) fcommand("FOCUS+STOP")

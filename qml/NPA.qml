@@ -121,7 +121,7 @@ Item {
                 //drag.minimumX: 0
                 //drag.maximumX: container.width - rect.width
             }
-            // запястье - поворот M1
+            //  запястье - поворот M1
             a1left: board1.ana2
             a1right:board1.ana2
             // клешня - захватить и отпустить M2
@@ -173,16 +173,7 @@ Item {
                 //drag.maximumX: container.width - rect.width
             }
         }
-        //        MouseArea {
-        //            id: ma
-        //            anchors.fill: parent
-        //            hoverEnabled: true
-        //            drag.target: npa
-        //            drag.axis: Drag.XAndYAxis
-        //            onDoubleClicked: changestate()
-        //            //drag.minimumX: 0
-        //            //drag.maximumX: container.width - rect.width
-        //        }
+
     }
 
 
