@@ -4,6 +4,7 @@ import "./figure.js" as Fig
 
 Item {
     id: hand
+    property alias gmod: gm.text
     property real a1: 20
     property real a2: -80
     property real a3: 120
@@ -45,7 +46,7 @@ Item {
     property alias a4right: a4right.value
     property alias a1left: a1left.value  //поворот Схвата
     property alias a1right: a1right.value
-    property alias brdr: b.visible
+    property bool brdr: true
 //    onA1Changed:   canvas.requestPaint()
 //    onA2Changed:   canvas.requestPaint()
 //    onA3Changed:   canvas.requestPaint()
@@ -67,7 +68,7 @@ Item {
         color: "black"
         anchors.fill: parent
         opacity: 0.5
-        border.color: "#FFFF00"
+        border.color: brdr?"#FFFF00":"transparent"
         radius:10
 
     }
@@ -239,49 +240,11 @@ Item {
         x: parent.width - 50
         positive: false
     }
-
-
-//    Canvas {
-//        id: canvas
-
-//        width: 20//parent.width
-//        height: 20 //parent.height
-
-//        onPaint: {
-//            var ctx = getContext('2d')
-//            ctx.save()
-//            ctx.clearRect(0, 0, width, height)
-//            ctx.strokeStyle = "white"
-
-//            ctx.beginPath()
-//            var th=20
-//            //p0="100,200"
-//            //p0.y=hy
-
-//            p1=el(ctx,p0, l1, a1, draw1, 1)
-//            //console.log(p1);
-//            p2=el(ctx, p1, l2, a1+a2, draw2, 2)
-//            p3=el(ctx, p2, l3, a1+a2+a3, draw3, 4 )
-//            p4=el(ctx, p3, l4, a1+a2+a3+a4, draw4, 8)
-//            p5=el(ctx, p4, l5, a1+a2+a3+a4+a5, draw6, 0,a1+a2+a3+a4) // draw5 - это с раскрывом губок захвата углом. draw6 - губки разъезжаюся
-//            Fig.line(ctx,p0.x, p0.y,10,p0.y, 2);
-//            Fig.text_m(ctx,5,p0.y,th,"6", "left", "bottom", Qt.rgba(0.8, 0.8, 1.0, 0.5))
-//            Fig.line(ctx,p0.x, p0.y,p0.x,(p0.y+height)/2.1, 2);
-//            Fig.text_m(ctx,p0.x,(p0.y+height)/2.1,th,"7", "left", "top", Qt.rgba(0.8, 0.8, 1.0, 0.5))
-//            Fig.line(ctx,p1.x, p1.y,p1.x,(p1.y-height/3), 2);
-//            Fig.text_m(ctx,p1.x,(p1.y-height/3),th,"5", "left", "bottom", Qt.rgba(0.8, 0.8, 1.0, 0.5))
-//            Fig.line(ctx,p2.x, p2.y,p2.x,(p2.y+height/3), 2);
-//            Fig.text_m(ctx,p2.x,(p2.y+height/3),th,"4", "left", "top", Qt.rgba(0.8, 0.8, 1.0, 0.5))
-//            Fig.line(ctx,p3.x, p3.y,p3.x,(p3.y-height/3), 2);
-//            Fig.text_m(ctx,p3.x,(p3.y-height/3),th,"3", "left", "bottom", Qt.rgba(0.8, 0.8, 1.0, 0.5))
-//            Fig.line(ctx,p4.x, p4.y,p4.x+width/4,p4.y, 2);
-//            Fig.text_m(ctx,p4.x+width/4,p4.y,th,"2", "left", "bottom", Qt.rgba(0.8, 0.8, 1.0, 0.5))
-//            var rr=l4*0.8
-//            Fig.circle(ctx, p4.x,p4.y,rr,Qt.rgba(1, 1, 1.0, 0.0))
-//            Fig.line(ctx,p4.x, p4.y+rr,p4.x,p4.y+rr+l5, 2);
-//            Fig.text_m(ctx,p4.x,p4.y+rr+l5,th,"1", "left", "top", Qt.rgba(0.8, 0.8, 1.0, 0.5))
-//            ctx.restore()
-//            //ctx.closePath();
-//        }
-//    }
+    Text {
+        id: gm
+        color: "white"
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.margins: 20
+    }
 }

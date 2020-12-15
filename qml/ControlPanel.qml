@@ -14,6 +14,7 @@ Item {
     property int fontSize:15
     property RigJoystick j1
     property RigJoystick j2
+    property alias cameras_power: cam_onoff.active
     signal lampClicked(string cp_command)
     width: row.width+row.spacing
     Settings {
@@ -75,7 +76,6 @@ Item {
                     height: lampSize
                     width: lampSize
                     bottomText:"КАМЕРЫ[F3]"
-                    active:source.camera
                     command: "CAMERA ON"
                     command3: "CAMSET"
                     text: "Правая кн. мышки - меню включения питания камер"

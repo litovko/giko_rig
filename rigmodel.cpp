@@ -385,6 +385,7 @@ QJsonObject cRigmodel::getData()
     json["ana2"]=ana2();
     json["ana3"]=ana3();
     json["svet"]=(m_light1+(m_light2*16)+(m_light3*16*16)+(m_light4*16*16*16));
+    json["gmod"]=m_gmod;
     //    json["dig1"]= m_engine*1
     //            +   !m_pump*4  //замок манипулятора открывание
     //            +   m_pump*2 //замок манипулятора закрывание

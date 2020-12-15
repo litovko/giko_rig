@@ -3,6 +3,7 @@ import Gyco 1.0
 import Qt.labs.settings 1.0
 Item {
     id:npa
+    property Board board0:null
     property Board board1:null
     //    property Board board2:null
     anchors.centerIn: parent
@@ -78,31 +79,7 @@ Item {
     Rectangle{
         anchors.fill: parent
         color: "transparent"
-        //opacity: 0.5
         border.color: "transparent"
-        radius:10
-
-        //        NPA_move { //трастеры - движители
-        //            id:npa_move
-        //            width: parent.width
-        //            height: parent.height
-
-        //            ax1: -board1.ana3 //подрулька
-        //            ax3: board1.ana1 //левый задний движок
-        //            ax2: board1.ana2 //правый задний
-        //            ax4: board2.ana1 //лифт передний
-        //            ax5: board2.ana2 //лифт задний
-        //            brdr: mam.containsMouse
-        //            MouseArea {
-        //                id: mam
-        //                anchors.fill: parent
-        //                hoverEnabled: true
-        //                drag.target: npa_move
-        //                drag.axis: Drag.XAndYAxis
-        //                //drag.minimumX: 0
-        //                //drag.maximumX: container.width - rect.width
-        //            }
-        //        }
 
         NPA_hand{ //манипулятор
             id:npa_hand
@@ -112,6 +89,7 @@ Item {
             select: sel()
             position: board1.position
             brdr: mah.containsMouse
+            gmod: board1.gmod
             MouseArea {
                 id: mah
                 anchors.fill: parent
@@ -131,17 +109,17 @@ Item {
             a3left: board1.ana3
             a3right:board1.ana3
             //            // кисть 2Г - угол
-            a4left:-board1.pin0*127
-            a4right:board1.pin1*127
+            a4left:-board0.pin2*127
+            a4right:board0.pin3*127
             //            // плечо - 3Г
             a5left:-board1.pin2*127
             a5right:board1.pin3*127
             //            // плечо - 4Г
-            a6up: board1.pin4*127
-            a6down: -board1.pin5*127
+            a6up: board0.pin4*127
+            a6down: -board0.pin5*127
             // плечо - 5Г
-            a7up: board1.pin6*127
-            a7down: -board1.pin7*127
+            a7up: board0.pin6*127
+            a7down: -board0.pin7*127
         }
 
         MyBubble2 {

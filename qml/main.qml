@@ -64,12 +64,18 @@ Window {
         light2: 0
         light3: 0
         light4: 0
-        camera1: camSettings.cam1
-        camera2: camSettings.cam2
-        camera3: camSettings.cam3
-        camera4: camSettings.cam4
+//        camera1: camSettings.cam1
+//        camera2: camSettings.cam2
+//        camera3: camSettings.cam3
+//        camera4: camSettings.cam4
         onFree_engine1Changed: pins[1] = free_engine1 // клапан разгрузки
         Component.onCompleted: networker.reg(this)
+        pin2: j2.keys[2]*(j2.x1axis>40); // поворот кисти влево 2Г
+        pin3: j2.keys[2]*(j2.x1axis<-40);// поворот кисти вправо 2Г
+        pin4: j2.keys[3]*(j2.y1axis>40);// направл локтя Подъем 4Г
+        pin5: j2.keys[3]*(j2.y1axis<-40);// направл локть Спуск 4Г
+        pin6: j2.keys[0]*(j2.y1axis>40); // направл плеча Подъем 5Г
+        pin7: j2.keys[0]*(j2.y1axis<-40);// направл плеча Спуск 5Г
 
     }
     function power(v){ //регулировка мощности - зависит от движка на джойстике
@@ -91,14 +97,11 @@ Window {
         light3: lampsSettings.lamp3 * lamp_switch
         light4: lampsSettings.lamp4 * lamp_switch
         Component.onCompleted: networker.reg(this)
-        pin0: j2.keys[2]*(j2.x1axis>40); // поворот кисти влево
-        pin1: j2.keys[2]*(j2.x1axis<-40);// поворот кисти вправо
-        pin2: j2.keys[3]*(j2.y1axis>40);// направ кисти Подъем
-        pin3: j2.keys[3]*(j2.y1axis<-40);// направ кисти Спуск
-        pin4: j2.keys[2]*(j2.y1axis>40);// направл локтя Подъем
-        pin5: j2.keys[2]*(j2.y1axis<-40);// направл локть Спуск
-        pin6: j2.keys[0]*(j2.y1axis>40); // направл плеча Подъем
-        pin7: j2.keys[0]*(j2.y1axis<-40);// направл плеча Спуск
+
+        pin2: j2.keys[2]*(j2.y1axis>40);// направ кисти Подъем
+        pin3: j2.keys[2]*(j2.y1axis<-40);// направ кисти Спуск
+        pin6: controlPanel.cameras_power*camSettings.cam1; // Инжектор камеры
+
     }
 //    Board {
 //        id: rig2
@@ -284,9 +287,7 @@ Window {
             lampsSettings.height = lampsSettings.visible ? 160 : 0
             break
         case "CAMERA ON":
-            rig0.camera = !rig0.camera
-            rig0.pins[3] = rig0.camera * camSettings.cam1
-            rig0.pins[4] = rig0.camera * camSettings.cam2
+            controlPanel.cameras_power=!controlPanel.cameras_power
             break
         case "CAMSET":
             //окно с выбором включенных камер - не передаются параметры в rig
@@ -348,7 +349,7 @@ Window {
         state: "1-KAM-bol"
 
         Keys.onPressed: {
-//            console.log("KeY:" + event.key)
+            console.log("KeY:" + event.key)
             if (event.key === Qt.Key_F1 || event.key === Qt.Key_1)
                 win.fcommand("HELP")
             if (event.key === Qt.Key_F2 || event.key === Qt.Key_2)
@@ -384,6 +385,14 @@ Window {
             if ((event.modifiers & Qt.ControlModifier)
                     && (event.key === Qt.Key_S))
                 win.fcommand("SCREENSHOT")
+            if ((event.key === Qt.Key_Y))
+                rig0.gmod=rig1.gmod = "grup1"
+            if ((event.key === Qt.Key_U))
+                rig0.gmod=rig1.gmod = "grup2"
+            if ((event.key === Qt.Key_I))
+                rig0.gmod=rig1.gmod = "grup3"
+            if ((event.key === Qt.Key_O))
+                rig0.gmod=rig1.gmod = "grup4"
             if ((event.modifiers & Qt.ControlModifier)
                     && (event.key === Qt.Key_Z))
                 vlcPlayer1.mrl = "file:///" + win.filepath + "/demo/01.mpg"

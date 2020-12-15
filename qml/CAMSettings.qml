@@ -82,6 +82,7 @@ Item {
                 anchors.left: parent.left
 //                visible: cam[1].cameraenabled
                 CheckBox {
+                    visible: false;
                     id: checkBox2
                     anchors {left: parent.right; bottom: parent.bottom}
                 }
@@ -96,6 +97,7 @@ Item {
                 anchors.left: parent.left
 //                visible: cam[2].cameraenabled
                 CheckBox {
+                    visible: false;
                     id: checkBox3
                     anchors {left: parent.right; bottom: parent.bottom}
                 }
@@ -110,6 +112,7 @@ Item {
                 anchors.left: parent.left
 //                visible: cam[3].cameraenabled
                 CheckBox {
+                    visible: false;
                     id: checkBox4
                     anchors {left: parent.right; bottom: parent.bottom}
                 }

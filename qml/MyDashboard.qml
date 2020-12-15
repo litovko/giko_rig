@@ -66,9 +66,10 @@ Item {
 
     NPA {
         id: npa_pult
-        height: 450
+        height: 300
         width: 450
         //joystick: j1
+        board0: rig0
         board1: rig1
 //        board2: rig2
         z:4

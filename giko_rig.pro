@@ -1,6 +1,6 @@
 QT +=  quick network multimedia
 CONFIG += c++11  console
-VERSION = 7.7.0.1
+VERSION = 7.7.0.3
 SOURCES += main.cpp \
     camera/camera.cpp \
     camera/checktcp.cpp \

@@ -4,8 +4,8 @@ import "figure.js" as Fig
 Item {
     id: el
     property int linewidth: 2
-    property color linestyle: Qt.rgba(1.0, 1.0, 1.0, 0.5)
-    property color fillstyle: Qt.rgba(1.0, 0.0, 0.0, 0.5)
+    property color linestyle: Qt.rgba(1.0, 1.0, 1.0, 0.7)
+    property color fillstyle: Qt.rgba(1.0, 0.0, 0.0, 0.7)
     property real g_ld: 12/28
     property real g_la: 20/35
     property int angle: 0

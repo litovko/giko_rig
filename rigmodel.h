@@ -60,11 +60,11 @@ class cRigmodel : public QObject
     Q_PROPERTY(int ana3 READ ana3 NOTIFY ana3Changed)
     Q_PROPERTY(int ana4 READ ana4 NOTIFY ana4Changed)
 
-    Q_PROPERTY(bool camera READ camera WRITE setCamera NOTIFY cameraChanged)
-    Q_PROPERTY(bool camera1 READ camera1 WRITE setCamera1 NOTIFY camera1Changed)
-    Q_PROPERTY(bool camera2 READ camera2 WRITE setCamera2 NOTIFY camera2Changed)
-    Q_PROPERTY(bool camera3 READ camera3 WRITE setCamera3 NOTIFY camera3Changed)
-    Q_PROPERTY(bool camera4 READ camera4 WRITE setCamera4 NOTIFY camera4Changed)
+//    Q_PROPERTY(bool camera READ camera WRITE setCamera NOTIFY cameraChanged)
+//    Q_PROPERTY(bool camera1 READ camera1 WRITE setCamera1 NOTIFY camera1Changed)
+//    Q_PROPERTY(bool camera2 READ camera2 WRITE setCamera2 NOTIFY camera2Changed)
+//    Q_PROPERTY(bool camera3 READ camera3 WRITE setCamera3 NOTIFY camera3Changed)
+//    Q_PROPERTY(bool camera4 READ camera4 WRITE setCamera4 NOTIFY camera4Changed)
 
     Q_PROPERTY(int light1 READ light1 WRITE setLight1 NOTIFY light1Changed) //яркость - 16 градаций
     Q_PROPERTY(int light2 READ light2 WRITE setLight2 NOTIFY light2Changed)
@@ -470,7 +470,7 @@ private:
     int m_lima=100000; //порог по току
     int m_limv=100000; //порог по напряжению
     int m_limz=100000; //порог по току утечки
-    QString m_gmod="move"; //
+    QString m_gmod="grup1"; //
 
     bool m_good_data=false;
     bool m_check_type=false;
