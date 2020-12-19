@@ -110,6 +110,8 @@ Item {
                 //                network_caching=parseInt(netcache.text);
 
                 j.ispresent=cbj.checked
+                settingsDialog.visible=false;
+                mainRect.focus=true;
             }
         }
 

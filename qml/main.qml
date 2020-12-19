@@ -19,6 +19,7 @@ Window {
     property int filesize: 700 //Mbyte
     property alias rig: networker
     property list<MyCamera> cams
+    property int demo_mode: 0
 
     Settings {
         property alias x: win.x
@@ -32,6 +33,76 @@ Window {
         property alias filesize: win.filesize
         property alias joy_devider: j2.devider
     }
+    function f_demo_mode(ana, mod ) {
+        console.log(ana +"__"+mod)
+        if (mod === 0)
+        {
+            if (ana===1) {
+                return 0
+            }
+            if (ana===2) {
+                return 0
+            }
+            if (ana===3) {
+                return 0
+            }
+        }
+        if (mod === 1)
+        {
+            rig1.gmod="grup1"
+//            console.log(ana +"qqqq__"+mod)
+            if (ana===1) {
+                return 127
+            }
+            if (ana===2) {
+                return 127
+            }
+            if (ana===3) {
+                return 0
+            }
+        }
+        if (mod === 2)
+        {
+            rig1.gmod="grup1"
+            if (ana===1) {
+                return -127
+            }
+            if (ana===2) {
+                return -127
+            }
+            if (ana===3) {
+                return 0
+            }
+        }
+        if (mod === 3)
+        {
+            rig1.gmod="grup2"
+            if (ana===1) {
+                return 127
+            }
+            if (ana===2) {
+                return 127
+            }
+            if (ana===3) {
+                return 127
+            }
+        }
+        if (mod === 4)
+        {
+            rig1.gmod="grup2"
+            if (ana===1) {
+                return -127
+            }
+            if (ana===2) {
+                return -127
+            }
+            if (ana===3) {
+                return -127
+            }
+        }
+
+    }
+
     function register_camera(c) {
         cams.push(c)
     }
@@ -86,11 +157,17 @@ Window {
         id: rig1
         board: 1
         //j1.keys[0] = курок
-        joystick_x1: power((j2.y1axis>30||j2.y1axis<-30)*j2.y1axis*j2.keys[1])  //ana1 Схват
+//        joystick_x1: (win.f_demo_mode(1,win.demo_mode))+power((j2.y1axis>30||j2.y1axis<-30)*j2.y1axis*j2.keys[1])  //ana1 Схват
 
-        joystick_y1: power((j2.x2axis>30||j2.x2axis<-30)*j2.x2axis*j2.keys[0])   //ana2 поворот Схвата
+//        joystick_y1: (win.f_demo_mode(2,win.demo_mode))+power((j2.x2axis>30||j2.x2axis<-30)*j2.x2axis*j2.keys[0])   //ana2 поворот Схвата
 
-        joystick_x2: power((j2.x1axis>30||j2.x1axis<-30)*j2.x1axis*j2.keys[0])   //ana3 поворот руки
+//        joystick_x2: (win.f_demo_mode(3,win.demo_mode))+power((j2.x1axis>30||j2.x1axis<-30)*j2.x1axis*j2.keys[0])   //ana3 поворот руки
+
+        joystick_x1: power(win.f_demo_mode(1,win.demo_mode))+power((j2.y1axis>30||j2.y1axis<-30)*j2.y1axis*j2.keys[1])  //ana1 Схват
+
+        joystick_y1: power(win.f_demo_mode(2,win.demo_mode))+power((j2.x2axis>30||j2.x2axis<-30)*j2.x2axis*j2.keys[0])   //ana2 поворот Схвата
+
+        joystick_x2: power(win.f_demo_mode(3,win.demo_mode))+power((j2.x1axis>30||j2.x1axis<-30)*j2.x1axis*j2.keys[0])   //ana3 поворот руки
         property bool lamp_switch: false
         light1: lampsSettings.lamp1 * lamp_switch
         light2: lampsSettings.lamp2 * lamp_switch
@@ -151,6 +228,26 @@ Window {
             break
         case "FOCUS+STOP":
             cam_control.focus_minus_stop()
+            break
+        case "G+":
+            if(rig1.gmod==="grup1")
+                rig1.gmod="grup2"
+            else if(rig1.gmod==="grup2")
+                rig1.gmod="grup3"
+             else if(rig1.gmod==="grup3")
+                rig1.gmod="grup4"
+              else if(rig1.gmod==="grup4")
+                rig1.gmod="grup1"
+            break
+        case "G-":
+            if(rig1.gmod==="grup4")
+                rig1.gmod="grup3"
+            else if(rig1.gmod==="grup3")
+                rig1.gmod="grup2"
+             else if(rig1.gmod==="grup2")
+                rig1.gmod="grup1"
+              else if(rig1.gmod==="grup1")
+                rig1.gmod="grup4"
             break
         case "STOP":
             menu.visible = false
@@ -393,6 +490,22 @@ Window {
                 rig0.gmod=rig1.gmod = "grup3"
             if ((event.key === Qt.Key_O))
                 rig0.gmod=rig1.gmod = "grup4"
+
+            if ((event.key === Qt.Key_Q)) {
+
+                win.demo_mode=1
+                rig1.joystick_x1= power(win.f_demo_mode(1,win.demo_mode))
+                console.log(power(127)+ "  = "+ power(win.f_demo_mode(1,1))+" _  "+ win.f_demo_mode(1,1));
+            }
+            if ((event.key === Qt.Key_W))
+                win.demo_mode=2
+            if ((event.key === Qt.Key_E))
+                win.demo_mode=3
+            if ((event.key === Qt.Key_R))
+                win.demo_mode=4
+            if ((event.key === Qt.Key_T))
+                win.demo_mode=0
+
             if ((event.modifiers & Qt.ControlModifier)
                     && (event.key === Qt.Key_Z))
                 vlcPlayer1.mrl = "file:///" + win.filepath + "/demo/01.mpg"
@@ -465,9 +578,9 @@ Window {
             devider: 1
 //            onKeysChanged: print(keys)
             onKeyChanged: {
-//                console.log(key)
-//                if (key === 8 & !keys[8]) fcommand("PLAY")
-//                if (key === 9 & !keys[9]) fcommand("STOP")
+                console.log(key)
+                if (key === 2 & !keys[2]) fcommand("G-")
+                if (key === 3 & !keys[3]) fcommand("G+")
 
                 if (key === 11 & keys[11]) fcommand("FOCUS+START")
                 if (key === 11 & !keys[11]) fcommand("FOCUS+STOP")
