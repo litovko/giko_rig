@@ -25,7 +25,7 @@ Item {
     onAngleChanged: canvas.requestPaint()
     onFillstyleChanged: canvas.requestPaint();
     onStateChanged: canvas.requestPaint()
-
+    onLinestyleChanged: canvas.requestPaint()
     Canvas {
         id: canvas
         width: parent.width

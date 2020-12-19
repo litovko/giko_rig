@@ -100,26 +100,33 @@ Item {
                 //drag.maximumX: container.width - rect.width
             }
             //  запястье - поворот M1
-            a1left: board1.ana2
-            a1right:board1.ana2
-            // клешня - захватить и отпустить M2
-            a2up:   board1.ana1
-            a2down: board1.ana1
-            //            // манипулятор - поворот
-            a3left: board1.ana3
-            a3right:board1.ana3
+            a1left: board1.ana2*(board1.gmod==="grup3")
+            a1right:board1.ana2*(board1.gmod==="grup3")
+            a1color: (gmod==="grup3")?Qt.rgba(1.0, 1.0, 1.0, 0.7):Qt.rgba(1.0, 1.0, 1.0, 0.3)
+            // клешня - захватить и отпустить 1Г
+            a2up:   board1.ana1*(board1.gmod==="grup3")
+            a2down: board1.ana1*(board1.gmod==="grup3")
+            a2color: (gmod==="grup3")?Qt.rgba(1.0, 1.0, 1.0, 0.7):Qt.rgba(1.0, 1.0, 1.0, 0.3)
+            // манипулятор - поворот 6Г
+            a3left: board1.ana1*(board1.gmod==="grup1")
+            a3right:board1.ana1*(board1.gmod==="grup1")
+            a3color: (gmod==="grup1")?Qt.rgba(1.0, 1.0, 1.0, 0.7):Qt.rgba(1.0, 1.0, 1.0, 0.3)
             //            // кисть 2Г - угол
-            a4left:-board0.pin2*127
-            a4right:board0.pin3*127
+            a4left: board1.ana2*(board1.gmod==="grup2")
+            a4right:board1.ana2*(board1.gmod==="grup2")
+            a4color: (gmod==="grup2")?Qt.rgba(1.0, 1.0, 1.0, 0.7):Qt.rgba(1.0, 1.0, 1.0, 0.3)
             //            // плечо - 3Г
-            a5left:-board1.pin2*127
-            a5right:board1.pin3*127
+            a5up: board1.ana1*(board1.gmod==="grup2")
+            a5down:board1.ana1*(board1.gmod==="grup2")
+            a5color: (gmod==="grup2")?Qt.rgba(1.0, 1.0, 1.0, 0.7):Qt.rgba(1.0, 1.0, 1.0, 0.3)
             //            // плечо - 4Г
-            a6up: board0.pin4*127
-            a6down: -board0.pin5*127
+            a6up:  board1.ana3*(board1.gmod==="grup1")
+            a6down:board1.ana3*(board1.gmod==="grup1")
+            a6color: (gmod==="grup1")?Qt.rgba(1.0, 1.0, 1.0, 0.7):Qt.rgba(1.0, 1.0, 1.0, 0.3)
             // плечо - 5Г
-            a7up: board0.pin6*127
-            a7down: -board0.pin7*127
+            a7up: board1.ana2*(board1.gmod==="grup1")
+            a7down: board1.ana2*(board1.gmod==="grup1")
+            a7color: (gmod==="grup1")?Qt.rgba(1.0, 1.0, 1.0, 0.7):Qt.rgba(1.0, 1.0, 1.0, 0.3)
         }
 
         MyBubble2 {

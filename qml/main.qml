@@ -20,6 +20,7 @@ Window {
     property alias rig: networker
     property list<MyCamera> cams
     property int demo_mode: 0
+    property int sensitivity: 30
 
     Settings {
         property alias x: win.x
@@ -141,12 +142,12 @@ Window {
 //        camera4: camSettings.cam4
         onFree_engine1Changed: pins[1] = free_engine1 // клапан разгрузки
         Component.onCompleted: networker.reg(this)
-        pin2: j2.keys[2]*(j2.x1axis>40); // поворот кисти влево 2Г
-        pin3: j2.keys[2]*(j2.x1axis<-40);// поворот кисти вправо 2Г
-        pin4: j2.keys[3]*(j2.y1axis>40);// направл локтя Подъем 4Г
-        pin5: j2.keys[3]*(j2.y1axis<-40);// направл локть Спуск 4Г
-        pin6: j2.keys[0]*(j2.y1axis>40); // направл плеча Подъем 5Г
-        pin7: j2.keys[0]*(j2.y1axis<-40);// направл плеча Спуск 5Г
+//        pin2: j2.keys[2]*(j2.x1axis>40); // поворот кисти влево 2Г
+//        pin3: j2.keys[2]*(j2.x1axis<-40);// поворот кисти вправо 2Г
+//        pin4: j2.keys[3]*(j2.y1axis>40);// направл локтя Подъем 4Г
+//        pin5: j2.keys[3]*(j2.y1axis<-40);// направл локть Спуск 4Г
+//        pin6: j2.keys[0]*(j2.y1axis>40); // направл плеча Подъем 5Г
+//        pin7: j2.keys[0]*(j2.y1axis<-40);// направл плеча Спуск 5Г
 
     }
     function power(v){ //регулировка мощности - зависит от движка на джойстике
@@ -163,11 +164,31 @@ Window {
 
 //        joystick_x2: (win.f_demo_mode(3,win.demo_mode))+power((j2.x1axis>30||j2.x1axis<-30)*j2.x1axis*j2.keys[0])   //ana3 поворот руки
 
-        joystick_x1: power(win.f_demo_mode(1,win.demo_mode))+power((j2.y1axis>30||j2.y1axis<-30)*j2.y1axis*j2.keys[1])  //ana1 Схват
+//        joystick_x1: power(win.f_demo_mode(1,win.demo_mode))+power((j2.y1axis>30||j2.y1axis<-30)*j2.y1axis*j2.keys[1])  //ana1 Схват
 
-        joystick_y1: power(win.f_demo_mode(2,win.demo_mode))+power((j2.x2axis>30||j2.x2axis<-30)*j2.x2axis*j2.keys[0])   //ana2 поворот Схвата
+//        joystick_y1: power(win.f_demo_mode(2,win.demo_mode))+power((j2.x2axis>30||j2.x2axis<-30)*j2.x2axis*j2.keys[0])   //ana2 поворот Схвата
 
-        joystick_x2: power(win.f_demo_mode(3,win.demo_mode))+power((j2.x1axis>30||j2.x1axis<-30)*j2.x1axis*j2.keys[0])   //ana3 поворот руки
+//        joystick_x2: power(win.f_demo_mode(3,win.demo_mode))+power((j2.x1axis>30||j2.x1axis<-30)*j2.x1axis*j2.keys[0])   //ana3 поворот руки
+
+        // тут начинается магия -  в зависимости от группы.
+        // ana1
+        joystick_x1: power(
+                        (gmod=="grup1") * (j2.x1axis>win.sensitivity||j2.x1axis<(-win.sensitivity)) *  j2.x1axis * j2.keys[1]  // 6Г поворот плеча
+                      + (gmod=="grup2") * (j2.y1axis>win.sensitivity||j2.y1axis<(-win.sensitivity)) *  j2.y1axis * j2.keys[0]  // 3Г кисть вверх-вниз
+                      + (gmod=="grup3") * (j2.y1axis>win.sensitivity||j2.y1axis<(-win.sensitivity)) * -j2.y1axis * j2.keys[0]  // 1Г схват сжать-разжать
+                           )
+        //ana2
+        joystick_y1: power(
+                        (gmod=="grup1") * (j2.y1axis>win.sensitivity||j2.y1axis<(-win.sensitivity)) *  j2.y1axis * j2.keys[0]  // 5Г плечо подъем-спуск
+                      + (gmod=="grup2") * (j2.x1axis>win.sensitivity||j2.x1axis<(-win.sensitivity)) *  j2.x1axis * j2.keys[0]  // 2Г кисть влево-вправо
+                      + (gmod=="grup3") * (j2.x2axis>win.sensitivity||j2.x2axis<(-win.sensitivity)) *  j2.x2axis * j2.keys[0]  // 1М вращатель по часовой-против часовой
+                           )
+        //ana3
+        joystick_x2: power(
+                        (gmod=="grup1") * (j2.y1axis>win.sensitivity||j2.y1axis<(-win.sensitivity)) *  j2.y1axis * j2.keys[4]  // 4Г локоть спуск-подъем
+                           )
+
+
         property bool lamp_switch: false
         light1: lampsSettings.lamp1 * lamp_switch
         light2: lampsSettings.lamp2 * lamp_switch
@@ -175,9 +196,9 @@ Window {
         light4: lampsSettings.lamp4 * lamp_switch
         Component.onCompleted: networker.reg(this)
 
-        pin2: j2.keys[2]*(j2.y1axis>40);// направ кисти Подъем
-        pin3: j2.keys[2]*(j2.y1axis<-40);// направ кисти Спуск
-        pin6: controlPanel.cameras_power*camSettings.cam1; // Инжектор камеры
+//        pin2: j2.keys[2]*(j2.y1axis>40);// направ кисти Подъем
+//        pin3: j2.keys[2]*(j2.y1axis<-40);// направ кисти Спуск
+//        pin6: controlPanel.cameras_power*camSettings.cam1; // Инжектор камеры
 
     }
 //    Board {
@@ -235,7 +256,7 @@ Window {
             else if(rig1.gmod==="grup2")
                 rig1.gmod="grup3"
              else if(rig1.gmod==="grup3")
-                rig1.gmod="grup4"
+                rig1.gmod="grup1"
               else if(rig1.gmod==="grup4")
                 rig1.gmod="grup1"
             break
@@ -247,7 +268,7 @@ Window {
              else if(rig1.gmod==="grup2")
                 rig1.gmod="grup1"
               else if(rig1.gmod==="grup1")
-                rig1.gmod="grup4"
+                rig1.gmod="grup3"
             break
         case "STOP":
             menu.visible = false
@@ -578,7 +599,7 @@ Window {
             devider: 1
 //            onKeysChanged: print(keys)
             onKeyChanged: {
-                console.log(key)
+//                console.log(key)
                 if (key === 2 & !keys[2]) fcommand("G-")
                 if (key === 3 & !keys[3]) fcommand("G+")
 
