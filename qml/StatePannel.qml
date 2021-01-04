@@ -65,7 +65,6 @@ Rectangle {
             height: 40
             onVolChanged: {
                 cam.setZoom(vol)
-                zoom.text = vol
             }
             Component.onCompleted:  cam.getProfiles()
         }

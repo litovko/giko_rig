@@ -18,7 +18,6 @@ Item {
         onPressedChanged: c.requestPaint()
         anchors.fill: parent
         onReleased: {
-            print(mouseX)
             vol=1000*mouseX/(mm.width)
             rect.x=vol*(mm.width-rect.width)/1000
         }
