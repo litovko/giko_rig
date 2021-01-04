@@ -173,7 +173,7 @@ Window {
         // тут начинается магия -  в зависимости от группы.
         // ana1
         joystick_x1: power(
-                        (gmod=="grup1") * (j2.x1axis>win.sensitivity||j2.x1axis<(-win.sensitivity)) *  j2.x1axis * j2.keys[1]  // 6Г поворот плеча
+                        (gmod=="grup1") * (j2.x1axis>win.sensitivity||j2.x1axis<(-win.sensitivity)) *  j2.x1axis * j2.keys[0]  // 6Г поворот плеча
                       + (gmod=="grup2") * (j2.y1axis>win.sensitivity||j2.y1axis<(-win.sensitivity)) *  j2.y1axis * j2.keys[0]  // 3Г кисть вверх-вниз
                       + (gmod=="grup3") * (j2.y1axis>win.sensitivity||j2.y1axis<(-win.sensitivity)) * -j2.y1axis * j2.keys[0]  // 1Г схват сжать-разжать
                            )
@@ -185,7 +185,7 @@ Window {
                            )
         //ana3
         joystick_x2: power(
-                        (gmod=="grup1") * (j2.y1axis>win.sensitivity||j2.y1axis<(-win.sensitivity)) *  j2.y1axis * j2.keys[4]  // 4Г локоть спуск-подъем
+                        (gmod=="grup1") * (j2.y1axis>win.sensitivity||j2.y1axis<(-win.sensitivity)) *  j2.y1axis * j2.keys[1]  // 4Г локоть спуск-подъем
                            )
 
 
@@ -734,13 +734,13 @@ Window {
         timeout: 1000
         onOkChanged: console.log("camera " + (checke_tcp.ok ? "availavle": "unavailable"))
     }
-    CamControl {
-        id: cam_control
-        address: cm.address
-    }
-    Component.onDestruction: {
-        console.log("Good bye!")
-    }
+//    CamControl {
+//        id: cam_control
+//        address: cm.address
+//    }
+//    Component.onDestruction: {
+//        console.log("Good bye!")
+//    }
 
 }
 

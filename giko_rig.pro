@@ -1,7 +1,8 @@
-QT +=  quick network multimedia
+QT +=  quick network multimedia xml
 CONFIG += c++11  console
 VERSION = 7.7.0.5
 SOURCES += main.cpp \
+    camera/c_onvif.cpp \
     camera/camera.cpp \
     camera/checktcp.cpp \
     camera/decoder.cpp \
@@ -18,6 +19,7 @@ RESOURCES += qml.qrc
 #QML_IMPORT_PATH = C:\Qt\5.12.1\msvc2017_64\qml\QtQuick
 
 HEADERS += networker.h \
+    camera/c_onvif.h \
     camera/camera.h \
     camera/checktcp.h \
     camera/decoder.h \

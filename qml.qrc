@@ -46,5 +46,7 @@
         <file>qml/MySwitcher.qml</file>
         <file>skin/mgm7_2.svg</file>
         <file>qml/MyCamera.qml</file>
+        <file>qml/MyCorners.qml</file>
+        <file>qml/MyVolume.qml</file>
     </qresource>
 </RCC>

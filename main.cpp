@@ -21,6 +21,7 @@
 #include <iostream>
 #include "camera/checktcp.h"
 #include "camera/camera.h"
+#include "camera/c_onvif.h"
 //DONE: протестировать утечку памяти
 // https://kinddragon.github.io/vld/
 // C:\Qt\5.15.2\msvc2019_64\bin\qmake -spec win32-msvc -tp vc
@@ -128,6 +129,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<ipcamera>("HYCO", 1, 0, "IPCamera");
     qmlRegisterType<camera>("HYCO", 1, 0, "CamControl");
     qmlRegisterType<CheckTCP>("HYCO", 1, 0, "CheckTCP");
+    qmlRegisterType<c_onvif>("HYCO", 1, 0, "Onvif");
     QCoreApplication::setAttribute(Qt::AA_DisableShaderDiskCache); //NOTE понять зачем это?
 
     QGuiApplication app(argc, argv);

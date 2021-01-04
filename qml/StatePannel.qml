@@ -1,6 +1,7 @@
 import QtQuick 2.11
 import QtQuick.Window 2.11
 import Gyco 1.0
+import HYCO 1.0
 import Qt.labs.settings 1.0
 import QtQuick.Extras 1.4
 
@@ -28,7 +29,12 @@ Rectangle {
         //right: parent.right
         margins: 10
     }
-    
+    Onvif{
+        id: cam
+        address: "192.168.1.168"
+        user: "Admin"
+        password: "hyco[123]"
+    }
     Row {
         spacing: 10
         anchors {
@@ -44,5 +50,47 @@ Rectangle {
             font.pointSize: 12
         }
 
+    }
+    Row {
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.rightMargin: 20
+//        anchors.centerIn: parent
+        spacing: 10
+        MyVolume {
+//            anchors.margins: 1
+//            anchors.fill: parent
+            vol: 0
+            width: 80
+            height: 40
+            onVolChanged: {
+                cam.setZoom(vol)
+                zoom.text = vol
+            }
+            Component.onCompleted:  cam.getProfiles()
+        }
+        MyCorners {
+            anchors.verticalCenter: parent.verticalCenter
+            width: 30
+            height: 30
+            onPressed: {
+                if (press)
+                    cam.startFocal(-0.1)
+                else
+                    cam.stopFocal()
+            }
+        }
+        MyCorners {
+            anchors.verticalCenter: parent.verticalCenter
+            width: 30
+            height: 30
+            plus: true
+            onPressed: {
+                if (press)
+                    cam.startFocal(0.1)
+                else
+                    cam.stopFocal()
+            }
+        }
     }
 }
